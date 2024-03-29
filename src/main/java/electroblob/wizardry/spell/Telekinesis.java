@@ -36,8 +36,7 @@ public class Telekinesis extends SpellRay {
 			target.motionZ = (origin.z - target.posZ) / 6;
 			return true;
 
-		} else if (target instanceof EntityPlayer && (Wizardry.settings.telekineticDisarmament || !(caster instanceof EntityPlayer)) &&
-				ItemArtefact.isArtefactActive((EntityPlayer) target, WizardryItems.amulet_anchoring)) {
+		} else if (target instanceof EntityPlayer && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((EntityPlayer) target, WizardryItems.amulet_anchoring)) {
 
 			EntityPlayer player = (EntityPlayer)target;
 			
