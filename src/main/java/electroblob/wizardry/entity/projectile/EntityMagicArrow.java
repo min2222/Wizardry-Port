@@ -237,7 +237,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		super.onUpdate();
 
 		// Projectile disappears after its lifetime (if it has one) has elapsed
-		if(getLifetime() >=0 && this.ticksExisted > getLifetime()){
+		if(getLifetime() >=0 && this.tickCount > getLifetime()){
 			this.discard();
 		}
 

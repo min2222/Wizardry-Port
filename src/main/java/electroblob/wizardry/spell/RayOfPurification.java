@@ -93,11 +93,11 @@ public class RayOfPurification extends SpellRay {
 		if(caster != null){
 			ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.getPositionVector()))
 					.length(distance).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f)
-					.scale(Mth.sin(caster.ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
+					.scale(Mth.sin(caster.tickCount * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}else{
 			ParticleBuilder.create(Type.BEAM).pos(origin).target(origin.add(direction.scale(distance)))
 					.clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f)
-					.scale(Mth.sin(Wizardry.proxy.getThePlayer().ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
+					.scale(Mth.sin(Wizardry.proxy.getThePlayer().tickCount * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}
 	}
 }

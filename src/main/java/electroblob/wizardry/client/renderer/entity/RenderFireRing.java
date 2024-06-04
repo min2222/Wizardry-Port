@@ -45,7 +45,7 @@ public class RenderFireRing extends Render<EntityFireRing> {
 
 		GlStateManager.rotate(-90, 1, 0, 0);
 
-		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(entity.width * s, entity.width * s, entity.width * s);
 
 		Tessellator tessellator = Tessellator.getInstance();

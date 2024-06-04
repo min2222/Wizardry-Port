@@ -826,7 +826,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		private float getAlpha(float partialTicks){
-			return (Mth.sin(0.2f * (mc.player.ticksExisted + partialTicks)) + 1) / 4 + 0.5f;
+			return (Mth.sin(0.2f * (mc.player.tickCount + partialTicks)) + 1) / 4 + 0.5f;
 		}
 
 		@Override

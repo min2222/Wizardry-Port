@@ -33,7 +33,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 
 		super.onUpdate();
 
-		if(lifetime - ticksExisted > 10 && spawnTimer-- == 0){
+		if(lifetime - tickCount > 10 && spawnTimer-- == 0){
 
 			this.playSound(WizardrySounds.ENTITY_ZOMBIE_SPAWNER_SPAWN, 1, 1);
 

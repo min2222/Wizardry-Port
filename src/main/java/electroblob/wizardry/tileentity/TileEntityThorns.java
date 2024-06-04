@@ -6,7 +6,7 @@ import net.minecraft.util.ITickable;
 
 public class TileEntityThorns extends TileEntityPlayerSave implements ITickable {
 
-	private int ticksExisted = 0;
+	private int tickCount = 0;
 	private int lifetime;
 	private int age;
 
@@ -19,13 +19,13 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	@Override
 	public void update(){
 
-		ticksExisted++;
+		tickCount++;
 
-		if(ticksExisted > lifetime && !this.level.isClientSide){
+		if(tickCount > lifetime && !this.level.isClientSide){
 			this.world.destroyBlock(pos, false);
 		}
 
-		if(ticksExisted % BlockThorns.GROWTH_STAGE_DURATION == 0 && age < BlockThorns.GROWTH_STAGES - 1){
+		if(tickCount % BlockThorns.GROWTH_STAGE_DURATION == 0 && age < BlockThorns.GROWTH_STAGES - 1){
 			age++;
 			sync(); // Update displayed block
 		}
@@ -42,7 +42,7 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	@Override
 	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
-		ticksExisted = tagCompound.getInt("timer");
+		tickCount = tagCompound.getInt("timer");
 		lifetime = tagCompound.getInt("maxTimer"); // Left as maxTimer for backwards compatibility
 		age = tagCompound.getInt("age");
 		damageMultiplier = tagCompound.getFloat("damageMultiplier");
@@ -51,7 +51,7 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	@Override
 	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
-		tagCompound.putInt("timer", ticksExisted);
+		tagCompound.putInt("timer", tickCount);
 		tagCompound.putInt("maxTimer", lifetime);
 		tagCompound.putInt("age", age);
 		tagCompound.setFloat("damageMultiplier", damageMultiplier);

@@ -54,7 +54,7 @@ public class LayerMindControl extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	protected void applyTextureSpaceTransformations(LivingEntity entity, float partialTicks){
-		float f = entity.ticksExisted + partialTicks;
+		float f = entity.tickCount + partialTicks;
 		GlStateManager.translate(f * 0.003f, f * 0.003f, 0);
 	}
 }

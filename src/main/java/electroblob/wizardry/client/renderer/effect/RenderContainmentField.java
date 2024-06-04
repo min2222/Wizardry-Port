@@ -42,7 +42,7 @@ public class RenderContainmentField {
 
 		if(player.isPotionActive(WizardryPotions.containment)){
 
-			Vec3 centre = GeometryUtils.getCentre(NbtUtils.getPosFromTag(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
+			Vec3 centre = GeometryUtils.getCentre(NbtUtils.readBlockPos(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
 			float r = PotionContainment.getContainmentDistance(player.getActivePotionEffect(WizardryPotions.containment).getAmplifier());
 
 			GlStateManager.pushMatrix();
@@ -59,13 +59,13 @@ public class RenderContainmentField {
 			// Translate the texture in the 2D space (like the creeper charge layer)
 			GlStateManager.matrixMode(GL11.GL_TEXTURE);
 			GlStateManager.loadIdentity();
-			float distance = (player.ticksExisted + event.getPartialTicks()) * ANIMATION_SPEED;
+			float distance = (player.tickCount + event.getPartialTicks()) * ANIMATION_SPEED;
 			GlStateManager.translate(distance, distance, 0);
 			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 
 			GlStateManager.color(1, 1, 1, 1);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.ticksExisted % (TEXTURES.length * 2))/2]);
+			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
 
 			Tessellator tessellator = Tessellator.getInstance();
 

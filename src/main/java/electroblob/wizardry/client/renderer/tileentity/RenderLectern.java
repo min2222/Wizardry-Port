@@ -21,7 +21,7 @@ public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> 
 		GlStateManager.translate((float)x + 0.5F, (float)y + 1, (float)z + 0.5F);
 		GlStateManager.rotate(90 - te.getWorld().getBlockState(te.getPos()).getValue(BlockHorizontal.FACING).getHorizontalAngle(), 0, 1, 0);
 
-		float time = (float)te.ticksExisted + partialTicks;
+		float time = (float)te.tickCount + partialTicks;
 
 		float spread = te.bookSpreadPrev + (te.bookSpread - te.bookSpreadPrev) * partialTicks;
 

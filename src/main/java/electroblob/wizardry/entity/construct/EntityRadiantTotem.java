@@ -43,7 +43,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(level.isClientSide && this.ticksExisted == 1){
+		if(level.isClientSide && this.tickCount == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_RADIANT_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
@@ -87,7 +87,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 			if(ally.getHealth() < ally.getMaxHealth()){
 				// Slightly slower than healing aura, and it only does 1 at a time (without potency modifiers)
-				if(ally.ticksExisted % 8 == 0) ally.heal(Spells.radiant_totem.getProperty(Spell.HEALTH).floatValue());
+				if(ally.tickCount % 8 == 0) ally.heal(Spells.radiant_totem.getProperty(Spell.HEALTH).floatValue());
 				targetsRemaining--;
 
 				if(level.isClientSide){
@@ -103,7 +103,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 			if(EntityUtils.isLiving(target) && isValidTarget(target)){
 
-				if(target.ticksExisted % target.maxHurtResistantTime == 1){
+				if(target.tickCount % target.maxHurtResistantTime == 1){
 
 					float damage = Spells.radiant_totem.getProperty(Spell.DAMAGE).floatValue();
 

@@ -189,14 +189,14 @@ public class EntityRemnant extends EntityMob {
 	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.setElement(Element.values()[nbt.getInt("Element")]);
-		if(nbt.hasKey("BoundOrigin")) boundOrigin = NbtUtils.getPosFromTag(nbt.getCompoundTag("BoundOrigin"));
+		if(nbt.hasKey("BoundOrigin")) boundOrigin = NbtUtils.readBlockPos(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
 	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.putInt("Element", this.getElement().ordinal());
-		if(boundOrigin != null) nbt.setTag("BoundOrigin", NbtUtils.createPosTag(boundOrigin));
+		if(boundOrigin != null) nbt.setTag("BoundOrigin", NbtUtils.writeBlockPos(boundOrigin));
 	}
 
 	// AI classes (copied from EntityVex)

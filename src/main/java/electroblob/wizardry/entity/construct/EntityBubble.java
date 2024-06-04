@@ -58,14 +58,14 @@ public class EntityBubble extends EntityMagicConstruct {
 		}
 
 		// Stops the bubble bursting instantly.
-		if(this.ticksExisted < 1 && !isDarkOrb) ((LivingEntity)EntityUtils.getRider(this)).hurtTime = 0;
+		if(this.tickCount < 1 && !isDarkOrb) ((LivingEntity)EntityUtils.getRider(this)).hurtTime = 0;
 
 		this.move(MoverType.SELF, 0, 0.03, 0);
 
 		if(isDarkOrb){
 
 			if(EntityUtils.getRider(this) != null
-					&& EntityUtils.getRider(this).ticksExisted % Spells.entrapment.getProperty(Entrapment.DAMAGE_INTERVAL).intValue() == 0){
+					&& EntityUtils.getRider(this).tickCount % Spells.entrapment.getProperty(Entrapment.DAMAGE_INTERVAL).intValue() == 0){
 				if(this.getCaster() != null){
 					EntityUtils.getRider(this).hurt(
 							MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.MAGIC),
@@ -83,16 +83,16 @@ public class EntityBubble extends EntityMagicConstruct {
 						(this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(),
 						(this.random.nextDouble() - 0.5D) * 2.0D);
 			}
-			if(lifetime - this.ticksExisted == 75){
+			if(lifetime - this.tickCount == 75){
 				this.playSound(WizardrySounds.ENTITY_ENTRAPMENT_VANISH, 1.5f, 1.0f);
-			}else if(this.ticksExisted % 100 == 1 && this.ticksExisted < 150){
+			}else if(this.tickCount % 100 == 1 && this.tickCount < 150){
 				this.playSound(WizardrySounds.ENTITY_ENTRAPMENT_AMBIENT, 1.5f, 1.0f);
 			}
 		}
 
 		// Bubble bursts if the entity is hurt (see event handler) or killed, or if the bubble has existed for more than
 		// 10 seconds.
-		if(EntityUtils.getRider(this) == null && this.ticksExisted > 1){
+		if(EntityUtils.getRider(this) == null && this.tickCount > 1){
 			if(!this.isDarkOrb) this.playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
 			this.discard();
 		}
@@ -134,10 +134,10 @@ public class EntityBubble extends EntityMagicConstruct {
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		// Bursts bubble when the creature inside takes damage
-		if(event.getEntityLiving().getRidingEntity() instanceof EntityBubble
-				&& !((EntityBubble)event.getEntityLiving().getRidingEntity()).isDarkOrb){
-			event.getEntityLiving().getRidingEntity().playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
-			event.getEntityLiving().getRidingEntity().discard();
+		if(event.getEntity().getRidingEntity() instanceof EntityBubble
+				&& !((EntityBubble)event.getEntity().getRidingEntity()).isDarkOrb){
+			event.getEntity().getRidingEntity().playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
+			event.getEntity().getRidingEntity().discard();
 		}
 	}
 

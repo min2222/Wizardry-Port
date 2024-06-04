@@ -106,7 +106,7 @@ public class EntitySpiritWolf extends EntityWolf {
 			// wand.
 			if(stack.getItem() instanceof ISpellCastingItem && this.getOwner() == player && player.isSneaking()){
 				// Prevents accidental double clicking.
-				if(this.ticksExisted > 20){
+				if(this.tickCount > 20){
 					
 					this.dispelTimer++;
 					

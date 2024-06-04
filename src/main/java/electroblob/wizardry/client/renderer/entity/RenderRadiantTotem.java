@@ -34,7 +34,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 	@Nullable
 	@Override
 	protected ResourceLocation getEntityTexture(EntityRadiantTotem entity){
-		return CUBE_TEXTURES[entity.ticksExisted % CUBE_TEXTURES.length];
+		return CUBE_TEXTURES[entity.tickCount % CUBE_TEXTURES.length];
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 
 		GlStateManager.translate(x, y + entity.getBbHeight()/2, z);
 
-		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
 
 		drawFlare(tessellator);
@@ -110,7 +110,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 
 		GlStateManager.pushMatrix();
 
-		float age = entity.ticksExisted + partialTicks;
+		float age = entity.tickCount + partialTicks;
 		float rotationSpeed = 2;
 
 		GlStateManager.rotate(age * rotationSpeed/2, 0.0F, 1.0F, 0.0F);

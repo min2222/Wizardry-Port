@@ -509,7 +509,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 		// This new system removes a lot of repetitive event handler code and inflexible data which had duplicate
 		// functions, just for different enchantments.
-		if(player.ticksExisted % IMBUEMENT_UPDATE_INTERVAL == 0) updateImbuedItems();
+		if(player.tickCount % IMBUEMENT_UPDATE_INTERVAL == 0) updateImbuedItems();
 		updateContinuousSpellCasting();
 
 		this.spellData.forEach((k, v) -> this.spellData.put(k, k.update(player, v)));
@@ -631,7 +631,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	@SubscribeEvent
 	public static void onPlayerCloneEvent(PlayerEvent.Clone event){
 
-		WizardData newData = WizardData.get(event.getEntityPlayer());
+		WizardData newData = WizardData.get(event.getEntity());
 		WizardData oldData = WizardData.get(event.getOriginal());
 
 		newData.copyFrom(oldData, event.isWasDeath());
@@ -651,9 +651,9 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
-		if(event.getEntityLiving() instanceof Player){
+		if(event.getEntity() instanceof Player){
 
-			Player player = (Player)event.getEntityLiving();
+			Player player = (Player)event.getEntity();
 
 			if(WizardData.get(player) != null){
 				WizardData.get(player).update();

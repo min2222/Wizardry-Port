@@ -67,8 +67,8 @@ public final class InventoryUtils {
 		// Adds the offhand item to the beginning of the list so it is processed before the hotbar
 		hotbar.add(0, player.getHeldItemOffhand());
 		// Moves the item in the main hand to the beginning of the list so it is processed first
-		hotbar.remove(player.getHeldItemMainhand());
-		hotbar.add(0, player.getHeldItemMainhand());
+		hotbar.remove(player.getMainHandItem());
+		hotbar.add(0, player.getMainHandItem());
 		return hotbar;
 	}
 

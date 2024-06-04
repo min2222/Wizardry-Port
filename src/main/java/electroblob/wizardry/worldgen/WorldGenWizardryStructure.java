@@ -341,7 +341,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event){
-		if(event.player instanceof ServerPlayer && event.player.ticksExisted % 20 == 0){
+		if(event.player instanceof ServerPlayer && event.player.tickCount % 20 == 0){
 			WizardryAdvancementTriggers.visit_structure.trigger((ServerPlayer)event.player);
 		}
 	}

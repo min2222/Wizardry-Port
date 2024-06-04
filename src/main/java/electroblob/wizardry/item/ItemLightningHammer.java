@@ -181,11 +181,11 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	@SubscribeEvent
 	public static void onAttackEntityEvent(AttackEntityEvent event){
 
-		ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
+		ItemStack stack = event.getEntity().getMainHandItem();
 
 		if(stack.getItem() instanceof ItemLightningHammer && event.getTarget() instanceof LivingEntity){
 
-			Player wielder = event.getEntityPlayer();
+			Player wielder = event.getEntity();
 			LivingEntity hit = (LivingEntity)event.getTarget();
 
 			float attackStrength = wielder.getCooledAttackStrength(0);

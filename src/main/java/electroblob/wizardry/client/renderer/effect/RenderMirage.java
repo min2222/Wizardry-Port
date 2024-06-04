@@ -24,8 +24,8 @@ public class RenderMirage {
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Pre<?> event){
 		if(event.getEntity().isPotionActive(WizardryPotions.mirage)){
-			random.setSeed(event.getEntity().ticksExisted / BLINK_PERIOD_1
-						 + event.getEntity().ticksExisted / BLINK_PERIOD_2);
+			random.setSeed(event.getEntity().tickCount / BLINK_PERIOD_1
+						 + event.getEntity().tickCount / BLINK_PERIOD_2);
 			GlStateManager.pushMatrix();
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE); // GhoOOoOostly OooOOOo00oOOo
 			GlStateManager.color(1, 1, 1, 0.5f);

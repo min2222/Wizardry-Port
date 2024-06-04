@@ -58,7 +58,7 @@ public class Disintegration extends SpellRay {
 			// Set NBT client-side, it's only for rendering
 			// Normally dying entities are ignored but we're fiddling with them here so double-check
 			if(!target.getEntityData().hasKey(NBT_KEY)){
-				target.getEntityData().putInt(NBT_KEY, target.ticksExisted);
+				target.getEntityData().putInt(NBT_KEY, target.tickCount);
 			}
 		}else{
 			for(int i = 0; i < count; i++){
@@ -67,7 +67,7 @@ public class Disintegration extends SpellRay {
 				double y = world.random.nextDouble() * target.getBbHeight();
 				double z = (world.random.nextDouble() - 0.5) * target.width;
 				ember.setPosition(target.getX() + x, target.getY() + y, target.getZ() + z);
-				ember.ticksExisted = world.random.nextInt(20);
+				ember.tickCount = world.random.nextInt(20);
 				float speed = 0.2f;
 				ember.motionX = x * speed;
 				ember.motionY = y * 0.5f * speed;

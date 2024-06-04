@@ -32,7 +32,7 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 
 			player.getServerWorld().addScheduledTask(() -> {
 
-				ItemStack wand = player.getHeldItemMainhand();
+				ItemStack wand = player.getMainHandItem();
 
 				if(!(wand.getItem() instanceof ISpellCastingItem)){
 					wand = player.getHeldItemOffhand();

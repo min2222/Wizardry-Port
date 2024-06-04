@@ -24,7 +24,7 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 		GlStateManager.translate((float)x + 0.5F, (float)y + 1.4F, (float)z + 0.5F);
 		GlStateManager.rotate(180, 0F, 0F, 1F);
 
-		float t = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
+		float t = Minecraft.getMinecraft().player.tickCount + partialTicks;
 		GlStateManager.translate(0, 0.05f * Mth.sin(t/15), 0);
 
 		this.renderItem(tileentity, t);
@@ -53,7 +53,7 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 
 	private void renderRays(TileEntityImbuementAltar tileentity, float partialTicks){
 
-		float t = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
+		float t = Minecraft.getMinecraft().player.tickCount + partialTicks;
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();

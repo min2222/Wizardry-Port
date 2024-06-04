@@ -68,7 +68,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 			entity.getEntityData().setBoolean(NBT_KEY, true);
 
 			// If time is stopped, block all updates; otherwise block all updates except every [interval] ticks
-			entity.updateBlocked = stopTime || host.ticksExisted % interval != 0;
+			entity.updateBlocked = stopTime || host.tickCount % interval != 0;
 
 			if(!stopTime && entity.level.isClientSide){
 
@@ -114,7 +114,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 				}
 			}
 
-			if(entity.level.isClientSide && host.ticksExisted % 2 == 0){
+			if(entity.level.isClientSide && host.tickCount % 2 == 0){
 				int lifetime = 15;
 				double dx = (entity.world.random.nextDouble() - 0.5D) * 2 * (double)entity.width;
 				double dy = (entity.world.random.nextDouble() - 0.5D) * 2 * (double)entity.width;
@@ -162,7 +162,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
-		LivingEntity entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntity();
 
 		if(entity.isPotionActive(WizardryPotions.slow_time)){
 			performEffectConsistent(entity, entity.getActivePotionEffect(WizardryPotions.slow_time).getAmplifier());

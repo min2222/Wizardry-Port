@@ -103,7 +103,7 @@ public class WizardryControlHandler {
 
 	private static ItemStack getWandInUse(Player player){
 
-		ItemStack wand = player.getHeldItemMainhand();
+		ItemStack wand = player.getMainHandItem();
 
 		// Only bother sending packets if the player is holding a spellcasting item with more than one spell slot
 		if(!(wand.getItem() instanceof ISpellCastingItem) || ((ISpellCastingItem)wand.getItem()).getSpells(wand).length < 2){

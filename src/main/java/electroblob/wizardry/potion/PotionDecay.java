@@ -45,10 +45,10 @@ public class PotionDecay extends PotionMagicEffect {
 		// This can't be in performEffect because that method is called at a certain frequency which depends on the
 		// amplifier of the potion effect, and is too slow for this purpose.
 		
-		LivingEntity target = event.getEntityLiving();
+		LivingEntity target = event.getEntity();
 
 		// Do the timing check first, it'll cut out 95% of calls to all subsequent conditions
-		if(target.ticksExisted % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.level.isClientSide
+		if(target.tickCount % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.level.isClientSide
 				&& target.isPotionActive(WizardryPotions.decay) && target.onGround){
 
 			List<Entity> entities = target.world.getEntitiesWithinAABBExcludingEntity(target,

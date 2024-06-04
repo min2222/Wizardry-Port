@@ -81,7 +81,7 @@ public class EntityEmber extends EntityMagicProjectile {
 				.forEach(e -> e.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
 
 		// Copied from ParticleLava
-		if(this.random.nextFloat() > (float)this.ticksExisted / this.getLifetime()){
+		if(this.random.nextFloat() > (float)this.tickCount / this.getLifetime()){
 			this.world.spawnParticle(ParticleTypes.SMOKE_NORMAL, this.getX(), this.getY(), this.getZ(), this.motionX, this.motionY, this.motionZ);
 		}
 	}

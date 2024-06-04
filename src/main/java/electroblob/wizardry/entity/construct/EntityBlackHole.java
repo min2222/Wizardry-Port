@@ -73,7 +73,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 		// System.out.println("Client side: " + this.level.isClientSide + ", Caster: " + this.caster);
 
 		// Particle effect. Finishes 40 ticks before the end so the particles disappear at the same time.
-		if(this.ticksExisted + 40 < this.lifetime){
+		if(this.tickCount + 40 < this.lifetime){
 			for(int i = 0; i < 5; i++){
 				// this.world.spawnParticle(EnumParticleTypes.PORTAL, this.getX() + (this.random.nextDouble() - 0.5D) *
 				// (double)this.width, this.getY() + this.random.nextDouble() * (double)this.getBbHeight() - 0.75D, this.getZ() +
@@ -85,9 +85,9 @@ public class EntityBlackHole extends EntityScaledConstruct {
 			}
 		}
 
-		if(this.lifetime - this.ticksExisted == 75){
+		if(this.lifetime - this.tickCount == 75){
 			this.playSound(WizardrySounds.ENTITY_BLACK_HOLE_VANISH, 1.5f, 1.0f);
-		}else if(this.ticksExisted % 80 == 1 && this.ticksExisted + 80 < this.lifetime){
+		}else if(this.tickCount % 80 == 1 && this.tickCount + 80 < this.lifetime){
 			this.playSound(WizardrySounds.ENTITY_BLACK_HOLE_AMBIENT, 1.5f, 1.0f);
 		}
 

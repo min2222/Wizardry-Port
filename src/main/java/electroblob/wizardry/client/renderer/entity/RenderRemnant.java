@@ -25,7 +25,7 @@ public class RenderRemnant extends Render<EntityRemnant> {
 	@Override
 	public void doRender(EntityRemnant entity, double x, double y, double z, float entityYaw, float partialTicks){
 
-		float age = (float)entity.ticksExisted + partialTicks;
+		float age = (float)entity.tickCount + partialTicks;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float)x, (float)y, (float)z);
 		this.bindTexture(TEXTURE);

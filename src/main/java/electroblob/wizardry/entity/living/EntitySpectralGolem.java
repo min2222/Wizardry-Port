@@ -123,7 +123,7 @@ public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCre
 
 	@Override
 	public boolean hasAnimation(){
-		return this.dataManager.get(SPAWN_PARTICLES) || this.ticksExisted > 20;
+		return this.dataManager.get(SPAWN_PARTICLES) || this.tickCount > 20;
 	}
 
 	public void hideParticles(){

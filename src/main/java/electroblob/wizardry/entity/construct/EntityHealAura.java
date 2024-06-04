@@ -25,7 +25,7 @@ public class EntityHealAura extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(this.ticksExisted % 25 == 1){
+		if(this.tickCount % 25 == 1){
 			this.playSound(WizardrySounds.ENTITY_HEAL_AURA_AMBIENT, 0.1f, 1.0f);
 		}
 
@@ -45,7 +45,7 @@ public class EntityHealAura extends EntityScaledConstruct {
 						double velY = target.motionY;
 						double velZ = target.motionZ;
 
-						if (this.ticksExisted % 10 == 1) {
+						if (this.tickCount % 10 == 1) {
 							if (this.getCaster() != null) {
 								target.hurt(
 										MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.RADIANT),
@@ -61,7 +61,7 @@ public class EntityHealAura extends EntityScaledConstruct {
 						}
 					}
 
-				}else if(target.getHealth() < target.getMaxHealth() && target.ticksExisted % 5 == 0){
+				}else if(target.getHealth() < target.getMaxHealth() && target.tickCount % 5 == 0){
 					target.heal(Spells.healing_aura.getProperty(Spell.HEALTH).floatValue() * damageMultiplier);
 				}
 			}

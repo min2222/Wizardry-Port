@@ -83,7 +83,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 		super.onUpdate();
 
-		if(ticksExisted == 1 && level.isClientSide){
+		if(tickCount == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_FORCEFIELD_AMBIENT, WizardrySounds.SPELLS, 0.5f, 1, true);
 		}
 
@@ -168,7 +168,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 						}
 
-						if (this.ticksExisted % 5 == 0) {
+						if (this.tickCount % 5 == 0) {
 							this.lifetime = (int) (lifetime * 0.99);
 						}
 
@@ -282,10 +282,10 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 				return; // Players wearing a ring of the defender can shoot stuff as normal, so don't cancel the event
 		}
 
-		if(!event.getSource().isUnblockable() && event.getSource().getTrueSource() != null && event.getEntityLiving() != null
+		if(!event.getSource().isUnblockable() && event.getSource().getTrueSource() != null && event.getEntity() != null
 			&& !(event.getSource().getImmediateSource() instanceof EntityForcefield)){ // If the damage was from a forcefield that's ok
 			// This condition will be false if both entities are outside a forcefield or both are in the same one
-			if(getSurroundingForcefield(event.getEntityLiving()) != getSurroundingForcefield(event.getSource().getTrueSource())){
+			if(getSurroundingForcefield(event.getEntity()) != getSurroundingForcefield(event.getSource().getTrueSource())){
 				event.setCanceled(true);
 			}
 		}
@@ -342,7 +342,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		// If the player is trying to interact across a forcefield boundary, cancel the event
 		// The most pragmatic solution here is to use the centres - it's not perfect, but it's simple!
 		if(getSurroundingForcefield(event.getWorld(), GeometryUtils.getCentre(box))
-				!= getSurroundingForcefield(event.getWorld(), event.getEntityPlayer().getPositionVector())){
+				!= getSurroundingForcefield(event.getWorld(), event.getEntity().getPositionVector())){
 			event.setCanceled(true);
 		}
 	}

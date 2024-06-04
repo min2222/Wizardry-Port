@@ -35,7 +35,7 @@ public class RenderTargetPointers {
 		WizardData data = WizardData.get(mc.player);
 		RenderManager renderManager = event.getRenderer().getRenderManager();
 
-		ItemStack wand = mc.player.getHeldItemMainhand();
+		ItemStack wand = mc.player.getMainHandItem();
 
 		if(!(wand.getItem() instanceof ISpellCastingItem)){
 			wand = mc.player.getHeldItemOffhand();

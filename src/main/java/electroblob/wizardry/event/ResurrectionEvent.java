@@ -29,7 +29,7 @@ public class ResurrectionEvent extends PlayerEvent {
 	}
 
 	/** Returns the player that cast the resurrection spell. If the player resurrected themselves, this will be the
-	 * same as {@link ResurrectionEvent#getEntityPlayer()}. */
+	 * same as {@link ResurrectionEvent#getEntity()}. */
 	public Player getCaster(){
 		return caster;
 	}

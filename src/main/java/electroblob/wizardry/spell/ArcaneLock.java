@@ -93,7 +93,7 @@ public class ArcaneLock extends SpellRay {
 	@SubscribeEvent
 	public static void onRightClickBlockEvent(PlayerInteractEvent.RightClickBlock event){
 
-		if(!canBypassLocks(event.getEntityPlayer())){
+		if(!canBypassLocks(event.getEntity())){
 
 			BlockEntity tileentity = event.getWorld().getTileEntity(event.getPos());
 
@@ -106,7 +106,7 @@ public class ArcaneLock extends SpellRay {
 				// If nobody owns it (i.e. it's part of a shrine, or the owner logged out), player will be null
 				// Unfortunately we can't get the owner's allies if the owner is offline
 				// Perhaps if this crops up again we can store inverted 'ally of' maps as well?
-				if(owner == null || (owner != event.getEntityPlayer() && !AllyDesignationSystem.isPlayerAlly(owner, event.getEntityPlayer()))){
+				if(owner == null || (owner != event.getEntity() && !AllyDesignationSystem.isPlayerAlly(owner, event.getEntity()))){
 					event.setCanceled(true);
 				}
 			}
@@ -118,7 +118,7 @@ public class ArcaneLock extends SpellRay {
 	// block break event below, just in case.
 	@SubscribeEvent
 	public static void onLeftClickBlockEvent(PlayerInteractEvent.LeftClickBlock event){
-		event.setCanceled(checkForLockedBlockBreak(event.getEntityPlayer(), event.getWorld(), event.getPos()));
+		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getWorld(), event.getPos()));
 	}
 
 	@SubscribeEvent
@@ -129,7 +129,7 @@ public class ArcaneLock extends SpellRay {
 	// Yup, this spell even protects your chests from the enderdragon now!
 	@SubscribeEvent
 	public static void onLivingDestroyBlockEvent(LivingDestroyBlockEvent event){
-		event.setCanceled(checkForLockedBlockBreak(event.getEntityLiving(), event.getEntity().world, event.getPos()));
+		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getEntity().world, event.getPos()));
 	}
 
 	private static boolean checkForLockedBlockBreak(LivingEntity breaker, Level world, BlockPos pos){

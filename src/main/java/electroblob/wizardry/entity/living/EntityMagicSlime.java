@@ -118,7 +118,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		// Damages and slows the slime's victim or makes the slime explode if the victim is dead.
 		if(this.getRidingEntity() != null && this.getRidingEntity() instanceof LivingEntity
 				&& ((LivingEntity)this.getRidingEntity()).getHealth() > 0){
-			if(this.ticksExisted % 16 == 1){
+			if(this.tickCount % 16 == 1){
 				this.getRidingEntity().hurt(DamageSource.MAGIC, 1);
 				if(this.getRidingEntity() != null){ // Some mobs force-dismount when attacked (normally when dying)
 					((LivingEntity)this.getRidingEntity())

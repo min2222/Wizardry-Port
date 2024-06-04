@@ -69,7 +69,7 @@ public class RenderArcaneLock {
 
 					GlStateManager.color(1, 1, 1, 1);
 
-					Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.ticksExisted % (TEXTURES.length * 2))/2]);
+					Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
 
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 				}

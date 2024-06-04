@@ -38,19 +38,19 @@ public class RenderForcefield extends Render<EntityForcefield> {
 		float latStep = (float)Math.PI/20;
 		float longStep = (float)Math.PI/20;
 
-		float pulse = Mth.sin((entity.ticksExisted + partialTicks)/10f);
+		float pulse = Mth.sin((entity.tickCount + partialTicks)/10f);
 
 		float r = 0.35f, g = 0.55f + 0.05f * pulse, b = 1;
 
 		float radius = entity.getRadius();
 		float a = 0.5f;
 
-		if(entity.ticksExisted > entity.lifetime - EXPANSION_TIME){
-			radius *= 1 + 0.2f * (entity.ticksExisted + partialTicks - (entity.lifetime - EXPANSION_TIME))/EXPANSION_TIME;
-			a *= Math.max(0, 1 - (entity.ticksExisted + partialTicks - (entity.lifetime - EXPANSION_TIME))/EXPANSION_TIME);
-		}else if(entity.ticksExisted < EXPANSION_TIME){
-			radius *= 1 - (EXPANSION_TIME - entity.ticksExisted - partialTicks)/EXPANSION_TIME;
-			a *= 1 - (EXPANSION_TIME - entity.ticksExisted - partialTicks)/EXPANSION_TIME;
+		if(entity.tickCount > entity.lifetime - EXPANSION_TIME){
+			radius *= 1 + 0.2f * (entity.tickCount + partialTicks - (entity.lifetime - EXPANSION_TIME))/EXPANSION_TIME;
+			a *= Math.max(0, 1 - (entity.tickCount + partialTicks - (entity.lifetime - EXPANSION_TIME))/EXPANSION_TIME);
+		}else if(entity.tickCount < EXPANSION_TIME){
+			radius *= 1 - (EXPANSION_TIME - entity.tickCount - partialTicks)/EXPANSION_TIME;
+			a *= 1 - (EXPANSION_TIME - entity.tickCount - partialTicks)/EXPANSION_TIME;
 		}
 
 		// Draw the inside first

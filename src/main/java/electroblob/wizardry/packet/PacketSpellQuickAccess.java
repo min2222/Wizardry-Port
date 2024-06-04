@@ -21,7 +21,7 @@ public class PacketSpellQuickAccess implements IMessageHandler<PacketSpellQuickA
 
 			player.getServerWorld().addScheduledTask(() -> {
 
-				ItemStack wand = player.getHeldItemMainhand();
+				ItemStack wand = player.getMainHandItem();
 
 				if(!(wand.getItem() instanceof ISpellCastingItem)){
 					wand = player.getHeldItemOffhand();

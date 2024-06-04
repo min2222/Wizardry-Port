@@ -61,7 +61,7 @@ public class RenderShield {
 
 				GlStateManager.translate(0.5, 0.5, 0);
 
-				float s = 1 - ((player.ticksExisted + event.getPartialTicks()) % 5) / 5 * 0.52f;
+				float s = 1 - ((player.tickCount + event.getPartialTicks()) % 5) / 5 * 0.52f;
 				s = s*s;
 				GlStateManager.scale(s, s, 1);
 
@@ -98,7 +98,7 @@ public class RenderShield {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		Player player = event.getEntityPlayer();
+		Player player = event.getEntity();
 
 		if(WizardData.get(player).getVariable(Shield.SHIELD_KEY) != null && EntityUtils.isCasting(player, Spells.shield)){
 
@@ -133,7 +133,7 @@ public class RenderShield {
 
 			GlStateManager.translate(0.5, 0.5, 0);
 
-			float s = 1 - ((player.ticksExisted + event.getPartialRenderTick()) % 5) / 5 * 0.52f;
+			float s = 1 - ((player.tickCount + event.getPartialRenderTick()) % 5) / 5 * 0.52f;
 			s = s*s;
 			GlStateManager.scale(s, s, 1);
 

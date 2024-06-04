@@ -50,7 +50,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 	@Override
 	public void onUpdate(){
 
-		if(getLifetime() >=0 && this.ticksExisted > getLifetime()){ // The last tick before it disappears
+		if(getLifetime() >=0 && this.tickCount > getLifetime()){ // The last tick before it disappears
 			returnManaToCaster();
 		}
 

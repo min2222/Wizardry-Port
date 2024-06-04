@@ -101,7 +101,7 @@ public class EntitySpiritHorse extends EntityHorse {
 		// clicking mounts the horse in this case).
 		if(itemstack.getItem() instanceof ISpellCastingItem && this.getOwner() == player && player.isSneaking()){
 			// Prevents accidental double clicking.
-			if(this.ticksExisted > 20 && dispelTimer == 0){
+			if(this.tickCount > 20 && dispelTimer == 0){
 
 				this.dispelTimer++;
 				

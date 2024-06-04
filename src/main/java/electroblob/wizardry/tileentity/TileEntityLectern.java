@@ -19,7 +19,7 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 
 	private static final Random rand = new Random();
 
-	public int ticksExisted;
+	public int tickCount;
 	public float pageFlip;
 	public float pageFlipPrev;
 	public float flipT;
@@ -52,7 +52,7 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 
 		this.bookSpread = Mth.clamp(this.bookSpread, 0.0f, 1.0f);
 
-		this.ticksExisted++;
+		this.tickCount++;
 
 		this.pageFlipPrev = this.pageFlip;
 		float f = (this.flipT - this.pageFlip) * 0.4f;

@@ -26,13 +26,13 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 	public void onUpdate(){
 
-		if(this.ticksExisted % 40 == 1){
+		if(this.tickCount % 40 == 1){
 			this.playSound(WizardrySounds.ENTITY_FIRE_RING_AMBIENT, 4.0f, 0.7f);
 		}
 
 		super.onUpdate();
 
-		if(this.ticksExisted % 5 == 0 && !this.level.isClientSide){
+		if(this.tickCount % 5 == 0 && !this.level.isClientSide){
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.getX(), this.getY(), this.getZ(), this.getBbHeight(), this.world);
 

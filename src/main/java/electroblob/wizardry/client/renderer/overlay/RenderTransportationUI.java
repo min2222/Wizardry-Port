@@ -42,7 +42,7 @@ public class RenderTransportationUI {
 
 		Player player = Minecraft.getMinecraft().player;
 
-		ItemStack stack = player.getHeldItemMainhand();
+		ItemStack stack = player.getMainHandItem();
 		if(!(stack.getItem() instanceof ISpellCastingItem)){
 			stack = player.getHeldItemOffhand();
 			if(!(stack.getItem() instanceof ISpellCastingItem)) return;

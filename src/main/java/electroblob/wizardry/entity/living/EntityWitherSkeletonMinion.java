@@ -182,7 +182,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	@Override
 	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity and this skeleton does not have a bow.
-		return !EntityFlying.class.isAssignableFrom(entityType) || this.getHeldItemMainhand().getItem() instanceof ItemBow;
+		return !EntityFlying.class.isAssignableFrom(entityType) || this.getMainHandItem().getItem() instanceof ItemBow;
 	}
 
 	@Override

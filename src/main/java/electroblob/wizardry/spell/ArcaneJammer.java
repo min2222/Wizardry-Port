@@ -125,7 +125,7 @@ public class ArcaneJammer extends SpellRay {
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
 
 		if(event.getEntity() instanceof EntitySpellcasterIllager
-				&& event.getEntityLiving().isPotionActive(WizardryPotions.arcane_jammer)){
+				&& event.getEntity().isPotionActive(WizardryPotions.arcane_jammer)){
 
 			((EntitySpellcasterIllager)event.getEntity()).setSpellType(EntitySpellcasterIllager.SpellType.NONE);
 

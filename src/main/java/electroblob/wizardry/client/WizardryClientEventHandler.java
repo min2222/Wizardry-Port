@@ -125,16 +125,16 @@ public final class WizardryClientEventHandler {
 	@SubscribeEvent
 	public static void onInputUpdateEvent(InputUpdateEvent event){
 		// Prevents the player moving when paralysed
-		if(event.getEntityPlayer().isPotionActive(WizardryPotions.paralysis)){
+		if(event.getEntity().isPotionActive(WizardryPotions.paralysis)){
 			event.getMovementInput().moveForward = 0;
 			event.getMovementInput().moveStrafe = 0;
 			event.getMovementInput().jump = false;
 			event.getMovementInput().sneak = false;
 		}
 		
-		if(ItemArtefact.isArtefactActive(event.getEntityPlayer(), WizardryItems.charm_move_speed)
-				&& event.getEntityPlayer().isHandActive()
-				&& event.getEntityPlayer().getActiveItemStack().getItem() instanceof ISpellCastingItem){
+		if(ItemArtefact.isArtefactActive(event.getEntity(), WizardryItems.charm_move_speed)
+				&& event.getEntity().isHandActive()
+				&& event.getEntity().getActiveItemStack().getItem() instanceof ISpellCastingItem){
 			// Normally speed is set to 20% when using items, this makes it 80%
 			event.getMovementInput().moveStrafe *= 4;
 			event.getMovementInput().moveForward *= 4;
@@ -154,7 +154,7 @@ public final class WizardryClientEventHandler {
 
 			victim.rotationYawHead = Minecraft.getMinecraft().player.rotationYaw;
 
-			if(Minecraft.getMinecraft().player.getHeldItemMainhand().isEmpty()){
+			if(Minecraft.getMinecraft().player.getMainHandItem().isEmpty()){
 				event.setCanceled(true);
 			}
 		}

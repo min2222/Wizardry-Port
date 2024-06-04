@@ -121,7 +121,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 						.pos(this.getPositionVector().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
 						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
 
-				if(ticksExisted > 1){
+				if(tickCount > 1){
 					dx = (random.nextDouble() - 0.5) * width;
 					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2 - 0.1;
 					dz = (random.nextDouble() - 0.5) * width;

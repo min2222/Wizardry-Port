@@ -30,7 +30,7 @@ public class EntityDecay extends EntityMagicConstruct {
 
 		super.onUpdate();
 
-		if(this.random.nextInt(700) == 0 && this.ticksExisted + 100 < lifetime)
+		if(this.random.nextInt(700) == 0 && this.tickCount + 100 < lifetime)
 			this.playSound(WizardrySounds.ENTITY_DECAY_AMBIENT, 0.2F + random.nextFloat() * 0.2F,
 					0.6F + random.nextFloat() * 0.15F);
 

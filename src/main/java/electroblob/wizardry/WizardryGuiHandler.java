@@ -64,15 +64,15 @@ public class WizardryGuiHandler implements IGuiHandler {
 						(TileEntityArcaneWorkbench)tileEntity);
 			}
 
-		}else if(id == WIZARD_HANDBOOK && (player.getHeldItemMainhand().getItem() instanceof ItemWizardHandbook
+		}else if(id == WIZARD_HANDBOOK && (player.getMainHandItem().getItem() instanceof ItemWizardHandbook
 				|| player.getHeldItemOffhand().getItem() instanceof ItemWizardHandbook)){
 
 			return new electroblob.wizardry.client.gui.handbook.GuiWizardHandbook();
 
 		}else if(id == SPELL_BOOK){
 
-			if(player.getHeldItemMainhand().getItem() instanceof ItemSpellBook){
-				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getHeldItemMainhand());
+			if(player.getMainHandItem().getItem() instanceof ItemSpellBook){
+				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getMainHandItem());
 			}else if(player.getHeldItemOffhand().getItem() instanceof ItemSpellBook){
 				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getHeldItemOffhand());
 			}

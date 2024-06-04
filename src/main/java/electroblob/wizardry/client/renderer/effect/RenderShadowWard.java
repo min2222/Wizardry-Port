@@ -51,7 +51,7 @@ public class RenderShadowWard {
 				GlStateManager.pushMatrix();
 
 				GlStateManager.translate(0, 0, 1.2);
-				GlStateManager.rotate(player.ticksExisted * -2, 0, 0, 1);
+				GlStateManager.rotate(player.tickCount * -2, 0, 0, 1);
 				GlStateManager.scale(1.1, 1.1, 1.1);
 
 				Tessellator tessellator = Tessellator.getInstance();
@@ -91,7 +91,7 @@ public class RenderShadowWard {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		Player player = event.getEntityPlayer();
+		Player player = event.getEntity();
 
 		if(EntityUtils.isCasting(player, Spells.shadow_ward)){
 
@@ -113,7 +113,7 @@ public class RenderShadowWard {
 			BufferBuilder buffer = tessellator.getBuffer();
 
 			GlStateManager.translate(0, 1.2, 0);
-			GlStateManager.rotate(player.ticksExisted * -2, 0, 0, 1);
+			GlStateManager.rotate(player.tickCount * -2, 0, 0, 1);
 			GlStateManager.scale(1.1, 1.1, 1.1);
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

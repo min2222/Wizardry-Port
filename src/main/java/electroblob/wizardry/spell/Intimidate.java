@@ -120,11 +120,11 @@ public class Intimidate extends SpellAreaEffect {
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		// No need to do this every tick either
-		if(event.getEntity().ticksExisted % 50 == 0 && event.getEntityLiving().isPotionActive(WizardryPotions.fear)
-				&& event.getEntityLiving() instanceof EntityCreature){
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().isPotionActive(WizardryPotions.fear)
+				&& event.getEntity() instanceof EntityCreature){
 
-			CompoundTag entityNBT = event.getEntityLiving().getEntityData();
-			EntityCreature creature = (EntityCreature)event.getEntityLiving();
+			CompoundTag entityNBT = event.getEntity().getEntityData();
+			EntityCreature creature = (EntityCreature)event.getEntity();
 
 			if(entityNBT != null && entityNBT.hasUniqueId(NBT_KEY)){
 
@@ -132,7 +132,7 @@ public class Intimidate extends SpellAreaEffect {
 
 				if(caster instanceof LivingEntity){
 					double distance = BASE_AVOID_DISTANCE + AVOID_DISTANCE_PER_LEVEL
-							* event.getEntityLiving().getActivePotionEffect(WizardryPotions.fear).getAmplifier();
+							* event.getEntity().getActivePotionEffect(WizardryPotions.fear).getAmplifier();
 					runAway(creature, (LivingEntity)caster, distance);
 				}
 			}

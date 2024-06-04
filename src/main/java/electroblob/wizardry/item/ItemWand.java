@@ -898,8 +898,8 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@SubscribeEvent
 	public static void onAttackEntityEvent(AttackEntityEvent event){
 
-		Player player = event.getEntityPlayer();
-		ItemStack stack = player.getHeldItemMainhand(); // Can't melee with offhand items
+		Player player = event.getEntity();
+		ItemStack stack = player.getMainHandItem(); // Can't melee with offhand items
 
 		if(stack.getItem() instanceof IManaStoringItem){
 

@@ -38,11 +38,11 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				// Calculates coordinates for the block to be moved. The radius increases with time. The +1.5 is to
 				// leave blocks in the centre untouched.
-				int x = this.getX() < 0 ? (int)(this.getX() + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle) - 1)
-						: (int)(this.getX() + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle));
+				int x = this.getX() < 0 ? (int)(this.getX() + ((this.tickCount * speed) + 1.5) * Mth.sin(angle) - 1)
+						: (int)(this.getX() + ((this.tickCount * speed) + 1.5) * Mth.sin(angle));
 				int y = (int)(this.getY() - 0.5);
-				int z = this.getZ() < 0 ? (int)(this.getZ() + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle) - 1)
-						: (int)(this.getZ() + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle));
+				int z = this.getZ() < 0 ? (int)(this.getZ() + ((this.tickCount * speed) + 1.5) * Mth.cos(angle) - 1)
+						: (int)(this.getZ() + ((this.tickCount * speed) + 1.5) * Mth.cos(angle));
 
 				BlockPos pos = new BlockPos(x, y, z);
 
@@ -61,7 +61,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		}
 
 		List<LivingEntity> targets = EntityUtils
-				.getLivingWithinRadius((this.ticksExisted * speed) + 1.5, this.getX(), this.getY(), this.getZ(), world);
+				.getLivingWithinRadius((this.tickCount * speed) + 1.5, this.getX(), this.getY(), this.getZ(), world);
 
 		// In this particular instance, the caster is completely unaffected because they will always be in the
 		// centre.
@@ -70,7 +70,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		for(LivingEntity target : targets){
 
 			// Searches in a 1 wide ring.
-			if(this.getDistance(target) > (this.ticksExisted * speed) + 0.5 && target.getY() < this.getY() + 1
+			if(this.getDistance(target) > (this.tickCount * speed) + 0.5 && target.getY() < this.getY() + 1
 					&& target.getY() > this.getY() - 1){
 
 				// Knockback must be removed in this instance, or the target will fall into the floor.

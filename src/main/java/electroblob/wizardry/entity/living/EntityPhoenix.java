@@ -178,7 +178,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 		}
 
 		// Flapping sound effect
-		if(this.ticksExisted % 22 == 0){
+		if(this.tickCount % 22 == 0){
 			this.playSound(WizardrySounds.ENTITY_PHOENIX_FLAP, 1.0F, 1.0f);
 		}
 

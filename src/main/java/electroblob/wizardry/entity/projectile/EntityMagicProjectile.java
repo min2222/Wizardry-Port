@@ -107,7 +107,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 
 		super.onUpdate();
 
-		if(getLifetime() >=0 && this.ticksExisted > getLifetime()){
+		if(getLifetime() >=0 && this.tickCount > getLifetime()){
 			this.discard();
 		}
 

@@ -189,7 +189,7 @@ public interface IStoredVariable<T> extends IVariable<T> {
 
 		/** Creates a new {@code StoredVariable} for a {@link BlockPos} value with the given key. */
 		public static StoredVariable<BlockPos, NBTTagCompound> ofBlockPos(String key, Persistence persistence){
-			return new StoredVariable<>(key, NBTUtil::createPosTag, NBTUtil::getPosFromTag, persistence);
+			return new StoredVariable<>(key, NBTUtil::writeBlockPos, NBTUtil::readBlockPos, persistence);
 		}
 
 		/** Creates a new {@code StoredVariable} for a {@link UUID} value with the given key. */

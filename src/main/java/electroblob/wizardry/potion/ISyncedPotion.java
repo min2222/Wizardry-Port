@@ -37,11 +37,11 @@ public interface ISyncedPotion {
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
 
 		if(event.getPotionEffect().getPotion() instanceof ISyncedPotion
-		&& ((ISyncedPotion)event.getPotionEffect().getPotion()).shouldSync(event.getEntityLiving())){
+		&& ((ISyncedPotion)event.getPotionEffect().getPotion()).shouldSync(event.getEntity())){
 
-			if(!event.getEntityLiving().level.isClientSide){
-				event.getEntityLiving().world.playerEntities.stream()
-						.filter(p -> p.getDistanceSq(event.getEntityLiving()) < SYNC_RADIUS * SYNC_RADIUS)
+			if(!event.getEntity().level.isClientSide){
+				event.getEntity().world.playerEntities.stream()
+						.filter(p -> p.getDistanceSq(event.getEntity()) < SYNC_RADIUS * SYNC_RADIUS)
 						// Apparently unchecked casting in a lambda expression doesn't generate a warning. Who knew?
 						// (We know this cast is safe though)
 						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketEntityEffect(
@@ -52,12 +52,12 @@ public interface ISyncedPotion {
 
 	@SubscribeEvent
 	public static void onPotionExpiryEvent(PotionEvent.PotionExpiryEvent event){
-		onPotionEffectEnd(event.getPotionEffect(), event.getEntityLiving());
+		onPotionEffectEnd(event.getPotionEffect(), event.getEntity());
 	}
 
 	@SubscribeEvent
 	public static void onPotionRemoveEvent(PotionEvent.PotionRemoveEvent event){
-		onPotionEffectEnd(event.getPotionEffect(), event.getEntityLiving());
+		onPotionEffectEnd(event.getPotionEffect(), event.getEntity());
 	}
 
 	static void onPotionEffectEnd(MobEffectInstance effect, LivingEntity host){

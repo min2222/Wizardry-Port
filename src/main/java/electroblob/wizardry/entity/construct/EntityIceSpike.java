@@ -45,11 +45,11 @@ public class EntityIceSpike extends EntityMagicConstruct {
 		double extensionSpeed = 0;
 
 		if(!level.isClientSide){
-			if(lifetime - this.ticksExisted < 15){
-				extensionSpeed = -0.01 * (this.ticksExisted - (lifetime - 15));
-			}else if(lifetime - this.ticksExisted < 25){
+			if(lifetime - this.tickCount < 15){
+				extensionSpeed = -0.01 * (this.tickCount - (lifetime - 15));
+			}else if(lifetime - this.tickCount < 25){
 				extensionSpeed = 0;
-			}else if(lifetime - this.ticksExisted < 28){
+			}else if(lifetime - this.tickCount < 28){
 				extensionSpeed = 0.25;
 			}
 
@@ -59,7 +59,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 			}
 		}
 
-		if(lifetime - this.ticksExisted == 30) this.playSound(WizardrySounds.ENTITY_ICE_SPIKE_EXTEND, 1, 2.5f);
+		if(lifetime - this.tickCount == 30) this.playSound(WizardrySounds.ENTITY_ICE_SPIKE_EXTEND, 1, 2.5f);
 
 		if(!this.level.isClientSide){
 			for(Object entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox())){

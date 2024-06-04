@@ -134,7 +134,7 @@ public class GuiSpellDisplay {
 
 		// If the player has a wand in each hand, only displays for the one in the main hand.
 
-		ItemStack wand = player.getHeldItemMainhand();
+		ItemStack wand = player.getMainHandItem();
 		boolean mainHand = true;
 
 		if(!(wand.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)wand.getItem()).showSpellHUD(player, wand))){

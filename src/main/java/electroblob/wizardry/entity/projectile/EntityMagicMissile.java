@@ -53,7 +53,7 @@ public class EntityMagicMissile extends EntityMagicArrow {
 
 				ParticleBuilder.create(Type.SNOW).pos(getX(), getY(), getZ()).spawn(world);
 
-				if(this.ticksExisted > 1){ // Don't spawn particles behind where it started!
+				if(this.tickCount > 1){ // Don't spawn particles behind where it started!
 					double x = getX() - motionX / 2;
 					double y = getY() - motionY / 2;
 					double z = getZ() - motionZ / 2;
@@ -66,7 +66,7 @@ public class EntityMagicMissile extends EntityMagicArrow {
 				ParticleBuilder.create(Type.SPARKLE, rand, getX(), getY(), getZ(), 0.03, true).clr(1, 1, 0.65f).fade(0.7f, 0, 1)
 						.time(20 + random.nextInt(10)).spawn(world);
 
-				if(this.ticksExisted > 1){ // Don't spawn particles behind where it started!
+				if(this.tickCount > 1){ // Don't spawn particles behind where it started!
 					double x = getX() - motionX / 2;
 					double y = getY() - motionY / 2;
 					double z = getZ() - motionZ / 2;

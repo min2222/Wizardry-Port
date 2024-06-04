@@ -144,7 +144,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 			}
 		}
 
-		if(target.ticksExisted % 20 == 0){
+		if(target.tickCount % 20 == 0){
 			EntityUtils.attackEntityWithoutKnockback(target, source, damage);
 		}
 

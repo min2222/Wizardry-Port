@@ -282,7 +282,7 @@ public class Possession extends SpellRay {
 				possessor.inventory.clear();
 				possessor.inventoryContainer.detectAndSendChanges();
 
-				ItemStack stack = target.getHeldItemMainhand().copy();
+				ItemStack stack = target.getMainHandItem().copy();
 
 				if(target instanceof EntityEnderman && ((EntityEnderman)target).getHeldBlockState() != null){
 					stack = new ItemStack(((EntityEnderman)target).getHeldBlockState().getBlock());
@@ -478,7 +478,7 @@ public class Possession extends SpellRay {
 				possessee.onGround = event.player.onGround;
 
 				possessee.onUpdate(); // Event though it's not in the world, it still needs updating
-				possessee.ticksExisted++; // Normally gets updated from World
+				possessee.tickCount++; // Normally gets updated from World
 
 				if(possessee.getHealth() <= 0){
 					((Possession)Spells.possession).endPossession(event.player);
@@ -547,7 +547,7 @@ public class Possession extends SpellRay {
 
 		if(event instanceof PlayerInteractEvent.RightClickItem) return; // Can always do this
 
-		Mob possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntity());
 
 		if(possessee != null){
 
@@ -557,20 +557,20 @@ public class Possession extends SpellRay {
 							|| (event instanceof PlayerInteractEvent.LeftClickBlock && ((EntityEnderman)possessee).getHeldBlockState() == null)))
 				return;
 
-			if(WizardData.get(event.getEntityPlayer()) != null && event.getWorld().isRemote
+			if(WizardData.get(event.getEntity()) != null && event.getWorld().isRemote
 					&& (event instanceof PlayerInteractEvent.RightClickEmpty
 					|| event instanceof PlayerInteractEvent.EntityInteract
 					|| event instanceof PlayerInteractEvent.RightClickBlock)){
 
-				Integer cooldown = WizardData.get(event.getEntityPlayer()).getVariable(SHOOT_COOLDOWN_KEY);
+				Integer cooldown = WizardData.get(event.getEntity()).getVariable(SHOOT_COOLDOWN_KEY);
 
 				if(cooldown == null || cooldown == 0){
 
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.POSSESSION_PROJECTILE));
-					WizardData.get(event.getEntityPlayer()).setVariable(SHOOT_COOLDOWN_KEY, PROJECTILE_COOLDOWN);
+					WizardData.get(event.getEntity()).setVariable(SHOOT_COOLDOWN_KEY, PROJECTILE_COOLDOWN);
 
 					if(possessee instanceof EntityLightningWraith){
-						Spells.arc.cast(event.getWorld(), event.getEntityPlayer(), EnumHand.MAIN_HAND, 0, new SpellModifiers());
+						Spells.arc.cast(event.getWorld(), event.getEntity(), EnumHand.MAIN_HAND, 0, new SpellModifiers());
 					}
 
 					if(possessee instanceof EntityCreeper){
@@ -629,11 +629,11 @@ public class Possession extends SpellRay {
 
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){ // Not fired for revenge-targeting
-		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof Mob){
+		if(event.getTarget() instanceof Player && event.getEntity() instanceof Mob){
 			Mob possessee = getPossessee((Player)event.getTarget());
-			Mob attacker = (Mob)event.getEntityLiving();
+			Mob attacker = (Mob)event.getEntity();
 			if(possessee != null && !attacker.canAttackClass(possessee.getClass())){
-				((Mob)event.getEntityLiving()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
+				((Mob)event.getEntity()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
 			}
 		}
 	}
@@ -686,13 +686,13 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onEntityItemPickupEvent(EntityItemPickupEvent event){ // Why are there two item pickup events?
 
-		Mob possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntity());
 
 		if(possessee != null){
 
 			event.setCanceled(true);
 
-//			if(possessee.canPickUpLoot() && possessee.getHeldItemMainhand().isEmpty()){
+//			if(possessee.canPickUpLoot() && possessee.getMainHandItem().isEmpty()){
 //				possessee.setHeldItem(EnumHand.MAIN_HAND, event.getItem().getItem());
 //			}else{
 //				event.setCanceled(true);
@@ -711,7 +711,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onAttackEntityEvent(AttackEntityEvent event){
 
-		Mob possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntity());
 
 		if(possessee == null) return;
 

@@ -32,7 +32,7 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 	public void onUpdate(){
 
-		if(this.ticksExisted % 120 == 1){
+		if(this.tickCount % 120 == 1){
 			this.playSound(WizardrySounds.ENTITY_BLIZZARD_AMBIENT, 1.0f, 1.0f);
 		}
 

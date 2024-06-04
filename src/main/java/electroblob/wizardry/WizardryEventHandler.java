@@ -102,8 +102,8 @@ public final class WizardryEventHandler {
 		// Guess we'll just have to make do
 		// Also, this seems to get fired on player login, so to prevent the toasts from appearing every login the
 		// only way I can see to do it is by testing the player has been around long enough.
-		if(event.getEntityPlayer() instanceof ServerPlayer && event.getEntityPlayer().ticksExisted > 0){
-			syncAdvancements((ServerPlayer)event.getEntityPlayer(), true);
+		if(event.getEntity() instanceof ServerPlayer && event.getEntity().tickCount > 0){
+			syncAdvancements((ServerPlayer)event.getEntity(), true);
 		}
 	}
 
@@ -185,15 +185,15 @@ public final class WizardryEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onDiscoverSpellEvent(DiscoverSpellEvent event){
-		if(event.getEntityPlayer() instanceof ServerPlayer){
-			WizardryAdvancementTriggers.discover_spell.trigger((ServerPlayer)event.getEntityPlayer(), event.getSpell(), event.getSource());
+		if(event.getEntity() instanceof ServerPlayer){
+			WizardryAdvancementTriggers.discover_spell.trigger((ServerPlayer)event.getEntity(), event.getSpell(), event.getSource());
 		}
 	}
 
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 
-		if(event.getEntityLiving() instanceof Mob && event.getTarget() != null){
+		if(event.getEntity() instanceof Mob && event.getTarget() != null){
 
 			// Muffle
 			if(event.getTarget().isPotionActive(WizardryPotions.muffle)){
@@ -204,22 +204,22 @@ public final class WizardryEventHandler {
 				double angle = Math.acos(vec.dotProduct(event.getEntity().getLookVec()) / vec.length());
 				// If the player is not within the 144-degree arc in front of the mob, it won't detect them
 				if(angle > 0.4 * Math.PI){
-					((Mob)event.getEntityLiving()).setAttackTarget(null);
+					((Mob)event.getEntity()).setAttackTarget(null);
 				}
 			}
 
 			// Mirage
 			if(event.getTarget().isPotionActive(WizardryPotions.mirage)){
 				// Can't find players under mirage at all! (Pretty sure this excludes revenge-targeting)
-				((Mob)event.getEntityLiving()).setAttackTarget(null);
+				((Mob)event.getEntity()).setAttackTarget(null);
 			}
 
 			// Blindness tweak
 			// I'm not going as far as potion core's implementation, this is just so it does *something* to mobs
-			if(event.getEntityLiving().isPotionActive(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
+			if(event.getEntity().isPotionActive(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
 					&& Wizardry.settings.blindnessTweak && event.getTarget().getDistanceSq(event.getEntity()) > 3.5 * 3.5){
 				// Can't detect anything more than 3.5 blocks away (roughly the player's view distance when blinded)
-				((Mob)event.getEntityLiving()).setAttackTarget(null);
+				((Mob)event.getEntity()).setAttackTarget(null);
 			}
 		}
 	}
@@ -260,25 +260,25 @@ public final class WizardryEventHandler {
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
 			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
-			Level world = event.getEntityLiving().world;
+			Level world = event.getEntity().world;
 
-			if(attacker.getDistance(event.getEntityLiving()) < 10){
+			if(attacker.getDistance(event.getEntity()) < 10){
 
 				// Fireskin
-				if(event.getEntityLiving().isPotionActive(WizardryPotions.fireskin)
-						&& !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntityLiving()))
+				if(event.getEntity().isPotionActive(WizardryPotions.fireskin)
+						&& !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
 					attacker.setFire(Spells.fire_breath.getProperty(Spell.BURN_DURATION).intValue() * 20);
 
 				// Ice Shroud
-				if(event.getEntityLiving().isPotionActive(WizardryPotions.ice_shroud)
-						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving())
+				if(event.getEntity().isPotionActive(WizardryPotions.ice_shroud)
+						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity())
 						&& !(attacker instanceof FakePlayer)) // Fake players cause problems
 					attacker.addEffect(new MobEffectInstance(WizardryPotions.frost,
 							Spells.ice_shroud.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.ice_shroud.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 				// Static Aura
-				if(event.getEntityLiving().isPotionActive(WizardryPotions.static_aura)){
+				if(event.getEntity().isPotionActive(WizardryPotions.static_aura)){
 
 					if(level.isClientSide){
 
@@ -289,7 +289,7 @@ public final class WizardryEventHandler {
 								attacker.getY() + attacker.getBbHeight() / 2, attacker.getZ());
 					}
 
-					DamageSafetyChecker.attackEntitySafely(attacker, MagicDamage.causeDirectMagicDamage(event.getEntityLiving(),
+					DamageSafetyChecker.attackEntitySafely(attacker, MagicDamage.causeDirectMagicDamage(event.getEntity(),
 							DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
 					attacker.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 				}
@@ -302,7 +302,7 @@ public final class WizardryEventHandler {
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
 		// Ward
-		MobEffectInstance effect = event.getEntityLiving().getActivePotionEffect(WizardryPotions.ward);
+		MobEffectInstance effect = event.getEntity().getActivePotionEffect(WizardryPotions.ward);
 
 		if(effect != null && event.getSource().isMagicDamage()){
 			event.setAmount(event.getAmount() * Math.max(0, 1 - 0.2f * (1 + effect.getAmplifier()))); // Resistance is 20%
@@ -314,19 +314,19 @@ public final class WizardryEventHandler {
 			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
 
 			// Players can only ever attack with their main hand, so this is the right method to use here.
-			if(!attacker.getHeldItemMainhand().isEmpty() && ImbueWeapon.isSword(attacker.getHeldItemMainhand())){
+			if(!attacker.getMainHandItem().isEmpty() && ImbueWeapon.isSword(attacker.getMainHandItem())){
 
 				int level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.flaming_weapon,
-						attacker.getHeldItemMainhand());
+						attacker.getMainHandItem());
 
-				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntityLiving()))
-					event.getEntityLiving().setFire(level * 4);
+				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
+					event.getEntity().setFire(level * 4);
 
 				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon,
-						attacker.getHeldItemMainhand());
+						attacker.getMainHandItem());
 				// Frost lasts for longer because it doesn't do any actual damage
-				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-					event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
+				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
+					event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
 			}
 		}
 
@@ -337,8 +337,8 @@ public final class WizardryEventHandler {
 			int level = event.getSource().getImmediateSource().getEntityData()
 					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
-			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-				event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
+			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
+				event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
 		}
 
 		// Damage scaling
@@ -355,7 +355,7 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
-		if(event.getEntityLiving().level.isClientSide){
+		if(event.getEntity().level.isClientSide){
 
 			// Client-side continuous spell casting for NPCs
 
@@ -367,7 +367,7 @@ public final class WizardryEventHandler {
 
 				if(spell != null && spell != Spells.none){ // IntelliJ is wrong, do NOT remove the null check!
 
-					if(!MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(SpellCastEvent.Source.NPC, spell, event.getEntityLiving(),
+					if(!MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(SpellCastEvent.Source.NPC, spell, event.getEntity(),
 							modifiers, count))){
 
 						spell.cast(event.getEntity().world, (Mob)event.getEntity(), InteractionHand.MAIN_HAND, count,

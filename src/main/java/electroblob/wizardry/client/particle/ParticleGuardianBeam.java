@@ -44,7 +44,7 @@ public class ParticleGuardianBeam extends ParticleTargeted {
 		GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
 		GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
 
-		GlStateManager.rotate(Minecraft.getMinecraft().player.ticksExisted + partialTicks, 0, 0, 1);
+		GlStateManager.rotate(Minecraft.getMinecraft().player.tickCount + partialTicks, 0, 0, 1);
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
 

@@ -42,10 +42,10 @@ public class Telekinesis extends SpellRay {
 
 			// IDEA: Disarm the offhand if the mainhand is empty or otherwise harmless?
 
-			if (!player.getHeldItemMainhand().isEmpty()) {
+			if (!player.getMainHandItem().isEmpty()) {
 
 				if (!level.isClientSide) {
-					ItemEntity item = player.entityDropItem(player.getHeldItemMainhand(), 0);
+					ItemEntity item = player.entityDropItem(player.getMainHandItem(), 0);
 					// Makes the item move towards the caster
 					item.motionX = (origin.x - player.getX()) / 20;
 					item.motionZ = (origin.z - player.getZ()) / 20;

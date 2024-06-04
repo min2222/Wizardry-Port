@@ -40,10 +40,10 @@ public class PotionContainment extends PotionMagicEffect {
 
 		// Initialise the containment position to the entity's position if it wasn't set already
 		if(!target.getEntityData().hasKey(ENTITY_TAG)){
-			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.createPosTag(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
+			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.writeBlockPos(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
 		}
 
-		Vec3 origin = GeometryUtils.getCentre(NbtUtils.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
+		Vec3 origin = GeometryUtils.getCentre(NbtUtils.readBlockPos(target.getEntityData().getCompoundTag(ENTITY_TAG)));
 
 		double x = target.getX(), y = target.getY(), z = target.getZ();
 
@@ -75,9 +75,9 @@ public class PotionContainment extends PotionMagicEffect {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 		// This is LAST-RESORT CLEANUP. It does NOT need checking every tick! We always check for the actual potion anyway.
-		if(event.getEntity().ticksExisted % 20 == 0 && event.getEntityLiving().getEntityData().hasKey(ENTITY_TAG)
-				&& !event.getEntityLiving().isPotionActive(WizardryPotions.containment)){
-			event.getEntityLiving().getEntityData().removeTag(ENTITY_TAG);
+		if(event.getEntity().tickCount % 20 == 0 && event.getEntity().getEntityData().hasKey(ENTITY_TAG)
+				&& !event.getEntity().isPotionActive(WizardryPotions.containment)){
+			event.getEntity().getEntityData().removeTag(ENTITY_TAG);
 		}
 	}
 

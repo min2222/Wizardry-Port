@@ -94,7 +94,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	@Override
 	public void onLivingUpdate(){
 
-		if(this.ticksExisted % 120 == 1){
+		if(this.tickCount % 120 == 1){
 			this.playSound(WizardrySounds.ENTITY_STORM_ELEMENTAL_WIND, 1.0f, 1.0f);
 		}
 

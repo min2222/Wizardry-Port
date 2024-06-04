@@ -37,16 +37,16 @@ public interface IElementalDamage {
 			// One convenient side effect of the new damage type system is that I can get rid of all the places where
 			// creepers are charged and just put them here under shock damage - this is precisely the sort of
 			// repetitive code I was trying to get rid of, since errors can (and did!) occur.
-			if(event.getEntityLiving() instanceof EntityCreeper
-					&& !((EntityCreeper)event.getEntityLiving()).getPowered()
+			if(event.getEntity() instanceof EntityCreeper
+					&& !((EntityCreeper)event.getEntity()).getPowered()
 					&& ((IElementalDamage)event.getSource()).getType() == DamageType.SHOCK){
 				// Charges creepers when they are hit by shock damage
-				EntityUtils.chargeCreeper((EntityCreeper)event.getEntityLiving());
+				EntityUtils.chargeCreeper((EntityCreeper)event.getEntity());
 			}
 
-			if(event.getEntityLiving().isEntityUndead()
+			if(event.getEntity().isEntityUndead()
 					&& ((IElementalDamage)event.getSource()).getType() == DamageType.RADIANT){
-				event.getEntityLiving().setFire(8); // Same as zombies/skeletons in sunlight
+				event.getEntity().setFire(8); // Same as zombies/skeletons in sunlight
 			}
 		}
 	}

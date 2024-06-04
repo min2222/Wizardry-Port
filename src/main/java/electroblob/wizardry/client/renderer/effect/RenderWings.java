@@ -29,7 +29,7 @@ public class RenderWings {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		Player player = event.getEntityPlayer();
+		Player player = event.getEntity();
 
 		if(EntityUtils.isCasting(player, Spells.flight)){
 
@@ -53,7 +53,7 @@ public class RenderWings {
 			GlStateManager.pushMatrix();
 
 			GlStateManager.translate(0.1, 0.4, -0.15);
-			GlStateManager.rotate(20 + 20 * Mth.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
+			GlStateManager.rotate(20 + 20 * Mth.sin((player.tickCount + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
@@ -78,7 +78,7 @@ public class RenderWings {
 			GlStateManager.pushMatrix();
 
 			GlStateManager.translate(-0.1, 0.4, -0.15);
-			GlStateManager.rotate(-200 - 20 * Mth.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
+			GlStateManager.rotate(-200 - 20 * Mth.sin((player.tickCount + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

@@ -16,7 +16,7 @@ public class RenderPossessingPlayer {
 	@SuppressWarnings("unchecked") // Can't check it due to type erasure
 	public static void onRenderPlayerPreEvent(RenderPlayerEvent.Pre event){
 
-		Player player = event.getEntityPlayer();
+		Player player = event.getEntity();
 		Mob possessee = Possession.getPossessee(player);
 
 		if(possessee != null){

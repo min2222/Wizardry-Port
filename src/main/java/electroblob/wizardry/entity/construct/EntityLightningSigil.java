@@ -35,7 +35,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(this.ticksExisted > 600 && this.getCaster() == null && !this.level.isClientSide){
+		if(this.tickCount > 600 && this.getCaster() == null && !this.level.isClientSide){
 			this.discard();
 		}
 

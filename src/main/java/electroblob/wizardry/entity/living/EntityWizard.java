@@ -418,7 +418,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> new NBTTagInt(spell.metadata())));
 
 		if(this.towerBlocks != null && this.towerBlocks.size() > 0){
-			NBTExtras.storeTagSafely(nbt, "towerBlocks", NBTExtras.listToNBT(this.towerBlocks, NBTUtil::createPosTag));
+			NBTExtras.storeTagSafely(nbt, "towerBlocks", NBTExtras.listToNBT(this.towerBlocks, NBTUtil::writeBlockPos));
 		}
 	}
 
@@ -439,7 +439,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		NBTTagList tagList = nbt.getTagList("towerBlocks", NBT.TAG_COMPOUND);
 		if(!tagList.isEmpty()){
-			this.towerBlocks = new HashSet<>(NBTExtras.NBTToList(tagList, NBTUtil::getPosFromTag));
+			this.towerBlocks = new HashSet<>(NBTExtras.NBTToList(tagList, NBTUtil::readBlockPos));
 		}else{
 			// Fallback to old packed long format
 			this.towerBlocks = new HashSet<>(NBTExtras.NBTToList(nbt.getTagList("towerBlocks", NBT.TAG_LONG),

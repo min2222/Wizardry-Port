@@ -73,12 +73,12 @@ public class EntityHammer extends EntityMagicConstruct {
 
 		super.onUpdate();
 
-//		if(this.ticksExisted % 20 == 1 && !this.onGround && level.isClientSide){
+//		if(this.tickCount % 20 == 1 && !this.onGround && level.isClientSide){
 //			// Though this sound does repeat, it stops when it hits the ground.
 //			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_HAMMER_FALLING, WizardrySounds.SPELLS, 3.0f, 1.0f, false);
 //		}
 
-		if(this.level.isClientSide && this.ticksExisted % 3 == 0){
+		if(this.level.isClientSide && this.tickCount % 3 == 0){
 			ParticleBuilder.create(Type.SPARK)
 					.pos(this.getX() - 0.5d + random.nextDouble(), this.getY() + 2 * random.nextDouble(), this.getZ() - 0.5d + random.nextDouble())
 					.spawn(world);
@@ -114,7 +114,7 @@ public class EntityHammer extends EntityMagicConstruct {
 			for(LivingEntity target : targets){
 
 				if(EntityUtils.isLiving(target) && this.isValidTarget(target)
-						&& target.ticksExisted % Spells.lightning_hammer.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
+						&& target.tickCount % Spells.lightning_hammer.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
 
 					if(level.isClientSide){
 
@@ -203,14 +203,14 @@ public class EntityHammer extends EntityMagicConstruct {
 	public boolean processInitialInteract(Player player, InteractionHand hand){
 
 		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
-				&& player.getHeldItemMainhand().isEmpty() && ticksExisted > 10){
+				&& player.getMainHandItem().isEmpty() && tickCount > 10){
 
 			this.discard();
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
 			if(!hammer.hasTagCompound()) hammer.setTag(new CompoundTag());
 			hammer.getTag().putInt(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
-			hammer.setItemDamage(ticksExisted);
+			hammer.setItemDamage(tickCount);
 			hammer.getTag().putFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
 
 			player.setHeldItem(InteractionHand.MAIN_HAND, hammer);

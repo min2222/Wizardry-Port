@@ -226,10 +226,10 @@ public class PlayerAnimator {
 
 		if(!areAnimationsEnabled()) return;
 
-//		boolean firstPerson = event.getEntityPlayer() == Minecraft.getMinecraft().player
+//		boolean firstPerson = event.getEntity() == Minecraft.getMinecraft().player
 //				&& Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
 
-		updateModels(event.getEntityPlayer(), event.getRenderer(), event.getPartialRenderTick(), false);
+		updateModels(event.getEntity(), event.getRenderer(), event.getPartialRenderTick(), false);
 	}
 
 	@SubscribeEvent

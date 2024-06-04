@@ -136,7 +136,7 @@ public class Resurrection extends Spell {
 
 				if(WizardData.get(firstPersonPlayer).isPlayerAlly(player)){
 
-					ItemStack wand = firstPersonPlayer.getHeldItemMainhand();
+					ItemStack wand = firstPersonPlayer.getMainHandItem();
 
 					if(!(wand.getItem() instanceof ISpellCastingItem)){
 						wand = firstPersonPlayer.getHeldItemOffhand();

@@ -64,7 +64,7 @@ public class Transience extends Spell {
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		if(event.getSource() != null){
 			// Prevents all blockable damage while transience is active
-			if(event.getEntityLiving().isPotionActive(WizardryPotions.transience)
+			if(event.getEntity().isPotionActive(WizardryPotions.transience)
 					&& event.getSource() != DamageSource.OUT_OF_WORLD){
 				event.setCanceled(true);
 			}
@@ -79,7 +79,7 @@ public class Transience extends Spell {
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent event){
 		// Prevents transient players from interacting with the world in any way
-		if(event.isCancelable() && event.getEntityPlayer().isPotionActive(WizardryPotions.transience)){
+		if(event.isCancelable() && event.getEntity().isPotionActive(WizardryPotions.transience)){
 			event.setCanceled(true);
 		}
 	}

@@ -55,7 +55,7 @@ public class EntityFirebolt extends EntityMagicProjectile {
 		if(level.isClientSide){
 			ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE, this).time(14).spawn(world);
 
-			if(this.ticksExisted > 1){ // Don't spawn particles behind where it started!
+			if(this.tickCount > 1){ // Don't spawn particles behind where it started!
 				double x = getX() - motionX/2 + random.nextFloat() * 0.2 - 0.1;
 				double y = getY() + this.getBbHeight()/2 - motionY/2 + random.nextFloat() * 0.2 - 0.1;
 				double z = getZ() - motionZ/2 + random.nextFloat() * 0.2 - 0.1;

@@ -51,7 +51,7 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 			ParticleBuilder.create(Type.MAGIC_FIRE, rand, getX(), getY(), getZ(), 0.03, false)
 					.time(20 + random.nextInt(10)).spawn(world);
 
-			if(this.ticksExisted > 1){ // Don't spawn particles behind where it started!
+			if(this.tickCount > 1){ // Don't spawn particles behind where it started!
 				double x = getX() - motionX / 2;
 				double y = getY() - motionY / 2;
 				double z = getZ() - motionZ / 2;

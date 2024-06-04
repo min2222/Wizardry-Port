@@ -46,7 +46,7 @@ public class EntityMeteor extends EntityFallingBlock {
 	@Override
 	public void onUpdate(){
 
-		if(this.ticksExisted % 16 == 1 && level.isClientSide){
+		if(this.tickCount % 16 == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_METEOR_FALLING, WizardrySounds.SPELLS, 3.0f, 1.0f, false);
 		}
 

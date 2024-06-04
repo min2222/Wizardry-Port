@@ -43,10 +43,10 @@ public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 		// The visible bit
 		GlStateManager.pushMatrix();
 
-		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
 
-		GlStateManager.rotate((entity.ticksExisted + partialTicks) * 2, 0, 1, 0);
+		GlStateManager.rotate((entity.tickCount + partialTicks) * 2, 0, 1, 0);
 
 		this.bindTexture(TEXTURE);
 

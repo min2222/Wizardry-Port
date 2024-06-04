@@ -55,7 +55,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 		for(LivingEntity target : targets){
 
-			if(target.ticksExisted % 150 == 0){ // Use target's lifetime so they don't all get hit at once, looks better
+			if(target.tickCount % 150 == 0){ // Use target's lifetime so they don't all get hit at once, looks better
 
 				if(!this.level.isClientSide){
 					EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(

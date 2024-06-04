@@ -50,7 +50,7 @@ public class LayerSummonAnimation<T extends LivingEntity> extends LayerTiledOver
 
 	private int getFrameNumber(T entity){
 		if(!(entity instanceof ISummonedCreature)) throw new IllegalArgumentException("Entity must be an ISummonedCreature");
-		return Math.min(entity.ticksExisted, Math.max(((ISummonedCreature)entity).getLifetime() - entity.ticksExisted - 1, 0));
+		return Math.min(entity.tickCount, Math.max(((ISummonedCreature)entity).getLifetime() - entity.tickCount - 1, 0));
 	}
 
 	@Override
@@ -82,8 +82,8 @@ public class LayerSummonAnimation<T extends LivingEntity> extends LayerTiledOver
 
 	private static boolean shouldHideMainModel(LivingEntity entity){
 		return entity instanceof ISummonedCreature && ((ISummonedCreature)entity).hasAnimation()
-				&& ((ISummonedCreature)entity).getLifetime() > 0 && (entity.ticksExisted < HIDE_MODEL_TICKS
-				|| ((ISummonedCreature)entity).getLifetime() - entity.ticksExisted < HIDE_MODEL_TICKS);
+				&& ((ISummonedCreature)entity).getLifetime() > 0 && (entity.tickCount < HIDE_MODEL_TICKS
+				|| ((ISummonedCreature)entity).getLifetime() - entity.tickCount < HIDE_MODEL_TICKS);
 	}
 
 }

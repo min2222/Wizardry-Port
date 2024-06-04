@@ -53,7 +53,7 @@ public class Mine extends SpellRay {
 
 		// Needs to be outside because it gets run on the client-side
 		if(caster instanceof Player){
-			if(caster.getHeldItemMainhand().getItem() instanceof ISpellCastingItem){
+			if(caster.getMainHandItem().getItem() instanceof ISpellCastingItem){
 				caster.swingArm(InteractionHand.MAIN_HAND);
 			}else if(caster.getHeldItemOffhand().getItem() instanceof ISpellCastingItem){
 				caster.swingArm(InteractionHand.OFF_HAND);

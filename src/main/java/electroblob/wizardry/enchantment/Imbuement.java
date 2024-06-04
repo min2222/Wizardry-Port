@@ -123,7 +123,7 @@ public interface Imbuement {
 
 				LivingEntity archer = (LivingEntity)arrow.shootingEntity;
 
-				ItemStack bow = archer.getHeldItemMainhand();
+				ItemStack bow = archer.getMainHandItem();
 
 				if(!ImbueWeapon.isBow(bow)){
 					bow = archer.getHeldItemOffhand();

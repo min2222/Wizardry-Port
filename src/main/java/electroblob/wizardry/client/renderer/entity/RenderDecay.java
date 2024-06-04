@@ -44,7 +44,7 @@ public class RenderDecay extends Render<EntityDecay> {
 
 		GlStateManager.rotate(-90, 1, 0, 0);
 
-		float s = 2 * DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 50);
+		float s = 2 * DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 50);
 		GlStateManager.scale(s, s, s);
 
 		Tessellator tessellator = Tessellator.getInstance();

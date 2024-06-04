@@ -57,7 +57,7 @@ public class BlockPermafrost extends BlockDryFrostedIce {
 	@Override
 	public void onEntityCollision(Level world, BlockPos pos, BlockState state, Entity entity){
 
-		if(EntityUtils.isLiving(entity) && entity.ticksExisted % 30 == 0){
+		if(EntityUtils.isLiving(entity) && entity.tickCount % 30 == 0){
 			// Can't make it player damage unless we make this block a tile entity, but there will be too many for that
 			entity.hurt(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
 			int duration = Spells.permafrost.getProperty(Spell.EFFECT_DURATION).intValue();

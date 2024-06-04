@@ -57,7 +57,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 		double radius = width/2;
 
-		if(this.ticksExisted % 120 == 1 && level.isClientSide){
+		if(this.tickCount % 120 == 1 && level.isClientSide){
 			// Repeat is false so that the sound fades out when the tornado does rather than stopping suddenly
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_TORNADO_AMBIENT, WizardrySounds.SPELLS, 1.0f, 1.0f, false);
 		}

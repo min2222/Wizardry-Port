@@ -50,7 +50,7 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
 
 		this.bindTexture(RAY_TEXTURE);
@@ -72,13 +72,13 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 
 			int sliceAngle = 20 + a;
 
-			double x1 = radius * Mth.sin((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180f));
+			double x1 = radius * Mth.sin((entity.tickCount + 40 * j) * ((float)Math.PI / 180f));
 			// double y1 = 0.7*MathHelper.cos((blackhole.timer - 40*j)*(Math.PI/180))*j/10;
-			double z1 = radius * Mth.cos((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180));
+			double z1 = radius * Mth.cos((entity.tickCount + 40 * j) * ((float)Math.PI / 180));
 
-			double x2 = radius * Mth.sin((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double x2 = radius * Mth.sin((entity.tickCount + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 			// double y2 = 0.7*MathHelper.sin((blackhole.timer - 40*j)*(Math.PI/180))*j/10;
-			double z2 = radius * Mth.cos((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double z2 = radius * Mth.cos((entity.tickCount + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
 			double absoluteX = x1 * Mth.cos(31 * b);
 			double absoluteY = z1 * Mth.sin(31 * a) + x1 * Mth.cos(31 * a) * Mth.sin(31 * b);

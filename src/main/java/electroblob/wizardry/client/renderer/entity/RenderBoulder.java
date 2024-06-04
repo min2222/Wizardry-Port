@@ -30,7 +30,7 @@ public class RenderBoulder extends Render<EntityBoulder> {
 		GlStateManager.translate(0, -entity.getBbHeight()/2, 0);
 
 		// Pass in -1 for the lifetime as the boulder crumbles when the time expires
-		float s = DrawingUtils.smoothScaleFactor(-1, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(-1, entity.tickCount, partialTicks, 10, 10);
 		s *= entity.getSizeMultiplier();
 		GlStateManager.scale(s, s, s);
 

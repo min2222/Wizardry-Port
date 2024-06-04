@@ -149,7 +149,7 @@ public class Clairvoyance extends Spell {
 	@SubscribeEvent
 	public static void onRightClickBlockEvent(PlayerInteractEvent.RightClickBlock event){
 
-		if(event.getEntityPlayer().isSneaking()){
+		if(event.getEntity().isSneaking()){
 
 			// The event now has an ItemStack, which greatly simplifies hand-related stuff.
 			ItemStack stack = event.getItemStack();
@@ -157,7 +157,7 @@ public class Clairvoyance extends Spell {
 			if(stack.getItem() instanceof ISpellCastingItem
 					&& ((ISpellCastingItem)stack.getItem()).getCurrentSpell(stack) instanceof Clairvoyance){
 
-				WizardData data = WizardData.get(event.getEntityPlayer());
+				WizardData data = WizardData.get(event.getEntity());
 
 				if(data != null){
 
@@ -167,7 +167,7 @@ public class Clairvoyance extends Spell {
 					data.setVariable(DIMENSION_KEY, event.getWorld().provider.getDimension());
 
 					if(!event.getWorld().isRemote){
-						event.getEntityPlayer().sendStatusMessage(
+						event.getEntity().sendStatusMessage(
 								Component.translatable("spell." + Spells.clairvoyance.getUnlocalisedName() + ".confirm", Spells.clairvoyance.getNameForTranslationFormatted()), true);
 					}
 

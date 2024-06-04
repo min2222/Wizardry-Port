@@ -63,7 +63,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(level.isClientSide && this.ticksExisted == 1){
+		if(level.isClientSide && this.tickCount == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_WITHERING_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
@@ -104,7 +104,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 			if(EntityUtils.isLiving(target)){
 
-				if(target.ticksExisted % target.maxHurtResistantTime == 1){
+				if(target.tickCount % target.maxHurtResistantTime == 1){
 
 					float damage = Spells.withering_totem.getProperty(Spell.DAMAGE).floatValue();
 

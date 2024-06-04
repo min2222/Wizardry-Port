@@ -176,7 +176,7 @@ public abstract class Forfeit {
 
 				forfeit.apply(event.getWorld(), player);
 
-				ItemStack stack = player.getHeldItemMainhand();
+				ItemStack stack = player.getMainHandItem();
 
 				if(!(stack.getItem() instanceof ISpellCastingItem)){
 					stack = player.getHeldItemOffhand();

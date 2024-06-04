@@ -127,7 +127,7 @@ public class Fangs extends Spell {
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		if(event.getSource().getImmediateSource() instanceof EntityEvokerFangs){
-			if(!AllyDesignationSystem.isValidTarget(event.getSource().getTrueSource(), event.getEntityLiving())){
+			if(!AllyDesignationSystem.isValidTarget(event.getSource().getTrueSource(), event.getEntity())){
 				event.setCanceled(true); // Don't attack allies
 			}
 		}

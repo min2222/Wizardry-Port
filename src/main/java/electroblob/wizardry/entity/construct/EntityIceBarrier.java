@@ -61,18 +61,18 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 			double extensionSpeed = 0;
 
-			if(lifetime - this.ticksExisted < 20){
-				extensionSpeed = -0.01 * (this.ticksExisted - (lifetime - 20)) * sizeMultiplier;
-			}else if(ticksExisted > 3 + delay){
+			if(lifetime - this.tickCount < 20){
+				extensionSpeed = -0.01 * (this.tickCount - (lifetime - 20)) * sizeMultiplier;
+			}else if(tickCount > 3 + delay){
 				extensionSpeed = 0;
-			}else if(ticksExisted > delay){
+			}else if(tickCount > delay){
 				extensionSpeed = 0.5 * sizeMultiplier;
 			}
 
 			this.move(MoverType.SELF, 0, extensionSpeed, 0);
 		}
 
-		if(ticksExisted == delay + 1) this.playSound(WizardrySounds.ENTITY_ICE_BARRIER_EXTEND, 1, 1.5f);
+		if(tickCount == delay + 1) this.playSound(WizardrySounds.ENTITY_ICE_BARRIER_EXTEND, 1, 1.5f);
 
 		super.onUpdate();
 

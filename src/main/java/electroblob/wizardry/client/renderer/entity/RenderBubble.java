@@ -67,7 +67,7 @@ public class RenderBubble extends Render<EntityBubble> {
 		GlStateManager.rotate(yaw, 1.0F, 0.0F, 0.0F);
 
 		// Bubble 'bursts' so doesn't shrink when is disappears
-		float s = 3 * DrawingUtils.smoothScaleFactor(entity.isDarkOrb ? entity.lifetime : -1, entity.ticksExisted, partialTicks, 10, 10);
+		float s = 3 * DrawingUtils.smoothScaleFactor(entity.isDarkOrb ? entity.lifetime : -1, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
 
 		double pixelwidth = (1.0d / 128);

@@ -110,7 +110,7 @@ public class WizardTradeTweaksHandler {
 							GlStateManager.color(1, 1, 1);
 							Minecraft.getMinecraft().renderEngine.bindTexture(NEW_SPELL_ICON);
 
-							int frame = Math.max(player.ticksExisted / ANIMATION_FRAME_TIME % ANIMATION_PERIOD - (ANIMATION_PERIOD - ANIMATION_FRAMES), 0);
+							int frame = Math.max(player.tickCount / ANIMATION_FRAME_TIME % ANIMATION_PERIOD - (ANIMATION_PERIOD - ANIMATION_FRAMES), 0);
 							DrawingUtils.drawTexturedRect(x, y, 0, frame * ICON_HEIGHT, ICON_WIDTH, ICON_HEIGHT, ICON_WIDTH, ICON_HEIGHT * ANIMATION_FRAMES);
 
 							RenderHelper.disableStandardItemLighting();

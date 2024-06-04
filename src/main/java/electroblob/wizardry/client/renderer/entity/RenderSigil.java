@@ -58,9 +58,9 @@ public class RenderSigil extends Render<EntityMagicConstruct> {
 		GlStateManager.rotate(-90, 1, 0, 0);
 
 		// Healing aura rotates slowly
-		if(rotationSpeed != 0) GlStateManager.rotate(entity.ticksExisted * rotationSpeed, 0, 0, 1);
+		if(rotationSpeed != 0) GlStateManager.rotate(entity.tickCount * rotationSpeed, 0, 0, 1);
 
-		float s = entity.width * DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = entity.width * DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
 
 		Tessellator tessellator = Tessellator.getInstance();

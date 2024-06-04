@@ -182,7 +182,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		for(LivingEntity entity : entities){
 			entity.addEffect(new MobEffectInstance(WizardryPotions.containment, 219));
-			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NbtUtils.createPosTag(this.pos));
+			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.pos));
 		}
 	}
 
@@ -190,7 +190,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	public CompoundTag writeToNBT(CompoundTag compound){
 
 		compound.setBoolean("activated", this.activated);
-		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NbtUtils.createPosTag(linkedContainer.getPos()));
+		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NbtUtils.writeBlockPos(linkedContainer.getPos()));
 
 		ListTag tagList = new ListTag();
 		for(UUID uuid : linkedWizards){
@@ -205,7 +205,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	public void readFromNBT(CompoundTag compound){
 
 		this.activated = compound.getBoolean("activated");
-		this.linkedContainerPos = NbtUtils.getPosFromTag(compound.getCompoundTag("linkedContainerPos"));
+		this.linkedContainerPos = NbtUtils.readBlockPos(compound.getCompoundTag("linkedContainerPos"));
 
 		ListTag tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
 		int i = 0;

@@ -62,7 +62,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 
 	public void onUpdate(){
 
-		if(this.ticksExisted > lifetime && lifetime != -1){
+		if(this.tickCount > lifetime && lifetime != -1){
 			this.despawn();
 		}
 

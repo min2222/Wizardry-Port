@@ -45,20 +45,20 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingTickEvent event){
-		if(event.getEntityLiving().level.isClientSide){
+		if(event.getEntity().level.isClientSide){
 			// Behold the power of interfaces!
-			for(MobEffectInstance effect : event.getEntityLiving().getActivePotionEffects()){
+			for(MobEffectInstance effect : event.getEntity().getActivePotionEffects()){
 
 				if(effect.getPotion() instanceof ICustomPotionParticles && effect.doesShowParticles()){
 
-					double x = event.getEntityLiving().getX()
-							+ (event.getEntityLiving().world.random.nextDouble() - 0.5) * event.getEntityLiving().width;
-					double y = event.getEntityLiving().getY()
-							+ event.getEntityLiving().world.random.nextDouble() * event.getEntityLiving().getBbHeight();
-					double z = event.getEntityLiving().getZ()
-							+ (event.getEntityLiving().world.random.nextDouble() - 0.5) * event.getEntityLiving().width;
+					double x = event.getEntity().getX()
+							+ (event.getEntity().world.random.nextDouble() - 0.5) * event.getEntity().width;
+					double y = event.getEntity().getY()
+							+ event.getEntity().world.random.nextDouble() * event.getEntity().getBbHeight();
+					double z = event.getEntity().getZ()
+							+ (event.getEntity().world.random.nextDouble() - 0.5) * event.getEntity().width;
 
-					((ICustomPotionParticles)effect.getPotion()).spawnCustomParticle(event.getEntityLiving().world, x, y, z);
+					((ICustomPotionParticles)effect.getPotion()).spawnCustomParticle(event.getEntity().world, x, y, z);
 				}
 			}
 		}

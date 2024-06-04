@@ -89,7 +89,7 @@ public class RenderForceArrow extends Render<EntityForceArrow> {
 		// Rings
 		for(int i = 0; i < 5; i++){
 			GlStateManager.color(1, 1, 1, 1 - i * 0.2f);
-			double j = i + ((double)arrow.ticksExisted % 3) / 3;
+			double j = i + ((double)arrow.tickCount % 3) / 3;
 			double width = 2.0d + (Math.sqrt(j * 2) - 0.6) * 2;
 			GL11.glNormal3f(scale, 0.0F, 0.0F);
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

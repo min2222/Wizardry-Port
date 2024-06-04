@@ -305,13 +305,13 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 
 		Entity thisEntity = ((Entity)this);
 
-		if(thisEntity.ticksExisted == 1){
+		if(thisEntity.tickCount == 1){
 			this.onSpawn();
 		}
 
 		// For some reason Minecraft reads the entity from NBT just after the entity is created, so setting -1 as a
 		// default lifetime doesn't work. The easiest way around this is to use 0 - nobody's going to need it!
-		if(thisEntity.ticksExisted > this.getLifetime() && this.getLifetime() > 0){
+		if(thisEntity.tickCount > this.getLifetime() && this.getLifetime() > 0){
 			this.onDespawn();
 			thisEntity.discard();
 		}
@@ -398,13 +398,13 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 				// no summoner.
 				if(DamageSafetyChecker.attackEntitySafely(event.getEntity(), newSource, event.getAmount(), event.getSource(), false)){
 					// Uses event.getSource().getTrueSource() as this means the target is knocked back from the minion
-					EntityUtils.applyStandardKnockback(event.getSource().getTrueSource(), event.getEntityLiving());
-					((ISummonedCreature)event.getSource().getTrueSource()).onSuccessfulAttack(event.getEntityLiving());
+					EntityUtils.applyStandardKnockback(event.getSource().getTrueSource(), event.getEntity());
+					((ISummonedCreature)event.getSource().getTrueSource()).onSuccessfulAttack(event.getEntity());
 					// If the target revenge-targeted the summoner, make it revenge-target the minion instead
 					// (if it didn't revenge-target, do nothing)
-					if(event.getEntityLiving().getRevengeTarget() == summoner
+					if(event.getEntity().getRevengeTarget() == summoner
 							&& event.getSource().getTrueSource() instanceof LivingEntity){
-						event.getEntityLiving().setRevengeTarget((LivingEntity)event.getSource().getTrueSource());
+						event.getEntity().setRevengeTarget((LivingEntity)event.getSource().getTrueSource());
 					}
 				}
 

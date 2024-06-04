@@ -42,7 +42,7 @@ public class RenderDonationPerks {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		Player player = event.getEntityPlayer();
+		Player player = event.getEntity();
 		float partialTicks = event.getPartialRenderTick();
 
 		Element element = DonationPerksHandler.getElement(player);
@@ -81,7 +81,7 @@ public class RenderDonationPerks {
 			double dy = y2 + (y1 - y2) * partialTicks;
 			double dz = z2 + (z1 - z2) * partialTicks;
 
-			float t = player.ticksExisted + partialTicks;
+			float t = player.tickCount + partialTicks;
 			float hMoveFraction = Mth.clamp((float)(dx * dx + dz * dz) / 0.3f, 0, 1);
 			float vMoveFraction = Mth.clamp((float)(dy * dy) / 0.3f, 0, 1);
 
@@ -151,7 +151,7 @@ public class RenderDonationPerks {
 
 		GlStateManager.pushMatrix();
 
-		float age = player.ticksExisted + partialTicks;
+		float age = player.tickCount + partialTicks;
 		float rotationSpeed = 2;
 
 		GlStateManager.rotate(age * rotationSpeed/2, 0.0F, 1.0F, 0.0F);
@@ -162,7 +162,7 @@ public class RenderDonationPerks {
 
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(CUBE_TEXTURES[player.ticksExisted % CUBE_TEXTURES.length]);
+		Minecraft.getMinecraft().renderEngine.bindTexture(CUBE_TEXTURES[player.tickCount % CUBE_TEXTURES.length]);
 
 		Vec3[] vertices = GeometryUtils.getVertices(new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 

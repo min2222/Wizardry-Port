@@ -256,7 +256,7 @@ public final class AllyDesignationSystem {
 			}else{
 				// Prevents any magic damage to entities owned by allied players if friendly fire is disabled for owned creatures
 				// Since we're dealing with players separately we might as well just use isAllied
-				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((Player)event.getSource().getTrueSource(), event.getEntityLiving())){
+				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((Player)event.getSource().getTrueSource(), event.getEntity())){
 					event.setCanceled(true);
 				}
 			}

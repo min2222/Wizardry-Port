@@ -203,14 +203,14 @@ public class MindControl extends SpellRay {
 		// Of course, in survival this code is unlikely to be used much because the entity will always try to target the
 		// player and hence will rarely have no target.
 		// No need to do it every tick either!
-		if(event.getEntity().ticksExisted % 50 == 0 && event.getEntityLiving().isPotionActive(WizardryPotions.mind_control)
-				&& event.getEntityLiving() instanceof Mob){
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().isPotionActive(WizardryPotions.mind_control)
+				&& event.getEntity() instanceof Mob){
 			
-			Mob entity = (Mob)event.getEntityLiving();
+			Mob entity = (Mob)event.getEntity();
 			
 			// Processes targeting if the current target is null or has died
-			if(((Mob)event.getEntityLiving()).getAttackTarget() == null
-				|| !((Mob)event.getEntityLiving()).getAttackTarget().isEntityAlive()){
+			if(((Mob)event.getEntity()).getAttackTarget() == null
+				|| !((Mob)event.getEntity()).getAttackTarget().isEntityAlive()){
 			
 				processTargeting(entity.world, entity, null);
 			}
@@ -220,8 +220,8 @@ public class MindControl extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// The != null check prevents infinite loops with mind trick
-		if(event.getTarget() != null && event.getEntityLiving() instanceof Mob)
-			processTargeting(event.getEntity().world, (Mob)event.getEntityLiving(), event.getTarget());
+		if(event.getTarget() != null && event.getEntity() instanceof Mob)
+			processTargeting(event.getEntity().world, (Mob)event.getEntity(), event.getTarget());
 	}
 
 	@SubscribeEvent

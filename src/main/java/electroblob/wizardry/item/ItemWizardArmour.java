@@ -209,7 +209,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 	@Override
 	public void onArmorTick(Level world, Player player, ItemStack itemStack){
-		if(armorType == EquipmentSlot.HEAD && player.ticksExisted % 20 == 0
+		if(armorType == EquipmentSlot.HEAD && player.tickCount % 20 == 0
 				&& isWearingFullSet(player, element, ArmourClass.BATTLEMAGE) && doAllArmourPiecesHaveMana(player)){
 			player.addEffect(new MobEffectInstance(WizardryPotions.ward, 219, 0, true, false));
 		}
@@ -366,9 +366,9 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	@SubscribeEvent
 	public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event){
 
-		AttributeInstance movementSpeed = event.getEntityLiving().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
+		AttributeInstance movementSpeed = event.getEntity().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
 
-		if(isWearingFullSet(event.getEntityLiving(), null, ArmourClass.WARLOCK) && doAllArmourPiecesHaveMana(event.getEntityLiving())){
+		if(isWearingFullSet(event.getEntity(), null, ArmourClass.WARLOCK) && doAllArmourPiecesHaveMana(event.getEntity())){
 			// Only apply the modifier once (can't just check this is the helmet since it might not be the last piece equipped)
 			if(movementSpeed.getModifier(WARLOCK_SPEED_BOOST_UUID) == null){
 				movementSpeed.applyModifier(new AttributeModifier(WARLOCK_SPEED_BOOST_UUID, "Warlock set bonus", WARLOCK_SPEED_BOOST, Operations.MULTIPLY_FLAT));
@@ -463,8 +463,8 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// Undo the mob detection penalty for wearing armour when invisible
 		// Only bother doing this for players because the penalty only applies to them
-		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof Mob
-				&& event.getEntityLiving().isInvisible()){
+		if(event.getTarget() instanceof Player && event.getEntity() instanceof Mob
+				&& event.getEntity().isInvisible()){
 
 			int armourPieces = (int)Streams.stream(event.getTarget().getArmorInventoryList())
 					.filter(s -> !s.isEmpty() && !(s.getItem() instanceof ItemWizardArmour))
@@ -473,14 +473,14 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(armourPieces == 0) return;
 
 			// Repeat the calculation from EntityAIFindNearestPlayer, but ignoring wizard armour
-			AttributeInstance attribute = event.getEntityLiving().getEntityAttribute(Attributes.FOLLOW_RANGE);
+			AttributeInstance attribute = event.getEntity().getEntityAttribute(Attributes.FOLLOW_RANGE);
 			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
 			if(event.getTarget().isSneaking()) followRange *= 0.8;
 			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();
 			if(f < 0.1F) f = 0.1F;
 			followRange *= 0.7F * f;
 			// Don't need to worry about the isSuitableTarget check since it must already have been checked to get this far
-			if(event.getTarget().getDistance(event.getEntity()) > followRange) ((Mob)event.getEntityLiving()).setAttackTarget(null);
+			if(event.getTarget().getDistance(event.getEntity()) > followRange) ((Mob)event.getEntity()).setAttackTarget(null);
 		}
 	}
 

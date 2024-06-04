@@ -34,7 +34,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 	@Nullable
 	@Override
 	protected ResourceLocation getEntityTexture(EntityWitheringTotem entity){
-		return CUBE_TEXTURES[entity.ticksExisted % CUBE_TEXTURES.length];
+		return CUBE_TEXTURES[entity.tickCount % CUBE_TEXTURES.length];
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 
 		float charge = entity.getHealthDrained() / 50f;
 
-		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
+		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.tickCount, partialTicks, 10, 10);
 		s *= 1 + charge * 0.3f; // Gets bigger the more health it drains
 		GlStateManager.scale(s, s, s);
 
@@ -118,7 +118,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 
 		GlStateManager.pushMatrix();
 
-		float age = entity.ticksExisted + partialTicks;
+		float age = entity.tickCount + partialTicks;
 		float rotationSpeed = 2;
 
 		GlStateManager.rotate(age * rotationSpeed/2, 0.0F, 1.0F, 0.0F);

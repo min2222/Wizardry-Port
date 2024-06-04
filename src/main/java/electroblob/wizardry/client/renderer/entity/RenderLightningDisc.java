@@ -42,7 +42,7 @@ public class RenderLightningDisc extends Render<EntityLightningDisc> {
 
 		GlStateManager.rotate(-90, 1, 0, 0);
 
-		GlStateManager.rotate(entity.ticksExisted * 8, 0, 0, 1);
+		GlStateManager.rotate(entity.tickCount * 8, 0, 0, 1);
 
 		GlStateManager.scale(scale, scale, scale);
 
