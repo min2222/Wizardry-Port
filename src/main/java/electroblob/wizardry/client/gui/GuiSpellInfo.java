@@ -9,7 +9,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import org.lwjgl.input.Keyboard;
 
 /** Abstract base class for both {@link GuiSpellBook} and {@link GuiLectern}. Centralises code common to both
  * those classes. */
-public abstract class GuiSpellInfo extends GuiScreen {
+public abstract class GuiSpellInfo extends Screen {
 
 	protected static final String TRANSLATION_KEY_PREFIX = "gui." + Wizardry.MODID + ":spell_book";
 

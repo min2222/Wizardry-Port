@@ -6,7 +6,7 @@ import electroblob.wizardry.client.gui.GuiSpellDisplay;
 import electroblob.wizardry.client.gui.GuiSpellDisplay.Skin;
 import electroblob.wizardry.registry.Spells;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiSelectString;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class GuiSelectHUDSkin extends GuiSelectString {
 
-	public GuiSelectHUDSkin(GuiScreen parentScreen, IConfigElement configElement, int slotIndex, Map<Object, String> selectableValues, Object currentValue, boolean enabled){
+	public GuiSelectHUDSkin(Screen parentScreen, IConfigElement configElement, int slotIndex, Map<Object, String> selectableValues, Object currentValue, boolean enabled){
 		super(parentScreen, configElement, slotIndex, selectableValues, currentValue, enabled);
 	}
 	

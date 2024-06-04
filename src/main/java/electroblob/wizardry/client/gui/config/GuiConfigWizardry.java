@@ -3,7 +3,7 @@ package electroblob.wizardry.client.gui.config;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GuiConfigWizardry extends GuiConfig {
 
-	public GuiConfigWizardry(GuiScreen parent){
+	public GuiConfigWizardry(Screen parent){
 
 		super(parent, getConfigEntries(), Wizardry.MODID, false, false,
 				Wizardry.NAME + " - " + I18n.format("config." + Wizardry.MODID + ".title.general"));
@@ -58,7 +58,7 @@ public class GuiConfigWizardry extends GuiConfig {
 		}
 
 		@Override
-		protected GuiScreen buildChildScreen(){
+		protected Screen buildChildScreen(){
 			
 			String category = this.getCategory();
 			

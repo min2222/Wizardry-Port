@@ -20,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -55,7 +55,7 @@ import java.util.Map;
  * @see Image
  * @see CraftingRecipe
  */
-public class GuiWizardHandbook extends GuiScreen {
+public class GuiWizardHandbook extends Screen {
 
 	private static final ResourceLocation DEFAULT = new ResourceLocation(Wizardry.MODID, "texts/handbook_en_us.json");
 

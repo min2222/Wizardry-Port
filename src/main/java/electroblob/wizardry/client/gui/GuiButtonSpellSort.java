@@ -5,7 +5,7 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.util.ISpellSortable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.resources.ResourceLocation;
 
@@ -18,9 +18,9 @@ public class GuiButtonSpellSort extends GuiButton {
 	public final ISpellSortable.SortType sortType;
 
 	private final ISpellSortable sortable;
-	private final GuiScreen parent;
+	private final Screen parent;
 
-	public GuiButtonSpellSort(int id, int x, int y, ISpellSortable.SortType sortType, ISpellSortable sortable, GuiScreen parent){
+	public GuiButtonSpellSort(int id, int x, int y, ISpellSortable.SortType sortType, ISpellSortable sortable, Screen parent){
 		super(id, x, y, 10, 10, I18n.format("container." + Wizardry.MODID + ":arcane_workbench.sort_" + sortType.name));
 		this.sortType = sortType;
 		this.sortable = sortable;
