@@ -46,7 +46,7 @@ public class LightningRay extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player)
+				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player)
 					((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 							this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
@@ -57,7 +57,7 @@ public class LightningRay extends SpellRay {
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			}
 			
-			if(world.isRemote){
+			if(level.isClientSide){
 
 				if(ticksInUse % 3 == 0) ParticleBuilder.create(Type.LIGHTNING).entity(caster)
 				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
@@ -80,7 +80,7 @@ public class LightningRay extends SpellRay {
 	@Override
 	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		// This is a nice example of when onMiss is used for more than just returning a boolean
-		if(world.isRemote && ticksInUse % 4 == 0){
+		if(level.isClientSide && ticksInUse % 4 == 0){
 
 			// The arc does not reach full range when it has a free end
 			double freeRange = 0.8 * getRange(world, origin, direction, caster, ticksInUse, modifiers);

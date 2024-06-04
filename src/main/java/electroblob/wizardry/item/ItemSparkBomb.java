@@ -27,11 +27,11 @@ public class ItemSparkBomb extends Item {
 			stack.shrink(1);
 		}
 
-		player.playSound(WizardrySounds.ENTITY_SPARK_BOMB_THROW, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+		player.playSound(WizardrySounds.ENTITY_SPARK_BOMB_THROW, 0.5F, 0.4F / (itemrandom.nextFloat() * 0.4F + 0.8F));
 
 		player.getCooldownTracker().setCooldown(this, 20);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			EntitySparkBomb sparkBomb = new EntitySparkBomb(world);
 			sparkBomb.aim(player, 1);
 			world.spawnEntity(sparkBomb);

@@ -97,7 +97,7 @@ public class ItemFrostAxe extends ItemAxe implements IConjuredItem {
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-			target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 160, 1));
+			target.addEffect(new MobEffectInstance(WizardryPotions.frost, 160, 1));
 		return false;
 	}
 

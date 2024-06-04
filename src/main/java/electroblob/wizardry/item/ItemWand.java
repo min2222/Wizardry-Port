@@ -240,7 +240,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
-		if(!world.isRemote && !this.isManaFull(stack) && world.getTotalWorldTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
+		if(!level.isClientSide && !this.isManaFull(stack) && world.getTotalWorldTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
 			this.rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
 		}
@@ -393,7 +393,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 					player.setActiveHand(hand);
 					// Store the modifiers for use later
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
-					if(chargeup > 0 && world.isRemote) Wizardry.proxy.playChargeupSound(player);
+					if(chargeup > 0 && level.isClientSide) Wizardry.proxy.playChargeupSound(player);
 					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 				}
 			}else{
@@ -482,13 +482,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 		Level world = caster.world;
 
-		if(world.isRemote && !spell.isContinuous && spell.requiresPacket()) return false;
+		if(level.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
 
 		if(spell.cast(world, caster, hand, castingTick, modifiers)){
 
 			if(castingTick == 0) MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.WAND, spell, caster, modifiers));
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){
@@ -528,7 +528,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 						// ...display a message above the player's hotbar
 						caster.playSound(WizardrySounds.ITEM_WAND_LEVELUP, 1.25f, 1);
 						WizardryAdvancementTriggers.wand_levelup.triggerFor(caster);
-						if(!world.isRemote)
+						if(!level.isClientSide)
 							caster.sendMessage(Component.translatable("item." + Wizardry.MODID + ":wand.levelup",
 									this.getItemStackDisplayName(stack), nextTier.getNameForTranslationFormatted()));
 					}
@@ -584,7 +584,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		if(player.isSneaking() && entity instanceof Player && WizardData.get(player) != null){
 			String string = WizardData.get(player).toggleAlly((Player)entity) ? "item." + Wizardry.MODID + ":wand.addally"
 					: "item." + Wizardry.MODID + ":wand.removeally";
-			if(!player.world.isRemote) player.sendMessage(Component.translatable(string, entity.getName()));
+			if(!player.level.isClientSide) player.sendMessage(Component.translatable(string, entity.getName()));
 			return true;
 		}
 
@@ -911,9 +911,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 				Random random = player.world.rand;
 
-				player.world.playSound(player.posX, player.posY, player.posZ, WizardrySounds.ITEM_WAND_MELEE, SoundCategory.PLAYERS, 0.75f, 1, false);
+				player.world.playSound(player.getX(), player.getY(), player.getZ(), WizardrySounds.ITEM_WAND_MELEE, SoundCategory.PLAYERS, 0.75f, 1, false);
 
-				if(player.world.isRemote){
+				if(player.level.isClientSide){
 
 					Vec3 origin = player.getPositionEyes(1);
 					Vec3 hit = origin.add(player.getLookVec().scale(player.getDistance(event.getTarget())));

@@ -146,7 +146,7 @@ public abstract class SpellAreaEffect extends Spell {
 			if(affectEntity(world, origin, caster, target, i++, ticksInUse, modifiers)) result = true;
 		}
 
-		if(world.isRemote) spawnParticleEffect(world, origin, radius, caster, modifiers);
+		if(level.isClientSide) spawnParticleEffect(world, origin, radius, caster, modifiers);
 		return result;
 	}
 
@@ -180,8 +180,8 @@ public abstract class SpellAreaEffect extends Spell {
 		
 		for(int i=0; i<particleCount; i++){
 			
-			double r = (1 + world.rand.nextDouble() * (radius - 1));
-			float angle = world.rand.nextFloat() * (float)Math.PI * 2f;
+			double r = (1 + world.random.nextDouble() * (radius - 1));
+			float angle = world.random.nextFloat() * (float)Math.PI * 2f;
 			
 			spawnParticle(world, origin.x + r * Mth.cos(angle), origin.y, origin.z + r * Mth.sin(angle));
 		}

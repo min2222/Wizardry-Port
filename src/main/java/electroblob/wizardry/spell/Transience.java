@@ -38,19 +38,19 @@ public class Transience extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);
 			Wizardry.proxy.playBlinkEffect(caster);
 		}
 
 		if(!caster.isPotionActive(WizardryPotions.transience)){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
-				caster.addPotionEffect(new MobEffectInstance(WizardryPotions.transience, duration, 0));
-				caster.addPotionEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, 0, false, false));
+				caster.addEffect(new MobEffectInstance(WizardryPotions.transience, duration, 0));
+				caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, 0, false, false));
 
 				this.playSound(world, caster, ticksInUse, duration, modifiers);
 			}
@@ -86,7 +86,7 @@ public class Transience extends Spell {
 
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
-		if(event.getEntity().world.isRemote && event.getPotionEffect().getPotion() == WizardryPotions.transience
+		if(event.getEntity().level.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.transience
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());

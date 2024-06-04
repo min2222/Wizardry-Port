@@ -160,8 +160,8 @@ public abstract class SpellRay extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		Vec3 look = caster.getLookVec();
-		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
-		if(!this.isContinuous && world.isRemote && !Wizardry.proxy.isFirstPerson(caster)){
+		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
+		if(!this.isContinuous && level.isClientSide && !Wizardry.proxy.isFirstPerson(caster)){
 			origin = origin.add(look.scale(1.2));
 		}
 
@@ -175,19 +175,19 @@ public abstract class SpellRay extends Spell {
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// IDEA: Add in an aiming error and trigger onMiss accordingly
-		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
 		Vec3 targetPos = null;
 
 		if(target != null){
 
 			if(!ignoreLivingEntities || !EntityUtils.isLiving(target)){
-				targetPos = new Vec3(target.posX, target.posY + target.height / 2, target.posZ);
+				targetPos = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
 
 			}else{
 
-				int x = Mth.floor(target.posX);
-				int y = (int)target.posY - 1; // -1 because we need the block under the target
-				int z = Mth.floor(target.posZ);
+				int x = Mth.floor(target.getX());
+				int y = (int)target.getY() - 1; // -1 because we need the block under the target
+				int z = Mth.floor(target.getZ());
 				BlockPos pos = new BlockPos(x, y, z);
 
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
@@ -292,7 +292,7 @@ public abstract class SpellRay extends Spell {
 		if(!flag && !onMiss(world, caster, origin, direction, ticksInUse, modifiers)) return false;
 		
 		// Particle spawning
-		if(world.isRemote){
+		if(level.isClientSide){
 			spawnParticleRay(world, origin, direction, caster, range);
 		}
 		
@@ -374,9 +374,9 @@ public abstract class SpellRay extends Spell {
 		Vec3 velocity = direction.scale(particleVelocity);
 		
 		for(double d = particleSpacing; d <= distance; d += particleSpacing){
-			double x = origin.x + d*direction.x + particleJitter * (world.rand.nextDouble()*2 - 1);
-			double y = origin.y + d*direction.y + particleJitter * (world.rand.nextDouble()*2 - 1);
-			double z = origin.z + d*direction.z + particleJitter * (world.rand.nextDouble()*2 - 1);
+			double x = origin.x + d*direction.x + particleJitter * (world.random.nextDouble()*2 - 1);
+			double y = origin.y + d*direction.y + particleJitter * (world.random.nextDouble()*2 - 1);
+			double z = origin.z + d*direction.z + particleJitter * (world.random.nextDouble()*2 - 1);
 			spawnParticle(world, x, y, z, velocity.x, velocity.y, velocity.z);
 		}
 	}

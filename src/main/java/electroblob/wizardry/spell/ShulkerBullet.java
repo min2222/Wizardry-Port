@@ -37,14 +37,14 @@ public class ShulkerBullet extends Spell {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
+		if(!shoot(world, caster, caster.getX(), caster.getY(), caster.getZ(), Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
+		if(!shoot(world, caster, caster.getX(), caster.getY(), caster.getZ(), Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -58,7 +58,7 @@ public class ShulkerBullet extends Spell {
 
 	private boolean shoot(Level world, @Nullable LivingEntity caster, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 

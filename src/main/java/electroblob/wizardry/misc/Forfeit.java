@@ -213,7 +213,7 @@ public abstract class Forfeit {
 				EntityMagicFireball fireball = new EntityMagicFireball(w);
 				Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(6));
 				fireball.setPosition(vec.x, vec.y, vec.z);
-				fireball.shoot(p.posX, p.posY + p.getEyeHeight(), p.posZ, 1.5f, 1);
+				fireball.shoot(p.getX(), p.getY() + p.getEyeHeight(), p.getZ(), 1.5f, 1);
 				w.spawnEntity(fireball);
 			}
 		}));
@@ -221,12 +221,12 @@ public abstract class Forfeit {
 		add(Tier.APPRENTICE, Element.FIRE, create("firebomb", (w, p) -> {
 			if(!w.isRemote){
 				EntityFirebomb firebomb = new EntityFirebomb(w);
-				firebomb.setPosition(p.posX, p.posY + 5, p.posZ);
+				firebomb.setPosition(p.getX(), p.getY() + 5, p.getZ());
 				w.spawnEntity(firebomb);
 			}
 		}));
 
-		add(Tier.ADVANCED, Element.FIRE, create("explode", (w, p) -> w.createExplosion(null, p.posX, p.posY, p.posZ, 1, false)));
+		add(Tier.ADVANCED, Element.FIRE, create("explode", (w, p) -> w.createExplosion(null, p.getX(), p.getY(), p.getZ(), 1, false)));
 
 		add(Tier.ADVANCED, Element.FIRE, create("blazes", (w, p) -> {
 			if(!w.isRemote){
@@ -244,29 +244,29 @@ public abstract class Forfeit {
 			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
 				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition(), 6);
 				for(BlockPos pos : sphere){
-					if(w.rand.nextBoolean() && w.isAirBlock(pos) && BlockUtils.canPlaceBlock(p, w, pos))
+					if(w.random.nextBoolean() && w.isAirBlock(pos) && BlockUtils.canPlaceBlock(p, w, pos))
 						w.setBlockState(pos, Blocks.FIRE.getDefaultState());
 				}
 			}
 		}));
 
 		add(Tier.MASTER, Element.FIRE, create("meteors", (w, p) -> {
-			if(!w.isRemote) for(int i=0; i<5; i++) w.spawnEntity(new EntityMeteor(w, p.posX + w.rand.nextDouble() * 16 - 8,
-						p.posY + 40 + w.rand.nextDouble() * 30, p.posZ + w.rand.nextDouble() * 16 - 8,
+			if(!w.isRemote) for(int i=0; i<5; i++) w.spawnEntity(new EntityMeteor(w, p.getX() + w.random.nextDouble() * 16 - 8,
+						p.getY() + 40 + w.random.nextDouble() * 30, p.getZ() + w.random.nextDouble() * 16 - 8,
 						1, EntityUtils.canDamageBlocks(p, w)));
 		}));
 
-		add(Tier.NOVICE, Element.ICE, create("freeze_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 200))));
+		add(Tier.NOVICE, Element.ICE, create("freeze_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.frost, 200))));
 
-		add(Tier.APPRENTICE, Element.ICE, create("freeze_self_2", (w, p) -> p.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 300, 1))));
+		add(Tier.APPRENTICE, Element.ICE, create("freeze_self_2", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.frost, 300, 1))));
 
 		add(Tier.APPRENTICE, Element.ICE, create("ice_spikes", (w, p) -> {
 			if(!w.isRemote){
 				for(int i = 0; i < 5; i++){
 					EntityIceSpike iceSpike = new EntityIceSpike(w);
-					double x = p.posX + 2 - w.rand.nextFloat() * 4;
-					double z = p.posZ + 2 - w.rand.nextFloat() * 4;
-					Integer y = BlockUtils.getNearestSurface(w, new BlockPos(x, p.posY, z), EnumFacing.UP, 2, true,
+					double x = p.getX() + 2 - w.random.nextFloat() * 4;
+					double z = p.getZ() + 2 - w.random.nextFloat() * 4;
+					Integer y = BlockUtils.getNearestSurface(w, new BlockPos(x, p.getY(), z), EnumFacing.UP, 2, true,
 							BlockUtils.SurfaceCriteria.basedOn(Level::isBlockFullCube));
 					if(y == null) break;
 					iceSpike.setFacing(EnumFacing.UP);
@@ -279,7 +279,7 @@ public abstract class Forfeit {
 		add(Tier.ADVANCED, Element.ICE, create("blizzard", (w, p) -> {
 			if(!w.isRemote){
 				EntityBlizzard blizzard = new EntityBlizzard(w);
-				blizzard.setPosition(p.posX, p.posY, p.posZ);
+				blizzard.setPosition(p.getX(), p.getY(), p.getZ());
 				w.spawnEntity(blizzard);
 			}
 		}));
@@ -299,7 +299,7 @@ public abstract class Forfeit {
 		add(Tier.MASTER, Element.ICE, create("hailstorm", (w, p) -> {
 			if(!w.isRemote){
 				EntityHailstorm hailstorm = new EntityHailstorm(w);
-				hailstorm.setPosition(p.posX, p.posY + 5, p.posZ - 3); // Subtract 3 from z because it's facing south (yaw 0)
+				hailstorm.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
 				w.spawnEntity(hailstorm);
 			}
 		}));
@@ -307,14 +307,14 @@ public abstract class Forfeit {
 		add(Tier.MASTER, Element.ICE, create("ice_giant", (w, p) -> {
 			if(!w.isRemote){
 				EntityIceGiant iceGiant = new EntityIceGiant(w);
-				iceGiant.setPosition(p.posX + p.getLookVec().x * 4, p.posY, p.posZ + p.getLookVec().z * 4);
+				iceGiant.setPosition(p.getX() + p.getLookVec().x * 4, p.getY(), p.getZ() + p.getLookVec().z * 4);
 				w.spawnEntity(iceGiant);
 			}
 		}));
 
 		add(Tier.NOVICE, Element.LIGHTNING, create("thunder", (w, p) -> {
 			p.addVelocity(-p.getLookVec().x, 0, -p.getLookVec().z);
-			if(w.isRemote) w.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, p.posX, p.posY, p.posZ, 0, 0, 0);
+			if(w.isRemote) w.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, p.getX(), p.getY(), p.getZ(), 0, 0, 0);
 		}));
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("storm", (w, p) -> {
@@ -339,9 +339,9 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning", (w, p) -> w.addWeatherEffect(new EntityLightningBolt(w, p.posX, p.posY, p.posZ, false))));
+		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning", (w, p) -> w.addWeatherEffect(new EntityLightningBolt(w, p.getX(), p.getY(), p.getZ(), false))));
 
-		add(Tier.ADVANCED, Element.LIGHTNING, create("paralyse_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(WizardryPotions.paralysis, 200))));
+		add(Tier.ADVANCED, Element.LIGHTNING, create("paralyse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.paralysis, 200))));
 
 		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning_wraiths", (w, p) -> {
 			if(!w.isRemote){
@@ -366,7 +366,7 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.NOVICE, Element.NECROMANCY, create("nausea", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.NAUSEA, 400))));
+		add(Tier.NOVICE, Element.NECROMANCY, create("nausea", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 400))));
 
 		add(Tier.APPRENTICE, Element.NECROMANCY, create("zombie_horde", (w, p) -> {
 			if(!w.isRemote){
@@ -380,7 +380,7 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.ADVANCED, Element.NECROMANCY, create("wither_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.WITHER, 400))));
+		add(Tier.ADVANCED, Element.NECROMANCY, create("wither_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.WITHER, 400))));
 
 		add(Tier.MASTER, Element.NECROMANCY, create("cripple_self", (w, p) -> p.hurt(DamageSource.MAGIC, p.getHealth() - 1)));
 
@@ -408,7 +408,7 @@ public abstract class Forfeit {
 		add(Tier.NOVICE, Element.EARTH, create("squid", (w, p) -> {
 			if(!w.isRemote){
 				EntitySquid squid = new EntitySquid(w);
-				squid.setPosition(p.posX, p.posY + 3, p.posZ);
+				squid.setPosition(p.getX(), p.getY() + 3, p.getZ());
 				w.spawnEntity(squid);
 			}
 		}));
@@ -421,7 +421,7 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.APPRENTICE, Element.EARTH, create("poison_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.POISON, 400, 1))));
+		add(Tier.APPRENTICE, Element.EARTH, create("poison_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 1))));
 
 		add(Tier.ADVANCED, Element.EARTH, create("flood", (w, p) -> {
 			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
@@ -454,9 +454,9 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.APPRENTICE, Element.SORCERY, create("teleport_self", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.rand.nextDouble() * 8)));
+		add(Tier.APPRENTICE, Element.SORCERY, create("teleport_self", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.random.nextDouble() * 8)));
 
-		add(Tier.ADVANCED, Element.SORCERY, create("levitate_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.LEVITATION, 200))));
+		add(Tier.ADVANCED, Element.SORCERY, create("levitate_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200))));
 
 		add(Tier.ADVANCED, Element.SORCERY, create("vex_horde", (w, p) -> {
 			if(!w.isRemote){
@@ -480,12 +480,12 @@ public abstract class Forfeit {
 		add(Tier.MASTER, Element.SORCERY, create("arrow_rain", (w, p) -> {
 			if(!w.isRemote){
 				EntityArrowRain arrowRain = new EntityArrowRain(w);
-				arrowRain.setPosition(p.posX, p.posY + 5, p.posZ - 3); // Subtract 3 from z because it's facing south (yaw 0)
+				arrowRain.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
 				w.spawnEntity(arrowRain);
 			}
 		}));
 
-		add(Tier.MASTER, Element.SORCERY, create("teleport_self_large_distance", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.rand.nextDouble() * 700)));
+		add(Tier.MASTER, Element.SORCERY, create("teleport_self_large_distance", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.random.nextDouble() * 700)));
 
 		add(Tier.NOVICE, Element.HEALING, create("damage_self", (w, p) -> p.hurt(DamageSource.MAGIC, 4)));
 
@@ -499,15 +499,15 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.APPRENTICE, Element.HEALING, create("hunger", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.HUNGER, 400, 4))));
+		add(Tier.APPRENTICE, Element.HEALING, create("hunger", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.HUNGER, 400, 4))));
 
-		add(Tier.APPRENTICE, Element.HEALING, create("blind_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200))));
+		add(Tier.APPRENTICE, Element.HEALING, create("blind_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200))));
 
-		add(Tier.ADVANCED, Element.HEALING, create("weaken_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600, 3))));
+		add(Tier.ADVANCED, Element.HEALING, create("weaken_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600, 3))));
 
-		add(Tier.ADVANCED, Element.HEALING, create("jam_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(WizardryPotions.arcane_jammer, 300))));
+		add(Tier.ADVANCED, Element.HEALING, create("jam_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.arcane_jammer, 300))));
 
-		add(Tier.MASTER, Element.HEALING, create("curse_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE))));
+		add(Tier.MASTER, Element.HEALING, create("curse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE))));
 
 	}
 

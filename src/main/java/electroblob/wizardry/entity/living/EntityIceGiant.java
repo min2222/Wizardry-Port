@@ -87,10 +87,10 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	}
 	
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 30; i++){
-				float brightness = 0.5f + (rand.nextFloat() / 2);
-				ParticleBuilder.create(Type.SPARKLE, this).vel(0, -0.02, 0).time(12 + rand.nextInt(8))
+				float brightness = 0.5f + (random.nextFloat() / 2);
+				ParticleBuilder.create(Type.SPARKLE, this).vel(0, -0.02, 0).time(12 + random.nextInt(8))
 				.clr(brightness, brightness + 0.1f, 1.0f).spawn(world);
 			}
 		}
@@ -106,7 +106,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 
 		super.onLivingUpdate();
 
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			ParticleBuilder.create(Type.SNOW, this).spawn(world);
 		}
 	}
@@ -118,7 +118,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 		target.motionX += this.getLookVec().x * 0.2;
 		target.motionZ += this.getLookVec().z * 0.2;
 
-		target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 300, 0));
+		target.addEffect(new MobEffectInstance(WizardryPotions.frost, 300, 0));
 
 		this.applyEnchantments(this, target);
 

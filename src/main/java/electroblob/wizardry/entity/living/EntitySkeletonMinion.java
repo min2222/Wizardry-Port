@@ -75,9 +75,9 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata){
 		// Can't call super, so the code from the next level up (EntityLiving) had to be copied as well.
 		this.getEntityAttribute(Attributes.FOLLOW_RANGE)
-				.applyModifier(new AttributeModifier("Random spawn bonus", this.rand.nextGaussian() * 0.05D, EntityUtils.Operations.MULTIPLY_FLAT));
+				.applyModifier(new AttributeModifier("Random spawn bonus", this.random.nextGaussian() * 0.05D, EntityUtils.Operations.MULTIPLY_FLAT));
 
-		if(this.rand.nextFloat() < 0.05F){
+		if(this.random.nextFloat() < 0.05F){
 			this.setLeftHanded(true);
 		}else{
 			this.setLeftHanded(false);
@@ -87,9 +87,9 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 		if(this.getItemStackFromSlot(EquipmentSlot.HEAD).isEmpty()){
 			Calendar calendar = this.world.getCurrentDate();
 
-			if(calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F){
+			if(calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.random.nextFloat() < 0.25F){
 				this.setItemStackToSlot(EquipmentSlot.HEAD,
-						new ItemStack(this.rand.nextFloat() < 0.1F ? Blocks.LIT_PUMPKIN : Blocks.PUMPKIN));
+						new ItemStack(this.random.nextFloat() < 0.1F ? Blocks.LIT_PUMPKIN : Blocks.PUMPKIN));
 				this.inventoryArmorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
 			}
 		}
@@ -130,10 +130,10 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
-						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
+				this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * height, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}

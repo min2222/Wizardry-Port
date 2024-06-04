@@ -27,11 +27,11 @@ public class ItemSmokeBomb extends Item {
 			stack.shrink(1);
 		}
 
-		player.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_THROW, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
+		player.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_THROW, 0.5F, 0.4F / (itemrandom.nextFloat() * 0.4F + 0.8F));
 
 		player.getCooldownTracker().setCooldown(this, 20);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			EntitySmokeBomb smokebomb = new EntitySmokeBomb(world);
 			smokebomb.aim(player, 1);
 			world.spawnEntity(smokebomb);

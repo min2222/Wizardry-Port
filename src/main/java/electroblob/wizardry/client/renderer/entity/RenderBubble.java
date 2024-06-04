@@ -37,7 +37,7 @@ public class RenderBubble extends Render<EntityBubble> {
 		Entity rider = EntityUtils.getRider(entity);
 
 		if(rider != null){
-			yOffset = rider.height / 2;
+			yOffset = rider.getBbHeight() / 2;
 		}
 
 		GlStateManager.translate((float)x, (float)y + yOffset, (float)z);

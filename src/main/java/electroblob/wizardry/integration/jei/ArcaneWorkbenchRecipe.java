@@ -74,7 +74,7 @@ public class ArcaneWorkbenchRecipe implements IRecipeWrapper {
 		for(int i = 0; i < bookSlots; i++){
 			int x = ArcaneWorkbenchRecipeCategory.CENTRE_SLOT_X + ContainerArcaneWorkbench.getBookSlotXOffset(i, bookSlots) - 9;
 			int y = ArcaneWorkbenchRecipeCategory.CENTRE_SLOT_Y + ContainerArcaneWorkbench.getBookSlotYOffset(i, bookSlots) - 9;
-			DrawingUtils.drawTexturedRect(x, y, 0, ArcaneWorkbenchRecipeCategory.HEIGHT, 36, 36, 256, 256);
+			DrawingUtils.drawTexturedRect(x, y, 0, ArcaneWorkbenchRecipeCategory.getBbHeight(), 36, 36, 256, 256);
 		}
 	}
 

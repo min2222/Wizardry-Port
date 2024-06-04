@@ -60,7 +60,7 @@ public class Mine extends SpellRay {
 			}
 		}
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			if(BlockUtils.isBlockUnbreakable(world, pos)) return false;
 			// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation
@@ -139,7 +139,7 @@ public class Mine extends SpellRay {
 
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		ParticleBuilder.create(Type.DUST).pos(x, y, z).time(20 + world.rand.nextInt(5)).clr(0.9f, 0.95f, 1)
+		ParticleBuilder.create(Type.DUST).pos(x, y, z).time(20 + world.random.nextInt(5)).clr(0.9f, 0.95f, 1)
 				.shaded(false).spawn(world);
 	}
 

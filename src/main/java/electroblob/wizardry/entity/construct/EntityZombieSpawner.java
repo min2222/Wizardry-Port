@@ -37,12 +37,12 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 
 			this.playSound(WizardrySounds.ENTITY_ZOMBIE_SPAWNER_SPAWN, 1, 1);
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				EntityZombieMinion zombie = spawnHusks ? new EntityHuskMinion(world) : new EntityZombieMinion(world);
 
-				zombie.setPosition(this.posX + (rand.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE, this.posY,
-						this.posZ + (rand.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE);
+				zombie.setPosition(this.getX() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE, this.getY(),
+						this.getZ() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE);
 				zombie.setCaster(this.getCaster());
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
@@ -57,16 +57,16 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				world.spawnEntity(zombie);
 			}
 
-			spawnTimer += Spells.zombie_apocalypse.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + rand.nextInt(20);
+			spawnTimer += Spells.zombie_apocalypse.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + random.nextInt(20);
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			float b = 0.15f;
 
 			for(double r = 1.5; r < 4; r += 0.2){
-				ParticleBuilder.create(Type.CLOUD).clr(b-=0.02, 0, 0).pos(posX, posY - 0.3, posZ).scale(0.5f / (float)r)
-						.spin(r, 0.02/r * (1 + world.rand.nextDouble())).spawn(world);
+				ParticleBuilder.create(Type.CLOUD).clr(b-=0.02, 0, 0).pos(getX(), getY() - 0.3, getZ()).scale(0.5f / (float)r)
+						.spin(r, 0.02/r * (1 + world.random.nextDouble())).spawn(world);
 			}
 
 		}

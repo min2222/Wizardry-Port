@@ -44,14 +44,14 @@ public class Flight extends Spell {
 			if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0.0f;
 		}
 		
-		if(world.isRemote){
-			double x = caster.posX - 1 + world.rand.nextDouble() * 2;
-			double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			double z = caster.posZ - 1 + world.rand.nextDouble() * 2;
+		if(level.isClientSide){
+			double x = caster.getX() - 1 + world.random.nextDouble() * 2;
+			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+			double z = caster.getZ() - 1 + world.random.nextDouble() * 2;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, -0.1, 0).time(15).clr(0.8f, 1, 0.5f).spawn(world);
-			x = caster.posX - 1 + world.rand.nextDouble() * 2;
-			y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			z = caster.posZ - 1 + world.rand.nextDouble() * 2;
+			x = caster.getX() - 1 + world.random.nextDouble() * 2;
+			y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+			z = caster.getZ() - 1 + world.random.nextDouble() * 2;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, -0.1, 0).time(15).clr(1f, 1f, 1f).spawn(world);
 		}
 		

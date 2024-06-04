@@ -41,9 +41,9 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 
 			this.bookSpread += 0.1f;
 
-			if(this.bookSpread < 0.5f || rand.nextInt(40) == 0){
+			if(this.bookSpread < 0.5f || random.nextInt(40) == 0){
 				float f1 = this.flipT;
-				while(f1 == flipT) this.flipT += (float)(rand.nextInt(4) - rand.nextInt(4));
+				while(f1 == flipT) this.flipT += (float)(random.nextInt(4) - random.nextInt(4));
 			}
 
 		}else{

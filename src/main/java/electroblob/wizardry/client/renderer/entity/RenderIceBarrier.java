@@ -22,10 +22,10 @@ public class RenderIceBarrier extends Render<EntityIceBarrier> {
 	public void doRender(EntityIceBarrier entity, double x, double y, double z, float yaw, float partialTicks){
 
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y + entity.height/2, z);
+		GlStateManager.translate(x, y + entity.getBbHeight()/2, z);
 		GlStateManager.rotate(180, 0F, 0F, 1F);
 		GlStateManager.rotate(yaw, 0, 1, 0);
-		GlStateManager.translate(0, -entity.height/2 - 0.3, 0);
+		GlStateManager.translate(0, -entity.getBbHeight()/2 - 0.3, 0);
 
 		float s = entity.getSizeMultiplier();
 		GlStateManager.scale(s, s, s);

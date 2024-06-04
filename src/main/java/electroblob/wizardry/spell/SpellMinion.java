@@ -107,7 +107,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 		BlockPos pos = new BlockPos(x, y, z);
 		
 		// In this case it looks nice to have them all explode out from one position! (It also makes the code simpler...)
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			for(int i=0; i<getProperty(MINION_COUNT).intValue(); i++){
 
 				T minion = minionFactory.apply(world);
@@ -142,7 +142,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	// Protected since someone might want to extend this class and change the behaviour of this method.
 	protected boolean spawnMinions(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			for(int i=0; i<getProperty(MINION_COUNT).intValue(); i++){
 
 				int range = getProperty(SUMMON_RADIUS).intValue();
@@ -156,8 +156,8 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 						pos = pos.up(2); // Adding 2 will suffice, it's not exactly a game-changer...
 					}else{
 						// If there was no floor around to spawn them on, just pick any spot in mid-air
-						pos = caster.getPosition().north(world.rand.nextInt(range*2) - range)
-								.east(world.rand.nextInt(range*2) - range);
+						pos = caster.getPosition().north(world.random.nextInt(range*2) - range)
+								.east(world.random.nextInt(range*2) - range);
 					}
 				}else{
 					// If there was no floor around and the entity isn't a flying one, the spell fails.

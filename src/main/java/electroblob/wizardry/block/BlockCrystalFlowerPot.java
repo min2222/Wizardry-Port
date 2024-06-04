@@ -38,7 +38,7 @@ public class BlockCrystalFlowerPot extends Block {
 
 	@Override
 	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random random){
-		if(world.isRemote && random.nextBoolean()){
+		if(level.isClientSide && random.nextBoolean()){
 			ParticleBuilder.create(Type.SPARKLE)
 					.pos(pos.getX() + 0.3 + random.nextDouble() * 0.4, pos.getY() + 0.6 + random.nextDouble() * 0.3, pos.getZ() + 0.3 + random.nextDouble() * 0.4)
 					.vel(0, 0.01, 0)

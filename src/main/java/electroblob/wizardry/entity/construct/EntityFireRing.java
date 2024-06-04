@@ -32,9 +32,9 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(this.ticksExisted % 5 == 0 && !this.world.isRemote){
+		if(this.ticksExisted % 5 == 0 && !this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY, this.posZ, this.height, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.getX(), this.getY(), this.getZ(), this.getBbHeight(), this.world);
 
 			for(LivingEntity target : targets){
 

@@ -43,14 +43,14 @@ public class EntityThunderbolt extends EntityMagicProjectile {
 			entityHit.addVelocity(this.motionX * knockbackStrength, this.motionY * knockbackStrength, this.motionZ * knockbackStrength);
 		}
 
-		this.playSound(WizardrySounds.ENTITY_THUNDERBOLT_HIT, 1.4F, 0.5f + this.rand.nextFloat() * 0.1F);
+		this.playSound(WizardrySounds.ENTITY_THUNDERBOLT_HIT, 1.4F, 0.5f + this.random.nextFloat() * 0.1F);
 
 		// Particle effect
-		if(world.isRemote){
-			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+		if(level.isClientSide){
+			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
-		this.setDead();
+		this.discard();
 	}
 
 	@Override
@@ -58,12 +58,12 @@ public class EntityThunderbolt extends EntityMagicProjectile {
 
 		super.onUpdate();
 
-		if(world.isRemote){
-			ParticleBuilder.create(Type.SPARK, rand, posX, posY + height/2, posZ, 0.1, false).spawn(world);
+		if(level.isClientSide){
+			ParticleBuilder.create(Type.SPARK, rand, getX(), getY() + height/2, getZ(), 0.1, false).spawn(world);
 			for(int i = 0; i < 4; i++){
-				world.spawnParticle(ParticleTypes.SMOKE_NORMAL, this.posX + rand.nextFloat() * 0.2 - 0.1,
-						this.posY + this.height / 2 + rand.nextFloat() * 0.2 - 0.1,
-						this.posZ + rand.nextFloat() * 0.2 - 0.1, 0, 0, 0);
+				world.spawnParticle(ParticleTypes.SMOKE_NORMAL, this.getX() + random.nextFloat() * 0.2 - 0.1,
+						this.getY() + this.getBbHeight() / 2 + random.nextFloat() * 0.2 - 0.1,
+						this.getZ() + random.nextFloat() * 0.2 - 0.1, 0, 0, 0);
 			}
 		}
 	}

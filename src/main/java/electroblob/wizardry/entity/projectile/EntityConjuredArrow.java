@@ -23,7 +23,7 @@ public class EntityConjuredArrow extends Arrow {
 	public void onUpdate() {
 		super.onUpdate();
 		if (this.timeInGround > 400) {
-			this.setDead();
+			this.discard();
 		}
 	}
 

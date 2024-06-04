@@ -47,7 +47,7 @@ public class GuiBookshelf extends GuiContainer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		this.mc.getTextureManager().bindTexture(TEXTURE);
 		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
+		int j = (this.getBbHeight() - this.ySize) / 2;
 		this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
 	}
 

@@ -211,7 +211,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public void onArmorTick(Level world, Player player, ItemStack itemStack){
 		if(armorType == EquipmentSlot.HEAD && player.ticksExisted % 20 == 0
 				&& isWearingFullSet(player, element, ArmourClass.BATTLEMAGE) && doAllArmourPiecesHaveMana(player)){
-			player.addPotionEffect(new MobEffectInstance(WizardryPotions.ward, 219, 0, true, false));
+			player.addEffect(new MobEffectInstance(WizardryPotions.ward, 219, 0, true, false));
 		}
 	}
 

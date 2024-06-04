@@ -15,10 +15,10 @@ public class ParticleLeaf extends ParticleWizardry {
 
 	public ParticleLeaf(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.setVelocity(0, -0.03, 0);
-		this.setMaxAge(10 + rand.nextInt(5));
+		this.setMaxAge(10 + random.nextInt(5));
 		this.particleScale *= 1.4f;
 		this.particleGravity = 0;
 		this.canCollide = true;

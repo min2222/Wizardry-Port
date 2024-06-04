@@ -44,11 +44,11 @@ public class RemoveCurse extends SpellBuff {
 		super.spawnParticles(world, caster, modifiers);
 
 		for(int i = 0; i < particleCount*2; i++){
-			double x = caster.posX + world.rand.nextDouble() * 2 - 1;
-			double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			double z = caster.posZ + world.rand.nextDouble() * 2 - 1;
+			double x = caster.getX() + world.random.nextDouble() * 2 - 1;
+			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+			double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.14, 0).clr(0x0f001b)
-					.time(20 + world.rand.nextInt(12)).spawn(world);
+					.time(20 + world.random.nextInt(12)).spawn(world);
 			ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0x0f001b).spawn(world);
 		}
 	}

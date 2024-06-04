@@ -35,7 +35,7 @@ class Image {
 	private Image(ResourceLocation location, int width, int height){
 		this.location = location;
 		this.width = width;
-		this.height = height;
+		this.getBbHeight() = height;
 	}
 
 	/** Returns the width of the image. */
@@ -125,7 +125,7 @@ class Image {
 		image.u = JsonUtils.getInt(json, "u", 0);
 		image.v = JsonUtils.getInt(json, "v", 0);
 		image.textureWidth = JsonUtils.getInt(json, "texture_width", image.width);
-		image.textureHeight = JsonUtils.getInt(json, "texture_height", image.height);
+		image.textureHeight = JsonUtils.getInt(json, "texture_height", image.getBbHeight());
 		image.caption = JsonUtils.getString(json, "caption", "");
 		image.border = JsonUtils.getBoolean(json, "border", true);
 

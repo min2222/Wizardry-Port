@@ -237,7 +237,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	@Override
 	public void verifySellingItem(ItemStack stack){
 		// Copied from EntityVillager
-		if(!this.world.isRemote && this.livingSoundTime > -this.getTalkInterval() + 20){
+		if(!this.level.isClientSide && this.livingSoundTime > -this.getTalkInterval() + 20){
             this.livingSoundTime = -this.getTalkInterval();
             SoundEvent yes = Wizardry.tisTheSeason ? WizardrySounds.ENTITY_WIZARD_HOHOHO : WizardrySounds.ENTITY_WIZARD_YES;
             this.playSound(stack.isEmpty() ? WizardrySounds.ENTITY_WIZARD_NO : yes, this.getSoundVolume(), this.getSoundPitch());
@@ -314,7 +314,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		}else if(healCooldown == -1 && this.deathTime == 0){
 
 			// Heal particles TODO: Change this so it uses the heal spell directly
-			if(world.isRemote){
+			if(level.isClientSide){
 				ParticleBuilder.spawnHealParticles(world, this);
 			}else{
 				if(this.getHealth() < 10){
@@ -324,7 +324,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 					this.setHealCooldown(400);
 				}
 
-				this.playSound(Spells.heal.getSounds()[0], 0.7F, rand.nextFloat() * 0.4F + 1.0F);
+				this.playSound(Spells.heal.getSounds()[0], 0.7F, random.nextFloat() * 0.4F + 1.0F);
 			}
 		}
 
@@ -348,7 +348,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 						if(merchantrecipe.isRecipeDisabled()){
 							// Increases the number of allowed uses of a disabled recipe by a random number.
-							merchantrecipe.increaseMaxTradeUses(this.rand.nextInt(6) + this.rand.nextInt(6) + 2);
+							merchantrecipe.increaseMaxTradeUses(this.random.nextInt(6) + this.random.nextInt(6) + 2);
 						}
 					}
 
@@ -359,7 +359,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 					this.updateRecipes = false;
 				}
 
-				this.addPotionEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
+				this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
 			}
 		}
 
@@ -382,7 +382,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			if(this.spells.size() >= 4 && spell.canBeCastBy(this, true)){
 				// The set(...) method returns the element that was replaced - neat!
 				player.sendMessage(Component.translatable("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
-						this.getDisplayName(), this.spells.set(rand.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
+						this.getDisplayName(), this.spells.set(random.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
 						spell.getNameForTranslationFormatted()));
 				return true;
 			}
@@ -391,7 +391,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		// Won't trade with a player that has attacked them.
 		if(this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isSneaking()
 				&& this.getAttackTarget() != player){
-			if(!this.world.isRemote){
+			if(!this.level.isClientSide){
 				this.setCustomer(player);
 				player.displayVillagerTradeGui(this);
 				// player.displayGUIMerchant(this, this.getElement().getWizardName());
@@ -475,7 +475,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 						data.sync();
 
-						if(!world.isRemote && !this.getCustomer().isCreative() && Wizardry.settings.discoveryMode){
+						if(!level.isClientSide && !this.getCustomer().isCreative() && Wizardry.settings.discoveryMode){
 							// Sound and text only happen server-side, in survival, with discovery mode on
 							EntityUtils.playSoundAtPlayer(this.getCustomer(), WizardrySounds.MISC_DISCOVER_SPELL, 1.25f, 1);
 							this.getCustomer().sendMessage(Component.translatable("spell.discover",
@@ -487,7 +487,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		}
 
 		// Changed to a 4 in 5 chance of unlocking a new recipe.
-		if(this.rand.nextInt(5) > 0 || ItemArtefact.isArtefactActive(customer, WizardryItems.charm_haggler)){
+		if(this.random.nextInt(5) > 0 || ItemArtefact.isArtefactActive(customer, WizardryItems.charm_haggler)){
 			this.timeUntilReset = 40;
 			this.updateRecipes = true;
 
@@ -551,11 +551,11 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 				tier = Tier.NOVICE;
 
-				if(rand.nextDouble() < tierIncreaseChance){
+				if(random.nextDouble() < tierIncreaseChance){
 					tier = Tier.APPRENTICE;
-					if(rand.nextDouble() < tierIncreaseChance){
+					if(random.nextDouble() < tierIncreaseChance){
 						tier = Tier.ADVANCED;
-						if(rand.nextDouble() < tierIncreaseChance * 0.6){
+						if(random.nextDouble() < tierIncreaseChance * 0.6){
 							tier = Tier.MASTER;
 						}
 					}
@@ -580,7 +580,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			if(itemToSell.isEmpty()) return;
 
 			ItemStack secondItemToBuy = tier == Tier.MASTER ? new ItemStack(WizardryItems.astral_diamond)
-					: new ItemStack(WizardryItems.magic_crystal, tier.ordinal() * 3 + 1 + rand.nextInt(4));
+					: new ItemStack(WizardryItems.magic_crystal, tier.ordinal() * 3 + 1 + random.nextInt(4));
 
 			merchantrecipelist.add(new MerchantRecipe(this.getRandomPrice(tier), secondItemToBuy, itemToSell));
 		}
@@ -601,7 +601,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		Map<Pair<ResourceLocation, Short>, Integer> map = Wizardry.settings.currencyItems;
 		// This isn't that efficient but it's not called very often really so it doesn't matter
-		Pair<ResourceLocation, Short> itemName = map.keySet().toArray(new Pair[0])[rand.nextInt(map.size())];
+		Pair<ResourceLocation, Short> itemName = map.keySet().toArray(new Pair[0])[random.nextInt(map.size())];
 		Item item = Item.REGISTRY.getObject(itemName.getLeft());
 		short meta = itemName.getRight();
 		int value;
@@ -614,10 +614,10 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			value = map.get(itemName);
 		}
 
-		// ((tier.ordinal() + 1) * 16 + rand.nextInt(6)) gives a 'value' for the item being bought
+		// ((tier.ordinal() + 1) * 16 + random.nextInt(6)) gives a 'value' for the item being bought
 		// This is then divided by the value of the currency item to give a price
 		// The absolute maximum stack size that can result from this calculation (with value = 1) is 64.
-		return new ItemStack(item, Mth.clamp((8 + tier.ordinal() * 16 + rand.nextInt(9)) / value, 1, 64), meta);
+		return new ItemStack(item, Mth.clamp((8 + tier.ordinal() * 16 + random.nextInt(9)) / value, 1, 64), meta);
 	}
 
 	private ItemStack getRandomItemOfTier(Tier tier){
@@ -637,56 +637,56 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		switch(tier){
 
 		case NOVICE:
-			randomiser = rand.nextInt(5);
+			randomiser = random.nextInt(5);
 			if(randomiser < 4 && !spells.isEmpty()){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0 && !specialismSpells.isEmpty()){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0 && !specialismSpells.isEmpty()){
 					// This means it is more likely for spell books sold to be of the same element as the wizard if the
 					// wizard has an element.
-					return getBookStackForSpell(specialismSpells.get(rand.nextInt(specialismSpells.size())));
+					return getBookStackForSpell(specialismSpells.get(random.nextInt(specialismSpells.size())));
 				}else{
-					return getBookStackForSpell(spells.get(rand.nextInt(spells.size())));
+					return getBookStackForSpell(spells.get(random.nextInt(spells.size())));
 				}
 			}else{
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0){
 					// This means it is more likely for wands sold to be of the same element as the wizard if the wizard
 					// has an element.
 					return new ItemStack(WizardryItems.getWand(tier, this.getElement()));
 				}else{
 					return new ItemStack(
-							WizardryItems.getWand(tier, Element.values()[rand.nextInt(Element.values().length)]));
+							WizardryItems.getWand(tier, Element.values()[random.nextInt(Element.values().length)]));
 				}
 			}
 
 		case APPRENTICE:
-			randomiser = rand.nextInt(Wizardry.settings.discoveryMode ? 12 : 10);
+			randomiser = random.nextInt(Wizardry.settings.discoveryMode ? 12 : 10);
 			if(randomiser < 5 && !spells.isEmpty()){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0 && !specialismSpells.isEmpty()){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0 && !specialismSpells.isEmpty()){
 					// This means it is more likely for spell books sold to be of the same element as the wizard if the
 					// wizard has an element.
-					return getBookStackForSpell(specialismSpells.get(rand.nextInt(specialismSpells.size())));
+					return getBookStackForSpell(specialismSpells.get(random.nextInt(specialismSpells.size())));
 				}else{
-					return getBookStackForSpell(spells.get(rand.nextInt(spells.size())));
+					return getBookStackForSpell(spells.get(random.nextInt(spells.size())));
 				}
 			}else if(randomiser < 6){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0){
 					// This means it is more likely for wands sold to be of the same element as the wizard if the wizard
 					// has an element.
 					return new ItemStack(WizardryItems.getWand(tier, this.getElement()));
 				}else{
 					return new ItemStack(
-							WizardryItems.getWand(tier, Element.values()[rand.nextInt(Element.values().length)]));
+							WizardryItems.getWand(tier, Element.values()[random.nextInt(Element.values().length)]));
 				}
 			}else if(randomiser < 8){
 				return new ItemStack(WizardryItems.arcane_tome, 1, 1);
 			}else if(randomiser < 10){
-				EquipmentSlot slot = InventoryUtils.ARMOUR_SLOTS[rand.nextInt(InventoryUtils.ARMOUR_SLOTS.length)];
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
+				EquipmentSlot slot = InventoryUtils.ARMOUR_SLOTS[random.nextInt(InventoryUtils.ARMOUR_SLOTS.length)];
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0){
 					// This means it is more likely for armour sold to be of the same element as the wizard if the
 					// wizard has an element.
 					return new ItemStack(WizardryItems.getArmour(this.getElement(), slot));
 				}else{
 					return new ItemStack(
-							WizardryItems.getArmour(Element.values()[rand.nextInt(Element.values().length)], slot));
+							WizardryItems.getArmour(Element.values()[random.nextInt(Element.values().length)], slot));
 				}
 			}else{
 				// Don't need to check for discovery mode here since it is done above
@@ -694,42 +694,42 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			}
 
 		case ADVANCED:
-			randomiser = rand.nextInt(12);
+			randomiser = random.nextInt(12);
 			if(randomiser < 5 && !spells.isEmpty()){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0 && !specialismSpells.isEmpty()){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0 && !specialismSpells.isEmpty()){
 					// This means it is more likely for spell books sold to be of the same element as the wizard if the
 					// wizard has an element.
-					return getBookStackForSpell(specialismSpells.get(rand.nextInt(specialismSpells.size())));
+					return getBookStackForSpell(specialismSpells.get(random.nextInt(specialismSpells.size())));
 				}else{
-					return getBookStackForSpell(spells.get(rand.nextInt(spells.size())));
+					return getBookStackForSpell(spells.get(random.nextInt(spells.size())));
 				}
 			}else if(randomiser < 6){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0){
 					// This means it is more likely for wands sold to be of the same element as the wizard if the wizard
 					// has an element.
 					return new ItemStack(WizardryItems.getWand(tier, this.getElement()));
 				}else{
 					return new ItemStack(
-							WizardryItems.getWand(tier, Element.values()[rand.nextInt(Element.values().length)]));
+							WizardryItems.getWand(tier, Element.values()[random.nextInt(Element.values().length)]));
 				}
 			}else if(randomiser < 8){
 				return new ItemStack(WizardryItems.arcane_tome, 1, 2);
 			}else{
 				List<Item> upgrades = new ArrayList<Item>(WandHelper.getSpecialUpgrades());
-				randomiser = rand.nextInt(upgrades.size());
+				randomiser = random.nextInt(upgrades.size());
 				return new ItemStack(upgrades.get(randomiser));
 			}
 
 		case MASTER:
 			// If a regular wizard rolls a master trade, it can only be a simple master wand or a tome of arcana
-			randomiser = this.getElement() != Element.MAGIC ? rand.nextInt(8) : 5 + rand.nextInt(3);
+			randomiser = this.getElement() != Element.MAGIC ? random.nextInt(8) : 5 + random.nextInt(3);
 
 			if(randomiser < 5 && this.getElement() != Element.MAGIC && !specialismSpells.isEmpty()){
 				// Master spells can only be sold by a specialist in that element.
-				return getBookStackForSpell(specialismSpells.get(rand.nextInt(specialismSpells.size())));
+				return getBookStackForSpell(specialismSpells.get(random.nextInt(specialismSpells.size())));
 
 			}else if(randomiser < 6){
-				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
+				if(this.getElement() != Element.MAGIC && random.nextInt(4) > 0){
 					// Master elemental wands can only be sold by a specialist in that element.
 					return new ItemStack(WizardryItems.getWand(tier, this.getElement()));
 				}else{
@@ -748,10 +748,10 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		livingdata = super.onInitialSpawn(difficulty, livingdata);
 
-		textureIndex = this.rand.nextInt(6);
+		textureIndex = this.random.nextInt(6);
 
-		if(rand.nextBoolean()){
-			this.setElement(Element.values()[rand.nextInt(Element.values().length - 1) + 1]);
+		if(random.nextBoolean()){
+			this.setElement(Element.values()[random.nextInt(Element.values().length - 1) + 1]);
 		}else{
 			this.setElement(Element.MAGIC);
 		}

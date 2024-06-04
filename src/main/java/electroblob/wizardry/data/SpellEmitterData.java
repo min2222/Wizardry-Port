@@ -106,7 +106,7 @@ public class SpellEmitterData extends WorldSavedData {
 
 	@SubscribeEvent
 	public static void tick(TickEvent.WorldTickEvent event){
-		if(!event.world.isRemote && event.phase == TickEvent.Phase.END){
+		if(!event.level.isClientSide && event.phase == TickEvent.Phase.END){
 			update(event.world);
 		}
 	}

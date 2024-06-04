@@ -47,7 +47,7 @@ public class ChainLightning extends SpellRay {
 
 			// Secondary chaining effect
 			List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(
-					getProperty(SECONDARY_RANGE).doubleValue(), target.posX, target.posY + target.height / 2, target.posZ, world);
+					getProperty(SECONDARY_RANGE).doubleValue(), target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), world);
 
 			secondaryTargets.remove(target);
 			secondaryTargets.removeIf(e -> !EntityUtils.isLiving(e));
@@ -57,14 +57,14 @@ public class ChainLightning extends SpellRay {
 
 			for(LivingEntity secondaryTarget : secondaryTargets){
 
-				electrocute(world, caster, target.getPositionVector().add(0, target.height/2, 0), secondaryTarget,
+				electrocute(world, caster, target.getPositionVector().add(0, target.getBbHeight()/2, 0), secondaryTarget,
 						getProperty(SECONDARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 				// Tertiary chaining effect
 
 				List<LivingEntity> tertiaryTargets = EntityUtils.getLivingWithinRadius(
-						getProperty(TERTIARY_RANGE).doubleValue(), secondaryTarget.posX,
-						secondaryTarget.posY + secondaryTarget.height / 2, secondaryTarget.posZ, world);
+						getProperty(TERTIARY_RANGE).doubleValue(), secondaryTarget.getX(),
+						secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2, secondaryTarget.getZ(), world);
 
 				tertiaryTargets.remove(target);
 				tertiaryTargets.removeAll(secondaryTargets);
@@ -74,7 +74,7 @@ public class ChainLightning extends SpellRay {
 					tertiaryTargets = tertiaryTargets.subList(0, getProperty(TERTIARY_MAX_TARGETS).intValue());
 
 				for(LivingEntity tertiaryTarget : tertiaryTargets){
-					electrocute(world, caster, secondaryTarget.getPositionVector().add(0, secondaryTarget.height/2, 0),
+					electrocute(world, caster, secondaryTarget.getPositionVector().add(0, secondaryTarget.getBbHeight()/2, 0),
 							tertiaryTarget, getProperty(TERTIARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 				}
 			}
@@ -98,22 +98,22 @@ public class ChainLightning extends SpellRay {
 	private void electrocute(Level world, Entity caster, Vec3 origin, Entity target, float damage){
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()),
 					true);
 		}else{
 			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			ParticleBuilder.create(Type.LIGHTNING).entity(caster)
 			.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
 			
-			ParticleBuilder.spawnShockParticles(world, target.posX, target.posY + target.height/2, target.posZ);
+			ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight()/2, target.getZ());
 		}
 
-		//target.playSound(WizardrySounds.SPELL_SPARK, 1, 1.5f + 0.4f * world.rand.nextFloat());
+		//target.playSound(WizardrySounds.SPELL_SPARK, 1, 1.5f + 0.4f * world.random.nextFloat());
 	}
 
 }

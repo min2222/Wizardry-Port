@@ -116,8 +116,8 @@ public class SpellBuff extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(caster, modifiers) && !world.isRemote) return false;
-		if(world.isRemote) this.spawnParticles(world, caster, modifiers);
+		if(!this.applyEffects(caster, modifiers) && !level.isClientSide) return false;
+		if(level.isClientSide) this.spawnParticles(world, caster, modifiers);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -128,8 +128,8 @@ public class SpellBuff extends Spell {
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
 		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(caster, modifiers) && !world.isRemote) return false;
-		if(world.isRemote) this.spawnParticles(world, caster, modifiers);
+		if(!this.applyEffects(caster, modifiers) && !level.isClientSide) return false;
+		if(level.isClientSide) this.spawnParticles(world, caster, modifiers);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -154,8 +154,8 @@ public class SpellBuff extends Spell {
 		if(nearestEntity == null) return false;
 
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(nearestEntity, modifiers) && !world.isRemote) return false;
-		if(world.isRemote) this.spawnParticles(world, nearestEntity, modifiers);
+		if(!this.applyEffects(nearestEntity, modifiers) && !level.isClientSide) return false;
+		if(level.isClientSide) this.spawnParticles(world, nearestEntity, modifiers);
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
 		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
 
@@ -173,7 +173,7 @@ public class SpellBuff extends Spell {
 		int bonusAmplifier = getBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
 		for(MobEffect potion : potionSet){
-			caster.addPotionEffect(new MobEffectInstance(potion, potion.isInstant() ? 1 :
+			caster.addEffect(new MobEffectInstance(potion, potion.isInstant() ? 1 :
 					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)getProperty(getStrengthKey(potion)).floatValue() + bonusAmplifier,
 					false, true));
@@ -201,9 +201,9 @@ public class SpellBuff extends Spell {
 	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		for(int i = 0; i < particleCount; i++){
-			double x = caster.posX + world.rand.nextDouble() * 2 - 1;
-			double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			double z = caster.posZ + world.rand.nextDouble() * 2 - 1;
+			double x = caster.getX() + world.random.nextDouble() * 2 - 1;
+			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+			double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1, 0).clr(r, g, b).spawn(world);
 		}
 		

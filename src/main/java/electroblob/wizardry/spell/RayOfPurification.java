@@ -55,7 +55,7 @@ public class RayOfPurification extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 
 			if(MagicDamage.isEntityImmune(DamageType.RADIANT, target)){
-				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			}else if (ticksInUse % 10 == 0) {
@@ -69,7 +69,7 @@ public class RayOfPurification extends SpellRay {
 				EntityUtils.attackEntityWithoutKnockback(target,
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.RADIANT), damage);
 				// Blindness
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS,
+				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade))));
 			}
 		}
@@ -92,11 +92,11 @@ public class RayOfPurification extends SpellRay {
 
 		if(caster != null){
 			ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.getPositionVector()))
-					.length(distance).clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f)
+					.length(distance).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f)
 					.scale(Mth.sin(caster.ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}else{
 			ParticleBuilder.create(Type.BEAM).pos(origin).target(origin.add(direction.scale(distance)))
-					.clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f)
+					.clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f)
 					.scale(Mth.sin(Wizardry.proxy.getThePlayer().ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}
 	}

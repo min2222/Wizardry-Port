@@ -31,18 +31,18 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 		double speed = Spells.earthquake.getProperty(Earthquake.SPREAD_SPEED).doubleValue();
 
-		if(!world.isRemote && EntityUtils.canDamageBlocks(getCaster(), world)){
+		if(!level.isClientSide && EntityUtils.canDamageBlocks(getCaster(), world)){
 
 			// The further the earthquake is going to spread, the finer the angle increments.
 			for(float angle = 0; angle < 2 * Math.PI; angle += Math.PI / (lifetime * 1.5)){
 
 				// Calculates coordinates for the block to be moved. The radius increases with time. The +1.5 is to
 				// leave blocks in the centre untouched.
-				int x = this.posX < 0 ? (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle) - 1)
-						: (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle));
-				int y = (int)(this.posY - 0.5);
-				int z = this.posZ < 0 ? (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle) - 1)
-						: (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle));
+				int x = this.getX() < 0 ? (int)(this.getX() + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle) - 1)
+						: (int)(this.getX() + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle));
+				int y = (int)(this.getY() - 0.5);
+				int z = this.getZ() < 0 ? (int)(this.getZ() + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle) - 1)
+						: (int)(this.getZ() + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle));
 
 				BlockPos pos = new BlockPos(x, y, z);
 
@@ -61,7 +61,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		}
 
 		List<LivingEntity> targets = EntityUtils
-				.getLivingWithinRadius((this.ticksExisted * speed) + 1.5, this.posX, this.posY, this.posZ, world);
+				.getLivingWithinRadius((this.ticksExisted * speed) + 1.5, this.getX(), this.getY(), this.getZ(), world);
 
 		// In this particular instance, the caster is completely unaffected because they will always be in the
 		// centre.
@@ -70,8 +70,8 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		for(LivingEntity target : targets){
 
 			// Searches in a 1 wide ring.
-			if(this.getDistance(target) > (this.ticksExisted * speed) + 0.5 && target.posY < this.posY + 1
-					&& target.posY > this.posY - 1){
+			if(this.getDistance(target) > (this.ticksExisted * speed) + 0.5 && target.getY() < this.getY() + 1
+					&& target.getY() > this.getY() - 1){
 
 				// Knockback must be removed in this instance, or the target will fall into the floor.
 				double motionX = target.motionX;
@@ -81,7 +81,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.BLAST),
 							10 * this.damageMultiplier);
-					target.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, 400, 1));
+					target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 400, 1));
 				}
 
 				// All targets are thrown, even those immune to the damage, so they don't fall into the ground.

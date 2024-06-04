@@ -42,12 +42,12 @@ public class SpectralPathway extends Spell {
 
 		boolean flag = false;
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			// Gets the coordinates of the nearest block intersection to the player's feet.
 			// Remember that a block always takes the coordinates of its northwestern corner.
-			BlockPos origin = new BlockPos(Math.round(caster.posX), (int)caster.posY - 1,
-					Math.round(caster.posZ));
+			BlockPos origin = new BlockPos(Math.round(caster.getX()), (int)caster.getY() - 1,
+					Math.round(caster.getZ()));
 
 			int startPoint = direction.getAxisDirection() == AxisDirection.POSITIVE ? -1 : 0;
 

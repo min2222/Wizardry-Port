@@ -26,7 +26,7 @@ public class Boulder extends SpellConstruct<EntityBoulder> {
 		construct.setHorizontalVelocity(direction.x * speed, direction.z * speed);
 		construct.rotationYaw = caster == null ? side.getHorizontalAngle() : caster.rotationYaw;
 		double yOffset = caster == null ? 0 : 1.6;
-		construct.setPosition(construct.posX + direction.x, construct.posY + yOffset, construct.posZ + direction.z);
+		construct.setPosition(construct.getX() + direction.x, construct.getY() + yOffset, construct.getZ() + direction.z);
 	}
 
 }

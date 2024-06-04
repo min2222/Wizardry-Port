@@ -257,7 +257,7 @@ public final class DrawingUtils {
 	
 			if(tooltip){
 				gui.drawHoveringText(gui.getItemToolTip(stack), mouseX + gui.getXSize()/2 - gui.width/2,
-						mouseY + gui.getYSize()/2 - gui.height/2);
+						mouseY + gui.getYSize()/2 - gui.getBbHeight()/2);
 			}
 		}
 	

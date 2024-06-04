@@ -88,10 +88,10 @@ public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCre
 		this.updateDelegate();
 
 		// Adds a dust particle effect
-		if(this.world.isRemote){
-			double x = this.posX - this.width / 2 + this.rand.nextFloat() * width;
-			double y = this.posY + this.height * this.rand.nextFloat() + 0.2f;
-			double z = this.posZ - this.width / 2 + this.rand.nextFloat() * width;
+		if(this.level.isClientSide){
+			double x = this.getX() - this.width / 2 + this.random.nextFloat() * width;
+			double y = this.getY() + this.getBbHeight() * this.random.nextFloat() + 0.2f;
+			double z = this.getZ() - this.width / 2 + this.random.nextFloat() * width;
 			ParticleBuilder.create(ParticleBuilder.Type.DUST).pos(x, y, z).clr(0.7f, 0.9f, 1).shaded(true).spawn(world);
 		}
 
@@ -108,10 +108,10 @@ public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCre
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
-						this.posY + this.rand.nextFloat() * 2, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
+				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * 2, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}

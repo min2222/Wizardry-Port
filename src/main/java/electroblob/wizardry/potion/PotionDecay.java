@@ -48,7 +48,7 @@ public class PotionDecay extends PotionMagicEffect {
 		LivingEntity target = event.getEntityLiving();
 
 		// Do the timing check first, it'll cut out 95% of calls to all subsequent conditions
-		if(target.ticksExisted % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.world.isRemote
+		if(target.ticksExisted % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.level.isClientSide
 				&& target.isPotionActive(WizardryPotions.decay) && target.onGround){
 
 			List<Entity> entities = target.world.getEntitiesWithinAABBExcludingEntity(target,
@@ -62,7 +62,7 @@ public class PotionDecay extends PotionMagicEffect {
 			// just gets infected with its own decay and the effect lasts forever.
 			EntityDecay decay = new EntityDecay(target.world);
 			decay.setCaster(target);
-			decay.setPosition(target.posX, target.posY, target.posZ);
+			decay.setPosition(target.getX(), target.getY(), target.getZ());
 			target.world.spawnEntity(decay);
 		}
 	}

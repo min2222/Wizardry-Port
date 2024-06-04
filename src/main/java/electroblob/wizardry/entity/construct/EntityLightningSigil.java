@@ -35,12 +35,12 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(this.ticksExisted > 600 && this.getCaster() == null && !this.world.isRemote){
-			this.setDead();
+		if(this.ticksExisted > 600 && this.getCaster() == null && !this.level.isClientSide){
+			this.discard();
 		}
 
-		List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY,
-				this.posZ, this.height, this.world);
+		List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.getX(), this.getY(),
+				this.getZ(), this.getBbHeight(), this.world);
 
 		for(LivingEntity target : targets){
 
@@ -66,7 +66,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 					double seekerRange = Spells.lightning_sigil.getProperty(SECONDARY_RANGE).doubleValue();
 
 					List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(seekerRange,
-							target.posX, target.posY + target.height / 2, target.posZ, world);
+							target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), world);
 
 					for(int j = 0; j < Math.min(secondaryTargets.size(),
 							Spells.lightning_sigil.getProperty(SECONDARY_MAX_TARGETS).floatValue()); j++){
@@ -75,18 +75,18 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 						if(secondaryTarget != target && this.isValidTarget(secondaryTarget)){
 
-							if(world.isRemote){
+							if(level.isClientSide){
 								
 								ParticleBuilder.create(Type.LIGHTNING).entity(target)
-								.pos(0, target.height/2, 0).target(secondaryTarget).spawn(world);
+								.pos(0, target.getBbHeight()/2, 0).target(secondaryTarget).spawn(world);
 								
-								ParticleBuilder.spawnShockParticles(world, secondaryTarget.posX,
-										secondaryTarget.posY + secondaryTarget.height / 2,
-										secondaryTarget.posZ);
+								ParticleBuilder.spawnShockParticles(world, secondaryTarget.getX(),
+										secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2,
+										secondaryTarget.getZ());
 							}
 
 							secondaryTarget.playSound(WizardrySounds.ENTITY_LIGHTNING_SIGIL_TRIGGER, 1.0F,
-									world.rand.nextFloat() * 0.4F + 1.5F);
+									world.random.nextFloat() * 0.4F + 1.5F);
 
 							secondaryTarget.hurt(
 									MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK),
@@ -95,16 +95,16 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 					}
 					// The trap is destroyed once triggered.
-					this.setDead();
+					this.discard();
 				}
 			}
 		}
 
-		if(this.world.isRemote && this.rand.nextInt(15) == 0){
-			double radius = (0.5 + rand.nextDouble() * 0.3) * width/2;
-			float angle = rand.nextFloat() * (float)Math.PI * 2;
+		if(this.level.isClientSide && this.random.nextInt(15) == 0){
+			double radius = (0.5 + random.nextDouble() * 0.3) * width/2;
+			float angle = random.nextFloat() * (float)Math.PI * 2;
 			ParticleBuilder.create(Type.SPARK)
-			.pos(this.posX + radius * Mth.cos(angle), this.posY + 0.1, this.posZ + radius * Mth.sin(angle))
+			.pos(this.getX() + radius * Mth.cos(angle), this.getY() + 0.1, this.getZ() + radius * Mth.sin(angle))
 			.spawn(world);
 		}
 	}

@@ -98,9 +98,9 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 			this.playSound(WizardrySounds.ENTITY_STORM_ELEMENTAL_WIND, 1.0f, 1.0f);
 		}
 
-		if(this.rand.nextInt(24) == 0){
-			this.playSound(WizardrySounds.ENTITY_STORM_ELEMENTAL_BURN, 1.0F + this.rand.nextFloat(),
-					this.rand.nextFloat() * 0.7F + 0.3F);
+		if(this.random.nextInt(24) == 0){
+			this.playSound(WizardrySounds.ENTITY_STORM_ELEMENTAL_BURN, 1.0F + this.random.nextFloat(),
+					this.random.nextFloat() * 0.7F + 0.3F);
 		}
 
 		// Slow fall
@@ -108,26 +108,26 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 			this.motionY *= 0.6D;
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i=0; i<2; ++i){
 				
 				world.spawnParticle(ParticleTypes.SMOKE_LARGE,
-						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						this.posY + this.rand.nextDouble() * (double)this.height,
-						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getY() + this.random.nextDouble() * (double)this.getBbHeight(),
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
 				
 				ParticleBuilder.create(Type.SPARK, this).spawn(world);
 			}
 
 			for(int i=0; i<10; i++){
 				
-				float brightness = rand.nextFloat() * 0.2f;
-				double dy = this.rand.nextDouble() * (double)this.height;
+				float brightness = random.nextFloat() * 0.2f;
+				double dy = this.random.nextDouble() * (double)this.getBbHeight();
 				
-				ParticleBuilder.create(Type.SPARKLE).pos(this.posX, this.posY + dy, this.posZ)
-				.time(20 + rand.nextInt(10)).clr(0, brightness, brightness)//.entity(this)
-				.spin(0.2 + 0.5 * dy, 0.1 + 0.05 * world.rand.nextDouble()).spawn(world);
+				ParticleBuilder.create(Type.SPARKLE).pos(this.getX(), this.getY() + dy, this.getZ())
+				.time(20 + random.nextInt(10)).clr(0, brightness, brightness)//.entity(this)
+				.spin(0.2 + 0.5 * dy, 0.1 + 0.05 * world.random.nextDouble()).spawn(world);
 			}
 		}
 

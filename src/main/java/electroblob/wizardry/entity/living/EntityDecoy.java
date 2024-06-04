@@ -41,11 +41,11 @@ public class EntityDecoy extends EntitySummonedCreature {
 	public void onDespawn(){
 		super.onDespawn();
 		
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 20; i++){
 				ParticleBuilder.create(Type.DUST)
-				.pos(this.posX + (this.rand.nextDouble() - 0.5) * this.width, this.posY
-						+ this.rand.nextDouble() * this.height, this.posZ + (this.rand.nextDouble() - 0.5) * this.width)
+				.pos(this.getX() + (this.random.nextDouble() - 0.5) * this.width, this.getY()
+						+ this.random.nextDouble() * this.getBbHeight(), this.getZ() + (this.random.nextDouble() - 0.5) * this.width)
 				.time(40)
 				.clr(0.2f, 1.0f, 0.8f)
 				.shaded(true)
@@ -73,7 +73,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 	public void onUpdate(){
 		super.onUpdate();
 		if(this.getCaster() == null || this.getCaster().isDead){
-			this.setDead();
+			this.discard();
 			this.onDespawn();
 		}
 	}

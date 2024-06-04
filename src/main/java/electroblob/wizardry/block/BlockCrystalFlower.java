@@ -41,7 +41,7 @@ public class BlockCrystalFlower extends BlockBush {
 
 	@Override
 	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random random){
-		if(world.isRemote && random.nextBoolean()){
+		if(level.isClientSide && random.nextBoolean()){
 			ParticleBuilder.create(Type.SPARKLE)
 			.pos(pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() / 2 + 0.5, pos.getZ() + random.nextDouble()).vel(0, 0.01, 0)
 					.time(20 + random.nextInt(10)).clr(0.5f + (random.nextFloat() / 2), 0.5f + (random.nextFloat() / 2),
@@ -59,9 +59,9 @@ public class BlockCrystalFlower extends BlockBush {
 		// Grows crystal flowers when bonemeal is used on grass
 		if(Wizardry.settings.bonemealGrowsCrystalFlowers && event.getBlock().getBlock() == Blocks.GRASS){
 
-			BlockPos pos = event.getPos().add(event.getWorld().rand.nextInt(8) - event.getWorld().rand.nextInt(8),
-					event.getWorld().rand.nextInt(4) - event.getWorld().rand.nextInt(4),
-					event.getWorld().rand.nextInt(8) - event.getWorld().rand.nextInt(8));
+			BlockPos pos = event.getPos().add(event.getWorld().random.nextInt(8) - event.getWorld().random.nextInt(8),
+					event.getWorld().random.nextInt(4) - event.getWorld().random.nextInt(4),
+					event.getWorld().random.nextInt(8) - event.getWorld().random.nextInt(8));
 
 			if(event.getWorld().isAirBlock(new BlockPos(pos))
 					&& (!event.getWorld().provider.isNether() || pos.getY() < 127)

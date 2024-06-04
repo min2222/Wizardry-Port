@@ -20,8 +20,8 @@ public class EntityDecay extends EntityMagicConstruct {
 
 	public EntityDecay(Level world){
 		super(world);
-		textureIndex = this.rand.nextInt(10);
-		this.height = 0.2f;
+		textureIndex = this.random.nextInt(10);
+		this.getBbHeight() = 0.2f;
 		this.width = 2.0f;
 	}
 
@@ -30,32 +30,32 @@ public class EntityDecay extends EntityMagicConstruct {
 
 		super.onUpdate();
 
-		if(this.rand.nextInt(700) == 0 && this.ticksExisted + 100 < lifetime)
-			this.playSound(WizardrySounds.ENTITY_DECAY_AMBIENT, 0.2F + rand.nextFloat() * 0.2F,
-					0.6F + rand.nextFloat() * 0.15F);
+		if(this.random.nextInt(700) == 0 && this.ticksExisted + 100 < lifetime)
+			this.playSound(WizardrySounds.ENTITY_DECAY_AMBIENT, 0.2F + random.nextFloat() * 0.2F,
+					0.6F + random.nextFloat() * 0.15F);
 
-		if(!this.world.isRemote){
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2f, this.posX, this.posY,
-					this.posZ, this.height, this.world);
+		if(!this.level.isClientSide){
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2f, this.getX(), this.getY(),
+					this.getZ(), this.getBbHeight(), this.world);
 			for(LivingEntity target : targets){
 				if(target != this.getCaster()){
 					// If this check wasn't here the potion would be reapplied every tick and hence the entity would be
 					// damaged each tick.
 					// In this case, we do want particles to be shown.
 					if(!target.isPotionActive(WizardryPotions.decay))
-						target.addPotionEffect(new MobEffectInstance(WizardryPotions.decay,
+						target.addEffect(new MobEffectInstance(WizardryPotions.decay,
 								Spells.decay.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
 				}
 			}
 			
-		}else if(this.rand.nextInt(15) == 0){
+		}else if(this.random.nextInt(15) == 0){
 			
-			double radius = rand.nextDouble() * 0.8;
-			float angle = rand.nextFloat() * (float)Math.PI * 2;
-			float brightness = rand.nextFloat() * 0.4f;
+			double radius = random.nextDouble() * 0.8;
+			float angle = random.nextFloat() * (float)Math.PI * 2;
+			float brightness = random.nextFloat() * 0.4f;
 			
 			ParticleBuilder.create(Type.DARK_MAGIC)
-			.pos(this.posX + radius * Mth.cos(angle), this.posY, this.posZ + radius * Mth.sin(angle))
+			.pos(this.getX() + radius * Mth.cos(angle), this.getY(), this.getZ() + radius * Mth.sin(angle))
 			.clr(brightness, 0, brightness + 0.1f)
 			.spawn(world);
 		}

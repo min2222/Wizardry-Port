@@ -55,7 +55,7 @@ public class EntitySpiritWolf extends EntityWolf {
 
 		// Adds Particles on spawn. Due to client/server differences this cannot be done
 		// in the item.
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			this.spawnAppearParticles();
 		}
 
@@ -64,9 +64,9 @@ public class EntitySpiritWolf extends EntityWolf {
 
 	private void spawnAppearParticles(){
 		for(int i=0; i<15; i++){
-			double x = this.posX - this.width / 2 + this.rand.nextFloat() * width;
-			double y = this.posY + this.height * this.rand.nextFloat() + 0.2f;
-			double z = this.posZ - this.width / 2 + this.rand.nextFloat() * width;
+			double x = this.getX() - this.width / 2 + this.random.nextFloat() * width;
+			double y = this.getY() + this.getBbHeight() * this.random.nextFloat() + 0.2f;
+			double z = this.getZ() - this.width / 2 + this.random.nextFloat() * width;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).clr(0.8f, 0.8f, 1.0f).spawn(world);
 		}
 	}
@@ -82,15 +82,15 @@ public class EntitySpiritWolf extends EntityWolf {
 
 		if(dispelTimer > 0){
 			if(dispelTimer++ > DISPEL_TIME){
-				this.setDead();
+				this.discard();
 			}
 		}
 
 		// Adds a dust particle effect
-		if(this.world.isRemote){
-			double x = this.posX - this.width / 2 + this.rand.nextFloat() * width;
-			double y = this.posY + this.height * this.rand.nextFloat() + 0.2f;
-			double z = this.posZ - this.width / 2 + this.rand.nextFloat() * width;
+		if(this.level.isClientSide){
+			double x = this.getX() - this.width / 2 + this.random.nextFloat() * width;
+			double y = this.getY() + this.getBbHeight() * this.random.nextFloat() + 0.2f;
+			double z = this.getZ() - this.width / 2 + this.random.nextFloat() * width;
 			ParticleBuilder.create(Type.DUST).pos(x, y, z).clr(0.8f, 0.8f, 1.0f).shaded(true).spawn(world);
 		}
 	}
@@ -110,7 +110,7 @@ public class EntitySpiritWolf extends EntityWolf {
 					
 					this.dispelTimer++;
 					
-					this.playSound(WizardrySounds.ENTITY_SPIRIT_WOLF_VANISH, 0.7F, rand.nextFloat() * 0.4F + 1.0F);
+					this.playSound(WizardrySounds.ENTITY_SPIRIT_WOLF_VANISH, 0.7F, random.nextFloat() * 0.4F + 1.0F);
 					// This is necessary to prevent the wand's spell being cast when performing this
 					// action.
 					return true;

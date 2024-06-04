@@ -43,11 +43,11 @@ public class FlamingWeapon extends Spell {
 					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.flaming_weapon,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 
-					if(world.isRemote){
+					if(level.isClientSide){
 						for(int i=0; i<10; i++){
-							double x = caster.posX + world.rand.nextDouble() * 2 - 1;
-							double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-							double z = caster.posZ + world.rand.nextDouble() * 2 - 1;
+							double x = caster.getX() + world.random.nextDouble() * 2 - 1;
+							double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+							double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
 							ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1, 0).clr(0.9f, 0.7f, 1).spawn(world);
 						}
 					}

@@ -22,9 +22,9 @@ public class PocketWorkbench extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!world.isRemote){
-			caster.openGui(Wizardry.instance, WizardryGuiHandler.PORTABLE_CRAFTING, world, (int)caster.posX,
-					(int)caster.posY, (int)caster.posZ);
+		if(!level.isClientSide){
+			caster.openGui(Wizardry.instance, WizardryGuiHandler.PORTABLE_CRAFTING, world, (int)caster.getX(),
+					(int)caster.getY(), (int)caster.getZ());
 		}
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);

@@ -40,7 +40,7 @@ public class LightningPulse extends Spell {
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(
 					getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade),
-					caster.posX, caster.posY, caster.posZ, world);
+					caster.getX(), caster.getY(), caster.getZ(), world);
 
 			for(LivingEntity target : targets){
 				if(AllyDesignationSystem.isValidTarget(caster, target)){
@@ -48,12 +48,12 @@ public class LightningPulse extends Spell {
 					target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 							getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-					if(!world.isRemote){
+					if(!level.isClientSide){
 
-						double dx = target.posX - caster.posX;
-						double dz = target.posZ - caster.posZ;
+						double dx = target.getX() - caster.getX();
+						double dz = target.getZ() - caster.getZ();
 						// Normalises the velocity.
-						double vectorLength = Mth.sqrt(dx * dx + dz * dz);
+						double vectorLength = Math.sqrt(dx * dx + dz * dz);
 						dx /= vectorLength;
 						dz /= vectorLength;
 
@@ -69,9 +69,9 @@ public class LightningPulse extends Spell {
 				}
 			}
 			
-			if(world.isRemote){
-				ParticleBuilder.create(Type.LIGHTNING_PULSE).pos(caster.posX, caster.posY
-						+ GeometryUtils.ANTI_Z_FIGHTING_OFFSET, caster.posZ)
+			if(level.isClientSide){
+				ParticleBuilder.create(Type.LIGHTNING_PULSE).pos(caster.getX(), caster.getY()
+						+ GeometryUtils.ANTI_Z_FIGHTING_OFFSET, caster.getZ())
 				.scale(modifiers.get(WizardryItems.blast_upgrade)).spawn(world);
 			}
 

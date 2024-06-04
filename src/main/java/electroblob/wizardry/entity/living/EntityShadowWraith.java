@@ -101,10 +101,10 @@ public class EntityShadowWraith extends EntitySummonedCreature implements ISpell
 
 	@Override
 	public void onSpawn(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				float brightness = rand.nextFloat() * 0.4f;
-				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + rand.nextInt(10))
+				float brightness = random.nextFloat() * 0.4f;
+				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + random.nextInt(10))
 				.clr(brightness, 0.0f, brightness).spawn(world);
 			}
 		}
@@ -113,9 +113,9 @@ public class EntityShadowWraith extends EntitySummonedCreature implements ISpell
 	@Override
 	public void onLivingUpdate(){
 
-		if(this.rand.nextInt(24) == 0){
-			this.playSound(WizardrySounds.ENTITY_SHADOW_WRAITH_NOISE, 1.0F + this.rand.nextFloat(),
-					this.rand.nextFloat() * 0.7F + 0.3F);
+		if(this.random.nextInt(24) == 0){
+			this.playSound(WizardrySounds.ENTITY_SHADOW_WRAITH_NOISE, 1.0F + this.random.nextFloat(),
+					this.random.nextFloat() * 0.7F + 0.3F);
 		}
 
 		// Slow fall
@@ -123,23 +123,23 @@ public class EntityShadowWraith extends EntitySummonedCreature implements ISpell
 			this.motionY *= 0.6D;
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			for(int i=0; i<2; i++){
 				
 				world.spawnParticle(ParticleTypes.PORTAL,
-						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						this.posY + this.rand.nextDouble() * (double)this.height,
-						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getY() + this.random.nextDouble() * (double)this.getBbHeight(),
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
 				
 				world.spawnParticle(ParticleTypes.SMOKE_LARGE,
-						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						this.posY + this.rand.nextDouble() * (double)this.height,
-						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getY() + this.random.nextDouble() * (double)this.getBbHeight(),
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
 				
-				float brightness = rand.nextFloat() * 0.2f;
+				float brightness = random.nextFloat() * 0.2f;
 				
-				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + rand.nextInt(10))
+				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + random.nextInt(10))
 				.clr(brightness, 0.0f, brightness).spawn(world);
 				
 				ParticleBuilder.create(Type.DARK_MAGIC, this).clr(0.1f, 0.0f, 0.0f).spawn(world);

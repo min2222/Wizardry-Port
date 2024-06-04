@@ -49,11 +49,11 @@ public class ShadowWard extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(world.isRemote){
-			double dx = -1 + 2 * world.rand.nextFloat();
-			double dy = -1 + world.rand.nextFloat();
-			double dz = -1 + 2 * world.rand.nextFloat();
-			world.spawnParticle(ParticleTypes.PORTAL, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, dx, dy, dz);
+		if(level.isClientSide){
+			double dx = -1 + 2 * world.random.nextFloat();
+			double dy = -1 + world.random.nextFloat();
+			double dz = -1 + 2 * world.random.nextFloat();
+			world.spawnParticle(ParticleTypes.PORTAL, caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ(), dx, dy, dz);
 		}
 
 		if(ticksInUse % 50 == 0){

@@ -54,7 +54,7 @@ public class Permafrost extends SpellRay {
 
 		boolean flag = false;
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
 			// Results in the following patterns:
@@ -100,10 +100,10 @@ public class Permafrost extends SpellRay {
 
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = world.rand.nextFloat();
-		ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12))
+		float brightness = world.random.nextFloat();
+		ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12))
 				.clr(0.4f + 0.6f * brightness, 0.6f + 0.4f*brightness, 1).spawn(world);
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12)).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12)).spawn(world);
 	}
 
 }

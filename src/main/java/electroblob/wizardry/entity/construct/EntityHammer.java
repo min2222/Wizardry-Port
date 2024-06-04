@@ -73,20 +73,20 @@ public class EntityHammer extends EntityMagicConstruct {
 
 		super.onUpdate();
 
-//		if(this.ticksExisted % 20 == 1 && !this.onGround && world.isRemote){
+//		if(this.ticksExisted % 20 == 1 && !this.onGround && level.isClientSide){
 //			// Though this sound does repeat, it stops when it hits the ground.
 //			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_HAMMER_FALLING, WizardrySounds.SPELLS, 3.0f, 1.0f, false);
 //		}
 
-		if(this.world.isRemote && this.ticksExisted % 3 == 0){
+		if(this.level.isClientSide && this.ticksExisted % 3 == 0){
 			ParticleBuilder.create(Type.SPARK)
-					.pos(this.posX - 0.5d + rand.nextDouble(), this.posY + 2 * rand.nextDouble(), this.posZ - 0.5d + rand.nextDouble())
+					.pos(this.getX() - 0.5d + random.nextDouble(), this.getY() + 2 * random.nextDouble(), this.getZ() - 0.5d + random.nextDouble())
 					.spawn(world);
 		}
 
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevgetX() = this.getX();
+		this.prevgetY() = this.getY();
+		this.prevgetZ() = this.getZ();
 		++this.fallTime;
 		this.motionY -= 0.03999999910593033D;
 		this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
@@ -105,8 +105,8 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			double seekerRange = Spells.lightning_hammer.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX,
-					this.posY + 1, this.posZ, world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.getX(),
+					this.getY() + 1, this.getZ(), world);
 
 			int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue();
 			while(targets.size() > maxTargets) targets.remove(targets.size() - 1);
@@ -116,15 +116,15 @@ public class EntityHammer extends EntityMagicConstruct {
 				if(EntityUtils.isLiving(target) && this.isValidTarget(target)
 						&& target.ticksExisted % Spells.lightning_hammer.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
 
-					if(world.isRemote){
+					if(level.isClientSide){
 
-						ParticleBuilder.create(Type.LIGHTNING).pos(posX, posY + height - 0.1, posZ) .target(target).spawn(world);
+						ParticleBuilder.create(Type.LIGHTNING).pos(getX(), getY() + height - 0.1, getZ()) .target(target).spawn(world);
 
-						ParticleBuilder.spawnShockParticles(world, target.posX,
-								target.posY + target.height, target.posZ);
+						ParticleBuilder.spawnShockParticles(world, target.getX(),
+								target.getY() + target.getBbHeight(), target.getZ());
 					}
 
-					target.playSound(WizardrySounds.ENTITY_HAMMER_ATTACK, 1.0F, rand.nextFloat() * 0.4F + 1.5F);
+					target.playSound(WizardrySounds.ENTITY_HAMMER_ATTACK, 1.0F, random.nextFloat() * 0.4F + 1.5F);
 
 					float damage = Spells.lightning_hammer.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier;
 
@@ -158,8 +158,8 @@ public class EntityHammer extends EntityMagicConstruct {
 
 		this.playSound(WizardrySounds.ENTITY_HAMMER_EXPLODE, 1.0F, 1.0f);
 
-		if(this.world.isRemote){
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+		if(this.level.isClientSide){
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
 		super.despawn();
@@ -168,29 +168,29 @@ public class EntityHammer extends EntityMagicConstruct {
 	@Override
 	public void fall(float distance, float damageMultiplier){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i = 0; i < 40; i++){
-				double particleX = this.posX - 1.0d + 2 * rand.nextDouble();
-				double particleZ = this.posZ - 1.0d + 2 * rand.nextDouble();
+				double particleX = this.getX() - 1.0d + 2 * random.nextDouble();
+				double particleZ = this.getZ() - 1.0d + 2 * random.nextDouble();
 				// Roundabout way of getting a block instance for the block the hammer is standing on (if any).
-				BlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
+				BlockState block = world.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block != null){
-					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
-							particleX - this.posX, 0, particleZ - this.posZ, Block.getStateId(block));
+					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
+							particleX - this.getX(), 0, particleZ - this.getZ(), Block.getStateId(block));
 				}
 			}
 
 			if(this.fallDistance > 10){
-				EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, Player.class)
+				EntityUtils.getEntitiesWithinRadius(10, getX(), getY(), getZ(), world, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 6));
 			}
 
 		}else{
 			// Just to check the hammer has actually fallen from the sky, rather than the block under it being broken.
 			if(this.fallDistance > 10){
-				EntityLightningBolt entitylightning = new EntityLightningBolt(world, this.posX, this.posY, this.posZ,
+				EntityLightningBolt entitylightning = new EntityLightningBolt(world, this.getX(), this.getY(), this.getZ(),
 						false);
 				world.addWeatherEffect(entitylightning);
 			}
@@ -205,7 +205,7 @@ public class EntityHammer extends EntityMagicConstruct {
 		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
 				&& player.getHeldItemMainhand().isEmpty() && ticksExisted > 10){
 
-			this.setDead();
+			this.discard();
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
 			if(!hammer.hasTagCompound()) hammer.setTag(new CompoundTag());

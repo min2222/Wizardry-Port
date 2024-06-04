@@ -36,7 +36,7 @@ public class HealAlly extends SpellRay {
 				
 				entity.heal(getProperty(HEALTH).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-				if(world.isRemote) ParticleBuilder.spawnHealParticles(world, entity);
+				if(level.isClientSide) ParticleBuilder.spawnHealParticles(world, entity);
 				playSound(world, entity, ticksInUse, -1, modifiers);
 			}
 			

@@ -29,7 +29,7 @@ public class InvigoratingPresence extends SpellAreaEffect {
 
 		int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
-		target.addPotionEffect(new MobEffectInstance(MobEffects.STRENGTH,
+		target.addEffect(new MobEffectInstance(MobEffects.STRENGTH,
 				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 				getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 

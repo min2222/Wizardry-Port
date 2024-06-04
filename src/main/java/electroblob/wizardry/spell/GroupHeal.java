@@ -25,7 +25,7 @@ public class GroupHeal extends SpellAreaEffect {
 
 			Heal.heal(target, getProperty(HEALTH).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-			if(world.isRemote) ParticleBuilder.spawnHealParticles(world, target);
+			if(level.isClientSide) ParticleBuilder.spawnHealParticles(world, target);
 			playSound(world, target, ticksInUse, -1, modifiers);
 			return true;
 		}

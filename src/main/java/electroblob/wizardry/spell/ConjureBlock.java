@@ -35,7 +35,7 @@ public class ConjureBlock extends SpellRay {
 		
 		if(caster != null && caster.isSneaking() && world.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				// Dispelling of blocks
 				world.setBlockToAir(pos);
 			}else{
@@ -48,14 +48,14 @@ public class ConjureBlock extends SpellRay {
 		
 		pos = pos.offset(side);
 		
-		if(world.isRemote){
+		if(level.isClientSide){
 			ParticleBuilder.create(Type.FLASH).pos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).scale(3)
 			.clr(0.75f, 1, 0.85f).spawn(world);
 		}
 		
 		if(BlockUtils.canBlockBeReplaced(world, pos)){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				world.setBlockState(pos, WizardryBlocks.spectral_block.getDefaultState());
 				

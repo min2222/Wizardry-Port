@@ -45,11 +45,11 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 
 		for(int i=0; i<quantity; i++){
 
-			double radius = 0.5 + world.rand.nextDouble() * (maxRadius - 0.5);
+			double radius = 0.5 + world.random.nextDouble() * (maxRadius - 0.5);
 
 			// First, generate a random vector of length radius with a z component of zero
 			// Then rotate it so that what was south is now the side that was hit
-			Vec3 offset = Vec3.fromPitchYaw(world.rand.nextFloat() * 180 - 90, world.rand.nextBoolean() ? 0 : 180)
+			Vec3 offset = Vec3.fromPitchYaw(world.random.nextFloat() * 180 - 90, world.random.nextBoolean() ? 0 : 180)
 					.scale(radius).rotateYaw(side.getHorizontalAngle() * (float)Math.PI/180).rotatePitch(GeometryUtils.getPitch(side) * (float)Math.PI/180);
 
 			if(side.getAxis().isHorizontal()) offset = offset.rotateYaw((float)Math.PI/2);
@@ -70,7 +70,7 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 	@Override
 	protected void addConstructExtras(EntityIceSpike construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		// In this particular case, lifetime is implemented as a delay instead so is treated differently.
-		construct.lifetime = 30 + construct.world.rand.nextInt(15);
+		construct.lifetime = 30 + construct.world.random.nextInt(15);
 		construct.setFacing(side);
 	}
 

@@ -36,7 +36,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 		this.move(MoverType.SELF, motionX, 0, motionZ);
 
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 
 			float areaFactor = (width * width) / 36; // Ensures cloud/raindrop density stays the same for different sizes
 
@@ -57,13 +57,13 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 			if(target.ticksExisted % 150 == 0){ // Use target's lifetime so they don't all get hit at once, looks better
 
-				if(!this.world.isRemote){
+				if(!this.level.isClientSide){
 					EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(
 							this, this.getCaster(), MagicDamage.DamageType.SHOCK), damage);
 				}else{
-					ParticleBuilder.create(Type.LIGHTNING).pos(target.posX, posY + height/2, target.posZ)
+					ParticleBuilder.create(Type.LIGHTNING).pos(target.getX(), getY() + height/2, target.getZ())
 							.target(target).scale(2).spawn(world);
-					ParticleBuilder.spawnShockParticles(world, target.posX, target.posY + target.height, target.posZ);
+					ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight(), target.getZ());
 				}
 
 				target.playSound(WizardrySounds.ENTITY_STORMCLOUD_THUNDER, 1, 1.6f);
@@ -74,7 +74,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 		}
 
 		if(stormcloudRingActive){
-			EntityUtils.getLivingWithinRadius(width * 3, posX, posY, posZ, world).stream()
+			EntityUtils.getLivingWithinRadius(width * 3, getX(), getY(), getZ(), world).stream()
 					.filter(this::isValidTarget).min(Comparator.comparingDouble(this::getDistanceSq)).ifPresent(e -> {
 				Vec3 vel = e.getPositionVector().subtract(this.getPositionVector()).normalize().scale(0.2);
 				this.motionX = vel.x;

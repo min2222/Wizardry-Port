@@ -47,7 +47,7 @@ public class Cobwebs extends SpellRay {
 		for(BlockPos pos1 : sphere){
 
 			if(world.isAirBlock(pos1)){
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					world.setBlockState(pos1, WizardryBlocks.vanishing_cobweb.getDefaultState());
 					if(world.getTileEntity(pos1) instanceof TileEntityTimer){
 						((TileEntityTimer)world.getTileEntity(pos1))

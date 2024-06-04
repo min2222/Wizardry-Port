@@ -48,7 +48,7 @@ public class FireBreath extends SpellRay {
 		if(target instanceof LivingEntity){
 
 			if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
@@ -72,7 +72,7 @@ public class FireBreath extends SpellRay {
 		pos = pos.offset(side);
 
 		if(world.isAirBlock(pos)){
-			if(!world.isRemote && BlockUtils.canPlaceBlock(caster, world, pos)) world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+			if(!level.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)) world.setBlockState(pos, Blocks.FIRE.getDefaultState());
 			return true;
 		}
 		
@@ -86,8 +86,8 @@ public class FireBreath extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		ParticleBuilder.create(Type.MAGIC_FIRE).pos(x, y, z).vel(vx, vy, vz).scale(2 + world.rand.nextFloat()).collide(true).spawn(world);
-		ParticleBuilder.create(Type.MAGIC_FIRE).pos(x, y, z).vel(vx, vy, vz).scale(2 + world.rand.nextFloat()).collide(true).spawn(world);
+		ParticleBuilder.create(Type.MAGIC_FIRE).pos(x, y, z).vel(vx, vy, vz).scale(2 + world.random.nextFloat()).collide(true).spawn(world);
+		ParticleBuilder.create(Type.MAGIC_FIRE).pos(x, y, z).vel(vx, vy, vz).scale(2 + world.random.nextFloat()).collide(true).spawn(world);
 	}
 
 }

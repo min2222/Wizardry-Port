@@ -57,7 +57,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 		double radius = width/2;
 
-		if(this.ticksExisted % 120 == 1 && world.isRemote){
+		if(this.ticksExisted % 120 == 1 && level.isClientSide){
 			// Repeat is false so that the sound fades out when the tornado does rather than stopping suddenly
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_TORNADO_AMBIENT, WizardrySounds.SPELLS, 1.0f, 1.0f, false);
 		}
@@ -77,10 +77,10 @@ public class EntityTornado extends EntityScaledConstruct {
 			}
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			for(LivingEntity target : targets){
 
@@ -94,8 +94,8 @@ public class EntityTornado extends EntityScaledConstruct {
 					double velY = target.motionY;
 
 					// TODO: This doesn't seem right...
-					double dx = (this.posX - target.posX > 0 ? 0.5 : -0.5) - (this.posX - target.posX) * 0.125;
-					double dz = (this.posZ - target.posZ > 0 ? 0.5 : -0.5) - (this.posZ - target.posZ) * 0.125;
+					double dx = (this.getX() - target.getX() > 0 ? 0.5 : -0.5) - (this.getX() - target.getX()) * 0.125;
+					double dz = (this.getZ() - target.getZ() > 0 ? 0.5 : -0.5) - (this.getZ() - target.getZ()) * 0.125;
 
 					if(this.isBurning()){
 						target.setFire(4); // Just a fun Easter egg so no properties here!
@@ -123,12 +123,12 @@ public class EntityTornado extends EntityScaledConstruct {
 		}else{
 			for(int i = 1; i < 10; i++){
 
-				double yPos = rand.nextDouble() * 8;
+				double yPos = random.nextDouble() * 8;
 
-				int blockX = (int)this.posX - 2 + this.rand.nextInt(4);
-				int blockZ = (int)this.posZ - 2 + this.rand.nextInt(4);
+				int blockX = (int)this.getX() - 2 + this.random.nextInt(4);
+				int blockZ = (int)this.getZ() - 2 + this.random.nextInt(4);
 
-				BlockPos pos1 = new BlockPos(blockX, this.posY + 3, blockZ);
+				BlockPos pos1 = new BlockPos(blockX, this.getY() + 3, blockZ);
 
 				Integer blockY = BlockUtils.getNearestSurface(world, pos1, Direction.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
 
@@ -145,13 +145,13 @@ public class EntityTornado extends EntityScaledConstruct {
 						block = world.getBiome(pos1).topBlock;
 					}
 
-					Wizardry.proxy.spawnTornadoParticle(world, this.posX, this.posY + yPos, this.posZ, this.velX, this.velZ,
+					Wizardry.proxy.spawnTornadoParticle(world, this.getX(), this.getY() + yPos, this.getZ(), this.velX, this.velZ,
 							yPos / 3 + 0.5d, 100, block, pos1);
-					Wizardry.proxy.spawnTornadoParticle(world, this.posX, this.posY + yPos, this.posZ, this.velX, this.velZ,
+					Wizardry.proxy.spawnTornadoParticle(world, this.getX(), this.getY() + yPos, this.getZ(), this.velX, this.velZ,
 							yPos / 3 + 0.5d, 100, block, pos1);
 
 					// Sometimes spawns leaf particles if the block is leaves, or snow particles if the block is snow
-					if(this.rand.nextInt(3) == 0){
+					if(this.random.nextInt(3) == 0){
 
 						ResourceLocation type = null;
 
@@ -160,11 +160,11 @@ public class EntityTornado extends EntityScaledConstruct {
 							type = Type.SNOW;
 
 						if(type != null){
-							double yPos1 = rand.nextDouble() * 8;
+							double yPos1 = random.nextDouble() * 8;
 							ParticleBuilder.create(type)
-									.pos(this.posX + (rand.nextDouble() * 2 - 1) * (yPos1 / 3 + 0.5d), this.posY + yPos1,
-											this.posZ + (rand.nextDouble() * 2 - 1) * (yPos1 / 3 + 0.5d))
-									.time(40 + rand.nextInt(10))
+									.pos(this.getX() + (random.nextDouble() * 2 - 1) * (yPos1 / 3 + 0.5d), this.getY() + yPos1,
+											this.getZ() + (random.nextDouble() * 2 - 1) * (yPos1 / 3 + 0.5d))
+									.time(40 + random.nextInt(10))
 									.spawn(world);
 						}
 					}

@@ -164,7 +164,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 //	@SubscribeEvent
 //	public static void onWorldTickEvent(TickEvent.WorldTickEvent event){
 //
-//		if(!event.world.isRemote && event.phase == TickEvent.Phase.END){
+//		if(!event.level.isClientSide && event.phase == TickEvent.Phase.END){
 //			// This will fire once for each dimension, but since we want dispenser-casting to work in all dimensions,
 //			// this is correct (the loaded tile entity list will of course be different in each case.
 //			this.update();

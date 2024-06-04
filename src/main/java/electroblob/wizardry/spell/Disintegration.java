@@ -33,7 +33,7 @@ public class Disintegration extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 		}else{
 
@@ -54,7 +54,7 @@ public class Disintegration extends SpellRay {
 
 		target.extinguish();
 
-		if(world.isRemote){ // FIXME: Various syncing issues here!
+		if(level.isClientSide){ // FIXME: Various syncing issues here!
 			// Set NBT client-side, it's only for rendering
 			// Normally dying entities are ignored but we're fiddling with them here so double-check
 			if(!target.getEntityData().hasKey(NBT_KEY)){
@@ -63,11 +63,11 @@ public class Disintegration extends SpellRay {
 		}else{
 			for(int i = 0; i < count; i++){
 				EntityEmber ember = new EntityEmber(world, caster);
-				double x = (world.rand.nextDouble() - 0.5) * target.width;
-				double y = world.rand.nextDouble() * target.height;
-				double z = (world.rand.nextDouble() - 0.5) * target.width;
-				ember.setPosition(target.posX + x, target.posY + y, target.posZ + z);
-				ember.ticksExisted = world.rand.nextInt(20);
+				double x = (world.random.nextDouble() - 0.5) * target.width;
+				double y = world.random.nextDouble() * target.getBbHeight();
+				double z = (world.random.nextDouble() - 0.5) * target.width;
+				ember.setPosition(target.getX() + x, target.getY() + y, target.getZ() + z);
+				ember.ticksExisted = world.random.nextInt(20);
 				float speed = 0.2f;
 				ember.motionX = x * speed;
 				ember.motionY = y * 0.5f * speed;
@@ -80,7 +80,7 @@ public class Disintegration extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			for(int i = 0; i < 8; i++){
 				world.spawnParticle(ParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);

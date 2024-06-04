@@ -79,10 +79,10 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
 				ParticleBuilder.create(Type.DARK_MAGIC)
-				.pos(this.posX + this.rand.nextFloat(), this.posY + this.rand.nextFloat(), this.posZ + this.rand.nextFloat())
+				.pos(this.getX() + this.random.nextFloat(), this.getY() + this.random.nextFloat(), this.getZ() + this.random.nextFloat())
 				.clr(0.3f, 0.3f, 0.3f)
 				.spawn(world);
 			}
@@ -100,13 +100,13 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	public void onKillEntity(LivingEntity victim){
 		// If the silverfish has a summoner, this is actually called from Wizardry's event handler rather than by
 		// Minecraft itself, because the damagesource being changed causes it not to get called.
-		if(!this.world.isRemote && generation < MAX_GENERATIONS){
+		if(!this.level.isClientSide && generation < MAX_GENERATIONS){
 			// Summons 1-4 more silverfish
-			int alliesToSummon = rand.nextInt(4) + 1;
+			int alliesToSummon = random.nextInt(4) + 1;
 
 			for(int i = 0; i < alliesToSummon; i++){
 				EntitySilverfishMinion silverfish = new EntitySilverfishMinion(this.world);
-				silverfish.setPosition(victim.posX, victim.posY, victim.posZ);
+				silverfish.setPosition(victim.getX(), victim.getY(), victim.getZ());
 				silverfish.setCaster(this.getCaster());
 				silverfish.setLifetime(this.getLifetime());
 				silverfish.generation = this.generation + 1;

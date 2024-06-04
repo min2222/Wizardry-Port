@@ -183,7 +183,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft){
 		// Decreases the timer by the amount it should have been decreased while the bow was in use.
-		if(!world.isRemote) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
+		if(!level.isClientSide) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
 
 		if(entity instanceof Player){
 
@@ -203,21 +203,21 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 				if(stack.getTag() != null){
 					int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY) - 1;
 					stack.getTag().putInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
-					if(shotsLeft == 0 && !world.isRemote){
+					if(shotsLeft == 0 && !level.isClientSide){
 						stack.setItemDamage(getMaxDamage(stack) - getAnimationFrames());
 					}
 				}
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					EntityFlamecatcherArrow arrow = new EntityFlamecatcherArrow(world);
 					arrow.aim(player, EntityFlamecatcherArrow.SPEED * velocity);
 					world.spawnEntity(arrow);
 				}
 
-				world.playSound(null, player.posX, player.posY, player.posZ,
+				world.playSound(null, player.getX(), player.getY(), player.getZ(),
 						WizardrySounds.ITEM_FLAMECATCHER_SHOOT, WizardrySounds.SPELLS, 1, 1);
 
-				world.playSound(null, player.posX, player.posY, player.posZ,
+				world.playSound(null, player.getX(), player.getY(), player.getZ(),
 						WizardrySounds.ITEM_FLAMECATCHER_FLAME, WizardrySounds.SPELLS, 1, 1);
 			}
 		}

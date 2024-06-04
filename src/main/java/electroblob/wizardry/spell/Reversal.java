@@ -42,7 +42,7 @@ public class Reversal extends SpellRay {
 			List<MobEffectInstance> negativePotions = new ArrayList<>(caster.getActivePotionEffects());
 			negativePotions.removeIf(p -> !p.getPotion().isBadEffect());
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				if(negativePotions.isEmpty()) return false; // Needs potion effects to reverse!
 
@@ -56,7 +56,7 @@ public class Reversal extends SpellRay {
 
 				// Now reverse them!
 				negativePotions.forEach(p -> caster.removePotionEffect(p.getPotion()));
-				negativePotions.forEach(((LivingEntity)target)::addPotionEffect);
+				negativePotions.forEach(((LivingEntity)target)::addEffect);
 
 			}else{
 				ParticleBuilder.create(Type.BUFF).entity(caster).clr(1, 1, 0.3f).spawn(world);
@@ -79,6 +79,6 @@ public class Reversal extends SpellRay {
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.1f, 0, 0.05f).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0.1f, 0, 0.05f).spawn(world);
 	}
 }

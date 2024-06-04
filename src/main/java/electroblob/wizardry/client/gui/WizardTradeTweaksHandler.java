@@ -120,7 +120,7 @@ public class WizardTradeTweaksHandler {
 //
 //						if(mouseX >= x + 1 && mouseX < x + w + 1 && mouseY >= y - 1 && mouseY < y + h + 1){
 //							GuiUtils.drawHoveringText(Collections.singletonList("You haven't discovered this spell yet"), mouseX,
-//									mouseY, gui.width, gui.height, 150, Minecraft.getMinecraft().fontRenderer);
+//									mouseY, gui.width, gui.getBbHeight(), 150, Minecraft.getMinecraft().fontRenderer);
 //						}
 						}
 					}

@@ -436,7 +436,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		this.castCommandModifiers = modifiers;
 		this.castCommandDuration = duration;
 
-		if(!this.player.world.isRemote){
+		if(!this.player.level.isClientSide){
 			PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, spell, modifiers, duration);
 			WizardryPacketHandler.net.sendToDimension(message, this.player.world.provider.getDimension());
 		}
@@ -449,7 +449,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		this.castCommandTick = 0;
 		this.castCommandModifiers.reset();
 
-		if(!this.player.world.isRemote){
+		if(!this.player.level.isClientSide){
 			PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, Spells.none, this.castCommandModifiers, this.castCommandDuration);
 			WizardryPacketHandler.net.sendToDimension(message, this.player.world.provider.getDimension());
 		}
@@ -547,7 +547,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 			int id = -1;
 			if(this.selectedMinion != null && this.selectedMinion.get() instanceof Entity)
 				id = ((Entity)this.selectedMinion.get()).getEntityId();
-			long seed = player.world.rand.nextLong();
+			long seed = player.world.random.nextLong();
 			this.synchronisedRandom.setSeed(seed);
 			IMessage msg = new PacketPlayerSync.Message(seed, this.spellsDiscovered, id, this.spellData);
 			WizardryPacketHandler.net.sendTo(msg, (ServerPlayer)this.player);
@@ -641,7 +641,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinLevelEvent event){
-		if(!event.getEntity().world.isRemote && event.getEntity() instanceof ServerPlayer){
+		if(!event.getEntity().level.isClientSide && event.getEntity() instanceof ServerPlayer){
 			// Synchronises wizard data after loading.
 			WizardData data = WizardData.get((Player)event.getEntity());
 			if(data != null) data.sync();

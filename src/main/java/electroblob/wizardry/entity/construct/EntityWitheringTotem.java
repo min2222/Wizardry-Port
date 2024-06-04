@@ -63,7 +63,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(world.isRemote && this.ticksExisted == 1){
+		if(level.isClientSide && this.ticksExisted == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_WITHERING_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
@@ -71,19 +71,19 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
-			ParticleBuilder.create(Type.DUST, rand, posX, posY + 0.2, posZ, 0.3, false)
-					.vel(0, -0.02 - world.rand.nextFloat() * 0.01, 0).clr(0xf575f5).fade(0x382366).spawn(world);
+			ParticleBuilder.create(Type.DUST, rand, getX(), getY() + 0.2, getZ(), 0.3, false)
+					.vel(0, -0.02 - world.random.nextFloat() * 0.01, 0).clr(0xf575f5).fade(0x382366).spawn(world);
 
 			for(int i=0; i<PERIMETER_PARTICLE_DENSITY; i++){
 
-				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + rand.nextFloat());
+				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + random.nextFloat());
 
-				double x = posX + radius * Mth.sin(angle);
-				double z = posZ + radius * Mth.cos(angle);
+				double x = getX() + radius * Mth.sin(angle);
+				double z = getZ() + radius * Mth.cos(angle);
 
-				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
+				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, getY(), z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 
 				if(y != null){
 					ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(0, 0.01, 0).clr(0xf575f5).fade(0x382366).spawn(world);
@@ -91,7 +91,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 			}
 		}
 
-		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), world);
 		nearby.removeIf(e -> !isValidTarget(e));
 		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
 
@@ -116,13 +116,13 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 				targetsRemaining--;
 
-				if(world.isRemote){
+				if(level.isClientSide){
 
 					Vec3 centre = GeometryUtils.getCentre(this);
 					Vec3 pos = GeometryUtils.getCentre(target);
 
 					ParticleBuilder.create(Type.BEAM).pos(centre).target(target)
-							.clr(0.1f + 0.2f * world.rand.nextFloat(), 0, 0.3f).spawn(world);
+							.clr(0.1f + 0.2f * world.random.nextFloat(), 0, 0.3f).spawn(world);
 
 					for(int i = 0; i < 3; i++){
 						ParticleBuilder.create(Type.DUST, rand, pos.x, pos.y, pos.z, 0.3, false)
@@ -138,7 +138,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
-		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), world);
 		nearby.removeIf(e -> !isValidTarget(e));
 
 		float damage = Math.min(getHealthDrained() * 0.2f, Spells.withering_totem.getProperty(WitheringTotem.MAX_EXPLOSION_DAMAGE).floatValue());
@@ -147,12 +147,12 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 			if(EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 					getCaster(), DamageType.MAGIC), damage)){
-				target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER, Spells.withering_totem.getProperty(Spell.EFFECT_DURATION).intValue(),
+				target.addEffect(new MobEffectInstance(MobEffects.WITHER, Spells.withering_totem.getProperty(Spell.EFFECT_DURATION).intValue(),
 						Spells.withering_totem.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 			}
 		}
 
-		if(world.isRemote) ParticleBuilder.create(Type.SPHERE).pos(GeometryUtils.getCentre(this)).scale((float)radius).clr(0xbe1a53)
+		if(level.isClientSide) ParticleBuilder.create(Type.SPHERE).pos(GeometryUtils.getCentre(this)).scale((float)radius).clr(0xbe1a53)
 				.fade(0x210f4a).spawn(world);
 
 		this.playSound(WizardrySounds.ENTITY_WITHERING_TOTEM_EXPLODE, 1, 1);

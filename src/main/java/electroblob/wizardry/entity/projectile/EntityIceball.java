@@ -27,7 +27,7 @@ public class EntityIceball extends EntityMagicProjectile {
 	@Override
 	protected void onImpact(HitResult rayTrace){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			Entity entityHit = rayTrace.entityHit;
 
@@ -40,7 +40,7 @@ public class EntityIceball extends EntityMagicProjectile {
 						damage);
 
 				if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit)){
-					((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+					((LivingEntity)entityHit).addEffect(new MobEffectInstance(WizardryPotions.frost,
 							Spells.iceball.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.iceball.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}
@@ -49,15 +49,15 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				BlockPos pos = rayTrace.getBlockPos();
 
-				if(rayTrace.sideHit == Direction.UP && !world.isRemote && world.isSideSolid(pos, Direction.UP)
+				if(rayTrace.sideHit == Direction.UP && !level.isClientSide && world.isSideSolid(pos, Direction.UP)
 						&& BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canPlaceBlock(thrower, world, pos)){
 					world.setBlockState(pos.up(), Blocks.SNOW_LAYER.getDefaultState());
 				}
 			}
 
-			this.playSound(WizardrySounds.ENTITY_ICEBALL_HIT, 2, 0.8f + rand.nextFloat() * 0.3f);
+			this.playSound(WizardrySounds.ENTITY_ICEBALL_HIT, 2, 0.8f + random.nextFloat() * 0.3f);
 
-			this.setDead();
+			this.discard();
 		}
 	}
 
@@ -66,25 +66,25 @@ public class EntityIceball extends EntityMagicProjectile {
 
 		super.onUpdate();
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i=0; i<5; i++){
 
-				double dx = (rand.nextDouble() - 0.5) * width;
-				double dy = (rand.nextDouble() - 0.5) * height + this.height/2;
-				double dz = (rand.nextDouble() - 0.5) * width;
+				double dx = (random.nextDouble() - 0.5) * width;
+				double dy = (random.nextDouble() - 0.5) * height + this.getBbHeight()/2;
+				double dz = (random.nextDouble() - 0.5) * width;
 				double v = 0.06;
 				ParticleBuilder.create(ParticleBuilder.Type.SNOW)
 						.pos(this.getPositionVector().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
-						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + rand.nextInt(4)).spawn(world);
+						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + random.nextInt(4)).spawn(world);
 
 				if(ticksExisted > 1){
-					dx = (rand.nextDouble() - 0.5) * width;
-					dy = (rand.nextDouble() - 0.5) * height + this.height / 2;
-					dz = (rand.nextDouble() - 0.5) * width;
+					dx = (random.nextDouble() - 0.5) * width;
+					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2;
+					dz = (random.nextDouble() - 0.5) * width;
 					ParticleBuilder.create(ParticleBuilder.Type.SNOW)
 							.pos(this.getPositionVector().add(dx - this.motionX, dy, dz - this.motionZ))
-							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + rand.nextInt(4)).spawn(world);
+							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + random.nextInt(4)).spawn(world);
 				}
 			}
 		}

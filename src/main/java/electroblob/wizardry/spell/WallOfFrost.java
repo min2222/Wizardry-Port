@@ -49,12 +49,12 @@ public class WallOfFrost extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		// Wall of frost now freezes entities solid too!
-		if(target instanceof Mob && !world.isRemote){
+		if(target instanceof Mob && !level.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
 			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
 				
-				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
+				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
 		}
 		
@@ -64,7 +64,7 @@ public class WallOfFrost extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		if(!world.isRemote && EntityUtils.canDamageBlocks(caster, world)){
+		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			// Stops the ice being placed floating above snow and grass. Directions other than up included for
 			// completeness.
@@ -107,10 +107,10 @@ public class WallOfFrost extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = world.rand.nextFloat();
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12))
+		float brightness = world.random.nextFloat();
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12))
 		.clr(0.4f + 0.6f * brightness, 0.6f + 0.4f*brightness, 1).spawn(world);
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12)).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12)).spawn(world);
 	}
 
 }

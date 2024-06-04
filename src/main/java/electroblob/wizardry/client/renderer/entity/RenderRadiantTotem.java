@@ -50,7 +50,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableCull();
 
-		GlStateManager.translate(x, y + entity.height/2, z);
+		GlStateManager.translate(x, y + entity.getBbHeight()/2, z);
 
 		float s = DrawingUtils.smoothScaleFactor(entity.lifetime, entity.ticksExisted, partialTicks, 10, 10);
 		GlStateManager.scale(s, s, s);
@@ -124,7 +124,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 		bindEntityTexture(entity);
 
 		Vec3[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector()
-				.add(0, entity.height/2, 0).scale(-1)));
+				.add(0, entity.getBbHeight()/2, 0).scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

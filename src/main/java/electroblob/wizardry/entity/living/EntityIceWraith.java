@@ -47,12 +47,12 @@ public class EntityIceWraith extends EntityBlazeMinion {
 
 	@Override
 	protected void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				float brightness = 0.5f + (rand.nextFloat() / 2);
+				float brightness = 0.5f + (random.nextFloat() / 2);
 				ParticleBuilder.create(Type.SPARKLE, this)
 				.vel(0, 0.05f, 0)
-				.time(20 + rand.nextInt(10))
+				.time(20 + random.nextInt(10))
 				.clr(brightness, brightness + 0.1f, 1.0f)
 				.spawn(world);
 			}
@@ -71,17 +71,17 @@ public class EntityIceWraith extends EntityBlazeMinion {
 			this.motionY *= 0.6D;
 		}
 
-		if(this.rand.nextInt(24) == 0){
-			this.playSound(WizardrySounds.ENTITY_ICE_WRAITH_AMBIENT, 0.3F + this.rand.nextFloat() / 4,
-					this.rand.nextFloat() * 0.7F + 1.4F);
+		if(this.random.nextInt(24) == 0){
+			this.playSound(WizardrySounds.ENTITY_ICE_WRAITH_AMBIENT, 0.3F + this.random.nextFloat() / 4,
+					this.random.nextFloat() * 0.7F + 1.4F);
 		}
 
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 2; ++i){
 				this.world.spawnParticle(ParticleTypes.CLOUD,
-						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						this.posY + this.rand.nextDouble() * (double)this.height,
-						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getY() + this.random.nextDouble() * (double)this.getBbHeight(),
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
 			}
 		}
 
@@ -104,9 +104,9 @@ public class EntityIceWraith extends EntityBlazeMinion {
 		}
 
 		if(this.newPosRotationIncrements > 0 && !this.canPassengerSteer()){
-			double d0 = this.posX + (this.interpTargetX - this.posX) / (double)this.newPosRotationIncrements;
-			double d1 = this.posY + (this.interpTargetY - this.posY) / (double)this.newPosRotationIncrements;
-			double d2 = this.posZ + (this.interpTargetZ - this.posZ) / (double)this.newPosRotationIncrements;
+			double d0 = this.getX() + (this.interpTargetX - this.getX()) / (double)this.newPosRotationIncrements;
+			double d1 = this.getY() + (this.interpTargetY - this.getY()) / (double)this.newPosRotationIncrements;
+			double d2 = this.getZ() + (this.interpTargetZ - this.getZ()) / (double)this.newPosRotationIncrements;
 			double d3 = Mth.wrapDegrees(this.interpTargetYaw - (double)this.rotationYaw);
 			this.rotationYaw = (float)((double)this.rotationYaw + d3 / (double)this.newPosRotationIncrements);
 			this.rotationPitch = (float)((double)this.rotationPitch
@@ -251,8 +251,8 @@ public class EntityIceWraith extends EntityBlazeMinion {
 					this.blaze.attackEntityAsMob(entitylivingbase);
 				}
 
-				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY,
-						entitylivingbase.posZ, 1.0D);
+				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.getX(), entitylivingbase.getY(),
+						entitylivingbase.getZ(), 1.0D);
 			}else if(d0 < 256.0D){
 				if(this.attackTime <= 0){
 					++this.attackStep;
@@ -278,8 +278,8 @@ public class EntityIceWraith extends EntityBlazeMinion {
 				this.blaze.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
 			}else{
 				this.blaze.getNavigator().clearPath();
-				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY,
-						entitylivingbase.posZ, 1.0D);
+				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.getX(), entitylivingbase.getY(),
+						entitylivingbase.getZ(), 1.0D);
 			}
 
 			super.updateTask();

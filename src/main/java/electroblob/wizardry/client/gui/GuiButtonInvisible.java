@@ -12,7 +12,7 @@ public class GuiButtonInvisible extends GuiButton {
 
 	@Override
 	public void drawButton(Minecraft minecraft, int mouseX, int mouseY, float partialTicks){
-		this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+		this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 	}
 
 }

@@ -108,7 +108,7 @@ public class Grapple extends Spell {
 
 		// If the vine stretched too far
 		if(distance > maxLength){
-			if(world.isRemote && (ticksInUse-1) * extensionSpeed < distance){
+			if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 				spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), direction, distance);
 			}
 			data.setVariable(TARGET_KEY, null);
@@ -119,7 +119,7 @@ public class Grapple extends Spell {
 
 		if(extending){
 			// Extension
-			if(world.isRemote){
+			if(level.isClientSide){
 				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 				ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 						.target(origin.add(direction.scale(ticksInUse * extensionSpeed))).tvel(direction.scale(extensionSpeed))
@@ -147,7 +147,7 @@ public class Grapple extends Spell {
 
 					if(caster.motionY > 0 && !Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0; // Reset fall distance if the caster moves upwards
 
-					if(world.isRemote){
+					if(level.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 								.target(target).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
@@ -178,21 +178,21 @@ public class Grapple extends Spell {
 						}
 					}
 
-					if(world.isRemote){
+					if(level.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 								.target(entity).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
 
 					if(retractTime == 1){ // Just hit
 						this.playSound(world, caster, ticksInUse, -1, modifiers,  "pull");
-						this.playSound(world, entity.posX, entity.posY, entity.posZ, ticksInUse, -1, modifiers,  "attach");
+						this.playSound(world, entity.getX(), entity.getY(), entity.getZ(), ticksInUse, -1, modifiers,  "attach");
 					}
 
 					break;
 
 				default:
 					// Missed
-					if(world.isRemote && (ticksInUse-1) * extensionSpeed < distance){
+					if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 						spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), direction, distance);
 					}
 					//caster.resetActiveHand();
@@ -231,7 +231,7 @@ public class Grapple extends Spell {
 
 		// If the vine stretched too far
 		if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
-			if(world.isRemote && (ticksInUse-1) * extensionSpeed < distance){
+			if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 				spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 			}
 			return false;
@@ -262,7 +262,7 @@ public class Grapple extends Spell {
 			hookPosition = targetVec;
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 			ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).tvel(vec.scale(extensionSpeed))
 					.seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
@@ -293,7 +293,7 @@ public class Grapple extends Spell {
 
 			// If the vine stretched too far
 			if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
-				if(world.isRemote && (ticksInUse-1) * extensionSpeed < distance){
+				if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 					spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 				}
 				return false;
@@ -324,7 +324,7 @@ public class Grapple extends Spell {
 				hookPosition = target;
 			}
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 				ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 			}
@@ -371,7 +371,7 @@ public class Grapple extends Spell {
 			this.playSound(world, origin, duration, duration, modifiers, "release");
 		}
 
-		if(world.isRemote && origin != null && direction != null){
+		if(level.isClientSide && origin != null && direction != null){
 
 			float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 			double distance = Math.min(target.subtract(origin).length(), duration * extensionSpeed);
@@ -383,10 +383,10 @@ public class Grapple extends Spell {
 	private void spawnLeafParticles(Level world, Vec3 origin, Vec3 direction, double distance){
 		// Copied from SpellRay
 		for(double d = PARTICLE_SPACING; d <= distance; d += PARTICLE_SPACING){
-			double x = origin.x + d*direction.x;// + PARTICLE_JITTER * (world.rand.nextDouble()*2 - 1);
-			double y = origin.y + d*direction.y;// + PARTICLE_JITTER * (world.rand.nextDouble()*2 - 1);
-			double z = origin.z + d*direction.z;// + PARTICLE_JITTER * (world.rand.nextDouble()*2 - 1);
-			ParticleBuilder.create(Type.LEAF, world.rand, x, y, z, PARTICLE_JITTER, true).time(25 + world.rand.nextInt(5)).spawn(world);
+			double x = origin.x + d*direction.x;// + PARTICLE_JITTER * (world.random.nextDouble()*2 - 1);
+			double y = origin.y + d*direction.y;// + PARTICLE_JITTER * (world.random.nextDouble()*2 - 1);
+			double z = origin.z + d*direction.z;// + PARTICLE_JITTER * (world.random.nextDouble()*2 - 1);
+			ParticleBuilder.create(Type.LEAF, world.rand, x, y, z, PARTICLE_JITTER, true).time(25 + world.random.nextInt(5)).spawn(world);
 		}
 	}
 

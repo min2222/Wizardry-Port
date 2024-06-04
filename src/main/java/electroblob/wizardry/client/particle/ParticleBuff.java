@@ -90,9 +90,9 @@ public class ParticleBuff extends ParticleWizardry {
 
 		buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-		float x = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
-		float y = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);
-		float z = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
+		float x = (float)(this.prevgetX() + (this.getX() - this.prevgetX()) * (double)partialTicks - interpgetX());
+		float y = (float)(this.prevgetY() + (this.getY() - this.prevgetY()) * (double)partialTicks - interpgetY());
+		float z = (float)(this.prevgetZ() + (this.getZ() - this.prevgetZ()) * (double)partialTicks - interpgetZ());
 
 		// Increases from 0 to 1 in steps of 0.125 evenly throughout the particle's lifetime
 		float f = 0.875f - 0.125f * Mth.floor((float)this.particleAge/(float)this.particleMaxAge * 8 - 0.000001f);

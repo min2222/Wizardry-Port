@@ -32,9 +32,9 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(width/2, posX, posY, posZ, world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(width/2, getX(), getY(), getZ(), world);
 
 			for(LivingEntity target : targets){
 
@@ -42,18 +42,18 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 
 					float strength = Spells.combustion_rune.getProperty(Spell.BLAST_RADIUS).floatValue() * sizeMultiplier;
 
-					world.newExplosion(this.getCaster(), this.posX, this.posY, this.posZ, strength, true,
+					world.newExplosion(this.getCaster(), this.getX(), this.getY(), this.getZ(), strength, true,
 							EntityUtils.canDamageBlocks(getCaster(), world));
 
 					// The trap is destroyed once triggered.
-					this.setDead();
+					this.discard();
 				}
 			}
-		}else if(this.rand.nextInt(15) == 0){
-			double radius = 0.5 + rand.nextDouble() * 0.3;
-			float angle = rand.nextFloat() * (float)Math.PI * 2;
-			world.spawnParticle(ParticleTypes.FLAME, this.posX + radius * Mth.cos(angle), this.posY + 0.1,
-					this.posZ + radius * Mth.sin(angle), 0, 0, 0);
+		}else if(this.random.nextInt(15) == 0){
+			double radius = 0.5 + random.nextDouble() * 0.3;
+			float angle = random.nextFloat() * (float)Math.PI * 2;
+			world.spawnParticle(ParticleTypes.FLAME, this.getX() + radius * Mth.cos(angle), this.getY() + 0.1,
+					this.getZ() + radius * Mth.sin(angle), 0, 0, 0);
 		}
 	}
 

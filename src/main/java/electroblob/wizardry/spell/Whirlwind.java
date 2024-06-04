@@ -33,7 +33,7 @@ public class Whirlwind extends SpellRay {
 		if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
 				|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			return false;
 		}
@@ -43,7 +43,7 @@ public class Whirlwind extends SpellRay {
 			
 			Vec3 vec = target.getPositionEyes(1).subtract(origin).normalize();
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				float velocity = getProperty(REPULSION_VELOCITY).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
@@ -57,14 +57,14 @@ public class Whirlwind extends SpellRay {
 				}
 			}
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				
 				double distance = target.getDistance(origin.x, origin.y, origin.z);
 				
 				for(int i = 0; i < 10; i++){
-					double x = origin.x + world.rand.nextDouble() - 0.5 + vec.x * distance * 0.5;
-					double y = origin.y + world.rand.nextDouble() - 0.5 + vec.y * distance * 0.5;
-					double z = origin.z + world.rand.nextDouble() - 0.5 + vec.z * distance * 0.5;
+					double x = origin.x + world.random.nextDouble() - 0.5 + vec.x * distance * 0.5;
+					double y = origin.y + world.random.nextDouble() - 0.5 + vec.y * distance * 0.5;
+					double z = origin.z + world.random.nextDouble() - 0.5 + vec.z * distance * 0.5;
 					world.spawnParticle(ParticleTypes.CLOUD, x, y, z, vec.x, vec.y, vec.z);
 				}
 			}

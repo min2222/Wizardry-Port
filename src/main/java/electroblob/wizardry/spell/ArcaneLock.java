@@ -47,7 +47,7 @@ public class ArcaneLock extends SpellRay {
 		
 		if(caster instanceof Player){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				if(toggleLock(world, pos, (Player)caster)){
 					BlockPos otherHalf = BlockUtils.getConnectedChest(world, pos);
 					if(otherHalf != null) toggleLock(world, otherHalf, (Player)caster);

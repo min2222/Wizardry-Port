@@ -44,7 +44,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 
 		double extensionSpeed = 0;
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			if(lifetime - this.ticksExisted < 15){
 				extensionSpeed = -0.01 * (this.ticksExisted - (lifetime - 15));
 			}else if(lifetime - this.ticksExisted < 25){
@@ -61,14 +61,14 @@ public class EntityIceSpike extends EntityMagicConstruct {
 
 		if(lifetime - this.ticksExisted == 30) this.playSound(WizardrySounds.ENTITY_ICE_SPIKE_EXTEND, 1, 2.5f);
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 			for(Object entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox())){
 				if(entity instanceof LivingEntity && this.isValidTarget((LivingEntity)entity)){
 					DamageSource source = this.getCaster() == null ? DamageSource.MAGIC : MagicDamage.causeDirectMagicDamage(this.getCaster(), DamageType.FROST);
 					// Potion effect only gets added if the damage succeeded
 					// We DO want knockback here or the entity gets stuck on the spike, which is a bit of a cheat
 					if(((LivingEntity)entity).hurt(source, Spells.ice_spikes.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
-						((LivingEntity)entity).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+						((LivingEntity)entity).addEffect(new MobEffectInstance(WizardryPotions.frost,
 								Spells.ice_spikes.getProperty(Spell.EFFECT_DURATION).intValue(),
 								Spells.ice_spikes.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}

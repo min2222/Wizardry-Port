@@ -21,7 +21,7 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 
 		ticksExisted++;
 
-		if(ticksExisted > lifetime && !this.world.isRemote){
+		if(ticksExisted > lifetime && !this.level.isClientSide){
 			this.world.destroyBlock(pos, false);
 		}
 

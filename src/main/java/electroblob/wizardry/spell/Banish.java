@@ -36,7 +36,7 @@ public class Banish extends SpellRay {
 
 			double minRadius = getProperty(MINIMUM_TELEPORT_DISTANCE).doubleValue();
 			double maxRadius = getProperty(MAXIMUM_TELEPORT_DISTANCE).doubleValue();
-			double radius = (minRadius + world.rand.nextDouble() * maxRadius-minRadius) * modifiers.get(WizardryItems.blast_upgrade);
+			double radius = (minRadius + world.random.nextDouble() * maxRadius-minRadius) * modifiers.get(WizardryItems.blast_upgrade);
 
 			teleport(entity, world, radius);
 		}
@@ -63,21 +63,21 @@ public class Banish extends SpellRay {
 	// Extracted as a separate method for external use
 	public boolean teleport(LivingEntity entity, Level world, double radius){
 
-		float angle = world.rand.nextFloat() * (float)Math.PI * 2;
+		float angle = world.random.nextFloat() * (float)Math.PI * 2;
 
-		int x = Mth.floor(entity.posX + Mth.sin(angle) * radius);
-		int z = Mth.floor(entity.posZ - Mth.cos(angle) * radius);
+		int x = Mth.floor(entity.getX() + Mth.sin(angle) * radius);
+		int z = Mth.floor(entity.getZ() - Mth.cos(angle) * radius);
 		Integer y = BlockUtils.getNearestFloor(world,
-				new BlockPos(x, (int)entity.posY, z), (int)radius);
+				new BlockPos(x, (int)entity.getY(), z), (int)radius);
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i=0; i<10; i++){
-				double dx1 = entity.posX;
-				double dy1 = entity.posY + entity.height * world.rand.nextFloat();
-				double dz1 = entity.posZ;
-				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
-						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
+				double dx1 = entity.getX();
+				double dy1 = entity.getY() + entity.getBbHeight() * world.random.nextFloat();
+				double dz1 = entity.getZ();
+				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.random.nextDouble() - 0.5,
+						world.random.nextDouble() - 0.5, world.random.nextDouble() - 0.5);
 			}
 
 			if(entity instanceof Player) Wizardry.proxy.playBlinkEffect((Player)entity);
@@ -96,7 +96,7 @@ public class Banish extends SpellRay {
 				return false;
 			}
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				entity.setPositionAndUpdate(x + 0.5, y + 1, z + 0.5);
 			}
 

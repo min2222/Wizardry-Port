@@ -23,20 +23,20 @@ public class EntityShield extends Entity {
 		super(world);
 		this.noClip = true;
 		this.width = 1.2f;
-		this.height = 1.4f;
+		this.getBbHeight() = 1.4f;
 	}
 
 	public EntityShield(Level par1World, Player player){
 		super(par1World);
 		this.width = 1.2f;
-		this.height = 1.4f;
+		this.getBbHeight() = 1.4f;
 		this.player = new WeakReference<Player>(player);
 		this.noClip = true;
-		this.setPositionAndRotation(player.posX + player.getLookVec().x,
-				player.posY + 1 + player.getLookVec().y, player.posZ + player.getLookVec().z,
+		this.setPositionAndRotation(player.getX() + player.getLookVec().x,
+				player.getY() + 1 + player.getLookVec().y, player.getZ() + player.getLookVec().z,
 				player.rotationYawHead, player.rotationPitch);
-		this.setEntityBoundingBox(new AABB(this.posX - 0.6f, this.posY - 0.7f, this.posZ - 0.6f,
-				this.posX + 0.6f, this.posY + 0.7f, this.posZ + 0.6f));
+		this.setEntityBoundingBox(new AABB(this.getX() - 0.6f, this.getY() - 0.7f, this.getZ() - 0.6f,
+				this.getX() + 0.6f, this.getY() + 0.7f, this.getZ() + 0.6f));
 	}
 
 	@Override
@@ -44,16 +44,16 @@ public class EntityShield extends Entity {
 		// System.out.println("Shield exists, ID: " + this.getUniqueID().toString());
 		Player entityplayer = player != null ? player.get() : null;
 		if(entityplayer != null){
-			this.setPositionAndRotation(entityplayer.posX + entityplayer.getLookVec().x * 0.3,
-					entityplayer.posY + 1 + entityplayer.getLookVec().y * 0.3,
-					entityplayer.posZ + entityplayer.getLookVec().z * 0.3, entityplayer.rotationYawHead,
+			this.setPositionAndRotation(entityplayer.getX() + entityplayer.getLookVec().x * 0.3,
+					entityplayer.getY() + 1 + entityplayer.getLookVec().y * 0.3,
+					entityplayer.getZ() + entityplayer.getLookVec().z * 0.3, entityplayer.rotationYawHead,
 					entityplayer.rotationPitch);
 			if(!entityplayer.isHandActive() || !(entityplayer.getHeldItem(entityplayer.getActiveHand()).getItem() instanceof ISpellCastingItem)){
 				WizardData.get(entityplayer).setVariable(Shield.SHIELD_KEY, null);
-				this.setDead();
+				this.discard();
 			}
-		}else if(!world.isRemote){
-			this.setDead();
+		}else if(!level.isClientSide){
+			this.discard();
 		}
 	}
 
@@ -66,8 +66,8 @@ public class EntityShield extends Entity {
 
 	public boolean hurt(DamageSource source, float damage){
 		if(source != null && source.getImmediateSource() instanceof IProjectile){
-			world.playSound(null, source.getImmediateSource().posX, source.getImmediateSource().posY,
-					source.getImmediateSource().posZ, WizardrySounds.ENTITY_SHIELD_DEFLECT, WizardrySounds.SPELLS, 0.3f, 1.3f);
+			world.playSound(null, source.getImmediateSource().getX(), source.getImmediateSource().getY(),
+					source.getImmediateSource().getZ(), WizardrySounds.ENTITY_SHIELD_DEFLECT, WizardrySounds.SPELLS, 0.3f, 1.3f);
 		}
 		super.hurt(source, damage);
 		return false;

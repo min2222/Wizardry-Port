@@ -109,11 +109,11 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 
 	protected static int getBlockBrightnessForEntity(Entity entity){
 
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.posX), 0,
-				Mth.floor(entity.posZ));
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.getX()), 0,
+				Mth.floor(entity.getZ()));
 
 		if(entity.world.isBlockLoaded(pos)){
-			pos.setY(Mth.floor(entity.posY + (double)entity.getEyeHeight()));
+			pos.setY(Mth.floor(entity.getY() + (double)entity.getEyeHeight()));
 			return entity.world.getCombinedLight(pos, 0);
 		}else{
 			return 0;

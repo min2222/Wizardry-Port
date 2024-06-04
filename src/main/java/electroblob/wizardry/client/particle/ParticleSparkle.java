@@ -18,7 +18,7 @@ public class ParticleSparkle extends ParticleWizardry {
 		super(world, x, y, z, TEXTURES); // This time the textures are all one long animation
 		
 		this.setRBGColorF(1, 1, 1);
-		this.particleMaxAge = 48 + this.rand.nextInt(12);
+		this.particleMaxAge = 48 + this.random.nextInt(12);
 		this.particleScale *= 0.75f;
 		this.particleGravity = 0;
 		this.canCollide = false;

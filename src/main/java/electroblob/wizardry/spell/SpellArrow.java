@@ -83,14 +83,14 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			// Arrows have gravity 0.05
 			float g = 0.05f;
 			// Assume horizontal projection
-			return range / Mth.sqrt(2 * launchHeight/g);
+			return range / Math.sqrt(2 * launchHeight/g);
 		}
 	}
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			// Creates a projectile from the supplied factory
 			T projectile = arrowFactory.apply(world);
 			// Sets the necessary parameters
@@ -112,7 +112,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 		
 		if(target != null){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				// Creates a projectile from the supplied factory
 				T projectile = arrowFactory.apply(world);
 				// Sets the necessary parameters
@@ -139,7 +139,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			// Creates a projectile from the supplied factory
 			T projectile = arrowFactory.apply(world);
 			// Sets the necessary parameters

@@ -38,9 +38,9 @@ public class ParticleDarkMagic extends ParticleWizardry {
 
 	@Override
 	public void onUpdate(){
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevgetX() = this.getX();
+		this.prevgetY() = this.getY();
+		this.prevgetZ() = this.getZ();
 
 		if(this.particleAge++ >= this.particleMaxAge){
 			this.setExpired();
@@ -49,7 +49,7 @@ public class ParticleDarkMagic extends ParticleWizardry {
 		this.setParticleTextureIndex(this.baseSpellTextureIndex + (7 - this.particleAge * 8 / this.particleMaxAge));
 		this.motionY += 0.004D;
 		this.move(this.motionX, this.motionY, this.motionZ);
-		/* if (this.posY == this.prevPosY) { this.motionX *= 1.1D; this.motionZ *= 1.1D; } */
+		/* if (this.getY() == this.prevgetY()) { this.motionX *= 1.1D; this.motionZ *= 1.1D; } */
 		this.motionX *= 0.9599999785423279D;
 		this.motionY *= 0.9599999785423279D;
 		this.motionZ *= 0.9599999785423279D;

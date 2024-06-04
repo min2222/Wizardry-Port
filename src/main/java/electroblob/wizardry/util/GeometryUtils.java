@@ -55,7 +55,7 @@ public final class GeometryUtils {
 	 * efficient than {@code GeometryUtils.getCentre(entity.getEntityBoundingBox())} as it can use the entity's fields.
 	 */
 	public static Vec3 getCentre(Entity entity){
-		return new Vec3(entity.posX, entity.posY + entity.height/2, entity.posZ);
+		return new Vec3(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ());
 	}
 
 	/**

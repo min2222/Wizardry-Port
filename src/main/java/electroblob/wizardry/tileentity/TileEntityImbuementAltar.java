@@ -103,7 +103,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 					}
 				}
 
-				if(world.isRemote && world.rand.nextInt(2) == 0){
+				if(level.isClientSide && world.random.nextInt(2) == 0){
 
 					Element[] elements = getReceptacleElements();
 
@@ -275,7 +275,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 					// any actual numbers, thus allowing packmakers as much control as possible over the weighting
 					// The probabilities are a little complicated but work out quite nicely at 57% chance with 4 of the
 					// same element of spectral dust
-					Element element = receptacleElements[world.rand.nextInt(receptacleElements.length)];
+					Element element = receptacleElements[world.random.nextInt(receptacleElements.length)];
 					LootTable table = world.getLootTableManager().getLootTableFromLocation(
 							WizardryLoot.RUINED_SPELL_BOOK_LOOT_TABLES[element.ordinal() - 1]);
 					LootContext context = new LootContext.Builder((ServerLevel)world).withPlayer(lastUser)

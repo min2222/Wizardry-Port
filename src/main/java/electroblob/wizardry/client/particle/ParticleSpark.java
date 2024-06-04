@@ -16,7 +16,7 @@ public class ParticleSpark extends ParticleWizardry {
 
 	public ParticleSpark(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.particleScale *= 1.4f;
 		this.setRBGColorF(1, 1, 1);

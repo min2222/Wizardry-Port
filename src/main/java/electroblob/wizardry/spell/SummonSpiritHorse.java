@@ -42,11 +42,11 @@ public class SummonSpiritHorse extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			Entity oldHorse = EntityUtils.getEntityByUUID(world, data.getVariable(UUID_KEY));
 
-			if(oldHorse != null) oldHorse.setDead();
+			if(oldHorse != null) oldHorse.discard();
 
 			BlockPos pos = BlockUtils.findNearbyFloorSpace(caster, 2, 4);
 			if(pos == null) return false;

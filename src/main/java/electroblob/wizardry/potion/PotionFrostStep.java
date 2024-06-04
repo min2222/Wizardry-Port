@@ -42,7 +42,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 	@Override
 	public void spawnCustomParticle(Level world, double x, double y, double z){
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.rand.nextInt(5)).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.random.nextInt(5)).spawn(world);
 	}
 
 	// Use LivingUpdateEvent instead of performEffect because it gets called before the actual frost walker processing
@@ -56,7 +56,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 		if(host.isPotionActive(WizardryPotions.frost_step)){
 			// Mimics the behaviour of the frost walker enchantment itself
-			if(!host.world.isRemote){
+			if(!host.level.isClientSide){
 
 				BlockPos currentPos = new BlockPos(host);
 
@@ -93,7 +93,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 			for(BlockPos.MutableBlockPos pos2 : BlockPos.getAllInBoxMutable(pos.add((double)(-f), -1.0D, (double)(-f)), pos.add((double)f, -1.0D, (double)f))){
 
-				if(pos2.distanceSqToCenter(living.posX, living.posY, living.posZ) <= (double)(f * f)){
+				if(pos2.distanceSqToCenter(living.getX(), living.getY(), living.getZ()) <= (double)(f * f)){
 
 					pos1.setPos(pos2.getX(), pos2.getY() + 1, pos2.getZ());
 					BlockState state1 = world.getBlockState(pos1);

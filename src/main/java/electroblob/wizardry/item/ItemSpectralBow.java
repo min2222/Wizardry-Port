@@ -182,7 +182,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft){
 		// Decreases the timer by the amount it should have been decreased while the bow was in use.
-		if(!world.isRemote) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
+		if(!level.isClientSide) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
 
 		if(entity instanceof Player){
 
@@ -196,7 +196,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 
 			if((double)f >= 0.1D){
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 
 					EntityConjuredArrow entityarrow = new EntityConjuredArrow(world, entityplayer);
 					entityarrow.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F,
@@ -229,9 +229,9 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 					world.spawnEntity(entityarrow);
 				}
 
-				world.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ,
+				world.playSound(null, entityplayer.getX(), entityplayer.getY(), entityplayer.getZ(),
 						SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 1.0F,
-						1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+						1.0F / (itemrandom.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 
 				entityplayer.addStat(StatList.getObjectUseStats(this));
 			}

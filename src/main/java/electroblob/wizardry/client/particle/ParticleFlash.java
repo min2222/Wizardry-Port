@@ -29,9 +29,9 @@ public class ParticleFlash extends ParticleWizardry {
     public void drawParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ){
 		float f4 = particleScale * Mth.sin(((float)this.particleAge + partialTicks - 1.0F)/particleMaxAge * (float)Math.PI);
         this.setAlphaF(0.6F - ((float)this.particleAge + partialTicks - 1.0F)/particleMaxAge * 0.5F);
-        float f5 = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
-        float f6 = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);
-        float f7 = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
+        float f5 = (float)(this.prevgetX() + (this.getX() - this.prevgetX()) * (double)partialTicks - interpgetX());
+        float f6 = (float)(this.prevgetY() + (this.getY() - this.prevgetY()) * (double)partialTicks - interpgetY());
+        float f7 = (float)(this.prevgetZ() + (this.getZ() - this.prevgetZ()) * (double)partialTicks - interpgetZ());
         int i = this.getBrightnessForRender(partialTicks);
         int j = i >> 16 & 65535;
         int k = i & 65535;

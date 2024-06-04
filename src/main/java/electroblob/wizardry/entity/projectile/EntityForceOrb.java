@@ -31,40 +31,40 @@ public class EntityForceOrb extends EntityBomb {
 
 		if(par1RayTraceResult.entityHit != null){
 			// This is if the force orb gets a direct hit
-			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 		}
 
 		// Particle effect
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int j = 0; j < 20; j++){
-				float brightness = 0.5f + (rand.nextFloat() / 2);
-				ParticleBuilder.create(Type.SPARKLE, rand, posX, posY, posZ, 0.25, true).time(6)
+				float brightness = 0.5f + (random.nextFloat() / 2);
+				ParticleBuilder.create(Type.SPARKLE, rand, getX(), getY(), getZ(), 0.25, true).time(6)
 				.clr(brightness, 1.0f, brightness + 0.2f).spawn(world);
 			}
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
 			// 2 gives a cool flanging effect!
-			float pitch = this.rand.nextFloat() * 0.2F + 0.3F;
+			float pitch = this.random.nextFloat() * 0.2F + 0.3F;
 			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT_BLOCK, 1.5F, pitch);
 			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT_BLOCK, 1.5F, pitch - 0.01f);
 
 			double blastRadius = Spells.force_orb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(blastRadius, this.posX,
-					this.posY, this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(blastRadius, this.getX(),
+					this.getY(), this.getZ(), this.world);
 
 			for(LivingEntity target : targets){
 				if(target != this.getThrower()){
 
 					double velY = target.motionY;
 
-					double dx = this.posX - target.posX > 0 ? -0.5 - (this.posX - target.posX) / 8
-							: 0.5 - (this.posX - target.posX) / 8;
-					double dz = this.posZ - target.posZ > 0 ? -0.5 - (this.posZ - target.posZ) / 8
-							: 0.5 - (this.posZ - target.posZ) / 8;
+					double dx = this.getX() - target.getX() > 0 ? -0.5 - (this.getX() - target.getX()) / 8
+							: 0.5 - (this.getX() - target.getX()) / 8;
+					double dz = this.getZ() - target.getZ() > 0 ? -0.5 - (this.getZ() - target.getZ()) / 8
+							: 0.5 - (this.getZ() - target.getZ()) / 8;
 
 					float damage = Spells.force_orb.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
@@ -77,7 +77,7 @@ public class EntityForceOrb extends EntityBomb {
 				}
 			}
 
-			this.setDead();
+			this.discard();
 		}
 	}
 	

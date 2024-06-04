@@ -254,7 +254,7 @@ public class GuiWizardHandbook extends Screen {
 		this.drawDefaultBackground();
 
 		int left = this.width / 2 - GUI_WIDTH / 2;
-		int top = this.height / 2 - GUI_HEIGHT / 2;
+		int top = this.getBbHeight() / 2 - GUI_HEIGHT / 2;
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 
@@ -349,7 +349,7 @@ public class GuiWizardHandbook extends Screen {
 		initFormatTags();
 
 		final int left = this.width / 2 - GUI_WIDTH / 2;
-		final int top = this.height / 2 - GUI_HEIGHT / 2;
+		final int top = this.getBbHeight() / 2 - GUI_HEIGHT / 2;
 
 		recipes.values().forEach(CraftingRecipe::load);
 
@@ -358,19 +358,19 @@ public class GuiWizardHandbook extends Screen {
 		this.buttonList.clear();
 
 		this.buttonList.add(next = new GuiButtonTurnPage(nextButtonId++, left + GUI_WIDTH - BUTTON_INSET_X - GuiButtonTurnPage.WIDTH,
-				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.NEXT_PAGE, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
+				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.NEXT_PAGE, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
 
 		this.buttonList.add(previous = new GuiButtonTurnPage(nextButtonId++, left + BUTTON_INSET_X,
-				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.PREVIOUS_PAGE, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
+				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.PREVIOUS_PAGE, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
 
 		this.buttonList.add(nextSection = new GuiButtonTurnPage(nextButtonId++, left + GUI_WIDTH - BUTTON_INSET_X - GuiButtonTurnPage.WIDTH - BUTTON_SPACING,
-				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.NEXT_SECTION, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
+				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.NEXT_SECTION, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
 
 		this.buttonList.add(previousSection = new GuiButtonTurnPage(nextButtonId++, left + BUTTON_INSET_X + BUTTON_SPACING,
-				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.PREVIOUS_SECTION, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
+				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.PREVIOUS_SECTION, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
 
 		this.buttonList.add(menu = new GuiButtonTurnPage(nextButtonId++, left + GUI_WIDTH/2 - 28,
-				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.CONTENTS, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
+				top + GUI_HEIGHT - BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.CONTENTS, texture, TEXTURE_WIDTH, TEXTURE_HEIGHT));
 
 		this.buttonList.add(bookmark = new GuiButtonInvisible(nextButtonId++, left + 130, top + 172, 11, 19) {
 			@Override

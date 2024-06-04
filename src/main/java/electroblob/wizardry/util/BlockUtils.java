@@ -140,8 +140,8 @@ public final class BlockUtils {
 	 * is negative.
 	 */
 	public static BlockState getBlockEntityIsStandingOn(Entity entity){
-		BlockPos pos = new BlockPos(Mth.floor(entity.posX), (int)entity.posY - 1,
-				Mth.floor(entity.posZ));
+		BlockPos pos = new BlockPos(Mth.floor(entity.getX()), (int)entity.getY() - 1,
+				Mth.floor(entity.getZ()));
 		return entity.world.getBlockState(pos);
 	}
 
@@ -164,11 +164,11 @@ public final class BlockUtils {
 
 		for(int i=-(int)radius; i<=radius; i++){
 
-			float r1 = Mth.sqrt(radius*radius - i*i);
+			float r1 = Math.sqrt(radius*radius - i*i);
 
 			for(int j=-(int)r1; j<=r1; j++){
 
-				float r2 = Mth.sqrt(radius*radius - i*i - j*j);
+				float r2 = Math.sqrt(radius*radius - i*i - j*j);
 
 				for(int k=-(int)r2; k<=r2; k++){
 					sphere.add(centre.add(i, j, k));
@@ -222,7 +222,7 @@ public final class BlockUtils {
 	 */
 	public static boolean canPlaceBlock(@Nullable Entity placer, Level world, BlockPos pos){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			Wizardry.logger.warn("BlockUtils#canPlaceBlock called from the client side! Blocks should be modified server-side only");
 			return true;
 		}
@@ -281,7 +281,7 @@ public final class BlockUtils {
 	 */
 	public static int checkBlockBreakXP(@Nullable Entity breaker, Level world, BlockPos pos){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			Wizardry.logger.warn("BlockUtils#checkBlockBreakXP called from the client side! Blocks should be modified server-side only");
 			return 0;
 		}
@@ -580,7 +580,7 @@ public final class BlockUtils {
 		if(possibleLocations.isEmpty()){
 			return null;
 		}else{
-			return possibleLocations.get(world.rand.nextInt(possibleLocations.size()));
+			return possibleLocations.get(world.random.nextInt(possibleLocations.size()));
 		}
 	}
 

@@ -42,9 +42,9 @@ public class Enrage extends SpellAreaEffect {
 		if(caster != null) origin = caster.getPositionEyes(1);
 
 		for(int i = 0; i < 30; i++){
-			double x = origin.x - 1 + world.rand.nextDouble() * 2;
-			double y = origin.y - 0.25 + world.rand.nextDouble() * 0.5;
-			double z = origin.z - 1 + world.rand.nextDouble() * 2;
+			double x = origin.x - 1 + world.random.nextDouble() * 2;
+			double y = origin.y - 0.25 + world.random.nextDouble() * 0.5;
+			double z = origin.z - 1 + world.random.nextDouble() * 2;
 			ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.9f, 0.1f, 0).spawn(world);
 		}
 	}

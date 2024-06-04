@@ -39,7 +39,7 @@ public class ItemWizardHandbook extends Item {
 		ItemStack stack = player.getHeldItem(hand);
 		if (Wizardry.settings.loadHandbook) {
 			player.openGui(Wizardry.instance, WizardryGuiHandler.WIZARD_HANDBOOK, world, 0, 0, 0);
-		} else if (!world.isRemote){
+		} else if (!level.isClientSide){
 			player.sendStatusMessage(Component.translatable("item." + Wizardry.MODID + ":wizard_handbook.disabled"), false);
 		}
 		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);

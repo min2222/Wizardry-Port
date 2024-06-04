@@ -31,9 +31,9 @@ public class Telekinesis extends SpellRay {
 		
 		if(target instanceof ItemEntity){
 
-			target.motionX = (origin.x - target.posX) / 6;
-			target.motionY = (origin.y - target.posY) / 6;
-			target.motionZ = (origin.z - target.posZ) / 6;
+			target.motionX = (origin.x - target.getX()) / 6;
+			target.motionY = (origin.y - target.getY()) / 6;
+			target.motionZ = (origin.z - target.getZ()) / 6;
 			return true;
 
 		} else if (target instanceof Player && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((Player) target, WizardryItems.amulet_anchoring))) {
@@ -44,11 +44,11 @@ public class Telekinesis extends SpellRay {
 
 			if (!player.getHeldItemMainhand().isEmpty()) {
 
-				if (!world.isRemote) {
+				if (!level.isClientSide) {
 					ItemEntity item = player.entityDropItem(player.getHeldItemMainhand(), 0);
 					// Makes the item move towards the caster
-					item.motionX = (origin.x - player.posX) / 20;
-					item.motionZ = (origin.z - player.posZ) / 20;
+					item.motionX = (origin.x - player.getX()) / 20;
+					item.motionZ = (origin.z - player.getZ()) / 20;
 				}
 
 				player.setHeldItem(InteractionHand.MAIN_HAND, ItemStack.EMPTY);

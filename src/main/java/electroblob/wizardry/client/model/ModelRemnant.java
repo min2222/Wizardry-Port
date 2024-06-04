@@ -25,7 +25,7 @@ public class ModelRemnant extends ModelBase {
 
 		GlStateManager.disableCull();
 
-		GlStateManager.translate(0.0F, entity.height/2, 0.0F);
+		GlStateManager.translate(0.0F, entity.getBbHeight()/2, 0.0F);
 
 		float s = expandFraction + Mth.sin(age * 0.1f) * 0.06f;
 

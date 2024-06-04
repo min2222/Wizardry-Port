@@ -65,7 +65,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 				pos.getZ() + 0.5, TileEntityLectern.BOOK_OPEN_DISTANCE, false);
 
 		if(entityplayer != null){
-			ParticleBuilder.create(Type.DUST).pos(pos.getX() + rand.nextFloat(), pos.getY() + 1, pos.getZ() + rand.nextFloat())
+			ParticleBuilder.create(Type.DUST).pos(pos.getX() + random.nextFloat(), pos.getY() + 1, pos.getZ() + random.nextFloat())
 					.vel(0, 0.03, 0).clr(1, 1, 0.65f).fade(0.7f, 0, 1).shaded(false).spawn(world);
 		}
 	}

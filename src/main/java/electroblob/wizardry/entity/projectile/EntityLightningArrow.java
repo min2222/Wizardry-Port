@@ -29,9 +29,9 @@ public class EntityLightningArrow extends EntityMagicArrow {
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int j = 0; j < 8; j++){
-				ParticleBuilder.create(Type.SPARK, rand, posX, posY + height / 2, posZ, 1, false).spawn(world);
+				ParticleBuilder.create(Type.SPARK, rand, getX(), getY() + height / 2, getZ(), 1, false).spawn(world);
 			}
 		}
 		
@@ -40,7 +40,7 @@ public class EntityLightningArrow extends EntityMagicArrow {
 	
 //	@Override
 //	public void onBlockHit(RayTraceResult hit){
-//		if(this.world.isRemote){
+//		if(this.level.isClientSide){
 //			Vec3d vec = hit.hitVec.add(new Vec3d(hit.sideHit.getDirectionVec()).scale(WizardryUtilities.ANTI_Z_FIGHTING_OFFSET));
 //			ParticleBuilder.create(Type.SCORCH).pos(vec).face(hit.sideHit).clr(0.4f, 0.8f, 1).scale(0.6f).spawn(world);
 //		}
@@ -48,8 +48,8 @@ public class EntityLightningArrow extends EntityMagicArrow {
 
 	@Override
 	public void tickInAir(){
-		if(world.isRemote){
-			ParticleBuilder.create(Type.SPARK).pos(posX, posY, posZ).spawn(world);
+		if(level.isClientSide){
+			ParticleBuilder.create(Type.SPARK).pos(getX(), getY(), getZ()).spawn(world);
 		}
 	}
 

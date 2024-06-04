@@ -58,22 +58,22 @@ public class Firestorm extends SpellAreaEffect {
 	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		for(int i=0; i<100; i++){
-			float r = world.rand.nextFloat();
-			double speed = 0.02/r * (1 + world.rand.nextDouble());//(world.rand.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.rand.nextDouble());
+			float r = world.random.nextFloat();
+			double speed = 0.02/r * (1 + world.random.nextDouble());//(world.random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.random.nextDouble());
 			ParticleBuilder.create(Type.MAGIC_FIRE)
-					.pos(origin.x, origin.y + world.rand.nextDouble() * 3, origin.z)
+					.pos(origin.x, origin.y + world.random.nextDouble() * 3, origin.z)
 					.vel(0, 0, 0)
 					.scale(2)
-					.time(40 + world.rand.nextInt(10))
-					.spin(world.rand.nextDouble() * (radius - 0.5) + 0.5, speed)
+					.time(40 + world.random.nextInt(10))
+					.spin(world.random.nextDouble() * (radius - 0.5) + 0.5, speed)
 					.spawn(world);
 		}
 
 		for(int i=0; i<60; i++){
-			float r = world.rand.nextFloat();
-			double speed = 0.02/r * (1 + world.rand.nextDouble());//(world.rand.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.rand.nextDouble());
+			float r = world.random.nextFloat();
+			double speed = 0.02/r * (1 + world.random.nextDouble());//(world.random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.random.nextDouble());
 			ParticleBuilder.create(Type.CLOUD)
-					.pos(origin.x, origin.y + world.rand.nextDouble() * 2.5, origin.z)
+					.pos(origin.x, origin.y + world.random.nextDouble() * 2.5, origin.z)
 					.clr(DrawingUtils.mix(DrawingUtils.mix(0xffbe00, 0xff3600, r/0.6f), 0x222222, (r - 0.6f)/0.4f))
 					.spin(r * (radius - 1) + 0.5, speed)
 					.spawn(world);
@@ -82,7 +82,7 @@ public class Firestorm extends SpellAreaEffect {
 
 	private void burnNearbyBlocks(Level world, Vec3 origin, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!world.isRemote && EntityUtils.canDamageBlocks(caster, world)){
+		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
 
@@ -100,7 +100,7 @@ public class Firestorm extends SpellAreaEffect {
 						double dist = origin.distanceTo(new Vec3(origin.x + i, y, origin.z + j));
 
 						// Randomised with weighting so that the nearer the block the more likely it is to be set alight.
-						if(y != -1 && world.rand.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5
+						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
 							world.setBlockState(pos, Blocks.FIRE.getDefaultState());
 						}

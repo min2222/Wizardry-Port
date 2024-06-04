@@ -48,23 +48,23 @@ public class ItemPurifyingElixir extends Item {
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity entity){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			entity.curePotionEffects(stack);
 		}else{
 
 			ParticleBuilder.spawnHealParticles(world, entity);
 
 			for(int i = 0; i < 20; i++){
-				double x = entity.posX + world.rand.nextDouble() * 2 - 1;
-				double y = entity.posY + entity.getEyeHeight() - 0.5 + world.rand.nextDouble();
-				double z = entity.posZ + world.rand.nextDouble() * 2 - 1;
+				double x = entity.getX() + world.random.nextDouble() * 2 - 1;
+				double y = entity.getY() + entity.getEyeHeight() - 0.5 + world.random.nextDouble();
+				double z = entity.getZ() + world.random.nextDouble() * 2 - 1;
 				ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.14, 0).clr(0x0f001b)
-						.time(20 + world.rand.nextInt(12)).spawn(world);
+						.time(20 + world.random.nextInt(12)).spawn(world);
 				ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0x0f001b).spawn(world);
 			}
 		}
 
-		world.playSound(entity.posX, entity.posY, entity.posZ, WizardrySounds.ITEM_PURIFYING_ELIXIR_DRINK, SoundSource.PLAYERS, 1, 1, false);
+		world.playSound(entity.getX(), entity.getY(), entity.getZ(), WizardrySounds.ITEM_PURIFYING_ELIXIR_DRINK, SoundSource.PLAYERS, 1, 1, false);
 
 		if(entity instanceof ServerPlayer){
 			ServerPlayer entityplayermp = (ServerPlayer)entity;

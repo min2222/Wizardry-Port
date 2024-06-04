@@ -60,7 +60,7 @@ public class CurseOfSoulbinding extends SpellRay {
 				// Return false if soulbinding failed (e.g. if the target is already soulbound)
 				if(getSoulboundCreatures(data).add(target.getUniqueID())){
 					// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-					((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
+					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
 				}else{
 					return false;
 				}
@@ -84,13 +84,13 @@ public class CurseOfSoulbinding extends SpellRay {
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.4f, 0, 0).spawn(world);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(1, 0.8f, 1).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(1, 0.8f, 1).spawn(world);
 	}
 
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		if(!event.getEntity().world.isRemote && event.getEntityLiving() instanceof Player
+		if(!event.getEntity().level.isClientSide && event.getEntityLiving() instanceof Player
 				&& !event.getSource().isUnblockable() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
@@ -111,7 +111,7 @@ public class CurseOfSoulbinding extends SpellRay {
 								MagicDamage.DamageType.MAGIC, true), event.getAmount(), event.getSource().getDamageType(),
 								DamageSource.MAGIC, false)){
 							// Sound only plays if the damage succeeds
-							entity.playSound(WizardrySounds.SPELL_CURSE_OF_SOULBINDING_RETALIATE, 1.0F, player.world.rand.nextFloat() * 0.2F + 1.0F);
+							entity.playSound(WizardrySounds.SPELL_CURSE_OF_SOULBINDING_RETALIATE, 1.0F, player.world.random.nextFloat() * 0.2F + 1.0F);
 						}
 					}
 				}

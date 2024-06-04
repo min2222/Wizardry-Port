@@ -15,10 +15,10 @@ public class ParticleCloud extends ParticleWizardry {
 
 	public ParticleCloud(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.setRBGColorF(1, 1, 1);
-		this.particleMaxAge = 48 + this.rand.nextInt(12);
+		this.particleMaxAge = 48 + this.random.nextInt(12);
 		this.particleScale *= 6;
 		this.setGravity(false);
 		this.setAlphaF(0);

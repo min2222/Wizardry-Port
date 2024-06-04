@@ -27,13 +27,13 @@ public class CurseUndeath extends Curse {
 	public void performEffect(LivingEntity entitylivingbase, int strength){
 
 		// Adapted from EntityZombie
-		if(entitylivingbase.world.isDaytime() && !entitylivingbase.world.isRemote){
+		if(entitylivingbase.world.isDaytime() && !entitylivingbase.level.isClientSide){
 
 			float f = entitylivingbase.getBrightness();
 
-			if(f > 0.5F && entitylivingbase.world.rand.nextFloat() * 30.0F < (f - 0.4F) * 2.0F
-					&& entitylivingbase.world.canSeeSky(new BlockPos(entitylivingbase.posX,
-					entitylivingbase.posY + (double)entitylivingbase.getEyeHeight(), entitylivingbase.posZ))){
+			if(f > 0.5F && entitylivingbase.world.random.nextFloat() * 30.0F < (f - 0.4F) * 2.0F
+					&& entitylivingbase.world.canSeeSky(new BlockPos(entitylivingbase.getX(),
+					entitylivingbase.getY() + (double)entitylivingbase.getEyeHeight(), entitylivingbase.getZ()))){
 
 				boolean flag = true;
 				ItemStack itemstack = entitylivingbase.getItemStackFromSlot(EquipmentSlot.HEAD);
@@ -42,9 +42,9 @@ public class CurseUndeath extends Curse {
 					if (itemstack.isItemStackDamageable()) {
 
 						if (itemstack.getItem() instanceof ISpecialArmor) {
-							((ISpecialArmor) itemstack.getItem()).damageArmor(entitylivingbase, itemstack, DamageSource.ON_FIRE, entitylivingbase.world.rand.nextInt(2), EquipmentSlot.HEAD.getSlotIndex());
+							((ISpecialArmor) itemstack.getItem()).damageArmor(entitylivingbase, itemstack, DamageSource.ON_FIRE, entitylivingbase.world.random.nextInt(2), EquipmentSlot.HEAD.getSlotIndex());
 						} else {
-							itemstack.setItemDamage(itemstack.getItemDamage() + entitylivingbase.world.rand.nextInt(2));
+							itemstack.setItemDamage(itemstack.getItemDamage() + entitylivingbase.world.random.nextInt(2));
 							if (itemstack.getItemDamage() >= itemstack.getMaxDamage()) {
 								if (itemstack.getItem() instanceof ItemWizardArmour) {
 									entitylivingbase.setFire(8);

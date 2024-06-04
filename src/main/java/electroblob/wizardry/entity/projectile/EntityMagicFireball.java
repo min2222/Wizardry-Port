@@ -68,7 +68,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	@Override
 	protected void onImpact(HitResult rayTrace){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			Entity entityHit = rayTrace.entityHit;
 
@@ -94,9 +94,9 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 				}
 			}
 
-			//this.playSound(WizardrySounds.ENTITY_MAGIC_FIREBALL_HIT, 2, 0.8f + rand.nextFloat() * 0.3f);
+			//this.playSound(WizardrySounds.ENTITY_MAGIC_FIREBALL_HIT, 2, 0.8f + random.nextFloat() * 0.3f);
 
-			this.setDead();
+			this.discard();
 		}
 	}
 
@@ -109,22 +109,22 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 		super.onUpdate();
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i=0; i<5; i++){
 
-				double dx = (rand.nextDouble() - 0.5) * width;
-				double dy = (rand.nextDouble() - 0.5) * height + this.height/2 - 0.1; // -0.1 because flames aren't centred
-				double dz = (rand.nextDouble() - 0.5) * width;
+				double dx = (random.nextDouble() - 0.5) * width;
+				double dy = (random.nextDouble() - 0.5) * height + this.getBbHeight()/2 - 0.1; // -0.1 because flames aren't centred
+				double dz = (random.nextDouble() - 0.5) * width;
 				double v = 0.06;
 				ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
 						.pos(this.getPositionVector().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
 						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
 
 				if(ticksExisted > 1){
-					dx = (rand.nextDouble() - 0.5) * width;
-					dy = (rand.nextDouble() - 0.5) * height + this.height / 2 - 0.1;
-					dz = (rand.nextDouble() - 0.5) * width;
+					dx = (random.nextDouble() - 0.5) * width;
+					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2 - 0.1;
+					dz = (random.nextDouble() - 0.5) * width;
 					ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
 							.pos(this.getPositionVector().add(dx - this.motionX, dy, dz - this.motionZ))
 							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
@@ -159,7 +159,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				if(vec3d != null){
 
-					double speed = Mth.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+					double speed = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
 
 					this.motionX = vec3d.x * speed;
 					this.motionY = vec3d.y * speed;
@@ -233,7 +233,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 			EntityMagicFireball fireball = new EntityMagicFireball(event.getWorld());
 			fireball.thrower = ((EntitySmallFireball)event.getEntity()).shootingEntity;
-			fireball.setPosition(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ);
+			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(5);
 			fireball.setBurnDuration(5);
 			fireball.setLifetime(40);

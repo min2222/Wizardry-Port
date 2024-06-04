@@ -36,24 +36,24 @@ public class MindTrick extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				if(target instanceof Player){
 
-					((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.NAUSEA,
+					((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.NAUSEA,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 
 				}else if(target instanceof Mob){
 
 					((Mob)target).setAttackTarget(null);
-					((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.mind_trick,
+					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.mind_trick,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 				}
 				
 			}else{
 				for(int i=0; i<10; i++){
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.posX,
-							target.posY + target.getEyeHeight(), target.posZ, 0.25, false)
+					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.8f, 0.2f, 1.0f).spawn(world);
 				}
 			}

@@ -34,25 +34,25 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 					damage);
 
 			if(target instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.WITHER, target))
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
+				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.WITHER,
 						Spells.darkness_orb.getProperty(Spell.EFFECT_DURATION).intValue(),
 						Spells.darkness_orb.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
-			this.playSound(WizardrySounds.ENTITY_DARKNESS_ORB_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+			this.playSound(WizardrySounds.ENTITY_DARKNESS_ORB_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 		}
 
-		this.setDead();
+		this.discard();
 	}
 
 	public void onUpdate(){
 
 		super.onUpdate();
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			
-			float brightness = rand.nextFloat() * 0.2f;
+			float brightness = random.nextFloat() * 0.2f;
 			
-			ParticleBuilder.create(Type.SPARKLE, this).time(20 + rand.nextInt(10))
+			ParticleBuilder.create(Type.SPARKLE, this).time(20 + random.nextInt(10))
 			.clr(brightness, 0.0f, brightness).spawn(world);
 			
 			ParticleBuilder.create(Type.DARK_MAGIC, this).clr(0.1f, 0.0f, 0.0f).spawn(world);

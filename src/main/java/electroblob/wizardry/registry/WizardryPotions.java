@@ -113,7 +113,7 @@ public final class WizardryPotions {
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/ice_shroud.png")){
 			@Override
 			public void spawnCustomParticle(Level world, double x, double y, double z){
-				float brightness = 0.5f + (world.rand.nextFloat() / 2);
+				float brightness = 0.5f + (world.random.nextFloat() / 2);
 				ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).clr(brightness, brightness + 0.1f, 1.0f).gravity(true).spawn(world);
 				ParticleBuilder.create(Type.SNOW).pos(x, y, z).spawn(world);
 			}
@@ -135,7 +135,7 @@ public final class WizardryPotions {
 			public void performEffect(LivingEntity target, int strength){
 				// Reset the shader (a bit dirty but both the potion expiry hooks are only fired server-side, and
 				// there's no point sending packets unnecessarily if we can just do this instead)
-				if(target.getActivePotionEffect(this).getDuration() <= 1 && target.world.isRemote
+				if(target.getActivePotionEffect(this).getDuration() <= 1 && target.level.isClientSide
 						&& target == net.minecraft.client.Minecraft.getMinecraft().player){
 					net.minecraft.client.Minecraft.getMinecraft().entityRenderer.stopUseShader();
 				}

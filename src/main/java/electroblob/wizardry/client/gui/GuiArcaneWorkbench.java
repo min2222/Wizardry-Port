@@ -121,13 +121,13 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		this.mc.player.openContainer = this.inventorySlots;
 		this.guiLeft = (this.width - MAIN_GUI_WIDTH) / 2; // Use MAIN_GUI_WIDTH, not xSize, otherwise JEI messes with it
-		this.guiTop = (this.height - this.ySize) / 2;
+		this.guiTop = (this.getBbHeight() - this.ySize) / 2;
 
 		Keyboard.enableRepeatEvents(true);
 
 		this.buttonList.clear();
-		this.buttonList.add(this.applyBtn = new GuiButtonApply(0, this.width / 2 + 64, this.height / 2 + 3));
-		this.buttonList.add(this.clearBtn = new GuiButtonClear(0, this.width / 2 + 64, this.height / 2 - 16));
+		this.buttonList.add(this.applyBtn = new GuiButtonApply(0, this.width / 2 + 64, this.getBbHeight() / 2 + 3));
+		this.buttonList.add(this.clearBtn = new GuiButtonClear(0, this.width / 2 + 64, this.getBbHeight() / 2 - 16));
 		this.buttonList.add(sortButtons[0] = new GuiButtonSpellSort(1, this.guiLeft - 44, this.guiTop + 8, ISpellSortable.SortType.TIER, arcaneWorkbenchContainer, this));
 		this.buttonList.add(sortButtons[1] = new GuiButtonSpellSort(2, this.guiLeft - 31, this.guiTop + 8, ISpellSortable.SortType.ELEMENT, arcaneWorkbenchContainer, this));
 		this.buttonList.add(sortButtons[2] = new GuiButtonSpellSort(3, this.guiLeft - 18, this.guiTop + 8, ISpellSortable.SortType.ALPHABETICAL, arcaneWorkbenchContainer, this));
@@ -417,7 +417,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		this.buttonList.forEach(b -> b.drawButtonForegroundLayer(mouseX - guiLeft, mouseY - guiTop));
 
 		// Search tooltip
-		if(isPointInRegion(searchField.x, searchField.y, searchField.width, searchField.height, mouseX + guiLeft, mouseY + guiTop)){
+		if(isPointInRegion(searchField.x, searchField.y, searchField.width, searchField.getBbHeight(), mouseX + guiLeft, mouseY + guiTop)){
 			if(searchBarHoverTime == 0){
 				searchBarHoverTime++;
 			}else if(searchBarHoverTime == SEARCH_TOOLTIP_HOVER_TIME){
@@ -998,7 +998,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		public void drawButton(Minecraft minecraft, int mouseX, int mouseY, float partialTicks){
 
 			// Whether the button is highlighted
-			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 
 			int k = 72;
 			int l = 220;
@@ -1014,9 +1014,9 @@ public class GuiArcaneWorkbench extends GuiContainer {
 				//colour = 10526880;
 			}
 
-			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.height, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.getBbHeight(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			//this.drawCenteredString(minecraft.fontRenderer, this.displayString, this.x + this.width / 2,
-			//		this.y + (this.height - 8) / 2, colour);
+			//		this.y + (this.getBbHeight() - 8) / 2, colour);
 		}
 	}
 
@@ -1030,7 +1030,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		public void drawButton(Minecraft minecraft, int mouseX, int mouseY, float partialTicks){
 
 			// Whether the button is highlighted
-			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 
 			int k = 72;
 			int l = 236;
@@ -1046,9 +1046,9 @@ public class GuiArcaneWorkbench extends GuiContainer {
 				//colour = 10526880;
 			}
 
-			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.height, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.getBbHeight(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 			//this.drawCenteredString(minecraft.fontRenderer, this.displayString, this.x + this.width / 2,
-			//		this.y + (this.height - 8) / 2, colour);
+			//		this.y + (this.getBbHeight() - 8) / 2, colour);
 		}
 	}
 

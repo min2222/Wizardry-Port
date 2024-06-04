@@ -36,7 +36,7 @@ public class PocketFurnace extends Spell {
 
 			stack = caster.inventory.getStackInSlot(i);
 
-			if(!stack.isEmpty() && !world.isRemote){
+			if(!stack.isEmpty() && !level.isClientSide){
 
 				result = FurnaceRecipes.instance().getSmeltingResult(stack);
 
@@ -65,11 +65,11 @@ public class PocketFurnace extends Spell {
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 10; i++){
-				double x1 = (double)((float)caster.posX + world.rand.nextFloat() * 2 - 1.0F);
-				double y1 = (double)((float)caster.posY + caster.getEyeHeight() - 0.5F + world.rand.nextFloat());
-				double z1 = (double)((float)caster.posZ + world.rand.nextFloat() * 2 - 1.0F);
+				double x1 = (double)((float)caster.getX() + world.random.nextFloat() * 2 - 1.0F);
+				double y1 = (double)((float)caster.getY() + caster.getEyeHeight() - 0.5F + world.random.nextFloat());
+				double z1 = (double)((float)caster.getZ() + world.random.nextFloat() * 2 - 1.0F);
 				world.spawnParticle(ParticleTypes.FLAME, x1, y1, z1, 0, 0.01F, 0);
 			}
 		}

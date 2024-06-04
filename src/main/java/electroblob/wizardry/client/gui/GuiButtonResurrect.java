@@ -55,7 +55,7 @@ public class GuiButtonResurrect extends GuiButton {
 				&& InventoryUtils.getHotbar(Minecraft.getMinecraft().player).stream().anyMatch(s -> Resurrection.canStackResurrect(s, Minecraft.getMinecraft().player))){
 
 			event.getButtonList().add(new GuiButtonResurrect(event.getButtonList().size(), event.getGui().width / 2 - 100,
-					event.getGui().height / 4 + 120, "spell." + Spells.resurrection.getRegistryName() + ".button"));
+					event.getGui().getBbHeight() / 4 + 120, "spell." + Spells.resurrection.getRegistryName() + ".button"));
 			timeSinceDeath = 0;
 		}
 	}

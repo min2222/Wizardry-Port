@@ -34,7 +34,7 @@ public class FontOfMana extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(target instanceof Player){ // Font of mana is only useful to players
-			target.addPotionEffect(new MobEffectInstance(WizardryPotions.font_of_mana,
+			target.addEffect(new MobEffectInstance(WizardryPotions.font_of_mana,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)(getProperty(EFFECT_STRENGTH).intValue() + (modifiers.get(SpellModifiers.POTENCY) - 1) * 2)));
 		}
@@ -44,7 +44,7 @@ public class FontOfMana extends SpellAreaEffect {
 
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z){
-		float hue = world.rand.nextFloat() * 0.4f;
+		float hue = world.random.nextFloat() * 0.4f;
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.03, 0).time(50)
 				.clr(1, 1 - hue, 0.6f + hue).spawn(world);
 	}

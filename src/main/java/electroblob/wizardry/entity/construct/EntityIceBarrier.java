@@ -36,7 +36,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 		float b = Mth.sin((float)Math.toRadians(rotationYaw));
 		double x = width/2 * a + THICKNESS/2 * b;
 		double z = width/2 * b + THICKNESS/2 * a;
-		setEntityBoundingBox(new AABB(this.posX - x, this.posY, this.posZ - z, this.posX + x, this.posY + height, this.posZ + z));
+		setEntityBoundingBox(new AABB(this.getX() - x, this.getY(), this.getZ() - z, this.getX() + x, this.getY() + height, this.getZ() + z));
 	}
 
 	@Override
@@ -48,16 +48,16 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	public void onUpdate(){
 
 		// Bit of a cheat but it's easier than trying to sync FrostBarrier#addConstructExtras
-		if(world.isRemote && firstUpdate){
+		if(level.isClientSide && firstUpdate){
 			setSizeMultiplier(sizeMultiplier); // Do this first or it'll overwrite the bounding box
 			setRotation(rotationYaw, rotationPitch);
 		}
 
-		this.prevPosX = posX;
-		this.prevPosY = posY;
-		this.prevPosZ = posZ;
+		this.prevgetX() = getX();
+		this.prevgetY() = getY();
+		this.prevgetZ() = getZ();
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			double extensionSpeed = 0;
 
@@ -78,7 +78,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 		Vec3 look = this.getLookVec();
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			for(Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().grow(2))){
 
@@ -160,7 +160,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 	private double getSignedPerpendicularDistance(Vec3 point){
 		Vec3 look = this.getLookVec();
-		Vec3 delta = new Vec3(point.x - this.posX, 0, point.z - this.posZ);
+		Vec3 delta = new Vec3(point.x - this.getX(), 0, point.z - this.getZ());
 		return delta.dotProduct(look);
 	}
 

@@ -22,11 +22,11 @@ public class EntityHailstorm extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			double x = posX + (world.rand.nextDouble() - 0.5D) * (double)width;
-			double y = posY + world.rand.nextDouble() * (double)height;
-			double z = posZ + (world.rand.nextDouble() - 0.5D) * (double)width;
+			double x = getX() + (world.random.nextDouble() - 0.5D) * (double)width;
+			double y = getY() + world.random.nextDouble() * (double)height;
+			double z = getZ() + (world.random.nextDouble() - 0.5D) * (double)width;
 
 			EntityIceShard iceshard = new EntityIceShard(world);
 			iceshard.setPosition(x, y, z);

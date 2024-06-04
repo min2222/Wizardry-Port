@@ -42,11 +42,11 @@ public class SummonSpiritWolf extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			Entity oldWolf = EntityUtils.getEntityByUUID(world, data.getVariable(UUID_KEY));
 
-			if(oldWolf != null) oldWolf.setDead();
+			if(oldWolf != null) oldWolf.discard();
 
 			BlockPos pos = BlockUtils.findNearbyFloorSpace(caster, 2, 4);
 			if(pos == null) return false;

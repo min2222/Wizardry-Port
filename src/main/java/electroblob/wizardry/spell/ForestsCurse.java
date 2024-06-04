@@ -38,9 +38,9 @@ public class ForestsCurse extends SpellAreaEffect {
 			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 			int amplifier = (int)(getProperty(EFFECT_STRENGTH).floatValue() + bonusAmplifier);
 
-			target.addPotionEffect(new MobEffectInstance(MobEffects.POISON, duration, amplifier));
-			target.addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, amplifier));
-			target.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, amplifier));
+			target.addEffect(new MobEffectInstance(MobEffects.POISON, duration, amplifier));
+			target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, amplifier));
+			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, amplifier));
 		}
 
 		return true;
@@ -51,15 +51,15 @@ public class ForestsCurse extends SpellAreaEffect {
 		
 		y += 2; // Moves the particles up to the caster's head level
 		
-		float brightness = world.rand.nextFloat() / 4;
+		float brightness = world.random.nextFloat() / 4;
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).vel(0, -0.2, 0)
 		.clr(0.05f + brightness, 0.2f + brightness, 0).spawn(world);
 		
-		brightness = world.rand.nextFloat() / 4;
+		brightness = world.random.nextFloat() / 4;
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, -0.05, 0).time(50)
 		.clr(0.1f + brightness, 0.2f + brightness, 0).spawn(world);
 		
-		ParticleBuilder.create(Type.LEAF).pos(x, y, z).vel(0, -0.01, 0).time(40 + world.rand.nextInt(12)).spawn(world);
+		ParticleBuilder.create(Type.LEAF).pos(x, y, z).vel(0, -0.01, 0).time(40 + world.random.nextInt(12)).spawn(world);
 	}
 
 }

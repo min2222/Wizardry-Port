@@ -30,13 +30,13 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		entityHit.setFire(Spells.flamecatcher.getProperty(Spell.BURN_DURATION).intValue());
-		this.playSound(WizardrySounds.ENTITY_FLAMECATCHER_ARROW_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
-		if(this.world.isRemote) ParticleBuilder.create(Type.FLASH).pos(posX, posY, posZ).clr(0xff6d00).spawn(world);
+		this.playSound(WizardrySounds.ENTITY_FLAMECATCHER_ARROW_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+		if(this.level.isClientSide) ParticleBuilder.create(Type.FLASH).pos(getX(), getY(), getZ()).clr(0xff6d00).spawn(world);
 	}
 	
 	@Override
 	public void onBlockHit(HitResult hit){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
 			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0xff6d00).fade(0.85f, 0.5f, 0.8f).spawn(world);
@@ -46,24 +46,24 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	@Override
 	public void tickInAir(){
 
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 
-			ParticleBuilder.create(Type.MAGIC_FIRE, rand, posX, posY, posZ, 0.03, false)
-					.time(20 + rand.nextInt(10)).spawn(world);
+			ParticleBuilder.create(Type.MAGIC_FIRE, rand, getX(), getY(), getZ(), 0.03, false)
+					.time(20 + random.nextInt(10)).spawn(world);
 
 			if(this.ticksExisted > 1){ // Don't spawn particles behind where it started!
-				double x = posX - motionX / 2;
-				double y = posY - motionY / 2;
-				double z = posZ - motionZ / 2;
+				double x = getX() - motionX / 2;
+				double y = getY() - motionY / 2;
+				double z = getZ() - motionZ / 2;
 				ParticleBuilder.create(Type.MAGIC_FIRE, rand, x, y, z, 0.03, false)
-						.time(20 + rand.nextInt(10)).spawn(world);
+						.time(20 + random.nextInt(10)).spawn(world);
 			}
 		}
 	}
 
 	@Override
 	protected void entityInit(){
-		if(world != null && world.isRemote){
+		if(world != null && level.isClientSide){
 			ParticleBuilder.create(Type.FLASH).entity(this).time(this.getLifetime()).scale(1.5f).clr(0xffb800).spawn(world);
 		}
 	}

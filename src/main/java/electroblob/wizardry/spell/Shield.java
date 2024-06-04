@@ -41,7 +41,7 @@ public class Shield extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		caster.addPotionEffect(new MobEffectInstance(MobEffects.RESISTANCE, 10,
+		caster.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 10,
 				getProperty(EFFECT_STRENGTH).intValue(), false, false));
 
 		if(WizardData.get(caster).getVariable(SHIELD_KEY) == null){
@@ -49,7 +49,7 @@ public class Shield extends Spell {
 			EntityShield shield = new EntityShield(world, caster);
 
 			WizardData.get(caster).setVariable(SHIELD_KEY, shield);
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				world.spawnEntity(shield);
 			}
 		}

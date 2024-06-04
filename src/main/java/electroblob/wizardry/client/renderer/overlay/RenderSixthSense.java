@@ -79,7 +79,7 @@ public class RenderSixthSense {
 			// Disabling depth test allows it to be seen through everything.
 			GlStateManager.disableDepth();
 
-			GlStateManager.translate(event.getX(), event.getY() + event.getEntity().height * 0.6, event.getZ());
+			GlStateManager.translate(event.getX(), event.getY() + event.getEntity().getBbHeight() * 0.6, event.getZ());
 
 			// This counteracts the reverse rotation behaviour when in front f5 view.
 			// Fun fact: this is a bug with vanilla too! Look at a snowball in front f5 view, for example.

@@ -100,10 +100,10 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
-						this.posY + this.rand.nextFloat() * 2, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
+				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * 2, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}

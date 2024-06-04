@@ -27,20 +27,20 @@ public class EntityDart extends EntityMagicArrow {
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		// Adds a weakness effect to the target.
-		entityHit.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
+		entityHit.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
 				Spells.dart.getProperty(Spell.EFFECT_STRENGTH).intValue(), false, false));
-		this.playSound(WizardrySounds.ENTITY_DART_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_DART_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 
 	@Override
 	public void onBlockHit(HitResult hit){
-		this.playSound(WizardrySounds.ENTITY_DART_HIT_BLOCK, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_DART_HIT_BLOCK, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 
 	@Override
 	public void tickInAir(){
-		if(this.world.isRemote){
-			ParticleBuilder.create(Type.LEAF, this).time(10 + rand.nextInt(5)).spawn(world);
+		if(this.level.isClientSide){
+			ParticleBuilder.create(Type.LEAF, this).time(10 + random.nextInt(5)).spawn(world);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class EntityDart extends EntityMagicArrow {
 	@Override
 	public void tickInGround(){
 		if(this.ticksInGround > 60){
-			this.setDead();
+			this.discard();
 		}
 	}
 

@@ -18,9 +18,9 @@ public class FrostAxe extends SpellConjuration {
 	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		for(int i=0; i<10; i++){
-			double x = caster.posX + world.rand.nextDouble() * 2 - 1;
-			double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			double z = caster.posZ + world.rand.nextDouble() * 2 - 1;
+			double x = caster.getX() + world.random.nextDouble() * 2 - 1;
+			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+			double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
 			ParticleBuilder.create(Type.SNOW).pos(x, y, z).spawn(world);
 		}
 	}

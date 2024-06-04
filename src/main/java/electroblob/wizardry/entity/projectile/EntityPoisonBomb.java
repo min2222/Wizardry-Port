@@ -43,39 +43,39 @@ public class EntityPoisonBomb extends EntityBomb {
 					damage);
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.POISON, entityHit))
-				((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(MobEffects.POISON,
+				((LivingEntity)entityHit).addEffect(new MobEffectInstance(MobEffects.POISON,
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
 
 		// Particle effect
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier)
-			.clr(0.2f + rand.nextFloat() * 0.3f, 0.6f, 0.0f).spawn(world);
+			.clr(0.2f + random.nextFloat() * 0.3f, 0.6f, 0.0f).spawn(world);
 			
 			for(int i = 0; i < 60 * blastMultiplier; i++){
 				
-				ParticleBuilder.create(Type.SPARKLE, rand, posX, posY, posZ, 2*blastMultiplier, false).time(35)
-				.scale(2).clr(0.2f + rand.nextFloat() * 0.3f, 0.6f, 0.0f).spawn(world);
+				ParticleBuilder.create(Type.SPARKLE, rand, getX(), getY(), getZ(), 2*blastMultiplier, false).time(35)
+				.scale(2).clr(0.2f + random.nextFloat() * 0.3f, 0.6f, 0.0f).spawn(world);
 				
-				ParticleBuilder.create(Type.DARK_MAGIC, rand, posX, posY, posZ, 2*blastMultiplier, false)
-				.clr(0.2f + rand.nextFloat() * 0.2f, 0.8f, 0.0f).spawn(world);
+				ParticleBuilder.create(Type.DARK_MAGIC, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
+				.clr(0.2f + random.nextFloat() * 0.2f, 0.8f, 0.0f).spawn(world);
 			}
 			// Spawning this after the other particles fixes the rendering colour bug. It's a bit of a cheat, but it
 			// works pretty well.
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			this.playSound(WizardrySounds.ENTITY_POISON_BOMB_SMASH, 1.5F, rand.nextFloat() * 0.4F + 0.6F);
+			this.playSound(WizardrySounds.ENTITY_POISON_BOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_POISON_BOMB_POISON, 1.2F, 1.0f);
 
 			double range = Spells.poison_bomb.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()
@@ -83,13 +83,13 @@ public class EntityPoisonBomb extends EntityBomb {
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.POISON),
 							Spells.poison_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
-					target.addPotionEffect(new MobEffectInstance(MobEffects.POISON,
+					target.addEffect(new MobEffectInstance(MobEffects.POISON,
 							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
 							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}
 			}
 
-			this.setDead();
+			this.discard();
 		}
 	}
 }

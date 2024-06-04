@@ -39,7 +39,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	public EntityPhoenix(Level world){
 		super(world);
 		this.isImmuneToFire = true;
-		this.height = 2.0f;
+		this.getBbHeight() = 2.0f;
 		// For some reason this can't be in initEntityAI
 		this.tasks.addTask(1, this.spellAttackAI);
 	}
@@ -144,10 +144,10 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
-						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
+				this.world.spawnParticle(ParticleTypes.FLAME, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * height, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}
@@ -163,18 +163,18 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 		// Makes the phoenix hover.
 		Integer floorLevel = BlockUtils.getNearestFloor(world, new BlockPos(this), 4);
 
-		if(floorLevel == null || this.posY - floorLevel > 3){
+		if(floorLevel == null || this.getY() - floorLevel > 3){
 			this.motionY = -0.1;
-		}else if(this.posY - floorLevel < 2){
+		}else if(this.getY() - floorLevel < 2){
 			this.motionY = 0.1;
 		}else{
 			this.motionY = 0.0;
 		}
 
 		// Living sound
-		if(this.rand.nextInt(24) == 0){
-			this.playSound(WizardrySounds.ENTITY_PHOENIX_BURN, 1.0F + this.rand.nextFloat(),
-					this.rand.nextFloat() * 0.7F + 0.3F);
+		if(this.random.nextInt(24) == 0){
+			this.playSound(WizardrySounds.ENTITY_PHOENIX_BURN, 1.0F + this.random.nextFloat(),
+					this.random.nextFloat() * 0.7F + 0.3F);
 		}
 
 		// Flapping sound effect
@@ -184,9 +184,9 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 
 		for(int i = 0; i < 2; i++){
 			this.world.spawnParticle(ParticleTypes.FLAME,
-					this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-					this.posY + this.height / 2 + this.rand.nextDouble() * (double)this.height / 2,
-					this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, -0.1D, 0.0D);
+					this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+					this.getY() + this.getBbHeight() / 2 + this.random.nextDouble() * (double)this.getBbHeight() / 2,
+					this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0.0D, -0.1D, 0.0D);
 		}
 
 		// Adding this allows the phoenix to attack despite being in the air. However, for some strange reason

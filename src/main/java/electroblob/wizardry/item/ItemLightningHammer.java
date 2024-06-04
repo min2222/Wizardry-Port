@@ -122,11 +122,11 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 		ItemStack stack = player.getHeldItem(hand);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			EntityHammer hammer = new EntityHammer(world);
 			Vec3 look = player.getLookVec();
 			Vec3 vec = player.getPositionEyes(1).add(look);
-			hammer.setPositionAndRotation(vec.x, vec.y - hammer.height/2, vec.z, player.rotationYawHead - 90, 0);
+			hammer.setPositionAndRotation(vec.x, vec.y - hammer.getBbHeight()/2, vec.z, player.rotationYawHead - 90, 0);
 			// For some reason the above method insists on clamping the pitch to between -90 and 90
 			hammer.rotationPitch = 180 + player.rotationPitch;
 			hammer.prevRotationPitch = hammer.rotationPitch;
@@ -190,9 +190,9 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 			float attackStrength = wielder.getCooledAttackStrength(0);
 
-			double dx = wielder.posX - hit.posX;
+			double dx = wielder.getX() - hit.getX();
 			double dz;
-			for(dz = wielder.posZ - hit.posZ; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random())
+			for(dz = wielder.getZ() - hit.getZ(); dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random())
 					* 0.01D){
 				dx = (Math.random() - Math.random()) * 0.01D;
 			}
@@ -201,7 +201,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 			if(attackStrength == 1){ // Only chains when the attack meter is full
 
-				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.posX, hit.posY, hit.posZ, hit.world);
+				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.getX(), hit.getY(), hit.getZ(), hit.world);
 
 				nearby.remove(hit);
 				nearby.remove(wielder);
@@ -213,13 +213,13 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 					target.hurt(MagicDamage.causeDirectMagicDamage(wielder, DamageType.SHOCK), CHAINING_DAMAGE * ((ItemLightningHammer)stack.getItem()).getDamageMultiplier(stack));
 
-					if(hit.world.isRemote){
-						ParticleBuilder.create(Type.LIGHTNING).pos(hit.getPositionVector().add(0, hit.height / 2, 0))
+					if(hit.level.isClientSide){
+						ParticleBuilder.create(Type.LIGHTNING).pos(hit.getPositionVector().add(0, hit.getBbHeight() / 2, 0))
 								.target(target).spawn(hit.world);
-						ParticleBuilder.spawnShockParticles(hit.world, target.posX, target.posY + target.height / 2, target.posZ);
+						ParticleBuilder.spawnShockParticles(hit.world, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
 					}
 
-					//target.playSound(WizardrySounds.SPELL_SPARK, 1, 1.5f + 0.4f * world.rand.nextFloat());
+					//target.playSound(WizardrySounds.SPELL_SPARK, 1, 1.5f + 0.4f * world.random.nextFloat());
 				}
 			}
 		}

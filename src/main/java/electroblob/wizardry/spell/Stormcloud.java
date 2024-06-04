@@ -17,6 +17,6 @@ public class Stormcloud extends SpellConstructRanged<EntityStormcloud> {
 
 	@Override
 	protected void addConstructExtras(EntityStormcloud construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
-		construct.posY += 5;
+		construct.getY() += 5;
 	}
 }

@@ -30,43 +30,43 @@ public class EntitySmokeBomb extends EntityBomb {
 	protected void onImpact(HitResult rayTrace){
 
 		// Particle effect
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(world);
 			
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 						
 			for(int i = 0; i < 60 * blastMultiplier; i++){
 
-				float brightness = rand.nextFloat() * 0.1f + 0.1f;
-				ParticleBuilder.create(Type.CLOUD, rand, posX, posY, posZ, 2*blastMultiplier, false)
-						.clr(brightness, brightness, brightness).time(80 + this.rand.nextInt(12)).shaded(true).spawn(world);
+				float brightness = random.nextFloat() * 0.1f + 0.1f;
+				ParticleBuilder.create(Type.CLOUD, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
+						.clr(brightness, brightness, brightness).time(80 + this.random.nextInt(12)).shaded(true).spawn(world);
 
-				brightness = rand.nextFloat() * 0.3f;
-				ParticleBuilder.create(Type.DARK_MAGIC, rand, posX, posY, posZ, 2*blastMultiplier, false)
+				brightness = random.nextFloat() * 0.3f;
+				ParticleBuilder.create(Type.DARK_MAGIC, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
 				.clr(brightness, brightness, brightness).spawn(world);
 			}
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			this.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_SMASH, 1.5F, rand.nextFloat() * 0.4F + 0.6F);
+			this.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_SMOKE, 1.2F, 1.0f);
 
 			double range = Spells.smoke_bomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			int duration = Spells.smoke_bomb.getProperty(Spell.EFFECT_DURATION).intValue();
 
 			for(LivingEntity target : targets){
 				if(target != this.getThrower()){
-					target.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
+					target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 				}
 			}
 
-			this.setDead();
+			this.discard();
 		}
 	}
 }

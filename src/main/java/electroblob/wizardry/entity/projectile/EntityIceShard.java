@@ -38,29 +38,29 @@ public class EntityIceShard extends EntityMagicArrow {
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-			entityHit.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+			entityHit.addEffect(new MobEffectInstance(WizardryPotions.frost,
 					Spells.ice_shard.getProperty(Spell.EFFECT_DURATION).intValue(),
 					Spells.ice_shard.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
-		this.playSound(WizardrySounds.ENTITY_ICE_SHARD_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_ICE_SHARD_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 
 	@Override
 	public void onBlockHit(HitResult hit){
 		
 		// Adds a particle effect when the ice shard hits a block.
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
 			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0.75f, 1, 1).spawn(world);
 			
 			for(int j = 0; j < 10; j++){
-				ParticleBuilder.create(Type.ICE, this.rand, this.posX, this.posY, this.posZ, 0.5, true)
-				.time(20 + rand.nextInt(10)).gravity(true).spawn(world);
+				ParticleBuilder.create(Type.ICE, this.rand, this.getX(), this.getY(), this.getZ(), 0.5, true)
+				.time(20 + random.nextInt(10)).gravity(true).spawn(world);
 			}
 		}
 		// Parameters for sound: sound event name, volume, pitch.
-		this.playSound(WizardrySounds.ENTITY_ICE_SHARD_SMASH, 1.0F, rand.nextFloat() * 0.4F + 1.2F);
+		this.playSound(WizardrySounds.ENTITY_ICE_SHARD_SMASH, 1.0F, random.nextFloat() * 0.4F + 1.2F);
 
 	}
 

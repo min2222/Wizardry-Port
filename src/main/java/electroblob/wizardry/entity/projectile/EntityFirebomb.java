@@ -45,32 +45,32 @@ public class EntityFirebomb extends EntityBomb {
 		}
 
 		// Particle effect
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier).clr(1, 0.6f, 0)
 			.spawn(world);
 
 			for(int i = 0; i < 60 * blastMultiplier; i++){
 				
-				ParticleBuilder.create(Type.MAGIC_FIRE, rand, posX, posY, posZ, 2*blastMultiplier, false)
-				.time(10 + rand.nextInt(4)).scale(2 + rand.nextFloat()).spawn(world);
+				ParticleBuilder.create(Type.MAGIC_FIRE, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
+				.time(10 + random.nextInt(4)).scale(2 + random.nextFloat()).spawn(world);
 				
-				ParticleBuilder.create(Type.DARK_MAGIC, rand, posX, posY, posZ, 2*blastMultiplier, false)
-				.clr(1.0f, 0.2f + rand.nextFloat() * 0.4f, 0.0f).spawn(world);
+				ParticleBuilder.create(Type.DARK_MAGIC, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
+				.clr(1.0f, 0.2f + random.nextFloat() * 0.4f, 0.0f).spawn(world);
 			}
 
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			this.playSound(WizardrySounds.ENTITY_FIREBOMB_SMASH, 1.5F, rand.nextFloat() * 0.4F + 0.6F);
+			this.playSound(WizardrySounds.ENTITY_FIREBOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_FIREBOMB_FIRE, 1, 1);
 
 			double range = Spells.firebomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()
@@ -83,7 +83,7 @@ public class EntityFirebomb extends EntityBomb {
 				}
 			}
 
-			this.setDead();
+			this.discard();
 		}
 	}
 

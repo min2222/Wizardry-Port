@@ -109,7 +109,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 						InteractionHand.MAIN_HAND, spell, modifiers),
 				// Particles are usually only visible from 16 blocks away, so 128 is more than far enough.
 				// TODO: Why is this one a 128 block radius, whilst the other one is all in dimension?
-				new TargetPoint(attacker.dimension, attacker.posX, attacker.posY, attacker.posZ, 128));
+				new TargetPoint(attacker.dimension, attacker.getX(), attacker.getY(), attacker.getZ(), 128));
 	}
 
 	@Override
@@ -117,8 +117,8 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 
 		// Only executed server side.
 
-		double distanceSq = this.attacker.getDistanceSq(this.target.posX, this.target.posY,
-				this.target.posZ);
+		double distanceSq = this.attacker.getDistanceSq(this.target.getX(), this.target.getY(),
+				this.target.getZ());
 		boolean targetIsVisible = this.attacker.getEntitySenses().canSee(this.target);
 
 		if(targetIsVisible){
@@ -169,14 +169,14 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 				return;
 			}
 
-			double dx = target.posX - attacker.posX;
-			double dz = target.posZ - attacker.posZ;
+			double dx = target.getX() - attacker.getX();
+			double dz = target.getZ() - attacker.getZ();
 
 			List<Spell> spells = new ArrayList<Spell>(attacker.getSpells());
 
 			if(spells.size() > 0){
 
-				if(!attacker.world.isRemote){
+				if(!attacker.level.isClientSide){
 
 					// New way of choosing a spell; keeps trying until one works or all have been tried
 
@@ -184,7 +184,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 
 					while(!spells.isEmpty()){
 
-						spell = spells.get(attacker.world.rand.nextInt(spells.size()));
+						spell = spells.get(attacker.world.random.nextInt(spells.size()));
 
 						SpellModifiers modifiers = attacker.getModifiers();
 

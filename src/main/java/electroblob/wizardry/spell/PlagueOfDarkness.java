@@ -34,7 +34,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 		if(!MagicDamage.isEntityImmune(DamageType.WITHER, target)){
 			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
-			target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
+			target.addEffect(new MobEffectInstance(MobEffects.WITHER,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
@@ -49,18 +49,18 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 
 		for(int i = 0; i < 40 * modifiers.get(WizardryItems.blast_upgrade); i++){
 
-			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
-			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
+			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
+			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 			ParticleBuilder.create(Type.DARK_MAGIC).pos(particleX, origin.y, particleZ)
 					.vel(particleX - origin.x, 0, particleZ - origin.z).clr(0.1f, 0, 0).spawn(world);
 
-			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
-			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
+			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
+			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 			ParticleBuilder.create(Type.SPARKLE).pos(particleX, origin.y, particleZ)
 					.vel(particleX - origin.x, 0, particleZ - origin.z).time(30).clr(0.1f, 0, 0.05f).spawn(world);
 
-			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
-			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
+			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
+			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 
 			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 

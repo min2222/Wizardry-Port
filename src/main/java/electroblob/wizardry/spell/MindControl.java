@@ -57,7 +57,7 @@ public class MindControl extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 				
 			if(!canControl(target)){
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					if(caster instanceof Player){
 						// Adds a message saying that the player/boss entity/wizard resisted mind control
 						((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
@@ -67,7 +67,7 @@ public class MindControl extends SpellRay {
 
 			}else if(target instanceof Mob){
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					if(!MindControl.findMindControlTarget((Mob)target, caster, world)){
 						// If no valid target was found, this just acts like mind trick.
 						((Mob)target).setAttackTarget(null);
@@ -76,22 +76,22 @@ public class MindControl extends SpellRay {
 
 				if(target instanceof EntitySheep && ((EntitySheep)target).getFleeceColor() == EnumDyeColor.BLUE
 						&& EntityUtils.canDamageBlocks(caster, world)){
-					if(!world.isRemote) ((EntitySheep)target).setFleeceColor(EnumDyeColor.RED); // Wololo!
-					world.playSound(caster.posX, caster.posY, caster.posZ, SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
+					if(!level.isClientSide) ((EntitySheep)target).setFleeceColor(EnumDyeColor.RED); // Wololo!
+					world.playSound(caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
 				}
 
-				if(!world.isRemote) startControlling((Mob)target, caster,
+				if(!level.isClientSide) startControlling((Mob)target, caster,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 			}
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				
 				for(int i=0; i<10; i++){
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.posX,
-							target.posY + target.getEyeHeight(), target.posZ, 0.25, false)
+					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.8f, 0.2f, 1.0f).spawn(world);
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.posX,
-							target.posY + target.getEyeHeight(), target.posZ, 0.25, false)
+					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.2f, 0.04f, 0.25f).spawn(world);
 				}
 			}
@@ -124,7 +124,7 @@ public class MindControl extends SpellRay {
 
 	public static void startControlling(Mob target, LivingEntity controller, int duration){
 		target.getEntityData().setUniqueId(NBT_KEY, controller.getUniqueID());
-		target.addPotionEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
+		target.addEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class MindControl extends SpellRay {
 		// set the target until it wears off.
 		List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(
 				target.getEntityAttribute(Attributes.FOLLOW_RANGE).getAttributeValue(),
-				target.posX, target.posY, target.posZ, world);
+				target.getX(), target.getY(), target.getZ(), world);
 
 		possibleTargets.remove(target);
 		possibleTargets.remove(target.getRidingEntity());

@@ -93,7 +93,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(caster.onGround || !requiresFloor){
-			if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? Direction.UP : null,
+			if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.onGround ? Direction.UP : null,
 					caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
@@ -107,7 +107,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 
 		if(target != null){
 			if(caster.onGround || !requiresFloor){
-				if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? Direction.UP : null,
+				if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.onGround ? Direction.UP : null,
 						caster, modifiers)) return false;
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 				return true;
@@ -152,7 +152,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	 */
 	protected boolean spawnConstruct(Level world, double x, double y, double z, @Nullable Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			// Creates a new construct using the supplied factory
 			T construct = constructFactory.apply(world);
 			// Sets the position of the construct (and initialises its bounding box)

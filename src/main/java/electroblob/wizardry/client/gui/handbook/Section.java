@@ -255,7 +255,7 @@ class Section {
 					if(recipe == null) throw new JsonSyntaxException("Recipe with id " + arguments[1] + " is undefined");
 
 					// Starts a new page if the recipe will not fit on the current one
-					if((lines.size() % maxLineNumber) * font.FONT_HEIGHT + CraftingRecipe.HEIGHT > GuiWizardHandbook.PAGE_HEIGHT){
+					if((lines.size() % maxLineNumber) * font.FONT_HEIGHT + CraftingRecipe.getBbHeight() > GuiWizardHandbook.PAGE_HEIGHT){
 						// Remaining number of lines on the page, plus the first blank one on the new page
 						lines.addAll(Collections.nCopies(maxLineNumber - (lines.size() % maxLineNumber), " "));
 					}
@@ -271,7 +271,7 @@ class Section {
 
 					// Height of the recipe in lines, rounded up
 					// Uses a single space instead of an empty string so that the page trimming doesn't remove them
-					lines.addAll(Collections.nCopies(CraftingRecipe.HEIGHT / font.FONT_HEIGHT - 1, " "));
+					lines.addAll(Collections.nCopies(CraftingRecipe.getBbHeight() / font.FONT_HEIGHT - 1, " "));
 					// This time we're not adding an extra space because it's not really needed
 
 				}else{ // All other paragraphs

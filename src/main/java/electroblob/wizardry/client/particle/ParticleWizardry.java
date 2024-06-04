@@ -188,10 +188,10 @@ public abstract class ParticleWizardry extends Particle {
 	public void setSpin(double radius, double speed){
 		this.radius = radius;
 		this.speed = speed * 2 * Math.PI; // Converts rotations per tick into radians per tick for the trig functions
-		this.angle = this.rand.nextFloat() * (float)Math.PI * 2; // Random start angle
+		this.angle = this.random.nextFloat() * (float)Math.PI * 2; // Random start angle
 		// Need to set the start position or the circle won't be centred on the correct position
-		this.posX = relativeX - radius * Mth.cos(angle);
-		this.posZ = relativeZ + radius * Mth.sin(angle);
+		this.getX() = relativeX - radius * Mth.cos(angle);
+		this.getZ() = relativeZ + radius * Mth.sin(angle);
 		// Set these to the correct values
 		this.relativeMotionX = motionX;
 		this.relativeMotionY = motionY;
@@ -206,11 +206,11 @@ public abstract class ParticleWizardry extends Particle {
 		this.entity = entity;
 		// Set these to the correct values
 		if(entity != null){
-			this.setPosition(this.entity.posX + relativeX, this.entity.posY
-					+ relativeY, this.entity.posZ + relativeZ);
-			this.prevPosX = this.posX;
-			this.prevPosY = this.posY;
-			this.prevPosZ = this.posZ;
+			this.setPosition(this.entity.getX() + relativeX, this.entity.getY()
+					+ relativeY, this.entity.getZ() + relativeZ);
+			this.prevgetX() = this.getX();
+			this.prevgetY() = this.getY();
+			this.prevgetZ() = this.getZ();
 			// Set these to the correct values
 			this.relativeMotionX = motionX;
 			this.relativeMotionY = motionY;
@@ -373,14 +373,14 @@ public abstract class ParticleWizardry extends Particle {
 		// TODO: Still not working, it seems this bug was a thing back in 4.2.x anyway
 		if(this.entity != null){
 			// This is kind of cheating but we know it's always a constant velocity so it works fine
-			prevPosX = posX + entity.prevPosX - entity.posX - relativeMotionX * (1-partialTicks);
-			prevPosY = posY + entity.prevPosY - entity.posY - relativeMotionY * (1-partialTicks);
-			prevPosZ = posZ + entity.prevPosZ - entity.posZ - relativeMotionZ * (1-partialTicks);
+			prevgetX() = getX() + entity.prevgetX() - entity.getX() - relativeMotionX * (1-partialTicks);
+			prevgetY() = getY() + entity.prevgetY() - entity.getY() - relativeMotionY * (1-partialTicks);
+			prevgetZ() = getZ() + entity.prevgetZ() - entity.getZ() - relativeMotionZ * (1-partialTicks);
 		}else if(this.getFXLayer() == 3){
 			// Not sure why, but when fx layer is 3, the interp pos is wrong when not linked to an entity
-			interpPosX = viewer.lastTickPosX + (viewer.posX - viewer.lastTickPosX) * (double)partialTicks;
-			interpPosY = viewer.lastTickPosY + (viewer.posY - viewer.lastTickPosY) * (double)partialTicks;
-			interpPosZ = viewer.lastTickPosZ + (viewer.posZ - viewer.lastTickPosZ) * (double)partialTicks;
+			interpgetX() = viewer.lastTickgetX() + (viewer.getX() - viewer.lastTickgetX()) * (double)partialTicks;
+			interpgetY() = viewer.lastTickgetY() + (viewer.getY() - viewer.lastTickgetY()) * (double)partialTicks;
+			interpgetZ() = viewer.lastTickgetZ() + (viewer.getZ() - viewer.lastTickgetZ()) * (double)partialTicks;
 		}
 	}
 	
@@ -406,9 +406,9 @@ public abstract class ParticleWizardry extends Particle {
 				if(this.entity.isDead){
 					this.setExpired();
 				}else{
-					x += this.entity.posX;
-					y += this.entity.posY;
-					z += this.entity.posZ;
+					x += this.entity.getX();
+					y += this.entity.getY();
+					z += this.entity.getZ();
 				}
 			}
 			
@@ -449,8 +449,8 @@ public abstract class ParticleWizardry extends Particle {
 				this.motionY *= IMPACT_FRICTION;
 				this.motionZ *= IMPACT_FRICTION;
 				// Add random velocity in y and z proportional to the impact velocity
-				this.motionY += (rand.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
-				this.motionZ += (rand.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
+				this.motionY += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
+				this.motionZ += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
 			}
 
 			if(this.motionY == 0 && this.prevVelY != 0){ // If the particle just collided in y
@@ -458,8 +458,8 @@ public abstract class ParticleWizardry extends Particle {
 				this.motionX *= IMPACT_FRICTION;
 				this.motionZ *= IMPACT_FRICTION;
 				// Add random velocity in x and z proportional to the impact velocity
-				this.motionX += (rand.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
-				this.motionZ += (rand.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
+				this.motionX += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
+				this.motionZ += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
 			}
 
 			if(this.motionZ == 0 && this.prevVelZ != 0){ // If the particle just collided in z
@@ -467,18 +467,18 @@ public abstract class ParticleWizardry extends Particle {
 				this.motionX *= IMPACT_FRICTION;
 				this.motionY *= IMPACT_FRICTION;
 				// Add random velocity in x and y proportional to the impact velocity
-				this.motionX += (rand.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
-				this.motionY += (rand.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
+				this.motionX += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
+				this.motionY += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
 			}
 
 			double searchRadius = 20;
 
-			List<Entity> nearbyEntities = EntityUtils.getEntitiesWithinRadius(searchRadius, this.posX,
-					this.posY, this.posZ, world, Entity.class);
+			List<Entity> nearbyEntities = EntityUtils.getEntitiesWithinRadius(searchRadius, this.getX(),
+					this.getY(), this.getZ(), world, Entity.class);
 
 			if(nearbyEntities.stream().anyMatch(e -> e instanceof ICustomHitbox
-					&& ((ICustomHitbox)e).calculateIntercept(new Vec3(posX, posY, posZ),
-					new Vec3(prevPosX, prevPosY, prevPosZ), 0) != null)) this.setExpired();
+					&& ((ICustomHitbox)e).calculateIntercept(new Vec3(getX(), getY(), getZ()),
+					new Vec3(prevgetX(), prevgetY(), prevgetZ()), 0) != null)) this.setExpired();
 
 		}
 

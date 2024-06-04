@@ -12,7 +12,7 @@ public class ParticleDust extends ParticleWizardry {
 		this.setSize(0.01F, 0.01F);
 
 		// Defaults
-		this.particleScale *= this.rand.nextFloat() + 0.2F;
+		this.particleScale *= this.random.nextFloat() + 0.2F;
 		this.particleMaxAge = (int)(16.0D / (Math.random() * 0.8D + 0.2D));
 		this.setRBGColorF(1, 1, 1);
 	}

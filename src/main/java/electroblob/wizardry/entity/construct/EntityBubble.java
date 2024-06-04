@@ -77,11 +77,11 @@ public class EntityBubble extends EntityMagicConstruct {
 
 			for(int i = 0; i < 5; i++){
 				this.world.spawnParticle(ParticleTypes.PORTAL,
-						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						this.posY + this.rand.nextDouble() * (double)this.height + 0.5d,
-						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width,
-						(this.rand.nextDouble() - 0.5D) * 2.0D, -this.rand.nextDouble(),
-						(this.rand.nextDouble() - 0.5D) * 2.0D);
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getY() + this.random.nextDouble() * (double)this.getBbHeight() + 0.5d,
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						(this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(),
+						(this.random.nextDouble() - 0.5D) * 2.0D);
 			}
 			if(lifetime - this.ticksExisted == 75){
 				this.playSound(WizardrySounds.ENTITY_ENTRAPMENT_VANISH, 1.5f, 1.0f);
@@ -94,7 +94,7 @@ public class EntityBubble extends EntityMagicConstruct {
 		// 10 seconds.
 		if(EntityUtils.getRider(this) == null && this.ticksExisted > 1){
 			if(!this.isDarkOrb) this.playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
-			this.setDead();
+			this.discard();
 		}
 	}
 
@@ -137,7 +137,7 @@ public class EntityBubble extends EntityMagicConstruct {
 		if(event.getEntityLiving().getRidingEntity() instanceof EntityBubble
 				&& !((EntityBubble)event.getEntityLiving().getRidingEntity()).isDarkOrb){
 			event.getEntityLiving().getRidingEntity().playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
-			event.getEntityLiving().getRidingEntity().setDead();
+			event.getEntityLiving().getRidingEntity().discard();
 		}
 	}
 

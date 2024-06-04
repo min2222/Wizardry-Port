@@ -61,8 +61,8 @@ public class LightningWeb extends SpellRay {
             // Secondary chaining effect
 
             List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(
-                getProperty(SECONDARY_RANGE).floatValue(), target.posX, target.posY + target.height / 2,
-                target.posZ, world);
+                getProperty(SECONDARY_RANGE).floatValue(), target.getX(), target.getY() + target.getBbHeight() / 2,
+                target.getZ(), world);
 
             secondaryTargets.stream()
                 .filter(entity -> !entity.equals(target))
@@ -71,7 +71,7 @@ public class LightningWeb extends SpellRay {
                 .limit(getProperty(SECONDARY_MAX_TARGETS).intValue())
                 .forEach(secondaryTarget -> {
                     electrocute(world, caster,
-                        target.getPositionVector().add(0, target.height / 2, 0),
+                        target.getPositionVector().add(0, target.getBbHeight() / 2, 0),
                         secondaryTarget,
                         getProperty(SECONDARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY),
                         ticksInUse
@@ -82,9 +82,9 @@ public class LightningWeb extends SpellRay {
                     List<LivingEntity> tertiaryTargets =
                         EntityUtils.getLivingWithinRadius(
                             getProperty(TERTIARY_RANGE).floatValue(),
-                            secondaryTarget.posX,
-                            secondaryTarget.posY + secondaryTarget.height / 2,
-                            secondaryTarget.posZ,
+                            secondaryTarget.getX(),
+                            secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2,
+                            secondaryTarget.getZ(),
                             world
                         );
 
@@ -96,7 +96,7 @@ public class LightningWeb extends SpellRay {
                         .limit(getProperty(TERTIARY_MAX_TARGETS).intValue())
                         .forEach(tertiaryTarget ->
                             electrocute(world, caster,
-                                secondaryTarget.getPositionVector().add(0, secondaryTarget.height / 2, 0),
+                                secondaryTarget.getPositionVector().add(0, secondaryTarget.getBbHeight() / 2, 0),
                                 tertiaryTarget,
                                 getProperty(TERTIARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY),
                                 ticksInUse
@@ -116,7 +116,7 @@ public class LightningWeb extends SpellRay {
 	@Override
 	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		// This is a nice example of when onMiss is used for more than just returning a boolean
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			// The arc does not reach full range when it has a free end
 			double freeRange = 0.8 * getRange(world, origin, direction, caster, ticksInUse, modifiers);
@@ -145,7 +145,7 @@ public class LightningWeb extends SpellRay {
 	private void electrocute(Level world, Entity caster, Vec3 origin, Entity target, float damage, int ticksInUse){
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-			if(!world.isRemote && ticksInUse == 1 && caster instanceof Player)
+			if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player)
 				((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 		}else{
@@ -153,7 +153,7 @@ public class LightningWeb extends SpellRay {
 					MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			ParticleBuilder.create(Type.BEAM).entity(caster).clr(0.2f, 0.6f, 1)
 			.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);

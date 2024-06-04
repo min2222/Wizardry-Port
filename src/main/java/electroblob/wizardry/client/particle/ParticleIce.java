@@ -15,7 +15,7 @@ public class ParticleIce extends ParticleWizardry {
 	
 	public ParticleIce(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.canCollide = true;
 		

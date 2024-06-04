@@ -45,7 +45,7 @@ public class Paralysis extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 		
-			if(world.isRemote){
+			if(level.isClientSide){
 				// Rather neatly, the entity can be set here and if it's null nothing will happen.
 				ParticleBuilder.create(Type.BEAM).entity(caster).clr(0.2f, 0.6f, 1)
 				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
@@ -55,7 +55,7 @@ public class Paralysis extends SpellRay {
 	
 			// This is a lot neater than it was, thanks to the damage type system.
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist",
 						target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
@@ -64,7 +64,7 @@ public class Paralysis extends SpellRay {
 			}
 
 			float durationMultiplier = target instanceof Player ? modifiers.get(PLAYER_EFFECT_DURATION_MULTIPLIER) : 1.0f;
-			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.paralysis,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.paralysis,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * durationMultiplier * modifiers.get(WizardryItems.duration_upgrade)), 0));
 		}
 		
@@ -74,7 +74,7 @@ public class Paralysis extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(world.isRemote){
+		if(level.isClientSide){
 			
 			if(world.getBlockState(pos).getMaterial().isSolid()){
 				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
@@ -90,7 +90,7 @@ public class Paralysis extends SpellRay {
 		// This is first because we want the endpoint to be unaffected by the offset
 		Vec3 endpoint = origin.add(direction.scale(getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)));
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			ParticleBuilder.create(Type.LIGHTNING).time(4).pos(origin).target(endpoint).scale(0.5f).spawn(world);
 			ParticleBuilder.create(Type.BEAM).clr(0.2f, 0.6f, 1).time(4).pos(origin)
 			.target(endpoint).spawn(world);

@@ -43,7 +43,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(world.isRemote && this.ticksExisted == 1){
+		if(level.isClientSide && this.ticksExisted == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_RADIANT_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
@@ -51,19 +51,19 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 		double radius = Spells.radiant_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
-			ParticleBuilder.create(Type.DUST, rand, posX, posY + 0.2, posZ, 0.3, false)
-					.vel(0, -0.02 - world.rand.nextFloat() * 0.01, 0).clr(0xffffff).fade(0xffec90).spawn(world);
+			ParticleBuilder.create(Type.DUST, rand, getX(), getY() + 0.2, getZ(), 0.3, false)
+					.vel(0, -0.02 - world.random.nextFloat() * 0.01, 0).clr(0xffffff).fade(0xffec90).spawn(world);
 
 			for(int i=0; i<PERIMETER_PARTICLE_DENSITY; i++){
 
-				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + rand.nextFloat());
+				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + random.nextFloat());
 
-				double x = posX + radius * Mth.sin(angle);
-				double z = posZ + radius * Mth.cos(angle);
+				double x = getX() + radius * Mth.sin(angle);
+				double z = getZ() + radius * Mth.cos(angle);
 
-				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
+				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, getY(), z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 
 				if(y != null){
 					ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(0, 0.01, 0).clr(0xffffff).fade(0xffec90).spawn(world);
@@ -71,7 +71,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 			}
 		}
 
-		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), world);
 		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
 
 		List<LivingEntity> nearbyAllies = nearby.stream().filter(e -> e == getCaster()
@@ -90,9 +90,9 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 				if(ally.ticksExisted % 8 == 0) ally.heal(Spells.radiant_totem.getProperty(Spell.HEALTH).floatValue());
 				targetsRemaining--;
 
-				if(world.isRemote){
+				if(level.isClientSide){
 					ParticleBuilder.create(Type.BEAM).pos(this.getPositionVector().add(0, height/2, 0))
-							.target(ally).clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f).spawn(world);
+							.target(ally).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f).spawn(world);
 				}
 			}
 		}
@@ -113,9 +113,9 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 				targetsRemaining--;
 
-				if(world.isRemote){
+				if(level.isClientSide){
 					ParticleBuilder.create(Type.BEAM).pos(this.getPositionVector().add(0, height/2, 0))
-							.target(target).clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f).spawn(world);
+							.target(target).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f).spawn(world);
 				}
 			}
 		}

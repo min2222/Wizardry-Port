@@ -38,15 +38,15 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 
 		for(int i = 0; i < chancesToSpawn; i++){
 
-			int randPosX = x + random.nextInt(16);
-			int randPosY = random.nextInt(256);
-			int randPosZ = z + random.nextInt(16);
+			int randgetX() = x + random.nextInt(16);
+			int randgetY() = random.nextInt(256);
+			int randgetZ() = z + random.nextInt(16);
 
 			for(int l = 0; l < groupSize; ++l){
 
-				int i1 = randPosX + random.nextInt(8) - random.nextInt(8);
-				int j1 = randPosY + random.nextInt(4) - random.nextInt(4);
-				int k1 = randPosZ + random.nextInt(8) - random.nextInt(8);
+				int i1 = randgetX() + random.nextInt(8) - random.nextInt(8);
+				int j1 = randgetY() + random.nextInt(4) - random.nextInt(4);
+				int k1 = randgetZ() + random.nextInt(8) - random.nextInt(8);
 
 				BlockPos pos = new BlockPos(i1, j1, k1);
 

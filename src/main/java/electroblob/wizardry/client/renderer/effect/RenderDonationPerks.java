@@ -69,13 +69,13 @@ public class RenderDonationPerks {
 			GlStateManager.depthMask(false);
 			GlStateManager.disableCull();
 
-			double x1 = player.chasingPosX - player.posX;
-			double y1 = player.chasingPosY - player.posY;
-			double z1 = player.chasingPosZ - player.posZ;
+			double x1 = player.chasinggetX() - player.getX();
+			double y1 = player.chasinggetY() - player.getY();
+			double z1 = player.chasinggetZ() - player.getZ();
 
-			double x2 = player.prevChasingPosX - player.prevPosX;
-			double y2 = player.prevChasingPosY - player.prevPosY;
-			double z2 = player.prevChasingPosZ - player.prevPosZ;
+			double x2 = player.prevChasinggetX() - player.prevgetX();
+			double y2 = player.prevChasinggetY() - player.prevgetY();
+			double z2 = player.prevChasinggetZ() - player.prevgetZ();
 
 			double dx = x2 + (x1 - x2) * partialTicks;
 			double dy = y2 + (y1 - y2) * partialTicks;
@@ -86,7 +86,7 @@ public class RenderDonationPerks {
 			float vMoveFraction = Mth.clamp((float)(dy * dy) / 0.3f, 0, 1);
 
 			double x = event.getX() + ROTATION_RADIUS * Mth.sin(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dx;
-			double y = event.getY() + HEIGHT_FRACTION * player.height + BOBBING_DISTANCE * Mth.sin(t / BOBBING_PERIOD) * (1 - vMoveFraction) + FOLLOW_DISTANCE * dy;
+			double y = event.getY() + HEIGHT_FRACTION * player.getBbHeight() + BOBBING_DISTANCE * Mth.sin(t / BOBBING_PERIOD) * (1 - vMoveFraction) + FOLLOW_DISTANCE * dy;
 			double z = event.getZ() + ROTATION_RADIUS * Mth.cos(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dz;
 			GlStateManager.translate(x, y, z);
 

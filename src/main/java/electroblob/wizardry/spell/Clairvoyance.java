@@ -62,7 +62,7 @@ public class Clairvoyance extends Spell {
 			if(dimension != null && caster.dimension == dimension){
 				if(location != null){
 
-					if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
+					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
 
 					EntityZombie arbitraryZombie = new EntityZombie(world){
 						@Override
@@ -72,7 +72,7 @@ public class Clairvoyance extends Spell {
 					};
 					arbitraryZombie.getEntityAttribute(Attributes.FOLLOW_RANGE)
 							.setBaseValue(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
-					arbitraryZombie.setPosition(caster.posX, caster.posY, caster.posZ);
+					arbitraryZombie.setPosition(caster.getX(), caster.getY(), caster.getZ());
 					arbitraryZombie.setPathPriority(PathNodeType.WATER, 0.0F);
 					arbitraryZombie.onGround = true;
 
@@ -91,7 +91,7 @@ public class Clairvoyance extends Spell {
 
 							this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-							if(!world.isRemote && caster instanceof ServerPlayer){
+							if(!level.isClientSide && caster instanceof ServerPlayer){
 								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.duration_upgrade)),
 										(ServerPlayer)caster);
 							}
@@ -100,18 +100,18 @@ public class Clairvoyance extends Spell {
 						}
 					}
 
-					if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
+					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
 
 				}else{
-					if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 				}
 			}else{
-				if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+				if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 			}
 		}
 
 		// Fixes the problem with the sound not playing for the client of the caster.
-		if(world.isRemote) this.playSound(world, caster, ticksInUse, -1, modifiers);
+		if(level.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 		return false;
 	}

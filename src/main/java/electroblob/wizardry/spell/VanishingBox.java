@@ -18,7 +18,7 @@ public class VanishingBox extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			InventoryEnderChest enderchest = caster.getInventoryEnderChest();
 

@@ -19,14 +19,14 @@ public class ParticleTornado extends ParticleDigging {
 	public ParticleTornado(Level world, int maxAge, double originX, double originZ, double radius, double yPos,
                            double velX, double velZ, BlockState block){
 		super(world, 0, 0, 0, 0, 0, 0, block);
-		this.angle = this.rand.nextFloat() * (float)Math.PI * 2;
+		this.angle = this.random.nextFloat() * (float)Math.PI * 2;
 		double x = originX - Mth.cos(angle) * radius;
 		double z = originZ + radius * Mth.sin(angle);
 		this.radius = radius;
 		this.setPosition(x, yPos, z);
-		this.prevPosX = x;
-		this.prevPosY = yPos;
-		this.prevPosZ = z;
+		this.prevgetX() = x;
+		this.prevgetY() = yPos;
+		this.prevgetZ() = z;
 		// this.particleScale *= 0.75F;
 		this.particleMaxAge = maxAge;
 		this.canCollide = false;
@@ -35,7 +35,7 @@ public class ParticleTornado extends ParticleDigging {
 		// if(block.getBlock() != Blocks.GRASS || side == 1) this.setColour(block.getRenderColor(side));
 
 		// Blocks that emit light are rendered with full brightness.
-		if(block.getLightValue(world, new BlockPos(this.posX, this.posY, this.posZ)) == 0){
+		if(block.getLightValue(world, new BlockPos(this.getX(), this.getY(), this.getZ())) == 0){
 			this.particleRed *= 0.75;
 			this.particleGreen *= 0.75;
 			this.particleBlue *= 0.75;
@@ -43,7 +43,7 @@ public class ParticleTornado extends ParticleDigging {
 			this.fullBrightness = true;
 		}
 
-		speed = rand.nextDouble() * 2 + 1;
+		speed = random.nextDouble() * 2 + 1;
 		this.velX = velX;
 		this.velZ = velZ;
 	}
@@ -51,9 +51,9 @@ public class ParticleTornado extends ParticleDigging {
 	@Override
 	public void onUpdate(){
 
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevgetX() = this.getX();
+		this.prevgetY() = this.getY();
+		this.prevgetZ() = this.getZ();
 
 		if(this.particleAge++ >= this.particleMaxAge){
 			this.setExpired();

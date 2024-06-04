@@ -27,7 +27,7 @@ public class BlindingFlash extends SpellAreaEffect {
 
 		if(EntityUtils.isLiving(target)){
 			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
-			target.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
+			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 		}
 
 		return true;
@@ -35,7 +35,7 @@ public class BlindingFlash extends SpellAreaEffect {
 
 	@Override
 	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
-		if(caster != null) origin = origin.add(0, caster.height + 1, 0);
+		if(caster != null) origin = origin.add(0, caster.getBbHeight() + 1, 0);
 		ParticleBuilder.create(Type.SPHERE).pos(origin).scale((float)radius * 0.8f).spawn(world);
 	}
 }

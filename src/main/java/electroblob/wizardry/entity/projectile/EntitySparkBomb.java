@@ -40,7 +40,7 @@ public class EntitySparkBomb extends EntityBomb {
 			// This is if the spark bomb gets a direct hit
 			float damage = Spells.spark_bomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
-			this.playSound(WizardrySounds.ENTITY_SPARK_BOMB_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+			this.playSound(WizardrySounds.ENTITY_SPARK_BOMB_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 
 			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.SHOCK).setProjectile(),
@@ -49,14 +49,14 @@ public class EntitySparkBomb extends EntityBomb {
 		}
 
 		// Particle effect
-		if(world.isRemote){
-			ParticleBuilder.spawnShockParticles(world, posX, posY + height/2, posZ);
+		if(level.isClientSide){
+			ParticleBuilder.spawnShockParticles(world, getX(), getY() + height/2, getZ());
 		}
 
 		double seekerRange = Spells.spark_bomb.getProperty(Spell.EFFECT_RADIUS).doubleValue() * blastMultiplier;
 
-		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX, this.posY,
-				this.posZ, this.world);
+		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.getX(), this.getY(),
+				this.getZ(), this.world);
 
 		for(int i = 0; i < Math.min(targets.size(), Spells.spark_bomb.getProperty(SECONDARY_MAX_TARGETS).intValue()); i++){
 
@@ -65,15 +65,15 @@ public class EntitySparkBomb extends EntityBomb {
 							&& ((Player)targets.get(i)).isCreative());
 
 			// Detects (client side) if target is the thrower, to stop particles being spawned around them.
-			//if(flag && world.isRemote && targets.get(i).getEntityId() == this.playerID) flag = false;
+			//if(flag && level.isClientSide && targets.get(i).getEntityId() == this.playerID) flag = false;
 
 			if(flag){
 
 				LivingEntity target = targets.get(i);
 
-				if(!this.world.isRemote){
+				if(!this.level.isClientSide){
 
-					target.playSound(WizardrySounds.ENTITY_SPARK_BOMB_CHAIN, 1.0F, rand.nextFloat() * 0.4F + 1.5F);
+					target.playSound(WizardrySounds.ENTITY_SPARK_BOMB_CHAIN, 1.0F, random.nextFloat() * 0.4F + 1.5F);
 
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.SHOCK),
@@ -81,11 +81,11 @@ public class EntitySparkBomb extends EntityBomb {
 
 				}else{
 					ParticleBuilder.create(Type.LIGHTNING).pos(this.getPositionVector()).target(target).spawn(world);
-					ParticleBuilder.spawnShockParticles(world, target.posX, target.posY + target.height/2, target.posZ);
+					ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight()/2, target.getZ());
 				}
 			}
 		}
 
-		this.setDead();
+		this.discard();
 	}
 }

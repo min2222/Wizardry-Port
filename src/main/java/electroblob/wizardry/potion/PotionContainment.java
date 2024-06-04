@@ -45,24 +45,24 @@ public class PotionContainment extends PotionMagicEffect {
 
 		Vec3 origin = GeometryUtils.getCentre(NbtUtils.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
 
-		double x = target.posX, y = target.posY, z = target.posZ;
+		double x = target.getX(), y = target.getY(), z = target.getZ();
 
 		// Containment fields are cubes so we're dealing with each axis separately
 		if(target.getEntityBoundingBox().maxX > origin.x + maxDistance) x = origin.x + maxDistance - target.width/2;
 		if(target.getEntityBoundingBox().minX < origin.x - maxDistance) x = origin.x - maxDistance + target.width/2;
 
-		if(target.getEntityBoundingBox().maxY > origin.y + maxDistance) y = origin.y + maxDistance - target.height;
+		if(target.getEntityBoundingBox().maxY > origin.y + maxDistance) y = origin.y + maxDistance - target.getBbHeight();
 		if(target.getEntityBoundingBox().minY < origin.y - maxDistance) y = origin.y - maxDistance;
 
 		if(target.getEntityBoundingBox().maxZ > origin.z + maxDistance) z = origin.z + maxDistance - target.width/2;
 		if(target.getEntityBoundingBox().minZ < origin.z - maxDistance) z = origin.z - maxDistance + target.width/2;
 
-		if(x != target.posX || y != target.posY || z != target.posZ)
+		if(x != target.getX() || y != target.getY() || z != target.getZ())
 		{
-			target.addVelocity(0.15 * Math.signum(x - target.posX), 0.15 * Math.signum(y - target.posY), 0.15 * Math.signum(z - target.posZ));
+			target.addVelocity(0.15 * Math.signum(x - target.getX()), 0.15 * Math.signum(y - target.getY()), 0.15 * Math.signum(z - target.getZ()));
 			EntityUtils.undoGravity(target);
-			if(target.world.isRemote){
-				target.world.playSound(target.posX, target.posY, target.posZ, WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
+			if(target.level.isClientSide){
+				target.world.playSound(target.getX(), target.getY(), target.getZ(), WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
 						WizardrySounds.SPELLS, 0.3f, 1f, false);
 			}
 		}

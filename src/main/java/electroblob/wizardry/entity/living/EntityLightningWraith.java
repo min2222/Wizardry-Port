@@ -40,10 +40,10 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 
 	@Override
 	protected void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				float brightness = 0.3f + (rand.nextFloat() / 2);
-				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + rand.nextInt(10))
+				float brightness = 0.3f + (random.nextFloat() / 2);
+				ParticleBuilder.create(Type.SPARKLE, this).vel(0, 0.05, 0).time(20 + random.nextInt(10))
 				.clr(brightness, brightness + 0.2f, 1.0f).spawn(world);
 			}
 		}
@@ -58,7 +58,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 	public void onLivingUpdate(){
 		// Fortunately, lightning wraiths don't replace any of blazes' particle effects or the fire sound, they only
 		// add the sparks, so it's fine to call super here.
-		if(world.isRemote){
+		if(level.isClientSide){
 			ParticleBuilder.create(Type.SPARK, this).spawn(world);
 		}
 		super.onLivingUpdate();
@@ -143,8 +143,8 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 					this.blaze.attackEntityAsMob(entitylivingbase);
 				}
 
-				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY,
-						entitylivingbase.posZ, 1.0D);
+				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.getX(), entitylivingbase.getY(),
+						entitylivingbase.getZ(), 1.0D);
 			}else if(d0 < 256.0D){
 				if(this.attackTime <= 0){
 					++this.attackStep;
@@ -169,8 +169,8 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 				this.blaze.getLookHelper().setLookPositionWithEntity(entitylivingbase, 10.0F, 10.0F);
 			}else{
 				this.blaze.getNavigator().clearPath();
-				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.posX, entitylivingbase.posY,
-						entitylivingbase.posZ, 1.0D);
+				this.blaze.getMoveHelper().setMoveTo(entitylivingbase.getX(), entitylivingbase.getY(),
+						entitylivingbase.getZ(), 1.0D);
 			}
 
 			super.updateTask();

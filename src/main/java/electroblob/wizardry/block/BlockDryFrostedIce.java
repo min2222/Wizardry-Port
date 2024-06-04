@@ -32,7 +32,7 @@ public class BlockDryFrostedIce extends BlockFrostedIce {
 
 	@Override
 	public void updateTick(Level worldIn, BlockPos pos, BlockState state, Random rand){
-		if(rand.nextInt(3) == 0){
+		if(random.nextInt(3) == 0){
 			this.slightlyMelt(worldIn, pos, state, rand, true);
 		}else{
 			worldIn.scheduleUpdate(pos, this, Mth.getInt(rand, 20, 40));

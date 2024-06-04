@@ -32,7 +32,7 @@ public class Snare extends SpellRay {
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(side == Direction.UP && world.isSideSolid(pos, Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos.up())){
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				world.setBlockState(pos.up(), WizardryBlocks.snare.getDefaultState());
 				((TileEntityPlayerSave)world.getTileEntity(pos.up())).setCaster(caster);
 				((TileEntityPlayerSave)world.getTileEntity(pos.up())).sync();
@@ -50,10 +50,10 @@ public class Snare extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = world.rand.nextFloat() * 0.25f;
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(20 + world.rand.nextInt(8))
+		float brightness = world.random.nextFloat() * 0.25f;
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(20 + world.random.nextInt(8))
 		.clr(brightness, brightness + 0.1f, 0).spawn(world);
-		ParticleBuilder.create(Type.LEAF).pos(x, y, z).vel(0, -0.01, 0).time(40 + world.rand.nextInt(10)).spawn(world);
+		ParticleBuilder.create(Type.LEAF).pos(x, y, z).vel(0, -0.01, 0).time(40 + world.random.nextInt(10)).spawn(world);
 	}
 
 }

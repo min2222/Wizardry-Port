@@ -19,8 +19,8 @@ public class ArrowRain extends SpellConstructRanged<EntityArrowRain> {
 		
 		// Moves the entity back towards the caster a bit, so the area of effect is better centred on the position.
 		// 3 is the distance to move the entity back towards the caster.
-		double dx = caster == null ? side.getDirectionVec().getX() : caster.posX - x;
-		double dz = caster == null ? side.getDirectionVec().getZ() : caster.posZ - z;
+		double dx = caster == null ? side.getDirectionVec().getX() : caster.getX() - x;
+		double dz = caster == null ? side.getDirectionVec().getZ() : caster.getZ() - z;
 		double dist = Math.sqrt(dx * dx + dz * dz);
 		if(dist != 0){
 			double distRatio = 3 / dist;

@@ -61,7 +61,7 @@ public class RenderTransportationUI {
 			GlStateManager.pushMatrix();
 
 			Vec3 origin = player.getPositionEyes(event.getPartialTicks());
-			GlStateManager.translate(0, origin.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, 0);
+			GlStateManager.translate(0, origin.y - Minecraft.getMinecraft().getRenderManager().viewergetY(), 0);
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();

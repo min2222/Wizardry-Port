@@ -54,7 +54,7 @@ public class GuiButtonTurnPage extends GuiButton {
 		
 		if(this.visible){
 
-			boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			minecraft.getTextureManager().bindTexture(texture);
 

@@ -42,11 +42,11 @@ public class WitherSkull extends Spell {
 
 		Vec3 look = caster.getLookVec();
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			EntityWitherSkull witherskull = new EntityWitherSkull(world, caster, 1, 1, 1);
 
-			witherskull.setPosition(caster.posX + look.x, caster.posY + look.y + 1.3, caster.posZ + look.z);
+			witherskull.setPosition(caster.getX() + look.x, caster.getY() + look.y + 1.3, caster.getZ() + look.z);
 
 			double acceleration = getProperty(ACCELERATION).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 
@@ -69,21 +69,21 @@ public class WitherSkull extends Spell {
 
 		if(target != null){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				EntityWitherSkull witherskull = new EntityWitherSkull(world, caster, 1, 1, 1);
 
-				double dx = target.posX - caster.posX;
-				double dy = target.posY + (double)(target.height / 2.0F)
-						- (caster.posY + (double)(caster.height / 2.0F));
-				double dz = target.posZ - caster.posZ;
+				double dx = target.getX() - caster.getX();
+				double dy = target.getY() + (double)(target.getBbHeight() / 2.0F)
+						- (caster.getY() + (double)(caster.getBbHeight() / 2.0F));
+				double dz = target.getZ() - caster.getZ();
 
 				witherskull.accelerationX = dx / caster.getDistance(target) * 0.1;
 				witherskull.accelerationY = dy / caster.getDistance(target) * 0.1;
 				witherskull.accelerationZ = dz / caster.getDistance(target) * 0.1;
 
 				witherskull.shootingEntity = caster;
-				witherskull.setPosition(caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ);
+				witherskull.setPosition(caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ());
 
 				world.spawnEntity(witherskull);
 				this.playSound(world, caster, ticksInUse, -1, modifiers);

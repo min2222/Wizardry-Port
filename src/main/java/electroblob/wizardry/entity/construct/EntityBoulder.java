@@ -50,7 +50,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	@Override
 	public void onUpdate(){
 
-		if(world.isRemote && !soundStarted && onGround){
+		if(level.isClientSide && !soundStarted && onGround){
 			soundStarted = true;
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_BOULDER_ROLL, WizardrySounds.SPELLS, 1, 1, true);
 		}
@@ -71,7 +71,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 			if(!isValidTarget(entity)) break;
 
-			boolean crushBonus = entity.posY < this.posY
+			boolean crushBonus = entity.getY() < this.getY()
 					&& entity.getEntityBoundingBox().minX > this.getEntityBoundingBox().minX
 					&& entity.getEntityBoundingBox().maxX < this.getEntityBoundingBox().maxX
 					&& entity.getEntityBoundingBox().minZ > this.getEntityBoundingBox().minZ
@@ -98,13 +98,13 @@ public class EntityBoulder extends EntityScaledConstruct {
 		// Trailing particles
 		for(int i = 0; i < 10; i++){
 
-			double particleX = this.posX + width * 0.7 * (rand.nextDouble() - 0.5);
-			double particleZ = this.posZ + width * 0.7 * (rand.nextDouble() - 0.5);
+			double particleX = this.getX() + width * 0.7 * (random.nextDouble() - 0.5);
+			double particleZ = this.getZ() + width * 0.7 * (random.nextDouble() - 0.5);
 
 			BlockState block = world.getBlockState(new BlockPos(this).down());
 
 			if(block.getBlock() != Blocks.AIR){
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
 						0, 0.2, 0, Block.getStateId(block));
 			}
 		}
@@ -121,7 +121,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	private boolean smashBlocks(List<BlockPos> blocks, boolean breakIfTooHard){
 
 		if(blocks.removeIf(p -> world.getBlockState(p).getBlock().getExplosionResistance(world, p, this, null) > 3
-				|| (!world.isRemote && !BlockUtils.canBreakBlock(getCaster(), world, p)))){
+				|| (!level.isClientSide && !BlockUtils.canBreakBlock(getCaster(), world, p)))){
 			// If any of the blocks were not breakable, the boulder is smashed
 			if(breakIfTooHard){
 				this.despawn();
@@ -131,11 +131,11 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 		}else{
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				blocks.forEach(p -> world.destroyBlock(p, false));
 				if(--hitsRemaining <= 0) this.despawn();
 			}else{
-				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
+				world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 			}
 		}
 
@@ -144,24 +144,24 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	private void shakeNearbyPlayers(){
-		EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, Player.class)
+		EntityUtils.getEntitiesWithinRadius(10, getX(), getY(), getZ(), world, Player.class)
 				.forEach(p -> Wizardry.proxy.shakeScreen(p, 8));
 	}
 
 	@Override
 	public void despawn(){
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i = 0; i < 200; i++){
-				double x = posX + (rand.nextDouble() - 0.5) * width;
-				double y = posY + rand.nextDouble() * height;
-				double z = posZ + (rand.nextDouble() - 0.5) * width;
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - posX) * 0.1,
-						(y - posY + height / 2) * 0.1, (z - posZ) * 0.1, Block.getStateId(Blocks.DIRT.getDefaultState()));
+				double x = getX() + (random.nextDouble() - 0.5) * width;
+				double y = getY() + random.nextDouble() * height;
+				double z = getZ() + (random.nextDouble() - 0.5) * width;
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - getX()) * 0.1,
+						(y - getY() + height / 2) * 0.1, (z - getZ()) * 0.1, Block.getStateId(Blocks.DIRT.getDefaultState()));
 			}
 
-			world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
+			world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 		}
 
 		super.despawn();
@@ -170,7 +170,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	@Override
 	public void move(MoverType type, double x, double y, double z){
 		super.move(type, x, y, z);
-		this.rotationPitch += Math.toDegrees(Mth.sqrt(x*x + y*y + z*z) / (width/2)); // That's how we roll
+		this.rotationPitch += Math.toDegrees(Math.sqrt(x*x + y*y + z*z) / (width/2)); // That's how we roll
 	}
 
 	@Override
@@ -187,27 +187,27 @@ public class EntityBoulder extends EntityScaledConstruct {
 			hitsRemaining--;
 		}
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			// Landing particles
 			for(int i = 0; i < 40; i++){
 
-				double particleX = this.posX - 1.5 + 3 * rand.nextDouble();
-				double particleZ = this.posZ - 1.5 + 3 * rand.nextDouble();
+				double particleX = this.getX() - 1.5 + 3 * random.nextDouble();
+				double particleZ = this.getZ() - 1.5 + 3 * random.nextDouble();
 				// Roundabout way of getting a block instance for the block the boulder is standing on (if any).
-				BlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
+				BlockState block = world.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block.getBlock() != Blocks.AIR){
-					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
-							particleX - this.posX, 0, particleZ - this.posZ, Block.getStateId(block));
+					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
+							particleX - this.getX(), 0, particleZ - this.getZ(), Block.getStateId(block));
 				}
 			}
 
 			// Other landing effects
 			if(distance > 1.2){
-				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_LAND, SoundSource.BLOCKS, Math.min(2, distance / 4), 1, false);
+				world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_LAND, SoundSource.BLOCKS, Math.min(2, distance / 4), 1, false);
 				shakeNearbyPlayers();
-//				EntityUtils.getEntitiesWithinRadius(Math.min(12, distance * 2), posX, posY, posZ, world, EntityPlayer.class)
+//				EntityUtils.getEntitiesWithinRadius(Math.min(12, distance * 2), getX(), getY(), getZ(), world, EntityPlayer.class)
 //						.forEach(p -> Wizardry.proxy.shakeScreen(p, Math.min(12, distance * 2)));
 			}
 		}

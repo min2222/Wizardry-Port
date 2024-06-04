@@ -78,9 +78,9 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 		// Copied from ParticleWizardry, needs to be here since we're not calling super
 		updateEntityLinking(viewer, partialTicks);
 
-		float x = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks);
-		float y = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks);
-		float z = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks);
+		float x = (float)(this.prevgetX() + (this.getX() - this.prevgetX()) * (double)partialTicks);
+		float y = (float)(this.prevgetY() + (this.getY() - this.prevgetY()) * (double)partialTicks);
+		float z = (float)(this.prevgetZ() + (this.getZ() - this.prevgetZ()) * (double)partialTicks);
 
 		// Translates the particle a short distance in front of the entity
 		if(this.entity != null && this.shouldApplyOriginOffset()){
@@ -94,11 +94,11 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 
 		if(this.target != null){
 
-			this.targetX = this.target.prevPosX + (this.target.posX - this.target.prevPosX) * partialTicks;
-			double correction = this.target.posY - this.target.posY;
-			this.targetY = this.target.prevPosY + (this.target.posY - this.target.prevPosY) * partialTicks
-					+ target.height/2 + correction;
-			this.targetZ = this.target.prevPosZ + (this.target.posZ - this.target.prevPosZ) * partialTicks;
+			this.targetX = this.target.prevgetX() + (this.target.getX() - this.target.prevgetX()) * partialTicks;
+			double correction = this.target.getY() - this.target.getY();
+			this.targetY = this.target.prevgetY() + (this.target.getY() - this.target.prevgetY()) * partialTicks
+					+ target.getBbHeight()/2 + correction;
+			this.targetZ = this.target.prevgetZ() + (this.target.getZ() - this.target.prevgetZ()) * partialTicks;
 
 		}else if(this.entity != null && this.length > 0){
 
@@ -115,7 +115,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 		}
 		
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x - interpPosX, y - interpPosY, z - interpPosZ);
+		GlStateManager.translate(x - interpgetX(), y - interpgetY(), z - interpgetZ());
 
 		double dx = this.targetX - x;
 		double dy = this.targetY - y;

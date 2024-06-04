@@ -25,15 +25,15 @@ public class Glide extends Spell {
 
 	@Override
 	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
-		if(ticksInUse == 0 && world.isRemote) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
-				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f));
+		if(ticksInUse == 0 && level.isClientSide) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
+				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f));
 	}
 
 	@Override
 	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
-		if(ticksInUse == 0 && world.isRemote){
+		if(ticksInUse == 0 && level.isClientSide){
 			Wizardry.proxy.playSpellSoundLoop(world, x, y, z, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
-					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f), duration);
+					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f), duration);
 		}
 	}
 
@@ -56,14 +56,14 @@ public class Glide extends Spell {
 			if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0.0f;
 		}
 
-		if(world.isRemote){
-			double x = caster.posX - 0.25 + world.rand.nextDouble() / 2;
-			double y = caster.posY + world.rand.nextDouble();
-			double z = caster.posZ - 0.25 + world.rand.nextDouble() / 2;
+		if(level.isClientSide){
+			double x = caster.getX() - 0.25 + world.random.nextDouble() / 2;
+			double y = caster.getY() + world.random.nextDouble();
+			double z = caster.getZ() - 0.25 + world.random.nextDouble() / 2;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, -0.1, 0).time(15).clr(1f, 1f, 1f).spawn(world);
-			x = caster.posX - 0.25 + world.rand.nextDouble() / 2;
-			y = caster.posY + world.rand.nextDouble();
-			z = caster.posZ - 0.25 + world.rand.nextDouble() / 2;
+			x = caster.getX() - 0.25 + world.random.nextDouble() / 2;
+			y = caster.getY() + world.random.nextDouble();
+			z = caster.getZ() - 0.25 + world.random.nextDouble() / 2;
 			ParticleBuilder.create(Type.LEAF).pos(x, y, z).time(20).spawn(world);
 		}
 

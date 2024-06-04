@@ -32,12 +32,12 @@ public class Entrapment extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 			
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				// Deals a small amount damage so the target counts as being hit by the caster
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
 				
 				EntityBubble bubble = new EntityBubble(world);
-				bubble.setPosition(target.posX, target.posY, target.posZ);
+				bubble.setPosition(target.getX(), target.getY(), target.getZ());
 				bubble.setCaster(caster);
 				bubble.lifetime = ((int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				bubble.isDarkOrb = true;

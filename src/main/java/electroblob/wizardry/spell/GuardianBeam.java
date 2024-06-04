@@ -42,7 +42,7 @@ public class GuardianBeam extends SpellRay {
 				}
 			}
 			
-			if(world.isRemote){
+			if(level.isClientSide){
 
 				float t = (ticksInUse % 50) / 50f;
 				float yellowness = t * t;
@@ -55,7 +55,7 @@ public class GuardianBeam extends SpellRay {
 				.clr(r, g, b).spawn(world);
 
 				Vec3 direction = GeometryUtils.getCentre(target).subtract(origin);
-				Vec3 pos = origin.add(direction.scale(world.rand.nextFloat()));
+				Vec3 pos = origin.add(direction.scale(world.random.nextFloat()));
 				ParticleBuilder.create(Type.MAGIC_BUBBLE, world.rand, pos.x, pos.y, pos.z, 0.15, false).spawn(world);
 			}
 		}

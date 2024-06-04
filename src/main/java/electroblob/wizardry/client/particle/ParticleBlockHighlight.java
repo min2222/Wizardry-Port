@@ -48,7 +48,7 @@ public class ParticleBlockHighlight extends ParticleWizardry {
 		if(pitch == -90) facing = Direction.DOWN;
 		
 		// Disappears if there is no block behind it (this is the same check used to spawn it)
-		if(!world.getBlockState(new BlockPos(posX, posY, posZ).offset(facing.getOpposite())).getMaterial().isSolid()){
+		if(!world.getBlockState(new BlockPos(getX(), getY(), getZ()).offset(facing.getOpposite())).getMaterial().isSolid()){
 			this.setExpired();
 		}
 	}

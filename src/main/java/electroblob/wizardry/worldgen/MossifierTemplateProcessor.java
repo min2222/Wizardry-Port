@@ -27,7 +27,7 @@ public class MossifierTemplateProcessor implements ITemplateProcessor {
 	 */
 	public MossifierTemplateProcessor(float mossiness, float heightWeight, int groundLevel){
 		this.mossiness = mossiness;
-		this.heightWeight = heightWeight;
+		this.getBbHeight()Weight = heightWeight;
 		this.groundLevel = groundLevel;
 	}
 
@@ -37,7 +37,7 @@ public class MossifierTemplateProcessor implements ITemplateProcessor {
 
 		float chance = mossiness - heightWeight * (pos.getY() - groundLevel);
 
-		if(world.rand.nextFloat() < chance){
+		if(world.random.nextFloat() < chance){
 			if(info.blockState.getBlock() == Blocks.COBBLESTONE){
 				return new Template.BlockInfo(info.pos, Blocks.MOSSY_COBBLESTONE.getDefaultState(), info.tileentityData);
 			}else if(info.blockState.getBlock() == Blocks.STONEBRICK){

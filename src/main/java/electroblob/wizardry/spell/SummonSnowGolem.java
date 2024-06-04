@@ -26,7 +26,7 @@ public class SummonSnowGolem extends Spell {
 		BlockPos pos = BlockUtils.findNearbyFloorSpace(caster, 2, 4);
 		if(pos == null) return false;
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			
 			EntitySnowman snowman = new EntitySnowman(world);
 			snowman.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
@@ -35,9 +35,9 @@ public class SummonSnowGolem extends Spell {
 		}else{
 			
 			for(int i=0; i<10; i++){
-				double x = pos.getX() + world.rand.nextDouble() * 2 - 1;
-				double y = pos.getY() + 0.5 + world.rand.nextDouble();
-				double z = pos.getZ() + world.rand.nextDouble() * 2 - 1;
+				double x = pos.getX() + world.random.nextDouble() * 2 - 1;
+				double y = pos.getY() + 0.5 + world.random.nextDouble();
+				double z = pos.getZ() + world.random.nextDouble() * 2 - 1;
 				ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1, 0).clr(0.6f, 0.6f, 1).spawn(world);
 			}
 		}

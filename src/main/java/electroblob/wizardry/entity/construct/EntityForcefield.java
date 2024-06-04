@@ -56,11 +56,11 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	public void setRadius(float radius){
 		this.radius = radius;
-		this.height = 2 * radius;
+		this.getBbHeight() = 2 * radius;
 		this.width = 2 * radius;
 		// y-3 because it needs to be centred on the given position
-		this.setEntityBoundingBox(new AABB(posX - radius, posY - radius, posZ - radius,
-				posX + radius, posY + radius, posZ + radius));
+		this.setEntityBoundingBox(new AABB(getX() - radius, getY() - radius, getZ() - radius,
+				getX() + radius, getY() + radius, getZ() + radius));
 	}
 
 	public float getRadius(){
@@ -83,7 +83,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 		super.onUpdate();
 
-		if(ticksExisted == 1 && world.isRemote){
+		if(ticksExisted == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_FORCEFIELD_AMBIENT, WizardrySounds.SPELLS, 0.5f, 1, true);
 		}
 
@@ -92,7 +92,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		// If they will be inside the forcefield next tick, sets their position and velocity such that they appear to
 		// bounce off the forcefield and creates impact particle effects and sounds where they hit it
 
-		List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius + SEARCH_BORDER_SIZE, posX, posY, posZ, world, Entity.class);
+		List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius + SEARCH_BORDER_SIZE, getX(), getY(), getZ(), world, Entity.class);
 
 		targets.remove(this);
 		targets.removeIf(t -> t instanceof EntityXPOrb); // Gets annoying since they're attracted to the player
@@ -159,10 +159,10 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 					Vec3 targetNewPos = target.getPositionVector().add(targetRelativePos.normalize().scale(distanceTowardsCentre));
 					target.setPosition(targetNewPos.x, targetNewPos.y, targetNewPos.z);
 
-					world.playSound(target.posX, target.posY, target.posZ, WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
+					world.playSound(target.getX(), target.getY(), target.getZ(), WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
 							WizardrySounds.SPELLS, 0.3f, 1.3f, false);
 
-					if(!world.isRemote){
+					if(!level.isClientSide){
 						// Player motion is handled on that player's client so needs packets
 						if(target instanceof ServerPlayer){
 							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
@@ -185,17 +185,17 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 						for(int i = 0; i < 12; i++){
 
-							float yaw1 = yaw + 0.3f * (rand.nextFloat() - 0.5f) - (float)Math.PI/2;
-							float pitch1 = pitch + 0.3f * (rand.nextFloat() - 0.5f);
+							float yaw1 = yaw + 0.3f * (random.nextFloat() - 0.5f) - (float)Math.PI/2;
+							float pitch1 = pitch + 0.3f * (random.nextFloat() - 0.5f);
 
-							float brightness = rand.nextFloat();
+							float brightness = random.nextFloat();
 
 							double r = radius + 0.05;
-							double x = this.posX + r * Mth.cos(yaw1) * Mth.cos(pitch1);
-							double y = this.posY + r * Mth.sin(pitch1);
-							double z = this.posZ + r * Mth.sin(yaw1) * Mth.cos(pitch1);
+							double x = this.getX() + r * Mth.cos(yaw1) * Mth.cos(pitch1);
+							double y = this.getY() + r * Mth.sin(pitch1);
+							double z = this.getZ() + r * Mth.sin(yaw1) * Mth.cos(pitch1);
 
-							ParticleBuilder.create(Type.DUST).pos(x, y, z).time(6 + rand.nextInt(6))
+							ParticleBuilder.create(Type.DUST).pos(x, y, z).time(6 + random.nextInt(6))
 							.face((float)(yaw1 * 180/Math.PI) + 90, (float)(pitch1 * 180/Math.PI)).scale(1.5f)
 							.clr(0.7f + 0.3f * brightness, 0.85f + 0.15f * brightness, 1).spawn(world);
 						}
@@ -239,7 +239,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		if(dsquared > rsquared) return null;
 		// Now do pythagoras to find the other side of the triangle, which is the distance along the line from
 		// the closest point to the edge of the sphere, and go that far back towards the origin - and that's it!
-		return closestPoint.subtract(line.normalize().scale(Mth.sqrt(rsquared - dsquared)));
+		return closestPoint.subtract(line.normalize().scale(Math.sqrt(rsquared - dsquared)));
 	}
 
 	@Override

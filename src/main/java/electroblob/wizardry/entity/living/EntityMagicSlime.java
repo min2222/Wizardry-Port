@@ -50,7 +50,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	 */
 	public EntityMagicSlime(Level world, LivingEntity caster, LivingEntity target, int lifetime){
 		super(world);
-		this.setPosition(target.posX, target.posY, target.posZ);
+		this.setPosition(target.getX(), target.getY(), target.getZ());
 		this.startRiding(target);
 		if (caster != null) this.setOwnerId(caster.getUniqueID());
 		this.setSlimeSize(2, false); // Needs to be called before setting the experience value to 0
@@ -64,7 +64,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	@Override protected void dealDamage(LivingEntity entity){} // Handles damage itself
 
 	@Override
-	public void setDead(){
+	public void discard(){
 		// Restores behaviour from Entity, replacing slime splitting behaviour.
 		this.isDead = true;
 		// Makes sure that the undoing in onUpdate won't undo this. For some reason, EntitySlime sets isDead directly
@@ -72,11 +72,11 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		this.setHealth(0);
 		// Bursting effect
 		for(int i = 0; i < 30; i++){
-			double x = this.posX - 0.5 + rand.nextDouble();
-			double y = this.posY - 0.5 + rand.nextDouble();
-			double z = this.posZ - 0.5 + rand.nextDouble();
-			this.world.spawnParticle(ParticleTypes.SLIME, x, y, z, (x - this.posX) * 2, (y - this.posY) * 2,
-					(z - this.posZ) * 2);
+			double x = this.getX() - 0.5 + random.nextDouble();
+			double y = this.getY() - 0.5 + random.nextDouble();
+			double z = this.getZ() - 0.5 + random.nextDouble();
+			this.world.spawnParticle(ParticleTypes.SLIME, x, y, z, (x - this.getX()) * 2, (y - this.getY()) * 2,
+					(z - this.getZ()) * 2);
 		}
 		this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_SPLAT, 2.5f, 0.6f);
 		this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_EXPLODE, 1.0f, 0.5f);
@@ -111,7 +111,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		// isDead other than that, but it's better to do a quick sanity check just to be sure.
 		if(this.isDead && world.getDifficulty() == Difficulty.PEACEFUL && this.getHealth() > 0) this.isDead = false;
 		// Bursts instantly rather than doing the falling over animation.
-		if(this.getHealth() <= 0) this.setDead();
+		if(this.getHealth() <= 0) this.discard();
 
 		this.updateDelegate();
 
@@ -122,13 +122,13 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 				this.getRidingEntity().hurt(DamageSource.MAGIC, 1);
 				if(this.getRidingEntity() != null){ // Some mobs force-dismount when attacked (normally when dying)
 					((LivingEntity)this.getRidingEntity())
-							.addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2));
+							.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2));
 				}
 				this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_ATTACK, 1.0f, 1.0f);
 				this.squishAmount = 0.5F;
 			}
 		}else{
-			this.setDead();
+			this.discard();
 		}
 	}
 

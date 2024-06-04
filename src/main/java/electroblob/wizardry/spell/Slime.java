@@ -37,11 +37,11 @@ public class Slime extends SpellRay {
 		if(EntityUtils.isLiving(target) && !(target instanceof EntityMagicSlime)){
 
 			if(target instanceof EntitySlime){
-				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					EntityMagicSlime slime = new EntityMagicSlime(world, caster, (LivingEntity)target,
 							(int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 					world.spawnEntity(slime);

@@ -614,9 +614,9 @@ public final class ParticleBuilder {
 		if(x == 0 && y == 0 && z == 0 && entity == null) Wizardry.logger.warn("Spawning particle at (0, 0, 0) - are you"
 				+ " sure the position/entity has been set correctly?");
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			Wizardry.logger.warn("ParticleBuilder.spawn(...) called on the server side! ParticleBuilder has prevented a "
-					+ "server crash, but calling it on the server will do nothing. Consider adding a world.isRemote check.");
+					+ "server crash, but calling it on the server will do nothing. Consider adding a level.isClientSide check.");
 			// Must stop here because the line after this if statement would crash the server!
 			reset();
 			return;
@@ -714,9 +714,9 @@ public final class ParticleBuilder {
 	 */
 	public static ParticleBuilder create(ResourceLocation type, Entity entity){
 		
-		double x = entity.posX + (entity.world.rand.nextDouble() - 0.5D) * (double)entity.width;
-		double y = entity.posY + entity.world.rand.nextDouble() * (double)entity.height;
-		double z = entity.posZ + (entity.world.rand.nextDouble() - 0.5D) * (double)entity.width;
+		double x = entity.getX() + (entity.world.random.nextDouble() - 0.5D) * (double)entity.width;
+		double y = entity.getY() + entity.world.random.nextDouble() * (double)entity.getBbHeight();
+		double z = entity.getZ() + (entity.world.random.nextDouble() - 0.5D) * (double)entity.width;
 		
 		return ParticleBuilder.instance.particle(type).pos(x, y, z);
 	}
@@ -756,13 +756,13 @@ public final class ParticleBuilder {
 		double px, py, pz;
 
 		for(int i=0; i<8; i++){
-			px = x + world.rand.nextDouble() - 0.5;
-			py = y + world.rand.nextDouble() - 0.5;
-			pz = z + world.rand.nextDouble() - 0.5;
+			px = x + world.random.nextDouble() - 0.5;
+			py = y + world.random.nextDouble() - 0.5;
+			pz = z + world.random.nextDouble() - 0.5;
 			ParticleBuilder.create(Type.SPARK).pos(px, py, pz).spawn(world);
-			px = x + world.rand.nextDouble() - 0.5;
-			py = y + world.rand.nextDouble() - 0.5;
-			pz = z + world.rand.nextDouble() - 0.5;
+			px = x + world.random.nextDouble() - 0.5;
+			py = y + world.random.nextDouble() - 0.5;
+			pz = z + world.random.nextDouble() - 0.5;
 			world.spawnParticle(ParticleTypes.SMOKE_LARGE, px, py, pz, 0, 0, 0);
 		}
 	}
@@ -772,9 +772,9 @@ public final class ParticleBuilder {
 	public static void spawnHealParticles(Level world, LivingEntity entity){
 
 		for(int i = 0; i < 10; i++){
-			double x = entity.posX + world.rand.nextDouble() * 2 - 1;
-			double y = entity.posY + entity.getEyeHeight() - 0.5 + world.rand.nextDouble();
-			double z = entity.posZ + world.rand.nextDouble() * 2 - 1;
+			double x = entity.getX() + world.random.nextDouble() * 2 - 1;
+			double y = entity.getY() + entity.getEyeHeight() - 0.5 + world.random.nextDouble();
+			double z = entity.getZ() + world.random.nextDouble() * 2 - 1;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1, 0).clr(1, 1, 0.3f).spawn(world);
 		}
 

@@ -69,7 +69,7 @@ public class Fangs extends Spell {
 
 		boolean flag = false;
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			double x = origin.x;
 			double y = caster == null ? origin.y : origin.y + caster.getEyeHeight();

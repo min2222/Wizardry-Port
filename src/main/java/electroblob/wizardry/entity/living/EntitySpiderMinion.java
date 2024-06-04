@@ -67,9 +67,9 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 
 		// Can't call super, so the code from the next level up (EntityLiving) had to be copied as well.
 		this.getEntityAttribute(Attributes.FOLLOW_RANGE)
-				.applyModifier(new AttributeModifier("Random spawn bonus", this.rand.nextGaussian() * 0.05D, EntityUtils.Operations.MULTIPLY_FLAT));
+				.applyModifier(new AttributeModifier("Random spawn bonus", this.random.nextGaussian() * 0.05D, EntityUtils.Operations.MULTIPLY_FLAT));
 
-		if(this.rand.nextFloat() < 0.05F){
+		if(this.random.nextFloat() < 0.05F){
 			this.setLeftHanded(true);
 		}else{
 			this.setLeftHanded(false);
@@ -103,10 +103,10 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
 				ParticleBuilder.create(Type.DARK_MAGIC)
-				.pos(this.posX + this.rand.nextFloat(), this.posY + this.rand.nextFloat(), this.posZ + this.rand.nextFloat())
+				.pos(this.getX() + this.random.nextFloat(), this.getY() + this.random.nextFloat(), this.getZ() + this.random.nextFloat())
 				.clr(0.1f, 0.2f, 0.0f)
 				.spawn(world);
 			}
@@ -130,7 +130,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 		}
 
 		if(seconds > 0){
-			target.addPotionEffect(new MobEffectInstance(MobEffects.POISON, seconds * 20, 0));
+			target.addEffect(new MobEffectInstance(MobEffects.POISON, seconds * 20, 0));
 		}
 	}
 

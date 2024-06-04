@@ -68,11 +68,11 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 
 					entity.hurt(source, Spells.snare.getProperty(Spell.DAMAGE).floatValue());
 
-					((LivingEntity)entity).addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS,
+					((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.SLOWNESS,
 							Spells.snare.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.snare.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
-					if(!world.isRemote) world.destroyBlock(pos, false);
+					if(!level.isClientSide) world.destroyBlock(pos, false);
 				}
 			}
 		}

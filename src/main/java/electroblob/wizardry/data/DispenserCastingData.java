@@ -121,7 +121,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 		
 		if(slots.isEmpty()) return false; // If no stack was found that matched the current spell
 		
-		tileEntity.remove(slots.get(tileEntity.getWorld().rand.nextInt(slots.size())), 1); // Consumes 1 scroll
+		tileEntity.remove(slots.get(tileEntity.getWorld().random.nextInt(slots.size())), 1); // Consumes 1 scroll
 		return true;
 	}
 

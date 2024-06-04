@@ -40,12 +40,12 @@ public class Poison extends SpellRay {
 			
 			// Has no effect on undead or spiders.
 			if(MagicDamage.isEntityImmune(DamageType.POISON, target)){
-				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.POISON,
+				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.POISON,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			}
@@ -67,7 +67,7 @@ public class Poison extends SpellRay {
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.3f, 0.7f, 0).spawn(world);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.1f, 0.4f, 0).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0.1f, 0.4f, 0).spawn(world);
 	}
 
 }

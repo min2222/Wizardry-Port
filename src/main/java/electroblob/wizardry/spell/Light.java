@@ -38,7 +38,7 @@ public class Light extends Spell {
 
 			if(world.isAirBlock(pos)){
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					world.setBlockState(pos, WizardryBlocks.magic_light.getDefaultState());
 					if(world.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
@@ -52,14 +52,14 @@ public class Light extends Spell {
 			}
 		}else{
 
-			int x = (int)(Math.floor(caster.posX) + caster.getLookVec().x * range);
-			int y = (int)(Math.floor(caster.posY) + caster.eyeHeight + caster.getLookVec().y * range);
-			int z = (int)(Math.floor(caster.posZ) + caster.getLookVec().z * range);
+			int x = (int)(Math.floor(caster.getX()) + caster.getLookVec().x * range);
+			int y = (int)(Math.floor(caster.getY()) + caster.eyeHeight + caster.getLookVec().y * range);
+			int z = (int)(Math.floor(caster.getZ()) + caster.getLookVec().z * range);
 
 			BlockPos pos = new BlockPos(x, y, z);
 
 			if(world.isAirBlock(pos)){
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					world.setBlockState(pos, WizardryBlocks.magic_light.getDefaultState());
 					if(world.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1

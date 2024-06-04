@@ -86,7 +86,7 @@ public class SpeedTime extends Spell {
 			flag = true;
 		}
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.getPosition(), radius);
 
@@ -102,21 +102,21 @@ public class SpeedTime extends Spell {
 		}
 
 		// Particle effects
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i=1; i<3; i++){
 
 				double particleSpread = 2;
-				double x = caster.posX + 2;
-				double y = caster.posY + caster.height / 2;
-				double z = caster.posZ;
+				double x = caster.getX() + 2;
+				double y = caster.getY() + caster.getBbHeight() / 2;
+				double z = caster.getZ();
 
 				ParticleBuilder.create(ParticleBuilder.Type.SPARKLE, world.rand, x, y, z, particleSpread, false)
 						.vel(-0.25, 0, 0).time(16).clr(1f, 1f, 1f).spawn(world);
 
 				ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.rand, x, y, z, particleSpread, false)
-						.vel(-0.25, 0, 0).time(16).scale(0.5f).clr(0.6f + world.rand.nextFloat() * 0.4f,
-						0.6f + world.rand.nextFloat() * 0.4f, 0.6f + world.rand.nextFloat() * 0.4f).spawn(world);
+						.vel(-0.25, 0, 0).time(16).scale(0.5f).clr(0.6f + world.random.nextFloat() * 0.4f,
+						0.6f + world.random.nextFloat() * 0.4f, 0.6f + world.random.nextFloat() * 0.4f).spawn(world);
 			}
 		}
 

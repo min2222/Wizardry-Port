@@ -57,17 +57,17 @@ public class Thunderstorm extends Spell {
 
 			for(int i = 0; i < getProperty(LIGHTNING_BOLTS).intValue(); i++){
 
-				double radius = maxRadius * CENTRE_RADIUS_FRACTION + world.rand.nextDouble() * maxRadius
+				double radius = maxRadius * CENTRE_RADIUS_FRACTION + world.random.nextDouble() * maxRadius
 						* (1 - CENTRE_RADIUS_FRACTION) * modifiers.get(WizardryItems.blast_upgrade);
-				float angle = world.rand.nextFloat() * (float)Math.PI * 2;
+				float angle = world.random.nextFloat() * (float)Math.PI * 2;
 
-				double x = caster.posX + radius * Mth.cos(angle);
-				double z = caster.posZ + radius * Mth.sin(angle);
-				Integer y = BlockUtils.getNearestFloor(world, new BlockPos(x, caster.posY, z), (int)maxRadius);
+				double x = caster.getX() + radius * Mth.cos(angle);
+				double z = caster.getZ() + radius * Mth.sin(angle);
+				Integer y = BlockUtils.getNearestFloor(world, new BlockPos(x, caster.getY(), z), (int)maxRadius);
 
 				if(y != null){
 
-					if(!world.isRemote){
+					if(!level.isClientSide){
 						EntityLightningBolt lightning = new EntityLightningBolt(world, x, y, z, false);
 						lightning.getEntityData().setUniqueId(LightningBolt.SUMMONER_NBT_KEY, caster.getUniqueID());
 						lightning.getEntityData().setFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
@@ -84,13 +84,13 @@ public class Thunderstorm extends Spell {
 
 						if(AllyDesignationSystem.isValidTarget(caster, secondaryTarget)){
 
-							if(world.isRemote){
+							if(level.isClientSide){
 
 								ParticleBuilder.create(Type.LIGHTNING).pos(x, y, z).target(secondaryTarget).spawn(world);
 
-								ParticleBuilder.spawnShockParticles(world, secondaryTarget.posX,
-										secondaryTarget.posY + secondaryTarget.height / 2,
-										secondaryTarget.posZ);
+								ParticleBuilder.spawnShockParticles(world, secondaryTarget.getX(),
+										secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2,
+										secondaryTarget.getZ());
 							}
 
 							playSound(world, secondaryTarget, 0, -1, modifiers);
@@ -101,8 +101,8 @@ public class Thunderstorm extends Spell {
 							// Tertiary chaining effect
 
 							List<LivingEntity> tertiaryTargets = EntityUtils.getLivingWithinRadius(
-									getProperty(TERTIARY_RANGE).doubleValue(), secondaryTarget.posX,
-									secondaryTarget.posY + secondaryTarget.height / 2, secondaryTarget.posZ, world);
+									getProperty(TERTIARY_RANGE).doubleValue(), secondaryTarget.getX(),
+									secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2, secondaryTarget.getZ(), world);
 
 							for(int k = 0; k < Math.min(tertiaryTargets.size(), getProperty(TERTIARY_MAX_TARGETS).intValue()); k++){
 
@@ -111,12 +111,12 @@ public class Thunderstorm extends Spell {
 								if(!secondaryTargets.contains(tertiaryTarget)
 										&& AllyDesignationSystem.isValidTarget(caster, tertiaryTarget)){
 
-									if(world.isRemote){
+									if(level.isClientSide){
 										ParticleBuilder.create(Type.LIGHTNING).entity(secondaryTarget)
-												.pos(0, secondaryTarget.height / 2, 0).target(tertiaryTarget).spawn(world);
-										ParticleBuilder.spawnShockParticles(world, tertiaryTarget.posX,
-												tertiaryTarget.posY + tertiaryTarget.height / 2,
-												tertiaryTarget.posZ);
+												.pos(0, secondaryTarget.getBbHeight() / 2, 0).target(tertiaryTarget).spawn(world);
+										ParticleBuilder.spawnShockParticles(world, tertiaryTarget.getX(),
+												tertiaryTarget.getY() + tertiaryTarget.getBbHeight() / 2,
+												tertiaryTarget.getZ());
 									}
 
 									playSound(world, tertiaryTarget, 0, -1, modifiers);

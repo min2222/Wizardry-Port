@@ -347,7 +347,7 @@ public class ItemArtefact extends Item {
 					// This should be a chance per fall, so we can't just check fall distance is greater than 3 each tick
 					// Based on a stationary start and a gravity acceleration of 0.02 blocks/tick^2, at 3 blocks of fall
 					// distance the player should be falling at about 0.35b/t, so 0.5 blocks should be enough of a window
-					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.world.rand.nextFloat() < 0.5f){
+					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.world.random.nextFloat() < 0.5f){
 						if(!WizardData.get(player).isCasting()) WizardData.get(player).startCastingContinuousSpell(Spells.glide, new SpellModifiers(), 600);
 					}else if(player.onGround){
 						WizardData data = WizardData.get(player);
@@ -360,10 +360,10 @@ public class ItemArtefact extends Item {
 
 						if(wand.getItem() instanceof ItemScroll) return; // Ignore scrolls since they shouldn't work
 
-						List<Entity> projectiles = EntityUtils.getEntitiesWithinRadius(5, player.posX, player.posY, player.posZ, world, Entity.class);
+						List<Entity> projectiles = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), world, Entity.class);
 						projectiles.removeIf(e -> !(e instanceof IProjectile));
 						Vec3 look = player.getLookVec();
-						Vec3 playerPos = player.getPositionVector().add(0, player.height/2, 0);
+						Vec3 playerPos = player.getPositionVector().add(0, player.getBbHeight()/2, 0);
 
 						for(Entity projectile : projectiles){
 							Vec3 vec = playerPos.subtract(projectile.getPositionVector()).normalize();
@@ -383,13 +383,13 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_frost_warding){
 
-					if(!world.isRemote && player.ticksExisted % 40 == 0){
+					if(!level.isClientSide && player.ticksExisted % 40 == 0){
 
 						List<EntityIceBarrier> barriers = world.getEntitiesWithinAABB(EntityIceBarrier.class, player.getEntityBoundingBox().grow(1.5));
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
 						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.getPositionVector().subtract(player.getPositionVector())) > 0)){
-							player.addPotionEffect(new MobEffectInstance(WizardryPotions.ward, 50, 1));
+							player.addEffect(new MobEffectInstance(WizardryPotions.ward, 50, 1));
 						}
 
 					}
@@ -535,7 +535,7 @@ public class ItemArtefact extends Item {
 					// Spell properties allow all three of the above spells to be dealt with the same way - neat!
 					float healthGained = event.getSpell().getProperty(Spell.HEALTH).floatValue() * event.getModifiers().get(SpellModifiers.POTENCY);
 
-					List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(4, player.posX, player.posY, player.posZ, event.getWorld());
+					List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(4, player.getX(), player.getY(), player.getZ(), event.getWorld());
 
 					for(LivingEntity entity : nearby){
 						if(AllyDesignationSystem.isAllied(player, entity) && entity.getHealth() > 0 && entity.getHealth() < entity.getMaxHealth()){
@@ -566,8 +566,8 @@ public class ItemArtefact extends Item {
 
 					if(isArtefactActive((Player)caster, WizardryItems.ring_mind_control)){
 
-						EntityUtils.getEntitiesWithinRadius(3, entity.posX, entity.posY, entity.posZ, entity.world, Mob.class).stream()
-								.filter(e -> e.world.rand.nextInt(10) == 0)
+						EntityUtils.getEntitiesWithinRadius(3, entity.getX(), entity.getY(), entity.getZ(), entity.world, Mob.class).stream()
+								.filter(e -> e.world.random.nextInt(10) == 0)
 								.filter(MindControl::canControl)
 								.filter(e -> AllyDesignationSystem.isValidTarget(caster, e))
 								.forEach(target -> MindControl.startControlling(target, (Player)caster,
@@ -606,7 +606,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_channeling){
 
-					if(player.world.rand.nextFloat() < 0.3f && event.getSource() instanceof IElementalDamage
+					if(player.world.random.nextFloat() < 0.3f && event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.SHOCK){
 						event.setCanceled(true);
 						return;
@@ -628,31 +628,31 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_potential){
 
-					if(player.world.rand.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
+					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 						&& event.getSource().getTrueSource() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
 
-						if(player.world.isRemote){
+						if(player.level.isClientSide){
 
 							ParticleBuilder.create(ParticleBuilder.Type.LIGHTNING).entity(event.getEntity())
-									.pos(0, event.getEntity().height/2, 0).target(target).spawn(player.world);
+									.pos(0, event.getEntity().getBbHeight()/2, 0).target(target).spawn(player.world);
 
-							ParticleBuilder.spawnShockParticles(player.world, target.posX,
-									target.posY + target.height/2, target.posZ);
+							ParticleBuilder.spawnShockParticles(player.world, target.getX(),
+									target.getY() + target.getBbHeight()/2, target.getZ());
 						}
 
 						DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
 								MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
-						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.world.rand.nextFloat() * 0.4F + 1.5F);
+						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.world.random.nextFloat() * 0.4F + 1.5F);
 
 					}
 
 				}else if(artefact == WizardryItems.amulet_lich){
 
-					if(!event.getSource().isUnblockable() && player.world.rand.nextFloat() < 0.15f){
+					if(!event.getSource().isUnblockable() && player.world.random.nextFloat() < 0.15f){
 
-						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.posX, player.posY, player.posZ, player.world, Mob.class);
+						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), player.world, Mob.class);
 						nearbyMobs.removeIf(e -> !(e instanceof ISummonedCreature && ((ISummonedCreature)e).getCaster() == player));
 
 						if(!nearbyMobs.isEmpty()){
@@ -666,18 +666,18 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_banishing){
 
-					if(player.world.rand.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
+					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 							&& event.getSource().getTrueSource() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
-						((Banish)Spells.banish).teleport(target, target.world, 8 + target.world.rand.nextDouble() * 8);
+						((Banish)Spells.banish).teleport(target, target.world, 8 + target.world.random.nextDouble() * 8);
 					}
 
 				}else if(artefact == WizardryItems.amulet_transience){
 
-					if(player.getHealth() <= 6 && player.world.rand.nextFloat() < 0.25f){
-						player.addPotionEffect(new MobEffectInstance(WizardryPotions.transience, 300));
-						player.addPotionEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0, false, false));
+					if(player.getHealth() <= 6 && player.world.random.nextFloat() < 0.25f){
+						player.addEffect(new MobEffectInstance(WizardryPotions.transience, 300));
+						player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0, false, false));
 					}
 				}
 			}
@@ -703,7 +703,7 @@ public class ItemArtefact extends Item {
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.ICE){
-						event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 200, 0));
+						event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.frost, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_lightning_melee){
@@ -711,24 +711,24 @@ public class ItemArtefact extends Item {
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.LIGHTNING){
 
-						EntityUtils.getLivingWithinRadius(3, player.posX, player.posY, player.posZ, world).stream()
+						EntityUtils.getLivingWithinRadius(3, player.getX(), player.getY(), player.getZ(), world).stream()
 								.filter(EntityUtils::isLiving)
 								.filter(e -> e != player)
 								.min(Comparator.comparingDouble(player::getDistanceSq))
 								.ifPresent(target -> {
 
-									if(world.isRemote){
+									if(level.isClientSide){
 
 										ParticleBuilder.create(ParticleBuilder.Type.LIGHTNING).entity(event.getEntity())
-												.pos(0, event.getEntity().height/2, 0).target(target).spawn(world);
+												.pos(0, event.getEntity().getBbHeight()/2, 0).target(target).spawn(world);
 
-										ParticleBuilder.spawnShockParticles(world, target.posX,
-												target.posY + target.height/2, target.posZ);
+										ParticleBuilder.spawnShockParticles(world, target.getX(),
+												target.getY() + target.getBbHeight()/2, target.getZ());
 									}
 
 									DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
 											MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
-									target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.rand.nextFloat() * 0.4F + 1.5F);
+									target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 								});
 					}
 
@@ -736,19 +736,19 @@ public class ItemArtefact extends Item {
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.NECROMANCY){
-						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
+						event.getEntityLiving().addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_earth_melee){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.EARTH){
-						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
+						event.getEntityLiving().addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_shattering){
 
-					if(!player.world.isRemote && player.world.rand.nextFloat() < 0.15f
+					if(!player.level.isClientSide && player.world.random.nextFloat() < 0.15f
 							&& event.getEntityLiving().getHealth() < 12f // Otherwise it's a bit overpowered!
 							&& event.getEntityLiving().isPotionActive(WizardryPotions.frost)
 							&& EntityUtils.isMeleeDamage(event.getSource())){
@@ -756,13 +756,13 @@ public class ItemArtefact extends Item {
 						event.setAmount(12f);
 
 						for(int i = 0; i < 8; i++){
-							double dx = event.getEntity().world.rand.nextDouble() - 0.5;
-							double dy = event.getEntity().world.rand.nextDouble() - 0.5;
-							double dz = event.getEntity().world.rand.nextDouble() - 0.5;
+							double dx = event.getEntity().world.random.nextDouble() - 0.5;
+							double dy = event.getEntity().world.random.nextDouble() - 0.5;
+							double dz = event.getEntity().world.random.nextDouble() - 0.5;
 							EntityIceShard iceshard = new EntityIceShard(event.getEntity().world);
-							iceshard.setPosition(event.getEntity().posX + dx + Math.signum(dx) * event.getEntity().width,
-									event.getEntity().posY + event.getEntity().height/2 + dy,
-									event.getEntity().posZ + dz + Math.signum(dz) * event.getEntity().width);
+							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
+									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
+									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
 							iceshard.motionX = dx * 1.5;
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;
@@ -781,14 +781,14 @@ public class ItemArtefact extends Item {
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY))){
 
-						event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, 400));
+						event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, 400));
 						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUniqueID());
 					}
 
 				}else if(artefact == WizardryItems.ring_leeching){
 
 					// Best guess at necromancy spell damage: either it's wither damage...
-					if(player.world.rand.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
+					if(player.world.random.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 							// ...or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
 							|| (event.getSource().getImmediateSource() == player && !EntityUtils.isMeleeDamage(event.getSource())
@@ -813,7 +813,7 @@ public class ItemArtefact extends Item {
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.EARTH))){
 
-						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
+						event.getEntityLiving().addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_extraction){
@@ -832,7 +832,7 @@ public class ItemArtefact extends Item {
 								.filter(s -> s.getItem() instanceof ISpellCastingItem && s.getItem() instanceof IManaStoringItem
 										&& !((IManaStoringItem)s.getItem()).isManaFull(s))
 								.findFirst()
-								.ifPresent(s -> ((IManaStoringItem)s.getItem()).rechargeMana(s, 4 + world.rand.nextInt(3)));
+								.ifPresent(s -> ((IManaStoringItem)s.getItem()).rechargeMana(s, 4 + world.random.nextInt(3)));
 					}
 
 				}
@@ -853,8 +853,8 @@ public class ItemArtefact extends Item {
 				if(artefact == WizardryItems.ring_combustion){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
-						event.getEntity().world.createExplosion(event.getEntity(), event.getEntity().posX, event.getEntity().posY,
-								event.getEntity().posZ, 1.5f, false);
+						event.getEntity().world.createExplosion(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
+								event.getEntity().getZ(), 1.5f, false);
 					}
 
 				}else if(artefact == WizardryItems.ring_disintegration){
@@ -866,17 +866,17 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.ring_arcane_frost){
 
-					if(!player.world.isRemote && event.getSource() instanceof IElementalDamage
+					if(!player.level.isClientSide && event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FROST){
 
 						for(int i = 0; i < 8; i++){
-							double dx = event.getEntity().world.rand.nextDouble() - 0.5;
-							double dy = event.getEntity().world.rand.nextDouble() - 0.5;
-							double dz = event.getEntity().world.rand.nextDouble() - 0.5;
+							double dx = event.getEntity().world.random.nextDouble() - 0.5;
+							double dy = event.getEntity().world.random.nextDouble() - 0.5;
+							double dz = event.getEntity().world.random.nextDouble() - 0.5;
 							EntityIceShard iceshard = new EntityIceShard(event.getEntity().world);
-							iceshard.setPosition(event.getEntity().posX + dx + Math.signum(dx) * event.getEntity().width,
-									event.getEntity().posY + event.getEntity().height/2 + dy,
-									event.getEntity().posZ + dz + Math.signum(dz) * event.getEntity().width);
+							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
+									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
+									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
 							iceshard.motionX = dx * 1.5;
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;

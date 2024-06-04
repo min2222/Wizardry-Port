@@ -36,7 +36,7 @@ public class Detonate extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(getProperty(BLAST_RADIUS).doubleValue()
 					* modifiers.get(WizardryItems.blast_upgrade), pos.getX(), pos.getY(), pos.getZ(), world);

@@ -46,7 +46,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 
 	public EntityMagicConstruct(Level world){
 		super(world);
-		this.height = 1.0f;
+		this.getBbHeight() = 1.0f;
 		this.width = 1.0f;
 		this.noClip = true;
 	}
@@ -83,13 +83,13 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 
 	/**
-	 * Defaults to just setDead() in EntityMagicConstruct, but is provided to allow subclasses to override this e.g.
+	 * Defaults to just discard() in EntityMagicConstruct, but is provided to allow subclasses to override this e.g.
 	 * bubble uses it to dismount the entity inside it and play the 'pop' sound before calling super(). You should
 	 * always call super() when overriding this method, in case it changes. There is no need, therefore, to call
-	 * setDead() when overriding.
+	 * discard() when overriding.
 	 */
 	public void despawn(){
-		this.setDead();
+		this.discard();
 	}
 
 	@Override

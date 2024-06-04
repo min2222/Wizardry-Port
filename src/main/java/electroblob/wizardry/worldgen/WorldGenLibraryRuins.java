@@ -63,7 +63,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 		ITemplateProcessor processor = new MultiTemplateProcessor(true,
 				// Cobblestone/stone brick
 				(w, p, i) -> {
-					if(w.rand.nextFloat() > stoneBrickChance){
+					if(w.random.nextFloat() > stoneBrickChance){
 						// Behold, three different ways of doing the same thing, because this is pre-flattening!
 						// Also, stone bricks are about the least consistently-named thing in the entire game, so yay
 						if(i.blockState.getBlock() == Blocks.COBBLESTONE){
@@ -82,7 +82,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 				// Mossifier
 				new MossifierTemplateProcessor(mossiness, 0.04f, origin.getY() + 1),
 				// Stone brick smasher-upper
-				(w, p, i) -> i.blockState.getBlock() == Blocks.STONEBRICK && w.rand.nextFloat() < 0.1f ?
+				(w, p, i) -> i.blockState.getBlock() == Blocks.STONEBRICK && w.random.nextFloat() < 0.1f ?
 						new Template.BlockInfo(i.pos, Blocks.STONEBRICK.getDefaultState().withProperty(
 								BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.CRACKED), i.tileentityData) : i,
 				// Bookshelf marker

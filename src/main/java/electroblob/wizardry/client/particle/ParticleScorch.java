@@ -17,10 +17,10 @@ public class ParticleScorch extends ParticleWizardry {
 
 	public ParticleScorch(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.particleGravity = 0;
-		this.setMaxAge(100 + rand.nextInt(40));
+		this.setMaxAge(100 + random.nextInt(40));
 		this.particleScale *= 2;
 		// Defaults to black (which looks like a 'normal' scorch mark)
 		this.setRBGColorF(0, 0, 0);
@@ -60,7 +60,7 @@ public class ParticleScorch extends ParticleWizardry {
 		if(pitch == -90) facing = Direction.DOWN;
 		
 		// Disappears if there is no block behind it (this is the same check used to spawn it)
-		if(!world.getBlockState(new BlockPos(posX, posY, posZ).offset(facing.getOpposite())).getMaterial().isSolid()){
+		if(!world.getBlockState(new BlockPos(getX(), getY(), getZ()).offset(facing.getOpposite())).getMaterial().isSolid()){
 			this.setExpired();
 		}
 	}

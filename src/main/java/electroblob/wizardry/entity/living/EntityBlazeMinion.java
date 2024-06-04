@@ -93,10 +93,10 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	 * effects, it makes sense to have them override this rather than both onSpawn() and onDespawn().
 	 */
 	protected void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
-						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
+				this.world.spawnParticle(ParticleTypes.FLAME, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * height, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}

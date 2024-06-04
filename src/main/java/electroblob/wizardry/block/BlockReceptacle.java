@@ -260,12 +260,12 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
 				for(int i = 0; i < 3; i++){
 
-					double x = r * (rand.nextDouble() * 2 - 1);
-					double y = r * (rand.nextDouble() * 2 - 1);
-					double z = r * (rand.nextDouble() * 2 - 1);
+					double x = r * (random.nextDouble() * 2 - 1);
+					double y = r * (random.nextDouble() * 2 - 1);
+					double z = r * (random.nextDouble() * 2 - 1);
 
 					ParticleBuilder.create(ParticleBuilder.Type.DUST).pos(centre.x + x, centre.y + y, centre.z + z)
-							.vel(x * -0.03, 0.02, z * -0.03).time(24 + rand.nextInt(8)).clr(colours[1]).fade(colours[2]).spawn(world);
+							.vel(x * -0.03, 0.02, z * -0.03).time(24 + random.nextInt(8)).clr(colours[1]).fade(colours[2]).spawn(world);
 				}
 			}
 		}

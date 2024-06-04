@@ -27,9 +27,9 @@ public class MovingSoundEntity<T extends Entity> extends MovingSound {
 		if(this.source.isDead){
 			this.donePlaying = true;
 		}else{
-			this.xPosF = (float)this.source.posX;
-			this.yPosF = (float)this.source.posY;
-			this.zPosF = (float)this.source.posZ;
+			this.xPosF = (float)this.source.getX();
+			this.yPosF = (float)this.source.getY();
+			this.zPosF = (float)this.source.getZ();
 		}
 	}
 }

@@ -27,11 +27,11 @@ public class Leap extends Spell {
 			double horizontalSpeed = getProperty(HORIZONTAL_SPEED).floatValue();
 			caster.addVelocity(caster.getLookVec().x * horizontalSpeed, 0, caster.getLookVec().z * horizontalSpeed);
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				for(int i = 0; i < 10; i++){
-					double x = caster.posX + world.rand.nextFloat() - 0.5F;
-					double y = caster.posY;
-					double z = caster.posZ + world.rand.nextFloat() - 0.5F;
+					double x = caster.getX() + world.random.nextFloat() - 0.5F;
+					double y = caster.getY();
+					double z = caster.getZ() + world.random.nextFloat() - 0.5F;
 					world.spawnParticle(ParticleTypes.CLOUD, x, y, z, 0, 0, 0);
 				}
 			}

@@ -79,13 +79,13 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	protected float calculateVelocity(SpellModifiers modifiers, float launchHeight){
 		float g = 0.03f;
 		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
-		return range / Mth.sqrt(2 * launchHeight/g);
+		return range / Math.sqrt(2 * launchHeight/g);
 	}
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 			T projectile = projectileFactory.apply(world, caster);
 			projectile.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, velocity, 1.0f);
@@ -104,7 +104,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 		if(target != null){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 				T projectile = projectileFactory.apply(world, caster);
 				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
@@ -127,18 +127,18 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 		throwable.ignoreEntity = caster;
 
-		throwable.posY = caster.posY + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET;
-		double dx = target.posX - caster.posX;
-		double dy = !throwable.hasNoGravity() ? target.posY + (double)(target.height / 3.0f) - throwable.posY
-				: target.posY + (double)(target.height / 2.0f) - throwable.posY;
-		double dz = target.posZ - caster.posZ;
-		double horizontalDistance = Mth.sqrt(dx * dx + dz * dz);
+		throwable.getY() = caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET;
+		double dx = target.getX() - caster.getX();
+		double dy = !throwable.hasNoGravity() ? target.getY() + (double)(target.getBbHeight() / 3.0f) - throwable.getY()
+				: target.getY() + (double)(target.getBbHeight() / 2.0f) - throwable.getY();
+		double dz = target.getZ() - caster.getZ();
+		double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
 
 		if(horizontalDistance >= 1.0E-7D){
 
 			double dxNormalised = dx / horizontalDistance;
 			double dzNormalised = dz / horizontalDistance;
-			throwable.setPosition(caster.posX + dxNormalised, throwable.posY, caster.posZ + dzNormalised);
+			throwable.setPosition(caster.getX() + dxNormalised, throwable.getY(), caster.getZ() + dzNormalised);
 
 			// Depends on the horizontal distance between the two entities and accounts for bullet drop,
 			// but of course if gravity is ignored throwable should be 0 since there is no bullet drop.

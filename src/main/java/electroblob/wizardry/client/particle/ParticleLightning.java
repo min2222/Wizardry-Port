@@ -27,7 +27,7 @@ public class ParticleLightning extends ParticleTargeted {
 
 	public ParticleLightning(Level world, double x, double y, double z){
 		super(world, x, y, z); // Does not have a texture!
-		seed = this.rand.nextLong();
+		seed = this.random.nextLong();
 		this.setRBGColorF(0.2f, 0.6f, 1); // Default blue colour
 		this.setMaxAge(3);
 		this.particleScale = 1;

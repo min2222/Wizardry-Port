@@ -39,7 +39,7 @@ public interface ISyncedPotion {
 		if(event.getPotionEffect().getPotion() instanceof ISyncedPotion
 		&& ((ISyncedPotion)event.getPotionEffect().getPotion()).shouldSync(event.getEntityLiving())){
 
-			if(!event.getEntityLiving().world.isRemote){
+			if(!event.getEntityLiving().level.isClientSide){
 				event.getEntityLiving().world.playerEntities.stream()
 						.filter(p -> p.getDistanceSq(event.getEntityLiving()) < SYNC_RADIUS * SYNC_RADIUS)
 						// Apparently unchecked casting in a lambda expression doesn't generate a warning. Who knew?
@@ -65,7 +65,7 @@ public interface ISyncedPotion {
 		if(effect != null && effect.getPotion() instanceof ISyncedPotion
 				&& ((ISyncedPotion)effect.getPotion()).shouldSync(host)){
 
-			if(!host.world.isRemote){
+			if(!host.level.isClientSide){
 				host.world.playerEntities.stream()
 						.filter(p -> p.getDistanceSq(host) < SYNC_RADIUS * SYNC_RADIUS)
 						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketRemoveEntityEffect(

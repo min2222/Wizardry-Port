@@ -29,7 +29,7 @@ public class Petrify extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(target instanceof Mob && !world.isRemote){
+		if(target instanceof Mob && !level.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
 			if(((BlockStatue)WizardryBlocks.petrified_stone).convertToStatue((Mob)target,
 					caster, (int)(getProperty(MINIMUM_EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
@@ -51,7 +51,7 @@ public class Petrify extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.2f, 0.2f, 0.2f).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0.2f, 0.2f, 0.2f).spawn(world);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0.1f, 0.1f).spawn(world);
 	}
 

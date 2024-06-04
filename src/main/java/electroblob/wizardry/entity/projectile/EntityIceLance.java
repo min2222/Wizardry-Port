@@ -40,24 +40,24 @@ public class EntityIceLance extends EntityMagicArrow {
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-			entityHit.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+			entityHit.addEffect(new MobEffectInstance(WizardryPotions.frost,
 					Spells.ice_lance.getProperty(Spell.EFFECT_DURATION).intValue(),
 					Spells.ice_lance.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
-		this.playSound(WizardrySounds.ENTITY_ICE_LANCE_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_ICE_LANCE_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 
 	@Override
 	public void onBlockHit(HitResult hit){
 		// Adds a particle effect when the ice lance hits a block.
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int j = 0; j < 10; j++){
-				ParticleBuilder.create(Type.ICE, this.rand, this.posX, this.posY, this.posZ, 0.5, true)
-				.time(20 + rand.nextInt(10)).gravity(true).spawn(world);
+				ParticleBuilder.create(Type.ICE, this.rand, this.getX(), this.getY(), this.getZ(), 0.5, true)
+				.time(20 + random.nextInt(10)).gravity(true).spawn(world);
 			}
 		}
 		
-		this.playSound(WizardrySounds.ENTITY_ICE_LANCE_SMASH, 1.0F, rand.nextFloat() * 0.4F + 1.2F);
+		this.playSound(WizardrySounds.ENTITY_ICE_LANCE_SMASH, 1.0F, random.nextFloat() * 0.4F + 1.2F);
 
 	}
 

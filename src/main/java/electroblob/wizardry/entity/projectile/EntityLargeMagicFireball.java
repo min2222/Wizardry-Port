@@ -64,9 +64,9 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	@Override
 	protected void onImpact(HitResult rayTrace){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			boolean terrainDamage = EntityUtils.canDamageBlocks(this.getThrower(), world);
-			this.world.newExplosion(null, this.posX, this.posY, this.posZ, getExplosionPower() * blastMultiplier, terrainDamage, terrainDamage);
+			this.world.newExplosion(null, this.getX(), this.getY(), this.getZ(), getExplosionPower() * blastMultiplier, terrainDamage, terrainDamage);
 		}
 
 		super.onImpact(rayTrace);
@@ -105,7 +105,7 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 
 			EntityLargeMagicFireball fireball = new EntityLargeMagicFireball(event.getWorld());
 			fireball.thrower = ((EntityLargeFireball)event.getEntity()).shootingEntity;
-			fireball.setPosition(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ);
+			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(6);
 			// Don't set the burn duration because vanilla large fireballs don't set mobs on fire directly
 			fireball.setExplosionPower(((EntityLargeFireball)event.getEntity()).explosionPower);

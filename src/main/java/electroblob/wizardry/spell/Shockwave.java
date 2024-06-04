@@ -47,7 +47,7 @@ public class Shockwave extends SpellAreaEffect {
 			if(!Wizardry.settings.playersMoveEachOther) return false;
 
 			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)){
-				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 				return false;
@@ -62,16 +62,16 @@ public class Shockwave extends SpellAreaEffect {
 		target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
 				getProperty(DAMAGE).floatValue() * proximity * modifiers.get(SpellModifiers.POTENCY));
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			// Entity speed increases closer to the player to a maximum of 3 (at 1 block distance).
 			// This is the entity's speed compared to its distance from the player. Used for a similar triangles
 			// based x, y and z speed calculation.
 			double velocityFactor = proximity * getProperty(MAX_REPULSION_VELOCITY).floatValue();
 
-			double dx = target.posX - origin.x;
-			double dy = target.posY + 1 - origin.y;
-			double dz = target.posZ - origin.z;
+			double dx = target.getX() - origin.x;
+			double dy = target.getY() + 1 - origin.y;
+			double dz = target.getZ() - origin.z;
 
 			target.motionX = velocityFactor * dx;
 			target.motionY = velocityFactor * dy;
@@ -97,8 +97,8 @@ public class Shockwave extends SpellAreaEffect {
 
 		for(int i = 0; i < 40; i++){
 
-			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
-			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
+			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
+			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 
 			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 

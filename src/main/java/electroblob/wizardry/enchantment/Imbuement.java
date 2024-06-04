@@ -115,7 +115,7 @@ public interface Imbuement {
 	public static void onEntityJoinWorld(EntityJoinLevelEvent event){
 		// Rather long-winded (but necessary) way of getting an arrow just after it has been fired, checking if the bow
 		// that fired it has the imbuement enchantment, and applying extra damage accordingly.
-		if(!event.getEntity().world.isRemote && event.getEntity() instanceof Arrow){
+		if(!event.getEntity().level.isClientSide && event.getEntity() instanceof Arrow){
 
 			Arrow arrow = (Arrow)event.getEntity();
 

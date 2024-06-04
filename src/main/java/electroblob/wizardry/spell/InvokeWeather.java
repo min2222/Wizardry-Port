@@ -28,7 +28,7 @@ public class InvokeWeather extends Spell {
 
 		if(caster.dimension == 0){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
 				
@@ -47,15 +47,15 @@ public class InvokeWeather extends Spell {
 					world.getWorldInfo().setRaining(true);
 					// Thunderstorm is guaranteed if the caster has a bottled thundercloud charm equipped
 					world.getWorldInfo().setThundering(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_storm)
-							|| world.rand.nextFloat() < getProperty(THUNDERSTORM_CHANCE).floatValue());
+							|| world.random.nextFloat() < getProperty(THUNDERSTORM_CHANCE).floatValue());
 				}
 			}
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				for(int i = 0; i < 10; i++){
-					double x = caster.posX + world.rand.nextDouble() * 2 - 1;
-					double y = caster.posY + caster.getEyeHeight() - 0.5 + world.rand.nextDouble();
-					double z = caster.posZ + world.rand.nextDouble() * 2 - 1;
+					double x = caster.getX() + world.random.nextDouble() * 2 - 1;
+					double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
+					double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
 					ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1, 0).clr(0.5f, 0.7f, 1).spawn(world);
 				}
 			}

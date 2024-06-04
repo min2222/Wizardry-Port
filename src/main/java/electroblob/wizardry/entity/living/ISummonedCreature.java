@@ -313,12 +313,12 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 		// default lifetime doesn't work. The easiest way around this is to use 0 - nobody's going to need it!
 		if(thisEntity.ticksExisted > this.getLifetime() && this.getLifetime() > 0){
 			this.onDespawn();
-			thisEntity.setDead();
+			thisEntity.discard();
 		}
 
-		if(this.hasParticleEffect() && thisEntity.world.isRemote && thisEntity.world.rand.nextInt(8) == 0)
+		if(this.hasParticleEffect() && thisEntity.level.isClientSide && thisEntity.world.random.nextInt(8) == 0)
 			ParticleBuilder.create(Type.DARK_MAGIC)
-			.pos(thisEntity.posX, thisEntity.posY + thisEntity.world.rand.nextDouble() * 1.5, thisEntity.posZ)
+			.pos(thisEntity.getX(), thisEntity.getY() + thisEntity.world.random.nextDouble() * 1.5, thisEntity.getZ())
 			.clr(0.1f, 0.0f, 0.0f)
 			.spawn(thisEntity.world);
 
@@ -336,7 +336,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 		// Selects one of the player's minions.
 		if(player.isSneaking() && stack.getItem() instanceof ISpellCastingItem){
 
-			if(!player.world.isRemote && data != null && this.getCaster() == player){
+			if(!player.level.isClientSide && data != null && this.getCaster() == player){
 
 				if(data.selectedMinion != null && data.selectedMinion.get() == this){
 					// Deselects the selected minion if right-clicked again

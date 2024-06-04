@@ -39,10 +39,10 @@ public class Freeze extends SpellRay {
 			}
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
-				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.frost,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue()));
 			}
@@ -58,7 +58,7 @@ public class Freeze extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		if(!world.isRemote && BlockUtils.canPlaceBlock(caster, world, pos)){
+		if(!level.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
 			BlockUtils.freeze(world, pos, true);
 		}
 		
@@ -72,8 +72,8 @@ public class Freeze extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = 0.5f + (world.rand.nextFloat() / 2);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8))
+		float brightness = 0.5f + (world.random.nextFloat() / 2);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8))
 		.clr(brightness, brightness + 0.1f, 1).spawn(world);
 		ParticleBuilder.create(Type.SNOW).pos(x, y, z).spawn(world);
 	}

@@ -55,7 +55,7 @@ public class Intimidate extends SpellAreaEffect {
 			CompoundTag entityNBT = target.getEntityData();
 			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUniqueID());
 
-			target.addPotionEffect(new MobEffectInstance(WizardryPotions.fear,
+			target.addEffect(new MobEffectInstance(WizardryPotions.fear,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}
@@ -69,9 +69,9 @@ public class Intimidate extends SpellAreaEffect {
 		if(caster != null) origin = caster.getPositionEyes(1);
 
 		for(int i = 0; i < 30; i++){
-			double x = origin.x - 1 + world.rand.nextDouble() * 2;
-			double y = origin.y - 0.25 + world.rand.nextDouble() * 0.5;
-			double z = origin.z - 1 + world.rand.nextDouble() * 2;
+			double x = origin.x - 1 + world.random.nextDouble() * 2;
+			double y = origin.y - 0.25 + world.random.nextDouble() * 0.5;
+			double z = origin.z - 1 + world.random.nextDouble() * 2;
 			ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.9f, 0.1f, 0).spawn(world);
 		}
 	}
@@ -90,7 +90,7 @@ public class Intimidate extends SpellAreaEffect {
 		if(target.getDistance(caster) < distance){
 
 			Vec3 Vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(target, (int)distance, (int)(distance/2),
-					new Vec3(caster.posX, caster.posY, caster.posZ));
+					new Vec3(caster.getX(), caster.getY(), caster.getZ()));
 
 			if(Vec3d == null){
 				return false;

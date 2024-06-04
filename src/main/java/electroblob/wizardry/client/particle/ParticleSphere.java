@@ -43,12 +43,12 @@ public class ParticleSphere extends ParticleWizardry {
 		// Copied from ParticleWizardry, needs to be here since we're not calling super
 		updateEntityLinking(viewer, partialTicks);
 
-		float x = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks);
-		float y = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks);
-		float z = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks);
+		float x = (float)(this.prevgetX() + (this.getX() - this.prevgetX()) * (double)partialTicks);
+		float y = (float)(this.prevgetY() + (this.getY() - this.prevgetY()) * (double)partialTicks);
+		float z = (float)(this.prevgetZ() + (this.getZ() - this.prevgetZ()) * (double)partialTicks);
 
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(x - interpPosX, y - interpPosY, z - interpPosZ);
+		GlStateManager.translate(x - interpgetX(), y - interpgetY(), z - interpgetZ());
 
 		GlStateManager.disableLighting();
 		GlStateManager.enableBlend();

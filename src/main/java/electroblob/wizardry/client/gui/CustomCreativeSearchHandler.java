@@ -91,7 +91,7 @@ public class CustomCreativeSearchHandler {
 			GuiContainerCreative gui = (GuiContainerCreative)event.getGui();
 			CreativeModeTab tab = CreativeModeTab.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
 
-			if(tab == WizardryTabs.SPELLS && DrawingUtils.isPointInRegion(currentSearchField.x, currentSearchField.y, currentSearchField.width, currentSearchField.height, event.getMouseX(), event.getMouseY())){
+			if(tab == WizardryTabs.SPELLS && DrawingUtils.isPointInRegion(currentSearchField.x, currentSearchField.y, currentSearchField.width, currentSearchField.getBbHeight(), event.getMouseX(), event.getMouseY())){
 
 				if(searchBarHoverTime == 0){
 					searchBarHoverTime++;

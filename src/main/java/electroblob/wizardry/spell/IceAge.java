@@ -58,10 +58,10 @@ public class IceAge extends SpellAreaEffect {
 		if(target instanceof Mob){
 			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(FREEZE_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
-				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
+				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
 		}else if(target instanceof Player){
-			target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+			target.addEffect(new MobEffectInstance(WizardryPotions.frost,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue()));
 		}
@@ -73,24 +73,24 @@ public class IceAge extends SpellAreaEffect {
 	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		for(int i=0; i<100; i++){
-			float r = world.rand.nextFloat();
-			double speed = 0.02/r * (1 + world.rand.nextDouble());//(world.rand.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.rand.nextDouble());
+			float r = world.random.nextFloat();
+			double speed = 0.02/r * (1 + world.random.nextDouble());//(world.random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.random.nextDouble());
 			ParticleBuilder.create(Type.SNOW)
-					.pos(origin.x, origin.y + world.rand.nextDouble() * 3, origin.z)
+					.pos(origin.x, origin.y + world.random.nextDouble() * 3, origin.z)
 					.vel(0, 0, 0)
 					.scale(2)
-					.spin(world.rand.nextDouble() * (radius - 0.5) + 0.5, speed)
+					.spin(world.random.nextDouble() * (radius - 0.5) + 0.5, speed)
 					.shaded(true)
 					.spawn(world);
 		}
 
 		for(int i=0; i<60; i++){
-			float r = world.rand.nextFloat();
-			double speed = 0.02/r * (1 + world.rand.nextDouble());//(world.rand.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.rand.nextDouble());
+			float r = world.random.nextFloat();
+			double speed = 0.02/r * (1 + world.random.nextDouble());//(world.random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * world.random.nextDouble());
 			ParticleBuilder.create(Type.CLOUD)
-					.pos(origin.x, origin.y + world.rand.nextDouble() * 2.5, origin.z)
+					.pos(origin.x, origin.y + world.random.nextDouble() * 2.5, origin.z)
 					.clr(0xffffff)
-					.spin(world.rand.nextDouble() * (radius - 1) + 0.5, speed)
+					.spin(world.random.nextDouble() * (radius - 1) + 0.5, speed)
 					.shaded(true)
 					.spawn(world);
 		}
@@ -98,7 +98,7 @@ public class IceAge extends SpellAreaEffect {
 
 	private void freezeNearbyBlocks(Level world, Vec3 origin, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!world.isRemote && EntityUtils.canDamageBlocks(caster, world)){
+		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
 
@@ -116,7 +116,7 @@ public class IceAge extends SpellAreaEffect {
 						double dist = origin.distanceTo(new Vec3(origin.x + i, y, origin.z + j));
 
 						// Randomised with weighting so that the nearer the block the more likely it is to be snowed.
-						if(y != -1 && world.rand.nextInt((int)(dist * 2) + 1) < radius && dist < radius
+						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
 							BlockUtils.freeze(world, pos.down(), true);
 						}

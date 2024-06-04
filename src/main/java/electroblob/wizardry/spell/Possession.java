@@ -144,7 +144,7 @@ public class Possession extends SpellRay {
 	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		Vec3 look = caster.getLookVec();
-		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
 
 		if(!shootSpell(world, origin, look, caster, ticksInUse, modifiers)) return false;
 
@@ -168,7 +168,7 @@ public class Possession extends SpellRay {
 				return false;
 			}
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 				if(possess(player, (Mob)target, duration)){
 					return true;
@@ -211,12 +211,12 @@ public class Possession extends SpellRay {
 			WizardData.get(possessor).setVariable(POSSESSEE_KEY, target);
 			WizardData.get(possessor).setVariable(TIMER_KEY, duration);
 
-			possessor.setPositionAndRotation(target.posX, target.posY, target.posZ, target.rotationYaw, target.rotationPitch);
+			possessor.setPositionAndRotation(target.getX(), target.getY(), target.getZ(), target.rotationYaw, target.rotationPitch);
 			possessor.eyeHeight = target.getEyeHeight();
-			setSize(possessor, target.width, target.height);
+			setSize(possessor, target.width, target.getBbHeight());
 
 			target.dismountRidingEntity();
-			target.setDead();
+			target.discard();
 			target.setNoAI(true);
 			target.setAttackTarget(null);
 			target.getEntityData().setBoolean(NBT_KEY, true);
@@ -256,7 +256,7 @@ public class Possession extends SpellRay {
 				}
 			}
 
-			if(possessor.world.isRemote){
+			if(possessor.level.isClientSide){
 				// Shaders and effects
 				Wizardry.proxy.loadShader(possessor, SHADER);
 				Wizardry.proxy.playBlinkEffect(possessor);
@@ -265,8 +265,8 @@ public class Possession extends SpellRay {
 
 				// Targeting
 
-				for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, possessor.posX,
-						possessor.posY, possessor.posZ, possessor.world, Mob.class)){
+				for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, possessor.getX(),
+						possessor.getY(), possessor.getZ(), possessor.world, Mob.class)){
 					// Mobs are dumb, if a player possesses something they're like "Huh?! Where'd you go?"
 					// Of course, this won't last long if the player attacks them, since they'll revenge-target them
 					if(creature.getAttackTarget() == possessor && !creature.canAttackClass(target.getClass()))
@@ -328,12 +328,12 @@ public class Possession extends SpellRay {
 			victim.isDead = false;
 			victim.setNoAI(false);
 			victim.getEntityData().removeTag(NBT_KEY);
-			victim.setPosition(player.posX, player.posY, player.posZ);
-			if(!player.world.isRemote) player.world.spawnEntity(victim);
+			victim.setPosition(player.getX(), player.getY(), player.getZ());
+			if(!player.level.isClientSide) player.world.spawnEntity(victim);
 
 			for(MobEffectInstance effect : player.getActivePotionEffects()){
 				if(effect.getPotion() instanceof PotionSlowTime) continue; // Don't transfer slow time
-				victim.addPotionEffect(effect);
+				victim.addEffect(effect);
 			}
 		}
 
@@ -353,7 +353,7 @@ public class Possession extends SpellRay {
 			player.capabilities.isFlying = false;
 		}
 
-		if(player.world.isRemote && player == net.minecraft.client.Minecraft.getMinecraft().player){
+		if(player.level.isClientSide && player == net.minecraft.client.Minecraft.getMinecraft().player){
 			net.minecraft.client.Minecraft.getMinecraft().entityRenderer.stopUseShader();
 			Wizardry.proxy.playBlinkEffect(player);
 		}
@@ -375,7 +375,7 @@ public class Possession extends SpellRay {
 
 		this.playSound(player.world, player, 0, -1, null, "end");
 
-		if(!player.world.isRemote && player instanceof ServerPlayer){
+		if(!player.level.isClientSide && player instanceof ServerPlayer){
 			WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(player, null, 0), player);
 			WizardryPacketHandler.net.sendTo(new PacketPossession.Message(player, null, 0), (ServerPlayer)player);
 		}
@@ -404,7 +404,7 @@ public class Possession extends SpellRay {
 
 				possessionTimer--;
 
-				if(player.world.isRemote){
+				if(player.level.isClientSide){
 					ParticleBuilder.create(Type.DARK_MAGIC, player).clr(0.1f, 0, 0.3f).spawn(player.world);
 					Wizardry.proxy.loadShader(player, SHADER);
 				}
@@ -448,13 +448,13 @@ public class Possession extends SpellRay {
 	 * into Entity#setSize, which is protected. */
 	private static void setSize(Entity entity, float width, float height){
 
-		if(width != entity.width || height != entity.height){
+		if(width != entity.width || height != entity.getBbHeight()){
 
 			entity.width = width;
-			entity.height = height;
+			entity.getBbHeight() = height;
 
 			double halfWidth = (double)width / 2.0D;
-			entity.setEntityBoundingBox(new AABB(entity.posX - halfWidth, entity.posY, entity.posZ - halfWidth, entity.posX + halfWidth, entity.posY + (double)entity.height, entity.posZ + halfWidth));
+			entity.setEntityBoundingBox(new AABB(entity.getX() - halfWidth, entity.getY(), entity.getZ() - halfWidth, entity.getX() + halfWidth, entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfWidth));
 		}
 	}
 
@@ -471,7 +471,7 @@ public class Possession extends SpellRay {
 			if(possessee != null){
 				// Updating these to the player's variables won't have an effect on player movement, but it will
 				// affect various bits of mob-specific logic
-				possessee.setPosition(event.player.posX, event.player.posY, event.player.posZ);
+				possessee.setPosition(event.player.getX(), event.player.getY(), event.player.getZ());
 				possessee.motionX = event.player.motionX;
 				possessee.motionY = event.player.motionY;
 				possessee.motionZ = event.player.motionZ;
@@ -493,7 +493,7 @@ public class Possession extends SpellRay {
 		if(event.phase == TickEvent.Phase.END){
 			Mob possessee = getPossessee(event.player);
 			if(possessee != null){
-				setSize(event.player, possessee.width, possessee.height);
+				setSize(event.player, possessee.width, possessee.getBbHeight());
 			}
 		}
 	}
@@ -611,7 +611,7 @@ public class Possession extends SpellRay {
 
 						IProjectile projectile = factory.apply(possessor.world);
 						Vec3 look = possessor.getLookVec();
-						((Entity)projectile).setPosition(possessor.posX + look.x, possessor.posY + possessor.getEyeHeight() + look.y, possessor.posZ + look.z);
+						((Entity)projectile).setPosition(possessor.getX() + look.x, possessor.getY() + possessor.getEyeHeight() + look.y, possessor.getZ() + look.z);
 						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.world.getDifficulty()));
 
 						if(projectile instanceof EntityMagicProjectile) ((EntityMagicProjectile)projectile).setCaster(possessor);

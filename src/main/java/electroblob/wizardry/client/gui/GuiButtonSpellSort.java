@@ -33,10 +33,10 @@ public class GuiButtonSpellSort extends GuiButton {
 		if(this.visible){
 
 			// Whether the button is highlighted
-			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 
 			int k = 0;
-			int l = this.sortType.ordinal() * this.height;
+			int l = this.sortType.ordinal() * this.getBbHeight();
 
 			if(sortType == sortable.getSortType()){
 				k += this.width;
@@ -44,7 +44,7 @@ public class GuiButtonSpellSort extends GuiButton {
 			}
 
 			parent.mc.getTextureManager().bindTexture(TEXTURE);
-			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.height, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+			DrawingUtils.drawTexturedRect(this.x, this.y, k, l, this.width, this.getBbHeight(), TEXTURE_WIDTH, TEXTURE_HEIGHT);
 
 		}
 	}

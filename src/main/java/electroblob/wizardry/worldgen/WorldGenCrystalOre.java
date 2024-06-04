@@ -50,11 +50,11 @@ public class WorldGenCrystalOre implements IWorldGenerator {
 
 		int diffBtwnMinMaxY = maxY - minY;
 		for(int x = 0; x < chancesToSpawn; x++){
-			int posX = blockXPos + random.nextInt(maxX);
-			int posY = minY + random.nextInt(diffBtwnMinMaxY);
-			int posZ = blockZPos + random.nextInt(maxZ);
+			int getX() = blockXPos + random.nextInt(maxX);
+			int getY() = minY + random.nextInt(diffBtwnMinMaxY);
+			int getZ() = blockZPos + random.nextInt(maxZ);
 			// N.B. This method applies the anti-cascading-lag offset itself
-			(new WorldGenMinable(state, maxVeinSize)).generate(world, random, new BlockPos(posX, posY, posZ));
+			(new WorldGenMinable(state, maxVeinSize)).generate(world, random, new BlockPos(getX(), getY(), getZ()));
 		}
 	}
 

@@ -230,13 +230,13 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		}else if(healCooldown == -1 && this.deathTime == 0){
 
 			// Heal particles TODO: Change this so it uses the heal spell directly
-			if(world.isRemote){
+			if(level.isClientSide){
 				for(int i=0; i<10; i++){
-					double x = (double)((float)this.posX + rand.nextFloat() * 2 - 1.0F);
+					double x = (double)((float)this.getX() + random.nextFloat() * 2 - 1.0F);
 					// Apparently the client side spawns the particles 1 block higher than it should... hence the -
 					// 0.5F.
-					double y = (double)((float)this.posY - 0.5F + rand.nextFloat());
-					double z = (double)((float)this.posZ + rand.nextFloat() * 2 - 1.0F);
+					double y = (double)((float)this.getY() - 0.5F + random.nextFloat());
+					double z = (double)((float)this.getZ() + random.nextFloat() * 2 - 1.0F);
 					ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.1F, 0).clr(1, 1, 0.3f).spawn(world);
 				}
 			}else{
@@ -247,7 +247,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 					this.setHealCooldown(400);
 				}
 
-				this.playSound(Spells.heal.getSounds()[0], 0.7F, rand.nextFloat() * 0.4F + 1.0F);
+				this.playSound(Spells.heal.getSounds()[0], 0.7F, random.nextFloat() * 0.4F + 1.0F);
 			}
 		}
 		if(healCooldown > 0){
@@ -271,7 +271,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 			if(this.spells.size() >= 4 && spell.canBeCastBy(this, true)){
 				// The set(...) method returns the element that was replaced - neat!
 				player.sendMessage(Component.translatable("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
-						this.getDisplayName(), this.spells.set(rand.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
+						this.getDisplayName(), this.spells.set(random.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
 						spell.getNameForTranslationFormatted()));
 				return true;
 			}
@@ -315,7 +315,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 //	@Override
 //	protected float getSoundPitch(){
-//		return (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 0.6F;
+//		return (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 0.6F;
 //	}
 
 	@Override
@@ -339,7 +339,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	@Override
 	protected void dropFewItems(boolean hitByPlayer, int lootingLevel){
 		// Drops 3-5 crystals without looting bonuses
-		int j = 3 + this.rand.nextInt(3) + this.rand.nextInt(1 + lootingLevel);
+		int j = 3 + this.random.nextInt(3) + this.random.nextInt(1 + lootingLevel);
 
 		for(int k = 0; k < j; k++){
 			this.dropItem(WizardryItems.magic_crystal, 1);
@@ -347,9 +347,9 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 		// Evil wizards occasionally drop one of their spells as a spell book, but not magic missile. This isn't in
 		// the dropRareDrop method because that would be just as rare as normal mobs; instead this is half as rare.
-		if(this.spells.size() > 0 && rand.nextInt(100) - lootingLevel < 5)
+		if(this.spells.size() > 0 && random.nextInt(100) - lootingLevel < 5)
 			this.entityDropItem(new ItemStack(WizardryItems.spell_book, 1,
-					this.spells.get(1 + rand.nextInt(this.spells.size() - 1)).metadata()), 0);
+					this.spells.get(1 + random.nextInt(this.spells.size() - 1)).metadata()), 0);
 	}
 
 	@Override
@@ -362,11 +362,11 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 		data = super.onInitialSpawn(difficulty, data);
 
-		textureIndex = this.rand.nextInt(6);
+		textureIndex = this.random.nextInt(6);
 
 		if(getElement() == null){
-			if(rand.nextBoolean()){
-				this.setElement(Element.values()[rand.nextInt(Element.values().length - 1) + 1]);
+			if(random.nextBoolean()){
+				this.setElement(Element.values()[random.nextInt(Element.values().length - 1) + 1]);
 			}else{
 				this.setElement(Element.MAGIC);
 			}
@@ -390,7 +390,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 		// Now done after the spells so it can take the tier into account. For evil wizards this is slightly different;
 		// it picks a random wand which is at least a high enough tier for the spells the wizard has.
-		Tier tier = Tier.values()[maxTier.ordinal() + rand.nextInt(Tier.values().length - maxTier.ordinal())];
+		Tier tier = Tier.values()[maxTier.ordinal() + random.nextInt(Tier.values().length - maxTier.ordinal())];
 		this.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(WizardryItems.getWand(tier, element)));
 
 		return data;

@@ -30,19 +30,19 @@ public class EntitySpark extends EntityMagicProjectile {
 
 		}
 
-		this.playSound(WizardrySounds.ENTITY_HOMING_SPARK_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_HOMING_SPARK_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 
 		// Particle effect
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 8; i++){
-				double x = this.posX + rand.nextDouble() - 0.5;
-				double y = this.posY + this.height / 2 + rand.nextDouble() - 0.5;
-				double z = this.posZ + rand.nextDouble() - 0.5;
+				double x = this.getX() + random.nextDouble() - 0.5;
+				double y = this.getY() + this.getBbHeight() / 2 + random.nextDouble() - 0.5;
+				double z = this.getZ() + random.nextDouble() - 0.5;
 				ParticleBuilder.create(Type.SPARK).pos(x, y, z).spawn(world);
 			}
 		}
 
-		this.setDead();
+		this.discard();
 	}
 
 	@Override

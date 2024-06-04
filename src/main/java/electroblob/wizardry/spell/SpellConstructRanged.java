@@ -93,7 +93,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				double x = rayTrace.hitVec.x;
 				double y = rayTrace.hitVec.y;
@@ -104,13 +104,13 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 		}else if(!requiresFloor){
 			
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				Vec3 look = caster.getLookVec();
 				
-				double x = caster.posX + look.x * range;
-				double y = caster.posY + caster.getEyeHeight() + look.y * range;
-				double z = caster.posZ + look.z * range;
+				double x = caster.getX() + look.x * range;
+				double y = caster.getY() + caster.getEyeHeight() + look.y * range;
+				double z = caster.getZ() + look.z * range;
 				
 				if(!spawnConstruct(world, x, y, z, null, caster, modifiers)) return false;
 			}
@@ -132,11 +132,11 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 
 		if(target != null && caster.getDistance(target) <= range){
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
-				double x = target.posX;
-				double y = target.posY;
-				double z = target.posZ;
+				double x = target.getX();
+				double y = target.getY();
+				double z = target.getZ();
 
 				HitResult hit = world.rayTraceBlocks(origin, new Vec3(x, y, z), hitLiquids, ignoreUncollidables, false);
 
@@ -177,7 +177,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				double x1 = rayTrace.hitVec.x;
 				double y1 = rayTrace.hitVec.y;
@@ -188,7 +188,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 		}else if(!requiresFloor){
 			
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				
 				if(!spawnConstruct(world, endpoint.x, endpoint.y, endpoint.z, null, null, modifiers)) return false;
 			}

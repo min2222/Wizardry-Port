@@ -41,9 +41,9 @@ public class ParticlePath extends ParticleWizardry {
 	@Override
 	public void onUpdate(){
 
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevgetX() = this.getX();
+		this.prevgetY() = this.getY();
+		this.prevgetZ() = this.getZ();
 
 		if(this.particleAge++ >= this.particleMaxAge){
 			this.setExpired();
@@ -59,9 +59,9 @@ public class ParticlePath extends ParticleWizardry {
 
 		if(this.particleAge % Clairvoyance.PARTICLE_MOVEMENT_INTERVAL == 0){
 			this.setPosition(this.originX, this.originY, this.originZ);
-			this.prevPosX = this.posX;
-			this.prevPosY = this.posY;
-			this.prevPosZ = this.posZ;
+			this.prevgetX() = this.getX();
+			this.prevgetY() = this.getY();
+			this.prevgetZ() = this.getZ();
 		}
 
 	}

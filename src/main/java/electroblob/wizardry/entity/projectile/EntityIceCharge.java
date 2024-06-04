@@ -49,40 +49,40 @@ public class EntityIceCharge extends EntityBomb {
 					damage);
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-				((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+				((LivingEntity)entityHit).addEffect(new MobEffectInstance(WizardryPotions.frost,
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
 
 		// Particle effect
-		if(world.isRemote){
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+		if(level.isClientSide){
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 			for(int i = 0; i < 30 * blastMultiplier; i++){
 
-				ParticleBuilder.create(Type.ICE, rand, this.posX, this.posY, this.posZ, 2 * blastMultiplier, false)
+				ParticleBuilder.create(Type.ICE, rand, this.getX(), this.getY(), this.getZ(), 2 * blastMultiplier, false)
 				.time(35).gravity(true).spawn(world);
 
-				float brightness = 0.4f + rand.nextFloat() * 0.5f;
-				ParticleBuilder.create(Type.DARK_MAGIC, rand, this.posX, this.posY, this.posZ, 2 * blastMultiplier, false)
+				float brightness = 0.4f + random.nextFloat() * 0.5f;
+				ParticleBuilder.create(Type.DARK_MAGIC, rand, this.getX(), this.getY(), this.getZ(), 2 * blastMultiplier, false)
 				.clr(brightness, brightness + 0.1f, 1.0f).spawn(world);
 			}
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_SMASH, 1.5f, rand.nextFloat() * 0.4f + 0.6f);
-			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_ICE, 1.2f, rand.nextFloat() * 0.4f + 1.2f);
+			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_SMASH, 1.5f, random.nextFloat() * 0.4f + 0.6f);
+			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_ICE, 1.2f, random.nextFloat() * 0.4f + 1.2f);
 
 			double radius = Spells.ice_charge.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			// Slows targets
 			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()){
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-						target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+						target.addEffect(new MobEffectInstance(WizardryPotions.frost,
 								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
 								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}
@@ -92,7 +92,7 @@ public class EntityIceCharge extends EntityBomb {
 			for(int i = -1; i < 2; i++){
 				for(int j = -1; j < 2; j++){
 
-					BlockPos pos = new BlockPos(this.posX + i, this.posY, this.posZ + j);
+					BlockPos pos = new BlockPos(this.getX() + i, this.getY(), this.getZ() + j);
 
 					Integer y = BlockUtils.getNearestSurface(world, pos, Direction.UP, 7, true,
 							BlockUtils.SurfaceCriteria.SOLID_LIQUID_TO_AIR);
@@ -104,7 +104,7 @@ public class EntityIceCharge extends EntityBomb {
 						double dist = this.getDistance(pos.getX(), pos.getY(), pos.getZ());
 
 						// Randomised with weighting so that the nearer the block the more likely it is to be snowed.
-						if(rand.nextInt((int)dist * 2 + 1) < 1 && dist < 2){
+						if(random.nextInt((int)dist * 2 + 1) < 1 && dist < 2){
 							if(world.getBlockState(pos.down()).getBlock() == Blocks.WATER){
 								world.setBlockState(pos.down(), Blocks.ICE.getDefaultState());
 							}else{
@@ -119,11 +119,11 @@ public class EntityIceCharge extends EntityBomb {
 
 			// Releases shards
 			for(int i = 0; i < Spells.ice_charge.getProperty(ICE_SHARDS).intValue(); i++){
-				double dx = rand.nextDouble() - 0.5;
-				double dy = rand.nextDouble() - 0.5;
-				double dz = rand.nextDouble() - 0.5;
+				double dx = random.nextDouble() - 0.5;
+				double dy = random.nextDouble() - 0.5;
+				double dz = random.nextDouble() - 0.5;
 				EntityIceShard iceshard = new EntityIceShard(world);
-				iceshard.setPosition(this.posX + dx, this.posY + dy, this.posZ + dz);
+				iceshard.setPosition(this.getX() + dx, this.getY() + dy, this.getZ() + dz);
 				iceshard.motionX = dx * 1.5;
 				iceshard.motionY = dy * 1.5;
 				iceshard.motionZ = dz * 1.5;
@@ -132,7 +132,7 @@ public class EntityIceCharge extends EntityBomb {
 				world.spawnEntity(iceshard);
 			}
 
-			this.setDead();
+			this.discard();
 		}
 	}
 

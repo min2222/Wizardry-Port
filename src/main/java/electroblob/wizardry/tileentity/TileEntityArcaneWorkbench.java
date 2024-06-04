@@ -64,14 +64,14 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 		ItemStack stack = this.getStackInSlot(ContainerArcaneWorkbench.CENTRE_SLOT);
 
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
-		if(stack.getItem() instanceof IManaStoringItem && !this.world.isRemote && !((IManaStoringItem)stack.getItem()).isManaFull(stack)
+		if(stack.getItem() instanceof IManaStoringItem && !this.level.isClientSide && !((IManaStoringItem)stack.getItem()).isManaFull(stack)
 				&& this.world.getTotalWorldTime() % electroblob.wizardry.constants.Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
 			((IManaStoringItem)stack.getItem()).rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
 		}
 
 		// The server doesn't care what these are, and there's no need for them to be synced or saved.
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			timer++;
 		}
 	}

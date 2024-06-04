@@ -37,7 +37,7 @@ public class Decoy extends Spell {
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
-		double splitSpeed = world.rand.nextBoolean() ? 0.3 : -0.3;
+		double splitSpeed = world.random.nextBoolean() ? 0.3 : -0.3;
 		spawnDecoy(world, caster, modifiers, splitSpeed);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
@@ -45,11 +45,11 @@ public class Decoy extends Spell {
 	
 	private void spawnDecoy(Level world, LivingEntity caster, SpellModifiers modifiers, double splitSpeed){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			EntityDecoy decoy = new EntityDecoy(world);
 			decoy.setCaster(caster);
 			decoy.setLifetime(getProperty(DECOY_LIFETIME).intValue());
-			decoy.setLocationAndAngles(caster.posX, caster.posY, caster.posZ, caster.rotationYaw, caster.rotationPitch);
+			decoy.setLocationAndAngles(caster.getX(), caster.getY(), caster.getZ(), caster.rotationYaw, caster.rotationPitch);
 			decoy.addVelocity(-caster.getLookVec().z * splitSpeed, 0, caster.getLookVec().x * splitSpeed);
 			// Ignores the show names setting, since this would allow a player to easily detect a decoy
 			// Instead, a decoy player has its caster's name tag shown permanently and non-player decoys have nothing
@@ -57,11 +57,11 @@ public class Decoy extends Spell {
 			world.spawnEntity(decoy);
 
 			// Tricks any mobs that are targeting the caster into targeting the decoy instead.
-			for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, caster.posX, caster.posY,
-					caster.posZ, world, Mob.class)){
+			for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, caster.getX(), caster.getY(),
+					caster.getZ(), world, Mob.class)){
 				// More likely to trick mobs the higher the damage multiplier
 				// The default base value is 0.5, so modifiers of 2 or more will guarantee mobs are tricked
-				if(creature.getAttackTarget() == caster && world.rand.nextFloat()
+				if(creature.getAttackTarget() == caster && world.random.nextFloat()
 						< getProperty(MOB_TRICK_CHANCE).floatValue() * modifiers.get(SpellModifiers.POTENCY)){
 					creature.setAttackTarget(decoy);
 				}

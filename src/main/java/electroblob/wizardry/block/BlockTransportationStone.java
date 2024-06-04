@@ -124,16 +124,16 @@ public class BlockTransportationStone extends Block {
 
 								if(locations.contains(here)){
 									locations.remove(here);
-									if(!world.isRemote) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.forget", here.pos.getX(), here.pos.getY(), here.pos.getZ(), here.dimension), true);
+									if(!level.isClientSide) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.forget", here.pos.getX(), here.pos.getY(), here.pos.getZ(), here.dimension), true);
 
 								}else{
 
 									locations.add(here);
-									if(!world.isRemote) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.remember", here.pos.getX(), here.pos.getY(), here.pos.getZ(), here.dimension), true);
+									if(!level.isClientSide) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.remember", here.pos.getX(), here.pos.getY(), here.pos.getZ(), here.dimension), true);
 
 									if(locations.size() > Transportation.MAX_REMEMBERED_LOCATIONS){
 										Location removed = locations.remove(0);
-										if(!world.isRemote) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.forget", removed.pos.getX(), removed.pos.getY(), removed.pos.getZ(), removed.dimension), true);
+										if(!level.isClientSide) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.forget", removed.pos.getX(), removed.pos.getY(), removed.pos.getZ(), removed.dimension), true);
 									}
 								}
 
@@ -144,7 +144,7 @@ public class BlockTransportationStone extends Block {
 									if(locations.isEmpty()) locations.add(here);
 									else locations.set(Math.max(locations.size() - 1, 0), here);
 								}
-								if(!world.isRemote) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.confirm", Spells.transportation.getNameForTranslationFormatted()), true);
+								if(!level.isClientSide) player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.confirm", Spells.transportation.getNameForTranslationFormatted()), true);
 							}
 
 							return true;
@@ -152,7 +152,7 @@ public class BlockTransportationStone extends Block {
 					}
 				}
 
-				if(!world.isRemote){
+				if(!level.isClientSide){
 					player.sendStatusMessage(Component.translatable("tile." + Wizardry.MODID + ":transportation_stone.invalid"), true);
 				}else{
 

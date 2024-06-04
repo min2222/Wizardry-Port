@@ -52,7 +52,7 @@ public class Resurrection extends Spell {
 
 		double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		if(!world.isRemote && caster.getServer() != null){
+		if(!level.isClientSide && caster.getServer() != null){
 			// Potency reduces the time you have to wait to resurrect an ally
 			int waitTime = (int)(getProperty(WAIT_TIME).floatValue() / modifiers.get(SpellModifiers.POTENCY));
 
@@ -106,7 +106,7 @@ public class Resurrection extends Spell {
 		// Not sure what potion core is 'fixing' but it breaks my resurrection, so let's unfix it!
 		player.getEntityData().removeTag(POTION_CORE_FIX_NBT_KEY);
 
-		if(player.world.isRemote){
+		if(player.level.isClientSide){
 			ParticleBuilder.spawnHealParticles(player.world, player);
 			this.playSound(player.world, player, 0, -1, null); // We know the modifiers parameter isn't used
 		}
@@ -130,7 +130,7 @@ public class Resurrection extends Spell {
 
 			Player player = (Player)event.getEntity();
 
-			if(player.world.isRemote && !player.isEntityAlive()){
+			if(player.level.isClientSide && !player.isEntityAlive()){
 
 				Player firstPersonPlayer = Wizardry.proxy.getThePlayer();
 
@@ -149,10 +149,10 @@ public class Resurrection extends Spell {
 						int waitTime = Spells.resurrection.getProperty(WAIT_TIME).intValue();
 
 						if(player.deathTime > waitTime){
-							ParticleBuilder.create(Type.SPARKLE, player.world.rand, player.posX, player.posY + 0.5, player.posZ, 0.5, false)
+							ParticleBuilder.create(Type.SPARKLE, player.world.rand, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
 									.clr(1, 1, 0.3f).vel(0, 0.02, 0).spawn(player.world);
 						}else{
-							ParticleBuilder.create(Type.DUST, player.world.rand, player.posX, player.posY + 0.5, player.posZ, 0.5, false)
+							ParticleBuilder.create(Type.DUST, player.world.rand, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
 									.clr(1, 1, 0.3f).vel(0, 0.02, 0).time(50).spawn(player.world);
 						}
 					}

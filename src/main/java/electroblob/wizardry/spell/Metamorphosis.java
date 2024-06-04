@@ -59,9 +59,9 @@ public class Metamorphosis extends SpellRay {
 
 		if(EntityUtils.isLiving(target)){
 
-			double xPos = target.posX;
-			double yPos = target.posY;
-			double zPos = target.posZ;
+			double xPos = target.getX();
+			double yPos = target.getY();
+			double zPos = target.getZ();
 
 			// Sneaking allows the entities to be cycled through in the other direction.
 			// Dispensers always cycle through entities in the normal direction.
@@ -82,7 +82,7 @@ public class Metamorphosis extends SpellRay {
 			
 			if(newEntity == null) return false;
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				// Transfers attributes from the old entity to the new one.
 				newEntity.setHealth(((LivingEntity)target).getHealth());
 				CompoundTag tag = new CompoundTag();
@@ -91,7 +91,7 @@ public class Metamorphosis extends SpellRay {
 				NBTExtras.removeUniqueId(tag, "UUID");
 				newEntity.readFromNBT(tag);
 
-				target.setDead();
+				target.discard();
 				newEntity.setPosition(xPos, yPos, zPos);
 				world.spawnEntity(newEntity);
 				

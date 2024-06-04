@@ -54,14 +54,14 @@ public class FrostRay extends SpellRay {
 			if(target.isBurning()) target.extinguish();
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
-				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.
 			}else{
 				// For frost ray the entity can move slightly, unlike freeze
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.frost,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue()));
 
@@ -90,10 +90,10 @@ public class FrostRay extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = world.rand.nextFloat();
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12))
+		float brightness = world.random.nextFloat();
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12))
 		.clr(0.4f + 0.6f * brightness, 0.6f + 0.4f*brightness, 1).collide(true).spawn(world);
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.rand.nextInt(12)).collide(true).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).vel(vx, vy, vz).time(8 + world.random.nextInt(12)).collide(true).spawn(world);
 	}
 
 }

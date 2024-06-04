@@ -81,10 +81,10 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	}
 
 	private void spawnParticleEffect(){
-		if(this.world.isRemote){
+		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
 				ParticleBuilder.create(Type.DARK_MAGIC)
-				.pos(this.posX + this.rand.nextFloat(), this.posY + this.rand.nextFloat(), this.posZ + this.rand.nextFloat())
+				.pos(this.getX() + this.random.nextFloat(), this.getY() + this.random.nextFloat(), this.getZ() + this.random.nextFloat())
 				.clr(0.3f, 0.3f, 0.3f)
 				.spawn(world);
 			}

@@ -38,14 +38,14 @@ public class PhaseStep extends Spell {
 
 		// This is here because the conditions are false on the client for whatever reason. (see the Javadoc for cast()
 		// for an explanation)
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			for(int i = 0; i < 10; i++){
-				double dx1 = caster.posX;
-				double dy1 = caster.posY + 2 * world.rand.nextFloat();
-				double dz1 = caster.posZ;
-				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
-						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
+				double dx1 = caster.getX();
+				double dy1 = caster.getY() + 2 * world.random.nextFloat();
+				double dz1 = caster.getZ();
+				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.random.nextDouble() - 0.5,
+						world.random.nextDouble() - 0.5, world.random.nextDouble() - 0.5);
 			}
 
 			Wizardry.proxy.playBlinkEffect(caster);
@@ -102,7 +102,7 @@ public class PhaseStep extends Spell {
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 			if(!teleportMount && caster.isRiding()) caster.dismountRidingEntity();
-			if(!world.isRemote) toTeleport.setPositionAndUpdate(destination.x, destination.y, destination.z);
+			if(!level.isClientSide) toTeleport.setPositionAndUpdate(destination.x, destination.y, destination.z);
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;

@@ -148,7 +148,7 @@ public final class EntityUtils {
 		AABB aabb = new AABB(x - radius, y, z - radius, x + radius, y + height, z + radius);
 		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
 		for(T entity : entityList) {
-			if (entity.getDistance(x, entity.posY, z) > radius) {
+			if (entity.getDistance(x, entity.getY(), z) > radius) {
 				entityList.remove(entity);
 				break;
 			}
@@ -232,9 +232,9 @@ public final class EntityUtils {
 	 * @param strength The strength of the knockback
 	 */
 	public static void applyStandardKnockback(Entity attacker, LivingEntity target, float strength){
-		double dx = attacker.posX - target.posX;
+		double dx = attacker.getX() - target.getX();
 		double dz;
-		for(dz = attacker.posZ - target.posZ; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random())
+		for(dz = attacker.getZ() - target.getZ(); dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random())
 				* 0.01D){
 			dx = (Math.random() - Math.random()) * 0.01D;
 		}
@@ -261,7 +261,7 @@ public final class EntityUtils {
 			}
 		}
 
-		box = box.offset(destination.subtract(entity.posX, entity.posY, entity.posZ));
+		box = box.offset(destination.subtract(entity.getX(), entity.getY(), entity.getZ()));
 
 		// All the parameters of this method are INCLUSIVE, so even the max coordinates should be rounded down
 		Iterable<BlockPos> cuboid = BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
@@ -485,7 +485,7 @@ public final class EntityUtils {
 	 */
 	public static void playSoundAtPlayer(Player player, SoundEvent sound, SoundSource category, float volume,
                                          float pitch){
-		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, category, volume, pitch);
+		player.world.playSound(null, player.getX(), player.getY(), player.getZ(), sound, category, volume, pitch);
 	}
 
 	/**
@@ -493,7 +493,7 @@ public final class EntityUtils {
 	 * defaults to {@link SoundSource#PLAYERS}.
 	 */
 	public static void playSoundAtPlayer(Player player, SoundEvent sound, float volume, float pitch){
-		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, SoundSource.PLAYERS, volume, pitch);
+		player.world.playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, volume, pitch);
 	}
 
 }

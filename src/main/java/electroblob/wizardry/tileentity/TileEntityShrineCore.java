@@ -74,14 +74,14 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 			this.activated = true;
 
-			if(world.isRemote){
+			if(level.isClientSide){
 				ParticleBuilder.create(Type.SPHERE).pos(x, y + 1, z).clr(0xf06495).scale(5).time(12).spawn(world);
 			}
 
 			world.playSound(x, y, z,
 					WizardrySounds.BLOCK_PEDESTAL_ACTIVATE, SoundSource.BLOCKS, 1.5f, 1, false);
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				EntityEvilWizard[] wizards = new EntityEvilWizard[linkedWizards.length];
 
@@ -89,7 +89,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 					EntityEvilWizard wizard = new EntityEvilWizard(world);
 
-					float angle = world.rand.nextFloat() * 2 * (float)Math.PI;
+					float angle = world.random.nextFloat() * 2 * (float)Math.PI;
 					double x1 = this.pos.getX() + 0.5 + 5 * Mth.sin(angle);
 					double z1 = this.pos.getZ() + 0.5 + 5 * Mth.cos(angle);
 					Integer y1 = BlockUtils.getNearestFloor(world, new BlockPos(x1, this.pos.getY(), z1), 8);
@@ -118,7 +118,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		if(activated && world.getTotalWorldTime() % 20L == 0) containNearbyTargets();
 
-		if(activated && areWizardsDead() && !world.isRemote){
+		if(activated && areWizardsDead() && !level.isClientSide){
 			conquer();
 		}
 	}
@@ -139,7 +139,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 		double y = this.pos.getY() + 0.5;
 		double z = this.pos.getZ() + 0.5;
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			WizardryPacketHandler.net.sendToAllAround(new PacketConquerShrine.Message(this.pos),
 					new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), x, y, z, 64));
@@ -154,7 +154,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		world.markTileEntityForRemoval(this);
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getTileData(), ArcaneLock.NBT_KEY);
 		}else{
 			BlockEntity tileEntity = world.getTileEntity(this.pos.up());
@@ -165,10 +165,10 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		world.playSound(x, y, z, WizardrySounds.BLOCK_PEDESTAL_CONQUER, SoundSource.BLOCKS, 1, 1, false);
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			ParticleBuilder.create(Type.SPHERE).scale(5).pos(x, y + 1, z).clr(0xf06495).time(12).spawn(world);
 			for(int i=0; i<5; i++){
-				float brightness = 0.8f + world.rand.nextFloat() * 0.2f;
+				float brightness = 0.8f + world.random.nextFloat() * 0.2f;
 				ParticleBuilder.create(Type.SPARKLE, world.rand, x, y + 1, z, 1, true)
 				.clr(1, brightness, brightness).spawn(world);
 			}
@@ -181,7 +181,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
 		for(LivingEntity entity : entities){
-			entity.addPotionEffect(new MobEffectInstance(WizardryPotions.containment, 219));
+			entity.addEffect(new MobEffectInstance(WizardryPotions.containment, 219));
 			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NbtUtils.createPosTag(this.pos));
 		}
 	}

@@ -33,7 +33,7 @@ public class MarkSacrifice extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
-			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.mark_of_sacrifice,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.mark_of_sacrifice,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
@@ -54,7 +54,7 @@ public class MarkSacrifice extends SpellRay {
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0xe90e48).spawn(world);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0xff7bbb).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0xff7bbb).spawn(world);
 	}
 
 	@SubscribeEvent

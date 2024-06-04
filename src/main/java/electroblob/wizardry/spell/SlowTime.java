@@ -24,7 +24,7 @@ public class SlowTime extends SpellBuff {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.world.isRemote){
+		if(caster.level.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);
 		}
 

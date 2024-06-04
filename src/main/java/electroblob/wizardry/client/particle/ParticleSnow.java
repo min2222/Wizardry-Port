@@ -15,13 +15,13 @@ public class ParticleSnow extends ParticleWizardry {
 
 	public ParticleSnow(Level world, double x, double y, double z){
 		
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 		
 		this.setVelocity(0, -0.02, 0);
 		this.particleScale *= 0.6f;
 		this.particleGravity = 0;
 		this.canCollide = true;
-		this.setMaxAge(40 + rand.nextInt(10));
+		this.setMaxAge(40 + random.nextInt(10));
 		// Produces a variety of light blues and whites
 		this.setRBGColorF(0.9f + 0.1f * random.nextFloat(), 0.95f + 0.05f * random.nextFloat(), 1);
 	}

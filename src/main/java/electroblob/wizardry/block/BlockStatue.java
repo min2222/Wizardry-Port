@@ -60,7 +60,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 							// with
 							// the top of the entity model.
 							statue.position == statue.parts
-									? (float)Math.min(statue.creature.height - statue.parts + 1, 1)
+									? (float)Math.min(statue.creature.getBbHeight() - statue.parts + 1, 1)
 									: 1,
 							(float)Math.min(0.5 + statue.creature.width / 2, 1));
 				}
@@ -132,7 +132,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState state){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			TileEntityStatue tileentity = (TileEntityStatue)world.getTileEntity(pos);
 
@@ -200,7 +200,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		target.extinguish();
 
 		// Short mobs such as spiders and pigs
-		if((target.height < 1.2 || target.isChild()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
+		if((target.getBbHeight() < 1.2 || target.isChild()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
 			
 			world.setBlockState(pos, this.getDefaultState());
 			if(world.getTileEntity(pos) instanceof TileEntityStatue){
@@ -209,11 +209,11 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 			}
 			
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
-			target.setDead();
+			target.discard();
 			return true;
 		}
 		// Normal sized mobs like zombies and skeletons
-		else if(target.height < 2.5 && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up())
+		else if(target.getBbHeight() < 2.5 && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up())
 				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up())){
 			
 			world.setBlockState(pos, this.getDefaultState());
@@ -228,7 +228,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 			}
 
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
-			target.setDead();
+			target.discard();
 			return true;
 		}
 		// Tall mobs like endermen
@@ -252,7 +252,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 			}
 
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
-			target.setDead();
+			target.discard();
 			return true;
 		}
 			

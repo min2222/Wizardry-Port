@@ -111,7 +111,7 @@ public abstract class ActionAnimation extends Animation {
 				Vec3 direction = target.subtract(player.getPositionEyes(partialTicks));
 				float yaw = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
 
-				float pitch = (float) Mth.atan2(Mth.sqrt(direction.x*direction.x + direction.z*direction.z), direction.y);
+				float pitch = (float) Mth.atan2(Math.sqrt(direction.x*direction.x + direction.z*direction.z), direction.y);
 				float x = pitch - (float)Math.PI * 0.9f;
 				float y = -(float)Math.toRadians(yaw) - (float) Mth.atan2(direction.x, direction.z);
 				y += (side == EnumHandSide.RIGHT ? -0.25f : 0.25f);

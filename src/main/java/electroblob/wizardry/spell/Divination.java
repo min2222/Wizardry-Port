@@ -86,14 +86,14 @@ public class Divination extends Spell {
 			// The weights are sorted in ascending order, so this must be the largest
 			BlockPos target = sphere.get(sphere.size() - 1);
 
-			direction = Direction.getFacingFromVector((float)(target.getX() + 0.5 - caster.posX),
-					(float)(target.getY() + 0.5 - (caster.posY + caster.getEyeHeight())),
-					(float)(target.getZ() + 0.5 - caster.posZ));
+			direction = Direction.getFacingFromVector((float)(target.getX() + 0.5 - caster.getX()),
+					(float)(target.getY() + 0.5 - (caster.getY() + caster.getEyeHeight())),
+					(float)(target.getZ() + 0.5 - caster.getZ()));
 
 			strength = Strength.forWeight(calculateWeight(world, caster, target, range, modifiers));
 		}
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ strength.key, Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ RelativeFacing.relativise(direction, caster).name)), false);
@@ -124,8 +124,8 @@ public class Divination extends Spell {
 
 		for(int i=0; i<count; i++){
 			ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.rand, vec.x, vec.y, vec.z, 0.7, false)
-					.time(20 + world.rand.nextInt(5)).clr(0.6f + world.rand.nextFloat() * 0.4f,
-					0.6f + world.rand.nextFloat() * 0.4f, 0.6f + world.rand.nextFloat() * 0.4f).scale(0.3f).spawn(world);
+					.time(20 + world.random.nextInt(5)).clr(0.6f + world.random.nextFloat() * 0.4f,
+					0.6f + world.random.nextFloat() * 0.4f, 0.6f + world.random.nextFloat() * 0.4f).scale(0.3f).spawn(world);
 		}
 	}
 

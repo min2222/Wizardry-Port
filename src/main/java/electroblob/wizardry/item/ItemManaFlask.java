@@ -100,11 +100,11 @@ public class ItemManaFlask extends Item {
 
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity player, int count){
-		if(player.world.isRemote){
+		if(player.level.isClientSide){
 			float f = count/(float)getMaxItemUseDuration(stack);
 			Vec3 pos = player.getPositionEyes(0).subtract(0, 0.2, 0).add(player.getLookVec().scale(0.6));
 			Vec3 delta = new Vec3(0, 0.2 * f, 0).rotatePitch(count * 0.5f).rotateYaw((float)Math.toRadians(90 - player.rotationYawHead));
-			ParticleBuilder.create(Type.DUST).pos(pos.add(delta)).vel(delta.scale(0.2)).time(12 + player.world.rand.nextInt(6))
+			ParticleBuilder.create(Type.DUST).pos(pos.add(delta)).vel(delta.scale(0.2)).time(12 + player.world.random.nextInt(6))
 					.clr(1, 1, 0.65f).fade(0.7f, 0, 1).spawn(player.world);
 		}
 	}

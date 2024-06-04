@@ -370,7 +370,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * cast or whether a spell specific condition caused it not to be (for example, heal won't work if the player is on
 	 * full health), preventing unfair drain of mana.
 	 * <p></p>
-	 * Each spell must return true when it works or the spell will not use up mana. Note that (!world.isRemote) does not
+	 * Each spell must return true when it works or the spell will not use up mana. Note that (!level.isClientSide) does not
 	 * count as a condition; return true should be outside it - in other words, return a value on both the client and
 	 * the server.
 	 * <p></p>
@@ -404,7 +404,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * the regular cast method; for others it won't be - for example, projectile-based spells are normally done using
 	 * the player's look vector, but NPCs need to use a target-based method instead.
 	 * <p></p>
-	 * Each spell must return true when it works. Note that (!world.isRemote) does not count as a condition; return true
+	 * Each spell must return true when it works. Note that (!level.isClientSide) does not count as a condition; return true
 	 * should be outside it - in other words, return a value on both the client and the server.
 	 * <p></p>
 	 * It's worth noting that on the client side, this method only gets called if the server side cast() method
@@ -440,7 +440,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * the regular cast method; for others it won't be - for example, projectile-based spells are normally done using
 	 * the player's look vector, but dispensers need to use a facing-based method instead.
 	 * <p></p>
-	 * Each spell must return true when it works. Note that (!world.isRemote) does not count as a condition; return true
+	 * Each spell must return true when it works. Note that (!level.isClientSide) does not count as a condition; return true
 	 * should be outside it - in other words, return a value on both the client and the server.
 	 * <p></p>
 	 * It's worth noting that on the client side, this method only gets called if the server side cast() method
@@ -829,7 +829,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 */
 	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		if(!entity.isSilent()){
-			this.playSound(world, entity.posX, entity.posY, entity.posZ, ticksInUse, duration, modifiers, sounds);
+			this.playSound(world, entity.getX(), entity.getY(), entity.getZ(), ticksInUse, duration, modifiers, sounds);
 		}
 	}
 
@@ -878,7 +878,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 			for(SoundEvent sound : this.sounds){
 				ResourceLocation soundName = SoundEvent.REGISTRY.getNameForObject(sound);
 				if(soundName != null && (identifiers.size() == 0 || identifiers.contains(soundName.getPath()))){
-					world.playSound(null, x, y, z, sound, WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f));
+					world.playSound(null, x, y, z, sound, WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f));
 				}
 			}
 		}
@@ -887,16 +887,16 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	/** Helper method which plays a standard continuous spell sound loop on the first casting tick, which moves
 	 * with the given entity. */
 	protected final void playSoundLoop(Level world, LivingEntity entity, int ticksInUse){
-		if(ticksInUse == 0 && world.isRemote) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds,
-				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f));
+		if(ticksInUse == 0 && level.isClientSide) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds,
+				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f));
 	}
 
 	/** Helper method which plays a standard continuous spell sound loop on the first casting tick, at the given
 	 * coordinates. If the given duration is -1, the coordinates must be those of a dispenser. */
 	protected final void playSoundLoop(Level world, double x, double y, double z, int ticksInUse, int duration){
-		if(ticksInUse == 0 && world.isRemote){
+		if(ticksInUse == 0 && level.isClientSide){
 			Wizardry.proxy.playSpellSoundLoop(world, x, y, z, this, this.sounds,
-					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f), duration);
+					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f), duration);
 		}
 	}
 

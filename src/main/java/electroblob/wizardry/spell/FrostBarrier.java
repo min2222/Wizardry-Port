@@ -80,7 +80,7 @@ public class FrostBarrier extends Spell {
 
 	private boolean createBarriers(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			direction = GeometryUtils.horizontalise(direction);
 			Vec3 centre = origin.add(direction.scale(BARRIER_DISTANCE - BARRIER_ARC_RADIUS)); // Arc centred behind caster

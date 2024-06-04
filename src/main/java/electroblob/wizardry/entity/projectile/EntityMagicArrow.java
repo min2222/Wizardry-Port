@@ -98,14 +98,14 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		
 		this.setCaster(caster);
 		
-		this.setLocationAndAngles(caster.posX, caster.posY + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET,
-				caster.posZ, caster.rotationYaw, caster.rotationPitch);
+		this.setLocationAndAngles(caster.getX(), caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET,
+				caster.getZ(), caster.rotationYaw, caster.rotationPitch);
 		
-		this.posX -= (double)(Mth.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
-		this.posY -= 0.10000000149011612D;
-		this.posZ -= (double)(Mth.sin(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
+		this.getX() -= (double)(Mth.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
+		this.getY() -= 0.10000000149011612D;
+		this.getZ() -= (double)(Mth.sin(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
 		
-		this.setPosition(this.posX, this.posY, this.posZ);
+		this.setPosition(this.getX(), this.getY(), this.getZ());
 		
 		// yOffset was set to 0 here, but that has been replaced by getYOffset(), which returns 0 in Entity anyway.
 		this.motionX = (double)(-Mth.sin(this.rotationYaw / 180.0F * (float)Math.PI)
@@ -125,19 +125,19 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		
 		this.setCaster(caster);
 
-		this.posY = caster.posY + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET;
-		double dx = target.posX - caster.posX;
-		double dy = this.doGravity() ? target.posY + (double)(target.height / 3.0f) - this.posY
-				: target.posY + (double)(target.height / 2.0f) - this.posY;
-		double dz = target.posZ - caster.posZ;
-		double horizontalDistance = (double) Mth.sqrt(dx * dx + dz * dz);
+		this.getY() = caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET;
+		double dx = target.getX() - caster.getX();
+		double dy = this.doGravity() ? target.getY() + (double)(target.getBbHeight() / 3.0f) - this.getY()
+				: target.getY() + (double)(target.getBbHeight() / 2.0f) - this.getY();
+		double dz = target.getZ() - caster.getZ();
+		double horizontalDistance = (double) Math.sqrt(dx * dx + dz * dz);
 
 		if(horizontalDistance >= 1.0E-7D){
 			float yaw = (float)(Math.atan2(dz, dx) * 180.0d / Math.PI) - 90.0f;
 			float pitch = (float)(-(Math.atan2(dy, horizontalDistance) * 180.0d / Math.PI));
 			double dxNormalised = dx / horizontalDistance;
 			double dzNormalised = dz / horizontalDistance;
-			this.setLocationAndAngles(caster.posX + dxNormalised, this.posY, caster.posZ + dzNormalised, yaw, pitch);
+			this.setLocationAndAngles(caster.getX() + dxNormalised, this.getY(), caster.getZ() + dzNormalised, yaw, pitch);
 			// yOffset was set to 0 here, but that has been replaced by getYOffset(), which returns 0 in Entity anyway.
 
 			// Depends on the horizontal distance between the two entities and accounts for bullet drop,
@@ -214,10 +214,10 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	
 	// Methods triggered during the update cycle
 
-	/** Called each tick when the projectile is in a block. Defaults to setDead(), but can be overridden to change the
+	/** Called each tick when the projectile is in a block. Defaults to discard(), but can be overridden to change the
 	 * behaviour. */
 	protected void tickInGround(){
-		this.setDead();
+		this.discard();
 	}
 
 	/** Called each tick when the projectile is in the air. Override to add particles and such like. */
@@ -238,7 +238,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 		// Projectile disappears after its lifetime (if it has one) has elapsed
 		if(getLifetime() >=0 && this.ticksExisted > getLifetime()){
-			this.setDead();
+			this.discard();
 		}
 
 		if(this.getCaster() == null && this.casterUUID != null){
@@ -249,7 +249,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		}
 
 		if(this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F){
-			float f = Mth.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+			float f = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 			this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D
 					/ Math.PI);
 			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f) * 180.0D
@@ -263,7 +263,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			AABB axisalignedbb = iblockstate.getCollisionBoundingBox(this.world, blockpos);
 
 			if(axisalignedbb != Block.NULL_AABB
-					&& axisalignedbb.offset(blockpos).contains(new Vec3(this.posX, this.posY, this.posZ))){
+					&& axisalignedbb.offset(blockpos).contains(new Vec3(this.getX(), this.getY(), this.getZ()))){
 				this.inGround = true;
 			}
 		}
@@ -287,11 +287,11 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			
 			// Does a ray trace to determine whether the projectile will hit a block in the next tick
 			
-			Vec3 vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
-			Vec3 vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+			Vec3 vec3d1 = new Vec3(this.getX(), this.getY(), this.getZ());
+			Vec3 vec3d = new Vec3(this.getX() + this.motionX, this.getY() + this.motionY, this.getZ() + this.motionZ);
 			HitResult raytraceresult = this.world.rayTraceBlocks(vec3d1, vec3d, false, true, false);
-			vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
-			vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+			vec3d1 = new Vec3(this.getX(), this.getY(), this.getZ());
+			vec3d = new Vec3(this.getX() + this.motionX, this.getY() + this.motionY, this.getZ() + this.motionZ);
 
 			if(raytraceresult != null){
 				vec3d = new Vec3(raytraceresult.hitVec.x, raytraceresult.hitVec.y,
@@ -364,7 +364,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 							this.onEntityHit(entityHit);
 
 							if(this.knockbackStrength > 0){
-								float f4 = Mth.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+								float f4 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 
 								if(f4 > 0.0F){
 									raytraceresult.entityHit.addVelocity(
@@ -390,10 +390,10 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 						}
 
 						if(!(raytraceresult.entityHit instanceof EntityEnderman) && !this.doOverpenetration()){
-							this.setDead();
+							this.discard();
 						}
 					}else{
-						if(!this.doOverpenetration()) this.setDead();
+						if(!this.doOverpenetration()) this.discard();
 
 						// Was the 'rebound' that happened when entities were immune to damage
 						/* this.motionX *= -0.10000000149011612D; this.motionY *= -0.10000000149011612D; this.motionZ *=
@@ -407,15 +407,15 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 					this.blockY = raytraceresult.getBlockPos().getY();
 					this.blockZ = raytraceresult.getBlockPos().getZ();
 					this.stuckInBlock = this.world.getBlockState(raytraceresult.getBlockPos());
-					this.motionX = (double)((float)(raytraceresult.hitVec.x - this.posX));
-					this.motionY = (double)((float)(raytraceresult.hitVec.y - this.posY));
-					this.motionZ = (double)((float)(raytraceresult.hitVec.z - this.posZ));
+					this.motionX = (double)((float)(raytraceresult.hitVec.x - this.getX()));
+					this.motionY = (double)((float)(raytraceresult.hitVec.y - this.getY()));
+					this.motionZ = (double)((float)(raytraceresult.hitVec.z - this.getZ()));
 					// f2 = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ *
 					// this.motionZ);
-					// this.posX -= this.motionX / (double)f2 * 0.05000000074505806D;
-					// this.posY -= this.motionY / (double)f2 * 0.05000000074505806D;
-					// this.posZ -= this.motionZ / (double)f2 * 0.05000000074505806D;
-					// this.playSound("random.bowhit", 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+					// this.getX() -= this.motionX / (double)f2 * 0.05000000074505806D;
+					// this.getY() -= this.motionY / (double)f2 * 0.05000000074505806D;
+					// this.getZ() -= this.motionZ / (double)f2 * 0.05000000074505806D;
+					// this.playSound("random.bowhit", 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 					this.inGround = true;
 					this.arrowShake = 7;
 
@@ -441,8 +441,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 					if(AllyDesignationSystem.isValidTarget(getCaster(), hit.entityHit)){
 
-						Vec3 direction = new Vec3(hit.entityHit.posX, hit.entityHit.posY + hit.entityHit.height/2,
-								hit.entityHit.posZ).subtract(this.getPositionVector()).normalize().scale(velocity.length());
+						Vec3 direction = new Vec3(hit.entityHit.getX(), hit.entityHit.getY() + hit.entityHit.getBbHeight()/2,
+								hit.entityHit.getZ()).subtract(this.getPositionVector()).normalize().scale(velocity.length());
 
 						motionX = motionX + 2 * (direction.x - motionX) / SEEKING_TIME;
 						motionY = motionY + 2 * (direction.y - motionY) / SEEKING_TIME;
@@ -451,9 +451,9 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 				}
 			}
 
-			this.posX += this.motionX;
-			this.posY += this.motionY;
-			this.posZ += this.motionZ;
+			this.getX() += this.motionX;
+			this.getY() += this.motionY;
+			this.getZ() += this.motionZ;
 			// f2 = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
 			this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D / Math.PI);
 
@@ -483,8 +483,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			if(this.isInWater()){
 				for(int l = 0; l < 4; ++l){
 					float f4 = 0.25F;
-					this.world.spawnParticle(ParticleTypes.WATER_BUBBLE, this.posX - this.motionX * (double)f4,
-							this.posY - this.motionY * (double)f4, this.posZ - this.motionZ * (double)f4, this.motionX,
+					this.world.spawnParticle(ParticleTypes.WATER_BUBBLE, this.getX() - this.motionX * (double)f4,
+							this.getY() - this.motionY * (double)f4, this.getZ() - this.motionZ * (double)f4, this.motionX,
 							this.motionY, this.motionZ);
 				}
 
@@ -503,27 +503,27 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 			if(this.doGravity()) this.motionY -= 0.05;
 
-			this.setPosition(this.posX, this.posY, this.posZ);
+			this.setPosition(this.getX(), this.getY(), this.getZ());
 			this.doBlockCollisions();
 		}
 	}
 
 	@Override
 	public void shoot(double x, double y, double z, float speed, float randomness){
-		float f2 = Mth.sqrt(x * x + y * y + z * z);
+		float f2 = Math.sqrt(x * x + y * y + z * z);
 		x /= (double)f2;
 		y /= (double)f2;
 		z /= (double)f2;
-		x += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
-		y += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
-		z += this.rand.nextGaussian() * (double)(this.rand.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
+		x += this.random.nextGaussian() * (double)(this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
+		y += this.random.nextGaussian() * (double)(this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
+		z += this.random.nextGaussian() * (double)(this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double)randomness;
 		x *= (double)speed;
 		y *= (double)speed;
 		z *= (double)speed;
 		this.motionX = x;
 		this.motionY = y;
 		this.motionZ = z;
-		float f3 = Mth.sqrt(x * x + z * z);
+		float f3 = Math.sqrt(x * x + z * z);
 		this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(x, z) * 180.0D / Math.PI);
 		this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(y, (double)f3) * 180.0D / Math.PI);
 		this.ticksInGround = 0;
@@ -541,12 +541,12 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		this.motionZ = p_70016_5_;
 
 		if(this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F){
-			float f = Mth.sqrt(p_70016_1_ * p_70016_1_ + p_70016_5_ * p_70016_5_);
+			float f = Math.sqrt(p_70016_1_ * p_70016_1_ + p_70016_5_ * p_70016_5_);
 			this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(p_70016_1_, p_70016_5_) * 180.0D / Math.PI);
 			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(p_70016_3_, (double)f) * 180.0D / Math.PI);
 			this.prevRotationPitch = this.rotationPitch;
 			this.prevRotationYaw = this.rotationYaw;
-			this.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
+			this.setLocationAndAngles(this.getX(), this.getY(), this.getZ(), this.rotationYaw, this.rotationPitch);
 			this.ticksInGround = 0;
 		}
 	}

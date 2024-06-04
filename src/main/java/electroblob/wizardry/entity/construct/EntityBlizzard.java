@@ -42,10 +42,10 @@ public class EntityBlizzard extends EntityScaledConstruct {
 		// spell - in fact, blizzard doesn't even have a spell class (yet)
 		double radius = Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).doubleValue() * sizeMultiplier;
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
-					this.posZ, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.getX(), this.getY(),
+					this.getZ(), this.world);
 
 			for(LivingEntity target : targets){
 
@@ -63,21 +63,21 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 				// All entities are slowed, even the caster (except those immune to frost effects)
 				if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-					target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 20, 0));
+					target.addEffect(new MobEffectInstance(WizardryPotions.frost, 20, 0));
 			}
 			
 		}else{
 			
 			for(int i=0; i<6; i++){
-				double speed = (rand.nextBoolean() ? 1 : -1) * (0.1 + 0.05 * rand.nextDouble());
-				ParticleBuilder.create(Type.SNOW).pos(this.posX, this.posY + rand.nextDouble() * height, this.posZ).vel(0, 0, 0)
-				.time(100).scale(2).spin(rand.nextDouble() * (radius - 0.5) + 0.5, speed).shaded(true).spawn(world);
+				double speed = (random.nextBoolean() ? 1 : -1) * (0.1 + 0.05 * random.nextDouble());
+				ParticleBuilder.create(Type.SNOW).pos(this.getX(), this.getY() + random.nextDouble() * height, this.getZ()).vel(0, 0, 0)
+				.time(100).scale(2).spin(random.nextDouble() * (radius - 0.5) + 0.5, speed).shaded(true).spawn(world);
 			}
 
 			for(int i=0; i<3; i++){
-				double speed = (rand.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * rand.nextDouble());
-				ParticleBuilder.create(Type.CLOUD).pos(this.posX, this.posY + rand.nextDouble() * (height - 0.5), this.posZ)
-						.clr(0xffffff).shaded(true).spin(rand.nextDouble() * (radius - 1) + 0.5, speed).spawn(world);
+				double speed = (random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * random.nextDouble());
+				ParticleBuilder.create(Type.CLOUD).pos(this.getX(), this.getY() + random.nextDouble() * (height - 0.5), this.getZ())
+						.clr(0xffffff).shaded(true).spin(random.nextDouble() * (radius - 1) + 0.5, speed).spawn(world);
 			}
 		}
 	}

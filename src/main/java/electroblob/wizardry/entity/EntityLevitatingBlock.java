@@ -94,13 +94,13 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 			Block block = getBlock().getBlock();
 
 			if(getBlock().getMaterial() == Material.AIR){
-				this.setDead();
+				this.discard();
 
 			}else{
 
-				this.prevPosX = this.posX;
-				this.prevPosY = this.posY;
-				this.prevPosZ = this.posZ;
+				this.prevgetX() = this.getX();
+				this.prevgetY() = this.getY();
+				this.prevgetZ() = this.getZ();
 
 				if(this.fallTime++ == 0){
 
@@ -108,8 +108,8 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					if(this.world.getBlockState(blockpos).getBlock() == block){
 						this.world.setBlockToAir(blockpos);
-					}else if(!this.world.isRemote){
-						this.setDead();
+					}else if(!this.level.isClientSide){
+						this.discard();
 						return;
 					}
 				}
@@ -120,7 +120,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 				this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
 
-				if(!this.world.isRemote){
+				if(!this.level.isClientSide){
 
 					BlockPos blockpos1 = new BlockPos(this);
 					boolean isConcrete = getBlock().getBlock() == Blocks.CONCRETE_POWDER;
@@ -129,7 +129,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					if(isConcrete && d0 > 1.0D){
 
-						HitResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevPosX, this.prevPosY, this.prevPosZ), new Vec3(this.posX, this.posY, this.posZ), true);
+						HitResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevgetX(), this.prevgetY(), this.prevgetZ()), new Vec3(this.getX(), this.getY(), this.getZ()), true);
 
 						if(raytraceresult != null && this.world.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
@@ -139,16 +139,16 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					if(!this.onGround && !isConcreteInWater){
 
-						if(this.fallTime > 100 && !this.world.isRemote && (blockpos1.getY() < 1 || blockpos1.getY() > 256) || this.fallTime > 600){
-							this.setDead();
+						if(this.fallTime > 100 && !this.level.isClientSide && (blockpos1.getY() < 1 || blockpos1.getY() > 256) || this.fallTime > 600){
+							this.discard();
 						}
 
 					}else{
 
 						BlockState iblockstate = this.world.getBlockState(blockpos1);
 
-						if(this.world.isAirBlock(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ))){
-							if(!isConcreteInWater && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ)))){
+						if(this.world.isAirBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
+							if(!isConcreteInWater && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
 								this.onGround = false;
 								return;
 							}
@@ -162,7 +162,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 							if(suspendTimer == 0){
 
-								this.setDead(); // Moved inside the above if statement
+								this.discard(); // Moved inside the above if statement
 
 								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
 										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down())))

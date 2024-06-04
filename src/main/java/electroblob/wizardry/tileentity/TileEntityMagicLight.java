@@ -32,12 +32,12 @@ public class TileEntityMagicLight extends TileEntityTimer {
 
 		if(randomiser.length > 0 && randomiser[0] == -1){
 			for(int i = 0; i < randomiser.length; i++){
-				randomiser[i] = this.world.rand.nextInt(10);
+				randomiser[i] = this.world.random.nextInt(10);
 			}
 		}
 		if(randomiser2.length > 0 && randomiser2[0] == -1){
 			for(int i = 0; i < randomiser2.length; i++){
-				randomiser2[i] = this.world.rand.nextInt(10);
+				randomiser2[i] = this.world.random.nextInt(10);
 			}
 		}
 		super.update();

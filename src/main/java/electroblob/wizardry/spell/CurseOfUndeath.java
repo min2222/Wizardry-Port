@@ -28,7 +28,7 @@ public class CurseOfUndeath extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 
 			// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE,
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
 
@@ -49,7 +49,7 @@ public class CurseOfUndeath extends SpellRay {
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0x686c00).spawn(world);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0x251609).spawn(world);
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0xe6e592).spawn(world);
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0xe6e592).spawn(world);
 	}
 
 }

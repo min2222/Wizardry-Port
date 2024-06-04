@@ -35,11 +35,11 @@ public class SixthSense extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		caster.addPotionEffect(new MobEffectInstance(WizardryPotions.sixth_sense,
+		caster.addEffect(new MobEffectInstance(WizardryPotions.sixth_sense,
 				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 				(int)((modifiers.get(WizardryItems.range_upgrade) - 1f) / Constants.RANGE_INCREASE_PER_LEVEL)));
 
-		if(world.isRemote){
+		if(level.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);
 			Wizardry.proxy.playBlinkEffect(caster);
 		}
@@ -50,7 +50,7 @@ public class SixthSense extends Spell {
 
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
-		if(event.getEntity().world.isRemote && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
+		if(event.getEntity().level.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());

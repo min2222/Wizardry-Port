@@ -16,11 +16,11 @@ public class ParticleMagicFlame extends ParticleWizardry {
 
 	public ParticleMagicFlame(Level world, double x, double y, double z){
 
-		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
+		super(world, x, y, z, TEXTURES[world.random.nextInt(TEXTURES.length)]);
 
 		this.setRBGColorF(1, 1, 1);
 		this.particleAlpha = 1;
-		this.particleMaxAge = 12 + rand.nextInt(4);
+		this.particleMaxAge = 12 + random.nextInt(4);
 		this.shaded = false;
 		this.canCollide = true;
 	}

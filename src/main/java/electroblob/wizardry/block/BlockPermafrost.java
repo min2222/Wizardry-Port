@@ -62,7 +62,7 @@ public class BlockPermafrost extends BlockDryFrostedIce {
 			entity.hurt(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
 			int duration = Spells.permafrost.getProperty(Spell.EFFECT_DURATION).intValue();
 			int amplifier = Spells.permafrost.getProperty(Spell.EFFECT_STRENGTH).intValue();
-			((LivingEntity)entity).addPotionEffect(new MobEffectInstance(WizardryPotions.frost, duration, amplifier));
+			((LivingEntity)entity).addEffect(new MobEffectInstance(WizardryPotions.frost, duration, amplifier));
 		}
 
 		// EntityLivingBase's slipperiness code doesn't get the block below it properly so slipperiness only works for

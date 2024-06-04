@@ -32,12 +32,12 @@ public class IceStatue extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(target instanceof Mob && !world.isRemote){
+		if(target instanceof Mob && !level.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
 			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
 
-				//target.playSound(WizardrySounds.SPELL_FREEZE, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
+				//target.playSound(WizardrySounds.SPELL_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
 		}
 		
@@ -56,10 +56,10 @@ public class IceStatue extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		float brightness = 0.5f + world.rand.nextFloat() * 0.5f;
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8))
+		float brightness = 0.5f + world.random.nextFloat() * 0.5f;
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8))
 		.clr(brightness, brightness + 0.1f, 1.0f).spawn(world);
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(20 + world.rand.nextInt(10)).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(20 + world.random.nextInt(10)).spawn(world);
 	}
 
 }

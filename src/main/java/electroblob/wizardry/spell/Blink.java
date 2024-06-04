@@ -38,15 +38,15 @@ public class Blink extends Spell {
 
 		// It's worth noting that on the client side, the cast() method only gets called if the server side
 		// cast method succeeded, so you need not check any conditions for spawning particles.
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 10; i++){
-				double dx = caster.posX;
-				double dy = caster.posY + 2 * world.rand.nextFloat();
-				double dz = caster.posZ;
+				double dx = caster.getX();
+				double dy = caster.getY() + 2 * world.random.nextFloat();
+				double dz = caster.getZ();
 				// For portal particles, velocity is not velocity but the offset where they start, then drift to
 				// the actual position given.
-				world.spawnParticle(ParticleTypes.PORTAL, dx, dy, dz, world.rand.nextDouble() - 0.5,
-						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
+				world.spawnParticle(ParticleTypes.PORTAL, dx, dy, dz, world.random.nextDouble() - 0.5,
+						world.random.nextDouble() - 0.5, world.random.nextDouble() - 0.5);
 			}
 
 			Wizardry.proxy.playBlinkEffect(caster);
@@ -64,7 +64,7 @@ public class Blink extends Spell {
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 				if(!teleportMount && caster.isRiding()) caster.dismountRidingEntity();
-				if(!world.isRemote) toTeleport.setPositionAndUpdate(vec.x, vec.y, vec.z);
+				if(!level.isClientSide) toTeleport.setPositionAndUpdate(vec.x, vec.y, vec.z);
 
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 				return true;
@@ -78,26 +78,26 @@ public class Blink extends Spell {
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
-		float angle = (float)(Math.atan2(target.posZ - caster.posZ, target.posX - caster.posX)
-				+ world.rand.nextDouble() * Math.PI);
-		double radius = caster.getDistance(target.posX, target.posY, target.posZ)
-				+ world.rand.nextDouble() * 3.0d;
+		float angle = (float)(Math.atan2(target.getZ() - caster.getZ(), target.getX() - caster.getX())
+				+ world.random.nextDouble() * Math.PI);
+		double radius = caster.getDistance(target.getX(), target.getY(), target.getZ())
+				+ world.random.nextDouble() * 3.0d;
 
-		int x = Mth.floor(target.posX + Mth.sin(angle) * radius);
-		int z = Mth.floor(target.posZ - Mth.cos(angle) * radius);
+		int x = Mth.floor(target.getX() + Mth.sin(angle) * radius);
+		int z = Mth.floor(target.getZ() - Mth.cos(angle) * radius);
 		Integer y = BlockUtils.getNearestFloor(world, new BlockPos(caster), (int)radius);
 
 		// It's worth noting that on the client side, the cast() method only gets called if the server side
 		// cast method succeeded, so you need not check any conditions for spawning particles.
 
 		// For some reason, the wizard version spwans the particles where the wizard started
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 10; i++){
-				double dx1 = caster.posX;
-				double dy1 = caster.posY + caster.height * world.rand.nextFloat();
-				double dz1 = caster.posZ;
-				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
-						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
+				double dx1 = caster.getX();
+				double dy1 = caster.getY() + caster.getBbHeight() * world.random.nextFloat();
+				double dz1 = caster.getZ();
+				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.random.nextDouble() - 0.5,
+						world.random.nextDouble() - 0.5, world.random.nextDouble() - 0.5);
 			}
 		}
 
@@ -117,7 +117,7 @@ public class Blink extends Spell {
 			// Plays before and after so it is heard from both positions
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 				caster.setPositionAndUpdate(x + 0.5, y + 1, z + 0.5);
 			}
 

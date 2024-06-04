@@ -50,7 +50,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 		GlStateManager.depthMask(false);
 		GlStateManager.disableCull();
 
-		GlStateManager.translate(x, y + entity.height/2, z);
+		GlStateManager.translate(x, y + entity.getBbHeight()/2, z);
 
 		float charge = entity.getHealthDrained() / 50f;
 
@@ -132,7 +132,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 		bindEntityTexture(entity);
 
 		Vec3[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector()
-				.add(0, entity.height/2, 0).scale(-1)));
+				.add(0, entity.getBbHeight()/2, 0).scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

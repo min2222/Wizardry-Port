@@ -136,28 +136,28 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 		super.initGui();
 
 		final int left = this.width / 2 - this.xSize / 2;
-		final int top = this.height / 2 - this.ySize / 2;
+		final int top = this.getBbHeight() / 2 - this.ySize / 2;
 
 		int buttonID = 0;
 
 		// Page buttons
 		this.buttonList.add(nextPageButton = new GuiButtonTurnPage(buttonID++, left + xSize - PAGE_BUTTON_INSET_X - GuiButtonTurnPage.WIDTH,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.NEXT_PAGE, TEXTURE, textureWidth, textureHeight));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.NEXT_PAGE, TEXTURE, textureWidth, textureHeight));
 
 		this.buttonList.add(prevPageButton = new GuiButtonTurnPage(buttonID++, left + PAGE_BUTTON_INSET_X,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.PREVIOUS_PAGE, TEXTURE, textureWidth, textureHeight));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.PREVIOUS_PAGE, TEXTURE, textureWidth, textureHeight));
 
 		this.buttonList.add(lastPageButton = new GuiButtonTurnPage(buttonID++, left + xSize - PAGE_BUTTON_INSET_X - GuiButtonTurnPage.WIDTH - PAGE_BUTTON_SPACING,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.NEXT_SECTION, TEXTURE, textureWidth, textureHeight));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.NEXT_SECTION, TEXTURE, textureWidth, textureHeight));
 
 		this.buttonList.add(firstPageButton = new GuiButtonTurnPage(buttonID++, left + PAGE_BUTTON_INSET_X + PAGE_BUTTON_SPACING,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.PREVIOUS_SECTION, TEXTURE, textureWidth, textureHeight));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.PREVIOUS_SECTION, TEXTURE, textureWidth, textureHeight));
 
 		this.buttonList.add(indexButton = new GuiButtonTurnPage(buttonID++, left + xSize/2 - 23,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT, Type.CONTENTS, TEXTURE, textureWidth, textureHeight));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight(), Type.CONTENTS, TEXTURE, textureWidth, textureHeight));
 
 		this.buttonList.add(locateButton = new GuiButtonLocateBook(buttonID++, left + xSize/2 - 34,
-				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.HEIGHT));
+				top + ySize - PAGE_BUTTON_INSET_Y - GuiButtonTurnPage.getBbHeight()));
 
 		// Sort buttons
 		for(SortType sortType : SortType.values()){
@@ -225,7 +225,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 		this.buttonList.forEach(b -> b.drawButtonForegroundLayer(mouseX, mouseY));
 
 		// Search tooltip
-		if(DrawingUtils.isPointInRegion(searchField.x, searchField.y, searchField.width, searchField.height, mouseX, mouseY)){
+		if(DrawingUtils.isPointInRegion(searchField.x, searchField.y, searchField.width, searchField.getBbHeight(), mouseX, mouseY)){
 			if(searchBarHoverTime == 0){
 				searchBarHoverTime++;
 			}else if(searchBarHoverTime == SEARCH_TOOLTIP_HOVER_TIME){
@@ -444,7 +444,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 
 			if(this.visible){
 
-				boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.getBbHeight();
 				GlStateManager.color(1, 1, 1, 1);
 				minecraft.getTextureManager().bindTexture(TEXTURE);
 

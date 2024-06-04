@@ -60,7 +60,7 @@ public class SpellEmitter implements ITickable {
 	/** Sets this spell emitter's world. This should only be used on the client side when the world has not yet been
 	 * set, otherwise the world will not be changed and a warning will be printed to the console. */
 	public void setWorld(Level world){
-		if(world.isRemote && this.world == null){
+		if(level.isClientSide && this.world == null){
 			this.world = world;
 		}else{
 			Wizardry.logger.warn("Tried to change the world for a spell emitter, this shouldn't happen!");

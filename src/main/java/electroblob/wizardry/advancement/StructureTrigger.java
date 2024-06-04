@@ -71,7 +71,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		StructureTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 
 		if(listeners != null){
-			listeners.trigger(player.getServerWorld(), player.posX, player.posY, player.posZ);
+			listeners.trigger(player.getServerWorld(), player.getX(), player.getY(), player.getZ());
 		}
 	}
 

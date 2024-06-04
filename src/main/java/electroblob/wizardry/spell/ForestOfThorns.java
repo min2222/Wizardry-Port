@@ -56,7 +56,7 @@ public class ForestOfThorns extends Spell {
 
 	private boolean summonThorns(Level world, @Nullable LivingEntity caster, BlockPos origin, SpellModifiers modifiers){
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 
 			double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.blast_upgrade);
 
@@ -66,7 +66,7 @@ public class ForestOfThorns extends Spell {
 
 				for(int z = -(int)radius; z <= radius; z++){
 
-					double distance = Mth.sqrt(x*x + z*z);
+					double distance = Math.sqrt(x*x + z*z);
 
 					if(distance > radius || distance < radius - 1.5) continue;
 

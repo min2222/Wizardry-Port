@@ -115,7 +115,7 @@ public interface IConjuredItem {
 		for(ItemEntity item : event.getDrops()){
 			// Apparently some mods don't behave and shove null items in the list, quite why I have no idea
 			if(item != null && item.getItem() != null && item.getItem().getItem() instanceof IConjuredItem){
-				item.setDead();
+				item.discard();
 			}
 		}
 	}

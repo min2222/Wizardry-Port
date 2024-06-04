@@ -35,7 +35,7 @@ public class Evade extends Spell {
 		Vec3 evadeDirection;
 		if(caster.moveStrafing == 0){
 			// If the caster isn't strafing, pick a random direction
-			evadeDirection = look.rotateYaw(world.rand.nextBoolean() ? (float)Math.PI/2f : (float)-Math.PI/2f);
+			evadeDirection = look.rotateYaw(world.random.nextBoolean() ? (float)Math.PI/2f : (float)-Math.PI/2f);
 		}else{
 			// Otherwise, evade always moves whichever direction the caster was already strafing
 			evadeDirection = look.rotateYaw(Math.signum(caster.moveStrafing) * (float)Math.PI/2f);

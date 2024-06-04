@@ -44,11 +44,11 @@ public class EntityBlackHole extends EntityScaledConstruct {
 		setSize(r * 2, r);
 		randomiser = new int[30];
 		for(int i = 0; i < randomiser.length; i++){
-			randomiser[i] = this.rand.nextInt(10);
+			randomiser[i] = this.random.nextInt(10);
 		}
 		randomiser2 = new int[30];
 		for(int i = 0; i < randomiser2.length; i++){
-			randomiser2[i] = this.rand.nextInt(10);
+			randomiser2[i] = this.random.nextInt(10);
 		}
 	}
 
@@ -70,18 +70,18 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		// System.out.println("Client side: " + this.world.isRemote + ", Caster: " + this.caster);
+		// System.out.println("Client side: " + this.level.isClientSide + ", Caster: " + this.caster);
 
 		// Particle effect. Finishes 40 ticks before the end so the particles disappear at the same time.
 		if(this.ticksExisted + 40 < this.lifetime){
 			for(int i = 0; i < 5; i++){
-				// this.world.spawnParticle(EnumParticleTypes.PORTAL, this.posX + (this.rand.nextDouble() - 0.5D) *
-				// (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height - 0.75D, this.posZ +
-				// (this.rand.nextDouble() - 0.5D) * (double)this.width, (this.rand.nextDouble() - 0.5D) * 2.0D,
-				// -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
-				this.world.spawnParticle(ParticleTypes.PORTAL, this.posX, this.posY, this.posZ,
-						(this.rand.nextDouble() - 0.5D) * 4.0D, (this.rand.nextDouble() - 0.5D) * 4.0D - 1,
-						(this.rand.nextDouble() - 0.5D) * 4.0D);
+				// this.world.spawnParticle(EnumParticleTypes.PORTAL, this.getX() + (this.random.nextDouble() - 0.5D) *
+				// (double)this.width, this.getY() + this.random.nextDouble() * (double)this.getBbHeight() - 0.75D, this.getZ() +
+				// (this.random.nextDouble() - 0.5D) * (double)this.width, (this.random.nextDouble() - 0.5D) * 2.0D,
+				// -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
+				this.world.spawnParticle(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(),
+						(this.random.nextDouble() - 0.5D) * 4.0D, (this.random.nextDouble() - 0.5D) * 4.0D - 1,
+						(this.random.nextDouble() - 0.5D) * 4.0D);
 			}
 		}
 
@@ -91,7 +91,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 			this.playSound(WizardrySounds.ENTITY_BLACK_HOLE_AMBIENT, 1.5f, 1.0f);
 		}
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
 			double radius = 2 * height * sizeMultiplier;
 
@@ -106,7 +106,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 				for(BlockPos pos : sphere){
 
-					if(rand.nextInt(Math.max(1, (int)this.getDistanceSq(pos) * 3)) == 0){
+					if(random.nextInt(Math.max(1, (int)this.getDistanceSq(pos) * 3)) == 0){
 
 						if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isAirBlock(pos)
 								&& world.isBlockNormalCube(pos, false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){
@@ -127,8 +127,8 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 			}
 
-			List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius, this.posX, this.posY,
-					this.posZ, this.world, Entity.class);
+			List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius, this.getX(), this.getY(),
+					this.getZ(), this.world, Entity.class);
 
 			targets.removeIf(t -> !(t instanceof LivingEntity || (suckInBlocks && t instanceof EntityFallingBlock)));
 
@@ -144,21 +144,21 @@ public class EntityBlackHole extends EntityScaledConstruct {
 						if(target instanceof EntityLevitatingBlock) ((EntityLevitatingBlock)target).suspend();
 
 						// Sucks the target in
-						if(this.posX > target.posX && target.motionX < 1){
+						if(this.getX() > target.getX() && target.motionX < 1){
 							target.motionX += SUCTION_STRENGTH;
-						}else if(this.posX < target.posX && target.motionX > -1){
+						}else if(this.getX() < target.getX() && target.motionX > -1){
 							target.motionX -= SUCTION_STRENGTH;
 						}
 
-						if(this.posY > target.posY && target.motionY < 1){
+						if(this.getY() > target.getY() && target.motionY < 1){
 							target.motionY += SUCTION_STRENGTH;
-						}else if(this.posY < target.posY && target.motionY > -1){
+						}else if(this.getY() < target.getY() && target.motionY > -1){
 							target.motionY -= SUCTION_STRENGTH;
 						}
 
-						if(this.posZ > target.posZ && target.motionZ < 1){
+						if(this.getZ() > target.getZ() && target.motionZ < 1){
 							target.motionZ += SUCTION_STRENGTH;
-						}else if(this.posZ < target.posZ && target.motionZ > -1){
+						}else if(this.getZ() < target.getZ() && target.motionZ > -1){
 							target.motionZ -= SUCTION_STRENGTH;
 						}
 
@@ -172,10 +172,10 @@ public class EntityBlackHole extends EntityScaledConstruct {
 						// Damages the target if it is close enough, or destroys it if it's a block
 						if(target instanceof EntityFallingBlock){
 							target.playSound(WizardrySounds.ENTITY_BLACK_HOLE_BREAK_BLOCK, 0.5f,
-									(rand.nextFloat() - rand.nextFloat()) * 0.2f + 1);
+									(random.nextFloat() - random.nextFloat()) * 0.2f + 1);
 							BlockState state = ((EntityFallingBlock)target).getBlock();
 							if(state != null) world.playEvent(2001, new BlockPos(target), Block.getStateId(state));
-							target.setDead();
+							target.discard();
 
 						}else{
 							if(this.getCaster() != null){

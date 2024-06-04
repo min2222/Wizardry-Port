@@ -22,7 +22,7 @@ public class EntityEmber extends EntityMagicProjectile {
 	public EntityEmber(Level world, LivingEntity caster){
 		super(world);
 		this.thrower = caster;
-		extraLifetime = rand.nextInt(30);
+		extraLifetime = random.nextInt(30);
 		this.setSize(0.1f, 0.1f);
 	}
 
@@ -81,8 +81,8 @@ public class EntityEmber extends EntityMagicProjectile {
 				.forEach(e -> e.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
 
 		// Copied from ParticleLava
-		if(this.rand.nextFloat() > (float)this.ticksExisted / this.getLifetime()){
-			this.world.spawnParticle(ParticleTypes.SMOKE_NORMAL, this.posX, this.posY, this.posZ, this.motionX, this.motionY, this.motionZ);
+		if(this.random.nextFloat() > (float)this.ticksExisted / this.getLifetime()){
+			this.world.spawnParticle(ParticleTypes.SMOKE_NORMAL, this.getX(), this.getY(), this.getZ(), this.motionX, this.motionY, this.motionZ);
 		}
 	}
 }

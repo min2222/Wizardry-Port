@@ -20,6 +20,6 @@ public class WitheringTotem extends SpellConstructRanged<EntityWitheringTotem> {
 
 	@Override
 	protected void addConstructExtras(EntityWitheringTotem construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
-		construct.posY += 1.2;
+		construct.getY() += 1.2;
 	}
 }

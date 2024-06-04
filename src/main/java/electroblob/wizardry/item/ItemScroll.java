@@ -191,13 +191,13 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 		Level world = caster.world;
 
-		if(world.isRemote && !spell.isContinuous && spell.requiresPacket()) return false;
+		if(level.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
 
 		if(spell.cast(world, caster, hand, castingTick, modifiers)){
 
 			if(castingTick == 0) MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.SCROLL, spell, caster, modifiers));
 
-			if(!world.isRemote){
+			if(!level.isClientSide){
 
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){

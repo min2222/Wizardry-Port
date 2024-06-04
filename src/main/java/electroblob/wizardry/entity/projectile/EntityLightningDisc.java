@@ -16,7 +16,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 	public EntityLightningDisc(Level world){
 		super(world);
 		this.width = 2.0f;
-		this.height = 0.5f;
+		this.getBbHeight() = 0.5f;
 	}
 
 	@Override
@@ -30,9 +30,9 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 					DamageType.SHOCK), damage);
 		}
 
-		this.playSound(WizardrySounds.ENTITY_LIGHTNING_DISC_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+		this.playSound(WizardrySounds.ENTITY_LIGHTNING_DISC_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 
-		if(result.typeOfHit == HitResult.Type.BLOCK) this.setDead();
+		if(result.typeOfHit == HitResult.Type.BLOCK) this.discard();
 	}
 
 	@Override
@@ -41,10 +41,10 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 		super.onUpdate();
 
 		// Particle effect
-		if(world.isRemote){
+		if(level.isClientSide){
 			for(int i = 0; i < 8; i++){
-				ParticleBuilder.create(Type.SPARK).pos(this.posX + rand.nextFloat() * 2 - 1,
-						this.posY, this.posZ + rand.nextFloat() * 2 - 1).spawn(world);
+				ParticleBuilder.create(Type.SPARK).pos(this.getX() + random.nextFloat() * 2 - 1,
+						this.getY(), this.getZ() + random.nextFloat() * 2 - 1).spawn(world);
 			}
 		}
 

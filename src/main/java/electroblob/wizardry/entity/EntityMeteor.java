@@ -40,22 +40,22 @@ public class EntityMeteor extends EntityFallingBlock {
 
 	@Override
 	public double getYOffset(){
-		return this.height / 2.0F;
+		return this.getBbHeight() / 2.0F;
 	}
 
 	@Override
 	public void onUpdate(){
 
-		if(this.ticksExisted % 16 == 1 && world.isRemote){
+		if(this.ticksExisted % 16 == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_METEOR_FALLING, WizardrySounds.SPELLS, 3.0f, 1.0f, false);
 		}
 
 		// You'd think the best way to do this would be to call super and do all the exploding stuff in fall() instead.
 		// However, for some reason, fallTile is null on the client side, causing an NPE in super.onUpdate()
 
-		this.prevPosX = this.posX;
-		this.prevPosY = this.posY;
-		this.prevPosZ = this.posZ;
+		this.prevgetX() = this.getX();
+		this.prevgetY() = this.getY();
+		this.prevgetZ() = this.getZ();
 		++this.fallTime;
 		this.motionY -= 0.1d; // 0.03999999910593033D;
 		this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
@@ -65,18 +65,18 @@ public class EntityMeteor extends EntityFallingBlock {
 
 		if(this.onGround){
 
-			if(!this.world.isRemote){
+			if(!this.level.isClientSide){
 
 				this.motionX *= 0.699999988079071D;
 				this.motionZ *= 0.699999988079071D;
 				this.motionY *= -0.5D;
-				this.world.newExplosion(this, this.posX, this.posY, this.posZ,
+				this.world.newExplosion(this, this.getX(), this.getY(), this.getZ(),
 						Spells.meteor.getProperty(Meteor.BLAST_STRENGTH).floatValue() * blastMultiplier,
 						damageBlocks, damageBlocks);
-				this.setDead();
+				this.discard();
 
 			}else{
-				EntityUtils.getEntitiesWithinRadius(15, posX, posY, posZ, world, Player.class)
+				EntityUtils.getEntitiesWithinRadius(15, getX(), getY(), getZ(), world, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 10));
 			}
 		}

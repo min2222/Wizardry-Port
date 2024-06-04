@@ -28,7 +28,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 
 	@Override
 	public void spawnCustomParticle(Level world, double x, double y, double z){
-		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.rand.nextInt(5)).spawn(world);
+		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.random.nextInt(5)).spawn(world);
 	}
 
 	@SubscribeEvent

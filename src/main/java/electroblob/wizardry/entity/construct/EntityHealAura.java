@@ -31,9 +31,9 @@ public class EntityHealAura extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, posX, posY, posZ, this.height, world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, getX(), getY(), getZ(), this.getBbHeight(), world);
 
 			for(LivingEntity target : targets){
 
@@ -67,13 +67,13 @@ public class EntityHealAura extends EntityScaledConstruct {
 			}
 		}else{
 			for(int i=1; i<3; i++){
-				float brightness = 0.5f + (rand.nextFloat() * 0.5f);
-				double radius = rand.nextDouble() * (width/2);
-				float angle = rand.nextFloat() * (float)Math.PI * 2;
+				float brightness = 0.5f + (random.nextFloat() * 0.5f);
+				double radius = random.nextDouble() * (width/2);
+				float angle = random.nextFloat() * (float)Math.PI * 2;
 				ParticleBuilder.create(Type.SPARKLE)
-				.pos(this.posX + radius * Mth.cos(angle), this.posY, this.posZ + radius * Mth.sin(angle))
+				.pos(this.getX() + radius * Mth.cos(angle), this.getY(), this.getZ() + radius * Mth.sin(angle))
 				.vel(0, 0.05, 0)
-				.time(48 + this.rand.nextInt(12))
+				.time(48 + this.random.nextInt(12))
 				.clr(1.0f, 1.0f, brightness)
 				.spawn(world);
 			}

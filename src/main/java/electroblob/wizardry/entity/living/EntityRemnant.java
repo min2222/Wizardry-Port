@@ -75,7 +75,7 @@ public class EntityRemnant extends EntityMob {
 	@Nullable
 	@Override
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata){
-		this.setElement(Element.values()[1 + rand.nextInt(Element.values().length - 1)]); // Exclude MAGIC
+		this.setElement(Element.values()[1 + random.nextInt(Element.values().length - 1)]); // Exclude MAGIC
 		this.setBoundOrigin(new BlockPos(this));
 		return super.onInitialSpawn(difficulty, livingdata);
 	}
@@ -134,21 +134,21 @@ public class EntityRemnant extends EntityMob {
 
 		this.setNoGravity(true);
 
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			Vec3 centre = this.getPositionVector().add(0, height/2, 0);
 
 			int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(this.getElement());
 
-			if(rand.nextInt(10) == 0){
+			if(random.nextInt(10) == 0){
 				ParticleBuilder.create(ParticleBuilder.Type.FLASH).entity(this).pos(0, height/2, 0).scale(width).time(48).clr(colours[0]).spawn(world);
 			}
 
 			double r = width/3;
 
-			double x = r * (rand.nextDouble() * 2 - 1);
-			double y = r * (rand.nextDouble() * 2 - 1);
-			double z = r * (rand.nextDouble() * 2 - 1);
+			double x = r * (random.nextDouble() * 2 - 1);
+			double y = r * (random.nextDouble() * 2 - 1);
+			double z = r * (random.nextDouble() * 2 - 1);
 
 			if(this.deathTime > 0){
 				// Spew out particles on death
@@ -158,7 +158,7 @@ public class EntityRemnant extends EntityMob {
 				}
 			}else{
 				ParticleBuilder.create(ParticleBuilder.Type.DUST).pos(centre.x + x, centre.y + y, centre.z + z)
-						.vel(x * -0.03, 0.02, z * -0.03).time(24 + rand.nextInt(8)).clr(colours[1]).fade(colours[2]).spawn(world);
+						.vel(x * -0.03, 0.02, z * -0.03).time(24 + random.nextInt(8)).clr(colours[1]).fade(colours[2]).spawn(world);
 			}
 		}
 
@@ -209,7 +209,7 @@ public class EntityRemnant extends EntityMob {
 
 		@Override
 		public boolean shouldExecute(){
-			if(EntityRemnant.this.getAttackTarget() != null && !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.rand.nextInt(7) == 0){
+			if(EntityRemnant.this.getAttackTarget() != null && !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.random.nextInt(7) == 0){
 				return EntityRemnant.this.getDistanceSq(EntityRemnant.this.getAttackTarget()) > 4.0D;
 			}else{
 				return false;
@@ -268,12 +268,12 @@ public class EntityRemnant extends EntityMob {
 
 			if(this.action == EntityMoveHelper.Action.MOVE_TO){
 
-				double d0 = this.posX - EntityRemnant.this.posX;
-				double d1 = this.posY - EntityRemnant.this.posY;
-				double d2 = this.posZ - EntityRemnant.this.posZ;
+				double d0 = this.getX() - EntityRemnant.this.getX();
+				double d1 = this.getY() - EntityRemnant.this.getY();
+				double d2 = this.getZ() - EntityRemnant.this.getZ();
 				double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
-				d3 = Mth.sqrt(d3);
+				d3 = Math.sqrt(d3);
 
 				if(d3 < EntityRemnant.this.getEntityBoundingBox().getAverageEdgeLength()){
 
@@ -291,8 +291,8 @@ public class EntityRemnant extends EntityMob {
 					if(EntityRemnant.this.getAttackTarget() == null){
 						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(EntityRemnant.this.motionX, EntityRemnant.this.motionZ)) * (180F / (float)Math.PI);
 					}else{
-						double d4 = EntityRemnant.this.getAttackTarget().posX - EntityRemnant.this.posX;
-						double d5 = EntityRemnant.this.getAttackTarget().posZ - EntityRemnant.this.posZ;
+						double d4 = EntityRemnant.this.getAttackTarget().getX() - EntityRemnant.this.getX();
+						double d5 = EntityRemnant.this.getAttackTarget().getZ() - EntityRemnant.this.getZ();
 						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(d4, d5)) * (180F / (float)Math.PI);
 					}
 
@@ -310,7 +310,7 @@ public class EntityRemnant extends EntityMob {
 
 		@Override
 		public boolean shouldExecute(){
-			return !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.rand.nextInt(7) == 0;
+			return !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.random.nextInt(7) == 0;
 		}
 
 		@Override
@@ -328,7 +328,7 @@ public class EntityRemnant extends EntityMob {
 			}
 
 			for(int i = 0; i < 3; ++i){
-				BlockPos blockpos1 = blockpos.add(EntityRemnant.this.rand.nextInt(15) - 7, EntityRemnant.this.rand.nextInt(11) - 5, EntityRemnant.this.rand.nextInt(15) - 7);
+				BlockPos blockpos1 = blockpos.add(EntityRemnant.this.random.nextInt(15) - 7, EntityRemnant.this.random.nextInt(11) - 5, EntityRemnant.this.random.nextInt(15) - 7);
 
 				if(EntityRemnant.this.world.isAirBlock(blockpos1)){
 					EntityRemnant.this.moveHelper.setMoveTo((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.5D, (double)blockpos1.getZ() + 0.5D, 0.25D);

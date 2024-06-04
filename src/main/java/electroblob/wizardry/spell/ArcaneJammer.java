@@ -55,8 +55,8 @@ public class ArcaneJammer extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
-			if(!world.isRemote){
-				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.arcane_jammer,
+			if(!level.isClientSide){
+				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.arcane_jammer,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + (int)((modifiers.get(SpellModifiers.POTENCY) - 1)
 								/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f)));
@@ -78,7 +78,7 @@ public class ArcaneJammer extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.9f, 0.3f, 0.7f)
+		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.random.nextInt(8)).clr(0.9f, 0.3f, 0.7f)
 		.spawn(world);
 	}
 
@@ -104,7 +104,7 @@ public class ArcaneJammer extends SpellRay {
 			}
 
 			// Because we're using a seed that should be consistent, we can do client-side stuff!
-			event.getWorld().playSound(event.getCaster().posX, event.getCaster().posY, event.getCaster().posZ,
+			event.getWorld().playSound(event.getCaster().getX(), event.getCaster().getY(), event.getCaster().getZ(),
 					WizardrySounds.MISC_SPELL_FAIL, WizardrySounds.SPELLS, 1, 1, false);
 
 			if(event.getWorld().isRemote){
@@ -112,9 +112,9 @@ public class ArcaneJammer extends SpellRay {
 				Vec3 centre = event.getCaster().getPositionEyes(1).add(event.getCaster().getLookVec());
 
 				for(int i = 0; i < 5; i++){
-					double x = centre.x + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
-					double y = centre.y + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
-					double z = centre.z + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
+					double x = centre.x + 0.5f * (event.getWorld().random.nextFloat() - 0.5f);
+					double y = centre.y + 0.5f * (event.getWorld().random.nextFloat() - 0.5f);
+					double z = centre.z + 0.5f * (event.getWorld().random.nextFloat() - 0.5f);
 					event.getWorld().spawnParticle(ParticleTypes.SMOKE_LARGE, x, y, z, 0, 0, 0);
 				}
 			}

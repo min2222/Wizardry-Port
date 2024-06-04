@@ -42,9 +42,9 @@ public class RenderSpiritWolf extends RenderWolf {
 
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-//		double dx = (entity.posX - entity.prevPosX) * DECONVERGENCE;
-//		double dy = (entity.posY - entity.prevPosY) * DECONVERGENCE;
-//		double dz = (entity.posZ - entity.prevPosZ) * DECONVERGENCE;
+//		double dx = (entity.getX() - entity.prevgetX()) * DECONVERGENCE;
+//		double dy = (entity.getY() - entity.prevgetY()) * DECONVERGENCE;
+//		double dz = (entity.getZ() - entity.prevgetZ()) * DECONVERGENCE;
 //		float dyaw = (entity.rotationYaw - entity.prevRotationYaw) * DECONVERGENCE;
 //
 //		float opacity = 1;

@@ -41,7 +41,7 @@
 	@Override
 	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		
-		if(world.isRemote){
+		if(level.isClientSide){
 
 			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, x, y + 0.1, z, 0, 0, 0);
 
@@ -49,8 +49,8 @@
 
 			for(int i=0; i<40; i++){
 
-				particleX = x - 1.0d + 2 * world.rand.nextDouble();
-				particleZ = z - 1.0d + 2 * world.rand.nextDouble();
+				particleX = x - 1.0d + 2 * world.random.nextDouble();
+				particleZ = z - 1.0d + 2 * world.random.nextDouble();
 
 				BlockState block = BlockUtils.getBlockEntityIsStandingOn(caster);
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, y,

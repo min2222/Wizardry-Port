@@ -136,7 +136,7 @@ public final class WizardryEventHandler {
 
 		// If a spell is disabled in the config, it will not work.
 		if(!enabled){
-			if(event.getCaster() != null && !event.getCaster().world.isRemote) event.getCaster().sendMessage(
+			if(event.getCaster() != null && !event.getCaster().level.isClientSide) event.getCaster().sendMessage(
 					Component.translatable("spell.disabled", event.getSpell().getNameForTranslationFormatted()));
 			event.setCanceled(true);
 		}
@@ -170,7 +170,7 @@ public final class WizardryEventHandler {
 						// spell discovery updates on the client.
 						if(!event.getSpell().requiresPacket()) data.sync();
 
-					}else if(!event.getCaster().world.isRemote && !player.isCreative()
+					}else if(!event.getCaster().level.isClientSide && !player.isCreative()
 							&& Wizardry.settings.discoveryMode){
 						// Sound and text only happen server-side, in survival, with discovery mode on, and only when
 						// the spell wasn't cast using commands.
@@ -273,25 +273,25 @@ public final class WizardryEventHandler {
 				if(event.getEntityLiving().isPotionActive(WizardryPotions.ice_shroud)
 						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving())
 						&& !(attacker instanceof FakePlayer)) // Fake players cause problems
-					attacker.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+					attacker.addEffect(new MobEffectInstance(WizardryPotions.frost,
 							Spells.ice_shroud.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.ice_shroud.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 				// Static Aura
 				if(event.getEntityLiving().isPotionActive(WizardryPotions.static_aura)){
 
-					if(world.isRemote){
+					if(level.isClientSide){
 
-						ParticleBuilder.create(Type.LIGHTNING).entity(event.getEntity()).pos(0, event.getEntity().height / 2, 0)
+						ParticleBuilder.create(Type.LIGHTNING).entity(event.getEntity()).pos(0, event.getEntity().getBbHeight() / 2, 0)
 								.target(attacker).spawn(world);
 
-						ParticleBuilder.spawnShockParticles(world, attacker.posX,
-								attacker.posY + attacker.height / 2, attacker.posZ);
+						ParticleBuilder.spawnShockParticles(world, attacker.getX(),
+								attacker.getY() + attacker.getBbHeight() / 2, attacker.getZ());
 					}
 
 					DamageSafetyChecker.attackEntitySafely(attacker, MagicDamage.causeDirectMagicDamage(event.getEntityLiving(),
 							DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
-					attacker.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.rand.nextFloat() * 0.4F + 1.5F);
+					attacker.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 				}
 			}
 		}
@@ -326,7 +326,7 @@ public final class WizardryEventHandler {
 						attacker.getHeldItemMainhand());
 				// Frost lasts for longer because it doesn't do any actual damage
 				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-					event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
+					event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
 			}
 		}
 
@@ -338,7 +338,7 @@ public final class WizardryEventHandler {
 					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-				event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
+				event.getEntityLiving().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
 		}
 
 		// Damage scaling
@@ -355,7 +355,7 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
-		if(event.getEntityLiving().world.isRemote){
+		if(event.getEntityLiving().level.isClientSide){
 
 			// Client-side continuous spell casting for NPCs
 
@@ -412,7 +412,7 @@ public final class WizardryEventHandler {
 
 					int mana = Constants.SIPHON_MANA_PER_LEVEL
 							* WandHelper.getUpgradeLevel(stack, WizardryItems.siphon_upgrade)
-							+ player.world.rand.nextInt(Constants.SIPHON_MANA_PER_LEVEL);
+							+ player.world.random.nextInt(Constants.SIPHON_MANA_PER_LEVEL);
 
 					if(ItemArtefact.isArtefactActive(player, WizardryItems.ring_siphoning)) mana *= 1.3f;
 
@@ -436,7 +436,7 @@ public final class WizardryEventHandler {
 	@SubscribeEvent // Priority doesn't matter here, we're only setting event fields so if it's cancelled it won't matter
 	public static void onLivingFallEvent(LivingFallEvent event){
 		// Why is fall damage based on distance fallen? Why? Who on earth came up with that? It makes no sense whatsoever!
-		if(!event.getEntity().world.isRemote && Wizardry.settings.replaceVanillaFallDamage && !Loader.isModLoaded("speedbasedfalldamage")){
+		if(!event.getEntity().level.isClientSide && Wizardry.settings.replaceVanillaFallDamage && !Loader.isModLoaded("speedbasedfalldamage")){
 			// We want to keep the fall damage EXACTLY THE SAME for free, uninterrupted falls, but fix the weirdness
 			// caused when something else changes the entity's velocity
 			// All living entities have a gravity of 0.08b/t^2

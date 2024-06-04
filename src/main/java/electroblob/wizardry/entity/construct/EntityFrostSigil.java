@@ -34,10 +34,10 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 
 		super.onUpdate();
 
-		if(!this.world.isRemote){
+		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, this.posX, this.posY,
-					this.posZ, this.height, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, this.getX(), this.getY(),
+					this.getZ(), this.getBbHeight(), this.world);
 
 			for(LivingEntity target : targets){
 
@@ -49,21 +49,21 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 							* damageMultiplier);
 
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-						target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
+						target.addEffect(new MobEffectInstance(WizardryPotions.frost,
 								Spells.frost_sigil.getProperty(Spell.EFFECT_DURATION).intValue(),
 								Spells.frost_sigil.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 					this.playSound(WizardrySounds.ENTITY_FROST_SIGIL_TRIGGER, 1.0f, 1.0f);
 
 					// The trap is destroyed once triggered.
-					this.setDead();
+					this.discard();
 				}
 			}
-		}else if(this.rand.nextInt(15) == 0){
-			double radius = (0.5 + rand.nextDouble() * 0.3) * width/2;
-			float angle = rand.nextFloat() * (float)Math.PI * 2;
+		}else if(this.random.nextInt(15) == 0){
+			double radius = (0.5 + random.nextDouble() * 0.3) * width/2;
+			float angle = random.nextFloat() * (float)Math.PI * 2;
 			ParticleBuilder.create(Type.SNOW)
-			.pos(this.posX + radius * Mth.cos(angle), this.posY + 0.1, this.posZ + radius * Mth.sin(angle))
+			.pos(this.getX() + radius * Mth.cos(angle), this.getY() + 0.1, this.getZ() + radius * Mth.sin(angle))
 			.vel(0, 0, 0) // Required since default for snow is not stationary
 			.spawn(world);
 		}
