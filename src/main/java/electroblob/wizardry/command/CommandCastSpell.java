@@ -11,6 +11,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.command.*;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -18,7 +19,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
@@ -302,7 +302,7 @@ public class CommandCastSpell extends CommandBase {
 
 	/** Displays the "Unable to cast [spell]" message in the chat. */
 	private void displayFailMessage(ICommandSender sender, Spell spell){
-		ITextComponent message = new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.fail",
+		Component message = new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.fail",
 				spell.getNameForTranslationFormatted());
 		message.getStyle().setColor(ChatFormatting.RED);
 		sender.sendMessage(message);

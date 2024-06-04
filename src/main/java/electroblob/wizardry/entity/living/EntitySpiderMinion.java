@@ -20,7 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
@@ -178,7 +178,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

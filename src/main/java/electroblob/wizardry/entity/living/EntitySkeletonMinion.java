@@ -4,6 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
@@ -21,9 +22,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemBow;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
 
@@ -186,7 +187,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

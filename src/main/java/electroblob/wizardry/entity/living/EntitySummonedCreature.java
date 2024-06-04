@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 
@@ -129,7 +129,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

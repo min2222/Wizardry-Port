@@ -8,8 +8,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.text.event.ClickEvent;
@@ -216,7 +216,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 
 	static class External extends GuiButtonHyperlink {
 
-		final ITextComponent link;
+		final Component link;
 
 		External(int id, int x, int y, Font font, String text, String url, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 			super(id, x, y, font, text, indent, suffix, linesLeft, rightPage, spaceless);

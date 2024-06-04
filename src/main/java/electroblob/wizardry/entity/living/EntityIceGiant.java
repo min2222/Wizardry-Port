@@ -6,6 +6,7 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.Difficulty;
@@ -174,7 +174,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

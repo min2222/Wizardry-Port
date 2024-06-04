@@ -32,7 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.IPlantable;
@@ -83,26 +83,26 @@ public abstract class Forfeit {
 	public abstract void apply(Level world, Player player);
 
 	/**
-	 * Returns an {@link ITextComponent} for the message displayed when this forfeit is activated.
+	 * Returns an {@link Component} for the message displayed when this forfeit is activated.
 	 * @param implementName An {@code ITextComponent} for the name of the implement being used. This is usually
 	 *                      something generic like 'wand' or 'scroll'.
 	 * @return An {@code ITextComponent} representing this forfeit's message, for use in chat messages.
 	 * @see Forfeit#getMessageForWand()
 	 * @see Forfeit#getMessageForScroll()
 	 */
-	public ITextComponent getMessage(ITextComponent implementName){
+	public Component getMessage(Component implementName){
 		return new TextComponentTranslation("forfeit." + name.toString(), implementName);
 	}
 
-	/** Wrapper for {@link Forfeit#getMessage(ITextComponent)} with {@code implementName} set to the lang file key
+	/** Wrapper for {@link Forfeit#getMessage(Component)} with {@code implementName} set to the lang file key
 	 * {@code item.ebwizardry:wand.generic} */
-	public ITextComponent getMessageForWand(){
+	public Component getMessageForWand(){
 		return getMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":wand.generic"));
 	}
 
-	/** Wrapper for {@link Forfeit#getMessage(ITextComponent)} with {@code implementName} set to the lang file key
+	/** Wrapper for {@link Forfeit#getMessage(Component)} with {@code implementName} set to the lang file key
 	 * {@code item.ebwizardry:scroll.generic} */
-	public ITextComponent getMessageForScroll(){
+	public Component getMessageForScroll(){
 		return getMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":scroll.generic"));
 	}
 

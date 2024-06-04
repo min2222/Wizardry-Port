@@ -23,7 +23,7 @@ import net.minecraft.item.ItemBow;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.Difficulty;
@@ -186,7 +186,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

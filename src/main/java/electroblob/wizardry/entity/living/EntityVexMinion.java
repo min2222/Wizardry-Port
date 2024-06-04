@@ -3,6 +3,7 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.monster.EntityVex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 
@@ -139,7 +139,7 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
+	public Component getDisplayName(){
 		if(getCaster() != null){
 			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
 					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));

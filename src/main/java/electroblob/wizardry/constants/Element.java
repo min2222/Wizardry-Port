@@ -2,10 +2,10 @@ package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
@@ -79,7 +79,7 @@ public enum Element implements IStringSerializable {
 	}
 
 	/** Returns the translated display name for wizards of this element, shown in the trading GUI. */
-	public ITextComponent getWizardName(){
+	public Component getWizardName(){
 		return new TextComponentTranslation("element." + getName() + ".wizard");
 	}
 

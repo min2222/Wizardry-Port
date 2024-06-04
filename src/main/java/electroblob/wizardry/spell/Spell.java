@@ -15,6 +15,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +27,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
@@ -671,7 +671,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the spell, without
 	 * formatting (i.e. not coloured).
 	 */
-	public ITextComponent getNameForTranslation(){
+	public Component getNameForTranslation(){
 		return new TextComponentTranslation(getTranslationKey());
 	}
 
@@ -687,7 +687,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the spell, with
 	 * formatting (i.e. coloured).
 	 */
-	public ITextComponent getNameForTranslationFormatted(){
+	public Component getNameForTranslationFormatted(){
 		return new TextComponentTranslation(getTranslationKey()).setStyle(this.getElement().getColour());
 	}
 

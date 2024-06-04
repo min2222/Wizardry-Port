@@ -3,7 +3,7 @@ package electroblob.wizardry.constants;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.Random;
@@ -81,7 +81,7 @@ public enum Tier {
 	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the tier, with
 	 * formatting (i.e. coloured).
 	 */
-	public ITextComponent getNameForTranslationFormatted(){
+	public Component getNameForTranslationFormatted(){
 		return new TextComponentTranslation("tier." + unlocalisedName).setStyle(this.colour);
 	}
 
