@@ -35,7 +35,7 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 
 	private void renderItem(TileEntityImbuementAltar tileentity, float t){
 
-		ItemStack stack = tileentity.getStack();
+		ItemStack stack = tileentity.getItem();
 
 		if(!stack.isEmpty()){
 

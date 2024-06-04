@@ -43,7 +43,7 @@ public class LayerDisintegrateAnimation<T extends LivingEntity> extends LayerTil
 
 	@Override
 	public ResourceLocation getTexture(T entity, float partialTicks){
-		return TEXTURES[Mth.clamp(entity.ticksExisted - entity.getEntityData().getInteger(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
+		return TEXTURES[Mth.clamp(entity.ticksExisted - entity.getEntityData().getInt(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
 	}
 
 	@Override

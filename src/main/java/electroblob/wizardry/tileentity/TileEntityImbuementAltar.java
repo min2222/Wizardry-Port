@@ -192,7 +192,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 		CompoundTag itemTag = new CompoundTag();
 		stack.writeToNBT(itemTag);
 		nbt.setTag("item", itemTag);
-		nbt.setInteger("imbuementTimer", imbuementTimer);
+		nbt.putInt("imbuementTimer", imbuementTimer);
 		if(lastUser != null) nbt.setUniqueId("lastUser", lastUser.getUniqueID());
 		return nbt;
 	}
@@ -202,7 +202,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 		super.readFromNBT(nbt);
 		CompoundTag itemTag = nbt.getCompoundTag("item");
 		this.stack = new ItemStack(itemTag);
-		this.imbuementTimer = nbt.getInteger("imbuementTimer");
+		this.imbuementTimer = nbt.getInt("imbuementTimer");
 		this.lastUserUUID = nbt.getUniqueId("lastUser");
 	}
 
@@ -249,7 +249,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 				ItemStack result = new ItemStack(ItemWizardArmour.getArmour(receptacleElements[0], ((ItemWizardArmour)input.getItem()).armourClass, ((ItemWizardArmour)input.getItem()).armorType));
 
-				result.setTagCompound(input.getTagCompound());
+				result.setTag(input.getTag());
 				((IManaStoringItem)result.getItem()).setMana(result, ((ItemWizardArmour)input.getItem()).getMana(input));
 
 				return result;

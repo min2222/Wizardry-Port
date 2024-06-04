@@ -44,7 +44,7 @@ public class EntityIceCharge extends EntityBomb {
 			// This is if the ice charge gets a direct hit
 			float damage = Spells.ice_charge.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-			entityHit.attackEntityFrom(
+			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FROST).setProjectile(),
 					damage);
 

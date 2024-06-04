@@ -38,7 +38,7 @@ public class Bubble extends SpellRay {
 			
 			if(!world.isRemote){
 				// Deals a small amount damage so the target counts as being hit by the caster
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
 				
 				EntityBubble bubble = new EntityBubble(world);
 				bubble.setPosition(target.posX, target.posY, target.posZ);

@@ -30,7 +30,7 @@ public class SlotBookList extends SlotItemClassList {
 
 	@Override
 	public ItemStack getStack(){
-		return hasDelegate() ? getDelegate().getStack() : ItemStack.EMPTY; // Delegate item lookup to virtual slot
+		return hasDelegate() ? getDelegate().getItem() : ItemStack.EMPTY; // Delegate item lookup to virtual slot
 	}
 
 	// This doesn't depend on the client-side search and sorting stuff so it can be done in here

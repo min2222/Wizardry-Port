@@ -45,7 +45,7 @@ public class LightningPulse extends Spell {
 			for(LivingEntity target : targets){
 				if(AllyDesignationSystem.isValidTarget(caster, target)){
 					// Base damage is 4 hearts no matter where the target is.
-					target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
+					target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 							getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 					if(!world.isRemote){

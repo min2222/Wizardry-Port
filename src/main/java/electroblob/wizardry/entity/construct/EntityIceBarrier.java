@@ -110,9 +110,9 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount){
+	public boolean hurt(DamageSource source, float amount){
 		this.playSound(WizardrySounds.ENTITY_ICE_BARRIER_DEFLECT, 0.7f, 2.5f);
-		return super.attackEntityFrom(source, amount);
+		return super.hurt(source, amount);
 	}
 
 //	@Override
@@ -123,13 +123,13 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	@Override
 	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
-		delay = nbt.getInteger("delay");
+		delay = nbt.getInt("delay");
 	}
 
 	@Override
 	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
-		nbt.setInteger("delay", delay);
+		nbt.putInt("delay", delay);
 	}
 
 	@Override

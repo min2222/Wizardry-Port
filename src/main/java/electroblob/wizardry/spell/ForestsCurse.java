@@ -32,7 +32,7 @@ public class ForestsCurse extends SpellAreaEffect {
 		if(!MagicDamage.isEntityImmune(DamageType.POISON, target) && EntityUtils.isLiving(target)){
 
 			DamageSource source = caster != null ? MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON) : DamageSource.MAGIC;
-			target.attackEntityFrom(source, getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
+			target.hurt(source, getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));

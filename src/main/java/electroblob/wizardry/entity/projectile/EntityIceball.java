@@ -35,7 +35,7 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				float damage = Spells.iceball.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-				entityHit.attackEntityFrom(
+				entityHit.hurt(
 						MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FROST).setProjectile(),
 						damage);
 

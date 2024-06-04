@@ -36,7 +36,7 @@ public class PotionDecay extends PotionMagicEffect {
 
 	@Override
 	public void performEffect(LivingEntity host, int strength){
-		host.attackEntityFrom(DamageSource.WITHER, 1);
+		host.hurt(DamageSource.WITHER, 1);
 	}
 
 	@SubscribeEvent

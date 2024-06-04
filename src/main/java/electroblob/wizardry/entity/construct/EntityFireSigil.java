@@ -44,7 +44,7 @@ public class EntityFireSigil extends EntityScaledConstruct {
 					double velY = target.motionY;
 					double velZ = target.motionZ;
 
-					target.attackEntityFrom(this.getCaster() != null
+					target.hurt(this.getCaster() != null
 							? MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.FIRE)
 							: DamageSource.MAGIC, Spells.fire_sigil.getProperty(Spell.DAMAGE).floatValue()
 							* damageMultiplier);

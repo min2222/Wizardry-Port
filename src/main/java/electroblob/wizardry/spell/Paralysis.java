@@ -59,7 +59,7 @@ public class Paralysis extends SpellRay {
 						new TextComponentTranslation("spell.resist",
 						target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			}
 

@@ -69,9 +69,9 @@ public final class WandHelper {
 
 		Spell[] spells = new Spell[0];
 
-		if(wand.getTagCompound() != null){
+		if(wand.getTag() != null){
 
-			int[] spellIDs = wand.getTagCompound().getIntArray(SPELL_ARRAY_KEY);
+			int[] spellIDs = wand.getTag().getIntArray(SPELL_ARRAY_KEY);
 
 			spells = new Spell[spellIDs.length];
 
@@ -89,7 +89,7 @@ public final class WandHelper {
 	 */
 	public static void setSpells(ItemStack wand, Spell[] spells){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
 		int[] spellIDs = new int[spells.length];
 
@@ -97,7 +97,7 @@ public final class WandHelper {
 			spellIDs[i] = spells[i] != null ? spells[i].metadata() : Spells.none.metadata();
 		}
 
-		wand.getTagCompound().setIntArray(SPELL_ARRAY_KEY, spellIDs);
+		wand.getTag().putIntArray(SPELL_ARRAY_KEY, spellIDs);
 	}
 
 	/** Returns the currently selected spell for the given wand, or the 'none' spell if the wand has no spell data. */
@@ -105,9 +105,9 @@ public final class WandHelper {
 
 		Spell[] spells = getSpells(wand);
 
-		if(wand.getTagCompound() != null){
+		if(wand.getTag() != null){
 
-			int selectedSpell = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+			int selectedSpell = wand.getTag().getInt(SELECTED_SPELL_KEY);
 
 			if(selectedSpell >= 0 && selectedSpell < spells.length){
 				return spells[selectedSpell];
@@ -150,8 +150,8 @@ public final class WandHelper {
 		// 5 here because if the spell array doesn't exist, the wand can't possibly have attunement upgrades
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
-		if(wand.getTagCompound() != null){
-			wand.getTagCompound().setInteger(SELECTED_SPELL_KEY, getNextSpellIndex(wand));
+		if(wand.getTag() != null){
+			wand.getTag().putInteger(SELECTED_SPELL_KEY, getNextSpellIndex(wand));
 		}
 	}
 
@@ -160,8 +160,8 @@ public final class WandHelper {
 		// 5 here because if the spell array doesn't exist, the wand can't possibly have attunement upgrades
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
-		if(wand.getTagCompound() != null){
-			wand.getTagCompound().setInteger(SELECTED_SPELL_KEY, getPreviousSpellIndex(wand));
+		if(wand.getTag() != null){
+			wand.getTag().putInteger(SELECTED_SPELL_KEY, getPreviousSpellIndex(wand));
 		}
 	}
 
@@ -178,8 +178,8 @@ public final class WandHelper {
 		// 5 here because if the spell array doesn't exist, the wand can't possibly have attunement upgrades
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
-		if(wand.getTagCompound() != null){
-			wand.getTagCompound().setInteger(SELECTED_SPELL_KEY, index);
+		if(wand.getTag() != null){
+			wand.getTag().putInteger(SELECTED_SPELL_KEY, index);
 		}
 
 		return true;
@@ -187,10 +187,10 @@ public final class WandHelper {
 	
 	private static int getNextSpellIndex(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
+		if(wand.getTag() == null) wand.setTag(new CompoundTag());
 		
 		int numberOfSpells = getSpells(wand).length;
-		int spellIndex = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+		int spellIndex = wand.getTag().getInt(SELECTED_SPELL_KEY);
 		
 		// Greater than or equal to so that if attunement upgrades are somehow removed by NBT modification it just
 		// resets.
@@ -205,10 +205,10 @@ public final class WandHelper {
 	
 	private static int getPreviousSpellIndex(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
+		if(wand.getTag() == null) wand.setTag(new CompoundTag());
 		
 		int numberOfSpells = getSpells(wand).length;
-		int spellIndex = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+		int spellIndex = wand.getTag().getInt(SELECTED_SPELL_KEY);
 
 		if(spellIndex <= 0){
 			spellIndex = Math.max(0, numberOfSpells - 1);
@@ -230,9 +230,9 @@ public final class WandHelper {
 
 		int[] cooldowns = new int[0];
 
-		if(wand.getTagCompound() != null){
+		if(wand.getTag() != null){
 
-			return wand.getTagCompound().getIntArray(COOLDOWN_ARRAY_KEY);
+			return wand.getTag().getIntArray(COOLDOWN_ARRAY_KEY);
 		}
 
 		return cooldowns;
@@ -242,9 +242,9 @@ public final class WandHelper {
 	 * Unlike {@link WandHelper#setCurrentCooldown(ItemStack, int)}, this will <b>not</b> set the max cooldowns. */
 	public static void setCooldowns(ItemStack wand, int[] cooldowns){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
-		wand.getTagCompound().setIntArray(COOLDOWN_ARRAY_KEY, cooldowns);
+		wand.getTag().putIntArray(COOLDOWN_ARRAY_KEY, cooldowns);
 	}
 
 	/** Decrements the cooldown for each spell bound to the given wand by 1, if that cooldown is greater than 0. */
@@ -266,11 +266,11 @@ public final class WandHelper {
 	/** Returns the given wand's cooldown for the currently selected spell, or 0 if the wand has no cooldown data. */
 	public static int getCurrentCooldown(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
+		if(wand.getTag() == null) wand.setTag(new CompoundTag());
 
 		int[] cooldowns = getCooldowns(wand);
 
-		int selectedSpell = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+		int selectedSpell = wand.getTag().getInt(SELECTED_SPELL_KEY);
 
 		if(selectedSpell < 0 || cooldowns.length <= selectedSpell) return 0;
 		// Don't need to check if the tag compound is null since the above check is equivalent.
@@ -306,11 +306,11 @@ public final class WandHelper {
 	/** Sets the given wand's cooldown for the currently selected spell. Will also set the maximum cooldown. */
 	public static void setCurrentCooldown(ItemStack wand, int cooldown){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
 		int[] cooldowns = getCooldowns(wand);
 
-		int selectedSpell = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+		int selectedSpell = wand.getTag().getInt(SELECTED_SPELL_KEY);
 		int spellCount = getSpells(wand).length;
 
 		if(spellCount <= selectedSpell) return; // Probably shouldn't happen
@@ -342,9 +342,9 @@ public final class WandHelper {
 
 		int[] cooldowns = new int[0];
 
-		if(wand.getTagCompound() != null){
+		if(wand.getTag() != null){
 
-			return wand.getTagCompound().getIntArray(MAX_COOLDOWN_ARRAY_KEY);
+			return wand.getTag().getIntArray(MAX_COOLDOWN_ARRAY_KEY);
 		}
 
 		return cooldowns;
@@ -353,9 +353,9 @@ public final class WandHelper {
 	/** Sets the given wand's cooldown array. The array can be anywhere between 5 and 8 (inclusive) in length. */
 	public static void setMaxCooldowns(ItemStack wand, int[] cooldowns){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
-		wand.getTagCompound().setIntArray(MAX_COOLDOWN_ARRAY_KEY, cooldowns);
+		wand.getTag().putIntArray(MAX_COOLDOWN_ARRAY_KEY, cooldowns);
 	}
 
 	/** Returns the given wand's max cooldown for the currently selected spell, or 0 if the wand has no cooldown data. */
@@ -363,9 +363,9 @@ public final class WandHelper {
 
 		int[] cooldowns = getMaxCooldowns(wand);
 
-		if(wand.getTagCompound() == null) return 0;
+		if(wand.getTag() == null) return 0;
 
-		int selectedSpell = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
+		int selectedSpell = wand.getTag().getInt(SELECTED_SPELL_KEY);
 
 		if(selectedSpell < 0 || cooldowns.length <= selectedSpell) return 0;
 
@@ -382,8 +382,8 @@ public final class WandHelper {
 
 		String key = upgradeMap.get(upgrade);
 
-		if(wand.getTagCompound() != null && wand.getTagCompound().hasKey(UPGRADES_KEY) && key != null){
-			return wand.getTagCompound().getCompoundTag(UPGRADES_KEY).getInteger(key);
+		if(wand.getTag() != null && wand.getTag().contains(UPGRADES_KEY) && key != null){
+			return wand.getTag().getCompound(UPGRADES_KEY).getInt(key);
 		}
 
 		return 0;
@@ -412,18 +412,18 @@ public final class WandHelper {
 	 */
 	public static void applyUpgrade(ItemStack wand, Item upgrade){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
-		if(!wand.getTagCompound().hasKey(UPGRADES_KEY))
-			NBTExtras.storeTagSafely(wand.getTagCompound(), UPGRADES_KEY, new CompoundTag());
+		if(!wand.getTag().contains(UPGRADES_KEY))
+			NBTExtras.storeTagSafely(wand.getTag(), UPGRADES_KEY, new CompoundTag());
 
-		CompoundTag upgrades = wand.getTagCompound().getCompoundTag(UPGRADES_KEY);
+		CompoundTag upgrades = wand.getTag().getCompound(UPGRADES_KEY);
 
 		String key = upgradeMap.get(upgrade);
 
-		if(key != null) upgrades.setInteger(key, upgrades.getInteger(key) + 1);
+		if(key != null) upgrades.putInt(key, upgrades.getInt(key) + 1);
 
-		NBTExtras.storeTagSafely(wand.getTagCompound(), UPGRADES_KEY, upgrades);
+		NBTExtras.storeTagSafely(wand.getTag(), UPGRADES_KEY, upgrades);
 	}
 
 	/** Returns true if the given item is a valid special wand upgrade. */
@@ -482,17 +482,17 @@ public final class WandHelper {
 	/** Sets the given wand's progression to the given value. */
 	public static void setProgression(ItemStack wand, int progression){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
+		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
-		wand.getTagCompound().setInteger(PROGRESSION_KEY, progression);
+		wand.getTag().putInteger(PROGRESSION_KEY, progression);
 	}
 
 	/** Returns the progression value for the given wand, or 0 if the wand has no data. */
 	public static int getProgression(ItemStack wand){
 
-		if(wand.getTagCompound() == null) return 0;
+		if(wand.getTag() == null) return 0;
 
-		return wand.getTagCompound().getInteger(PROGRESSION_KEY);
+		return wand.getTag().getInt(PROGRESSION_KEY);
 	}
 
 	/** Adds the given amount of progression to this wand's progression value. */
@@ -510,33 +510,33 @@ public final class WandHelper {
 	 */
 	public static boolean rechargeManaOnApplyButtonPressed(Slot centre, Slot crystals) {
 		boolean changed = false;
-		if (!(centre.getStack().getItem() instanceof IWorkbenchItem) || !(centre.getStack().getItem() instanceof IManaStoringItem)) {
+		if (!(centre.getItem().getItem() instanceof IWorkbenchItem) || !(centre.getItem().getItem() instanceof IManaStoringItem)) {
 			return false;
 		}
-		IManaStoringItem iManaStoringItem = (IManaStoringItem) centre.getStack().getItem();
+		IManaStoringItem iManaStoringItem = (IManaStoringItem) centre.getItem().getItem();
 
 		// Charges the item by appropriate amount
-		if (crystals.getStack() != ItemStack.EMPTY && !iManaStoringItem.isManaFull(centre.getStack())) {
+		if (crystals.getItem() != ItemStack.EMPTY && !iManaStoringItem.isManaFull(centre.getItem())) {
 
-			int chargeDepleted = iManaStoringItem.getManaCapacity(centre.getStack()) - iManaStoringItem.getMana(centre.getStack());
+			int chargeDepleted = iManaStoringItem.getManaCapacity(centre.getItem()) - iManaStoringItem.getMana(centre.getItem());
 
 			// Not too pretty but allows addons implementing the IManaStoringItem interface to provide their mana amount for custom crystals,
 			// previously this was defaulted to the regular crystal's amount, allowing players to exploit it if a crystal was worth less mana than that.
-			int manaPerItem = crystals.getStack().getItem() instanceof IManaStoringItem ?
-					((IManaStoringItem) crystals.getStack().getItem()).getMana(crystals.getStack()) :
-					crystals.getStack().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
+			int manaPerItem = crystals.getItem().getItem() instanceof IManaStoringItem ?
+					((IManaStoringItem) crystals.getItem().getItem()).getMana(crystals.getItem()) :
+					crystals.getItem().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
 
-			if (crystals.getStack().getItem() == WizardryItems.crystal_shard) {manaPerItem = Constants.MANA_PER_SHARD;}
-			if (crystals.getStack().getItem() == WizardryItems.grand_crystal) {manaPerItem = Constants.GRAND_CRYSTAL_MANA;}
+			if (crystals.getItem().getItem() == WizardryItems.crystal_shard) {manaPerItem = Constants.MANA_PER_SHARD;}
+			if (crystals.getItem().getItem() == WizardryItems.grand_crystal) {manaPerItem = Constants.GRAND_CRYSTAL_MANA;}
 
-			if (crystals.getStack().getCount() * manaPerItem < chargeDepleted) {
+			if (crystals.getItem().getCount() * manaPerItem < chargeDepleted) {
 				// If there aren't enough crystals to fully charge the item
-				iManaStoringItem.rechargeMana(centre.getStack(), crystals.getStack().getCount() * manaPerItem);
-				crystals.decrStackSize(crystals.getStack().getCount());
+				iManaStoringItem.rechargeMana(centre.getItem(), crystals.getItem().getCount() * manaPerItem);
+				crystals.decrStackSize(crystals.getItem().getCount());
 
 			} else {
 				// If there are excess crystals (or just enough)
-				iManaStoringItem.setMana(centre.getStack(), iManaStoringItem.getManaCapacity(centre.getStack()));
+				iManaStoringItem.setMana(centre.getItem(), iManaStoringItem.getManaCapacity(centre.getItem()));
 				crystals.decrStackSize((int) Math.ceil(((double) chargeDepleted) / manaPerItem));
 			}
 

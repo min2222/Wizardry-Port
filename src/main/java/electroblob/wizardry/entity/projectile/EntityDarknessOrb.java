@@ -29,7 +29,7 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 
 			float damage = Spells.darkness_orb.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-			target.attackEntityFrom(
+			target.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.WITHER).setProjectile(),
 					damage);
 

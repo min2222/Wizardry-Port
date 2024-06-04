@@ -27,7 +27,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.IProjectile;
-import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
@@ -896,7 +896,7 @@ public class ItemArtefact extends Item {
 		// This needs to happen or we can't cast the spell with it and use up the mana
 		if(isArtefactActive(event.getEntityPlayer(), WizardryItems.amulet_resurrection)){
 
-			EntityItem item = event.getDrops().stream()
+			ItemEntity item = event.getDrops().stream()
 					.filter(e -> Resurrection.canStackResurrect(e.getItem(), event.getEntityPlayer()))
 					.findFirst().orElse(null);
 

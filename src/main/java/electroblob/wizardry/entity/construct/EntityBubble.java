@@ -67,11 +67,11 @@ public class EntityBubble extends EntityMagicConstruct {
 			if(EntityUtils.getRider(this) != null
 					&& EntityUtils.getRider(this).ticksExisted % Spells.entrapment.getProperty(Entrapment.DAMAGE_INTERVAL).intValue() == 0){
 				if(this.getCaster() != null){
-					EntityUtils.getRider(this).attackEntityFrom(
+					EntityUtils.getRider(this).hurt(
 							MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.MAGIC),
 							1 * damageMultiplier);
 				}else{
-					EntityUtils.getRider(this).attackEntityFrom(DamageSource.MAGIC, 1 * damageMultiplier);
+					EntityUtils.getRider(this).hurt(DamageSource.MAGIC, 1 * damageMultiplier);
 				}
 			}
 

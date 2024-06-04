@@ -284,8 +284,8 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		Element element = this.getElement();
-		nbt.setInteger("element", element == null ? 0 : element.ordinal());
-		nbt.setInteger("skin", this.textureIndex);
+		nbt.putInt("element", element == null ? 0 : element.ordinal());
+		nbt.putInt("skin", this.textureIndex);
 		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> new NBTTagInt(spell.metadata())));
 		nbt.setBoolean("hasStructure", this.hasStructure);
 		NBTExtras.storeTagSafely(nbt, "groupUUIDs", NBTExtras.listToNBT(groupUUIDs, NBTUtil::createUUIDTag));
@@ -294,8 +294,8 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	@Override
 	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
-		this.setElement(Element.values()[nbt.getInteger("element")]);
-		this.textureIndex = nbt.getInteger("skin");
+		this.setElement(Element.values()[nbt.getInt("element")]);
+		this.textureIndex = nbt.getInt("skin");
 		this.spells = (List<Spell>)NBTExtras.NBTToList(nbt.getTagList("spells", NBT.TAG_INT),
 				(NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
 		this.hasStructure = nbt.getBoolean("hasStructure");

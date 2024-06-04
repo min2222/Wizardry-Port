@@ -6,10 +6,10 @@ import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.BlockDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
@@ -136,12 +136,12 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 		CapabilityManager.INSTANCE.register(DispenserCastingData.class, new IStorage<DispenserCastingData>(){
 			
 			@Override
-			public NBTBase writeNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side){
+			public Tag writeNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side){
 				return null;
 			}
 
 			@Override
-			public void readNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side, NBTBase nbt){}
+			public void readNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side, Tag nbt){}
 			
 		}, DispenserCastingData::new);
 	}

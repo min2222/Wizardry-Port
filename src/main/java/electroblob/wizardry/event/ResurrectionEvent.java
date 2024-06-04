@@ -3,7 +3,7 @@ package electroblob.wizardry.event;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * ResurrectionEvent is fired when a player is about to be resurrected, after all other checks have been performed.

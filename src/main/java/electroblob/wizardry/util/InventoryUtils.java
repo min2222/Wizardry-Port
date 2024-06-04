@@ -123,8 +123,8 @@ public final class InventoryUtils {
 	 */
 	public static ItemStack copyWithMeta(ItemStack toCopy, int newMetadata){
 		ItemStack copy = new ItemStack(toCopy.getItem(), toCopy.getCount(), newMetadata);
-		CompoundTag compound = toCopy.getTagCompound();
-		if(compound != null) copy.setTagCompound(compound.copy());
+		CompoundTag compound = toCopy.getTag();
+		if(compound != null) copy.setTag(compound.copy());
 		return copy;
 	}
 

@@ -132,12 +132,12 @@ public class TileEntityStatue extends BlockEntity implements ITickable {
 	@Override
 	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
-		position = tagCompound.getInteger("position");
-		parts = tagCompound.getInteger("parts");
+		position = tagCompound.getInt("position");
+		parts = tagCompound.getInt("parts");
 		entityCompound = tagCompound.getCompoundTag("entity");
 		entityName = new ResourceLocation(tagCompound.getString("entityName"));
-		timer = tagCompound.getInteger("timer");
-		lifetime = tagCompound.getInteger("lifetime");
+		timer = tagCompound.getInt("timer");
+		lifetime = tagCompound.getInt("lifetime");
 		isIce = tagCompound.getBoolean("isIce");
 		entityYawHead = tagCompound.getFloat("entityYawHead");
 		entityYawOffset = tagCompound.getFloat("entityYawOffset");
@@ -146,8 +146,8 @@ public class TileEntityStatue extends BlockEntity implements ITickable {
 	@Override
 	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
-		tagCompound.setInteger("position", position);
-		tagCompound.setInteger("parts", parts);
+		tagCompound.putInt("position", position);
+		tagCompound.putInt("parts", parts);
 		entityCompound = new CompoundTag();
 		if(creature != null){
 			creature.writeToNBT(entityCompound);
@@ -156,8 +156,8 @@ public class TileEntityStatue extends BlockEntity implements ITickable {
 			tagCompound.setFloat("entityYawOffset", creature.renderYawOffset);
 		}
 		NBTExtras.storeTagSafely(tagCompound, "entity", entityCompound);
-		tagCompound.setInteger("timer", timer);
-		tagCompound.setInteger("lifetime", lifetime);
+		tagCompound.putInt("timer", timer);
+		tagCompound.putInt("lifetime", lifetime);
 		tagCompound.setBoolean("isIce", isIce);
 
 		return tagCompound;

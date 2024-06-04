@@ -3,7 +3,7 @@ package electroblob.wizardry.util;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.Tag;
 
 import java.util.*;
 import java.util.function.Function;
@@ -44,8 +44,8 @@ public final class NBTExtras {
 	 * @param valueTagName The tag name to use for the value tags.
 	 * @return An NBTTagList that represents the given Map.
 	 */
-	public static <K, V, L extends NBTBase, W extends NBTBase> ListTag mapToNBT(Map<K, V> map,
-                                                                                Function<K, L> keyFunction, Function<V, W> valueFunction, String keyTagName, String valueTagName){
+	public static <K, V, L extends Tag, W extends Tag> ListTag mapToNBT(Map<K, V> map,
+                                                                        Function<K, L> keyFunction, Function<V, W> valueFunction, String keyTagName, String valueTagName){
 
 		ListTag tagList = new ListTag();
 
@@ -63,8 +63,8 @@ public final class NBTExtras {
 	 * See {@link NBTExtras#mapToNBT(Map, Function, Function, String, String)}; this version is for when the
 	 * names of the individual key/value tags are unimportant (they default to "key" and "value" respectively).
 	 */
-	public static <K, V, L extends NBTBase, W extends NBTBase> ListTag mapToNBT(Map<K, V> map,
-                                                                                Function<K, L> keyFunction, Function<V, W> valueFunction){
+	public static <K, V, L extends Tag, W extends Tag> ListTag mapToNBT(Map<K, V> map,
+                                                                        Function<K, L> keyFunction, Function<V, W> valueFunction){
 		return mapToNBT(map, keyFunction, valueFunction, "key", "value");
 	}
 
@@ -88,28 +88,28 @@ public final class NBTExtras {
 	 * @see NBTExtras#mapToNBT(Map, Function, Function, String, String)
 	 */
 	@SuppressWarnings("unchecked") // Intentional, because throwing an exception is appropriate here.
-	public static <K, V, L extends NBTBase, W extends NBTBase> Map<K, V> NBTToMap(ListTag tagList,
-                                                                                  Function<L, K> keyFunction, Function<W, V> valueFunction, String keyTagName, String valueTagName){
+	public static <K, V, L extends Tag, W extends Tag> Map<K, V> NBTToMap(ListTag tagList,
+                                                                          Function<L, K> keyFunction, Function<W, V> valueFunction, String keyTagName, String valueTagName){
 
 		Map<K, V> map = new HashMap<>();
 
 		for(int i = 0; i < tagList.tagCount(); i++){
 			CompoundTag mapping = tagList.getCompoundTagAt(i);
-			NBTBase keyTag = mapping.getTag(keyTagName);
-			NBTBase valueTag = mapping.getTag(valueTagName);
+			Tag keyTag = mapping.getTag(keyTagName);
+			Tag valueTag = mapping.getTag(valueTagName);
 			K key = null;
 			try{
 				key = keyFunction.apply((L)keyTag);
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading map from NBT: unexpected tag type " + NBTBase.NBT_TYPES[keyTag.getId()], e);
+						"Error when reading map from NBT: unexpected tag type " + Tag.NBT_TYPES[keyTag.getId()], e);
 			}
 			V value = null;
 			try{
 				value = valueFunction.apply((W)valueTag);
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading map from NBT: unexpected tag type " + NBTBase.NBT_TYPES[valueTag.getId()],
+						"Error when reading map from NBT: unexpected tag type " + Tag.NBT_TYPES[valueTag.getId()],
 						e);
 			}
 			map.put(key, value);
@@ -122,14 +122,14 @@ public final class NBTExtras {
 	 * See {@link NBTExtras#NBTToMap(ListTag, Function, Function, String, String)}; this version is for when
 	 * the names of the individual key/value tags are unimportant (they default to "key" and "value" respectively).
 	 */
-	public static <K, V, L extends NBTBase, W extends NBTBase> Map<K, V> NBTToMap(ListTag tagList,
-                                                                                  Function<L, K> keyFunction, Function<W, V> valueFunction){
+	public static <K, V, L extends Tag, W extends Tag> Map<K, V> NBTToMap(ListTag tagList,
+                                                                          Function<L, K> keyFunction, Function<W, V> valueFunction){
 		return NBTToMap(tagList, keyFunction, valueFunction, "key", "value");
 	}
 
 	/**
 	 * Stores the given {@link Collection} to an {@link ListTag} and returns it, converting the elements in the
-	 * collection to NBT tags (subclasses of {@link NBTBase}) according to the supplied mapper function.
+	 * collection to NBT tags (subclasses of {@link Tag}) according to the supplied mapper function.
 	 *
 	 * @param <E> The type of element stored in the given collection.
 	 * @param <T> The NBT tag type that the elements will be converted to.
@@ -137,7 +137,7 @@ public final class NBTExtras {
 	 * @param mapper A function that converts the elements in the collection to NBT objects that can be stored.
 	 * @return An {@code NBTTagList} that represents the given collection.
 	 */
-	public static <E, T extends NBTBase> ListTag listToNBT(Collection<E> list, Function<E, T> mapper){
+	public static <E, T extends Tag> ListTag listToNBT(Collection<E> list, Function<E, T> mapper){
 
 		ListTag tagList = new ListTag();
 		// If the collection is ordered, it will preserve the order, even though we don't know what type it is yet.
@@ -169,7 +169,7 @@ public final class NBTExtras {
 	 * @throws ClassCastException If the tags are not of the expected type.
 	 */
 	@SuppressWarnings("unchecked") // Intentional, because throwing an exception is appropriate here.
-	public static <E, T extends NBTBase> Collection<E> NBTToList(ListTag tagList, Function<T, E> function){
+	public static <E, T extends Tag> Collection<E> NBTToList(ListTag tagList, Function<T, E> function){
 		// Uses an ArrayList to guarantee iteration order, and also to permit duplicate elements (which are
 		// perfectly reasonable in this context).
 		Collection<E> list = new ArrayList<>();
@@ -177,13 +177,13 @@ public final class NBTExtras {
 		ListTag tagList2 = tagList.copy();
 
 		while(!tagList2.isEmpty()){
-			NBTBase tag = tagList2.removeTag(0);
+			Tag tag = tagList2.removeTag(0);
 			// Why oh why is NBTTagList not parametrised? It even has a tagType field, so it must know!
 			try{
 				list.add(function.apply((T)tag));
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading list from NBT: unexpected tag type " + NBTBase.NBT_TYPES[tag.getId()], e);
+						"Error when reading list from NBT: unexpected tag type " + Tag.NBT_TYPES[tag.getId()], e);
 			}
 		}
 
@@ -207,7 +207,7 @@ public final class NBTExtras {
 
 	/**
 	 * Stores the given NBT tag inside the given NBT tag compound using the given key. Under normal circumstances, this
-	 * is equivalent to {@link CompoundTag#setTag(String, NBTBase)}, but this method performs safety checks to
+	 * is equivalent to {@link CompoundTag#setTag(String, Tag)}, but this method performs safety checks to
 	 * prevent circular references. If storing the given tag would cause a circular reference, the tag is not stored
 	 * and an error is printed to the console.
 	 * @param compound The {@link CompoundTag} in which to store the tag.
@@ -215,11 +215,11 @@ public final class NBTExtras {
 	 * @param tag The tag to store.
 	 */
 	// This is a catch-all fix for issue #299.
-	public static void storeTagSafely(CompoundTag compound, String key, NBTBase tag){
+	public static void storeTagSafely(CompoundTag compound, String key, Tag tag){
 
 		if(compound == tag || deepContains(tag, compound)){
 			Wizardry.logger.error("Cannot store tag of type {} under key '{}' as it would result in a circular reference! Please report this (including your full log) to wizardry's issue tracker.",
-					NBTBase.getTypeName(tag.getId()), key);
+					Tag.getTypeName(tag.getId()), key);
 		}else{
 			compound.setTag(key, tag);
 		}
@@ -232,17 +232,17 @@ public final class NBTExtras {
 	 * @param searchFor The NBT tag to search for.
 	 * @return True if the second tag appears anywhere within the NBT tree contained within the first tag, false if not.
 	 */
-	public static boolean deepContains(NBTBase toSearch, NBTBase searchFor){
+	public static boolean deepContains(Tag toSearch, Tag searchFor){
 
 		if(toSearch instanceof CompoundTag){
 
 			for(String subKey : ((CompoundTag)toSearch).getKeySet()){
-				NBTBase subTag = ((CompoundTag)toSearch).getTag(subKey);
+				Tag subTag = ((CompoundTag)toSearch).getTag(subKey);
 				if(subTag == searchFor || deepContains(subTag, searchFor)) return true;
 			}
 
 		}else if(toSearch instanceof ListTag){
-			for(NBTBase subTag : (ListTag)toSearch){
+			for(Tag subTag : (ListTag)toSearch){
 				if(subTag == searchFor || deepContains(subTag, searchFor)) return true;
 			}
 		}

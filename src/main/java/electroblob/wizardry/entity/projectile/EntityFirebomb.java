@@ -36,7 +36,7 @@ public class EntityFirebomb extends EntityBomb {
 			// This is if the firebomb gets a direct hit
 			float damage = Spells.firebomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
-			entityHit.attackEntityFrom(
+			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FIRE).setProjectile(),
 					damage);
 
@@ -76,7 +76,7 @@ public class EntityFirebomb extends EntityBomb {
 				if(target != entityHit && target != this.getThrower()
 						&& !MagicDamage.isEntityImmune(DamageType.FIRE, target)){
 					// Splash damage does not count as projectile damage
-					target.attackEntityFrom(
+					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FIRE),
 							Spells.firebomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 					target.setFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());

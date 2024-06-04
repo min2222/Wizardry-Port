@@ -47,11 +47,11 @@ public class EntityHealAura extends EntityScaledConstruct {
 
 						if (this.ticksExisted % 10 == 1) {
 							if (this.getCaster() != null) {
-								target.attackEntityFrom(
+								target.hurt(
 										MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.RADIANT),
 										Spells.healing_aura.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
 							} else {
-								target.attackEntityFrom(DamageSource.MAGIC, Spells.healing_aura.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
+								target.hurt(DamageSource.MAGIC, Spells.healing_aura.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
 							}
 
 							// Removes knockback

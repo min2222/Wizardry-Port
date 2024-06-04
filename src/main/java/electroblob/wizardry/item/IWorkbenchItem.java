@@ -46,7 +46,7 @@ public interface IWorkbenchItem {
 	 * is fired <i>before</i> this method is called.
 	 * @param player The player that pressed the apply button.
 	 * @param centre The central slot in the arcane workbench. This slot will always contain a stack of the implementing
-	 * item, or in other words, <i>it is guaranteed that</i> {@code this == centre.getStack().getItem()}.
+	 * item, or in other words, <i>it is guaranteed that</i> {@code this == centre.getItem().getItem()}.
 	 * @param crystals The magic crystal slot of the arcane workbench.
 	 * @param upgrade The upgrade slot of the arcane workbench.
 	 * @param spellBooks An array of the <i>active</i> (visible) spell book slots in the arcane workbench. The length of
@@ -60,7 +60,7 @@ public interface IWorkbenchItem {
 	 * implement this method to define what happens when the apply button is pressed.
 	 * @param player The player that pressed the apply button.
 	 * @param centre The central slot in the arcane workbench. This slot will always contain a stack of the implementing
-	 * item, or in other words, <i>it is guaranteed that</i> {@code this == centre.getStack().getItem()}.
+	 * item, or in other words, <i>it is guaranteed that</i> {@code this == centre.getItem().getItem()}.
 	 * @param crystals The magic crystal slot of the arcane workbench.
 	 * @param upgrade The upgrade slot of the arcane workbench.
 	 * @param spellBooks An array of the <i>active</i> (visible) spell book slots in the arcane workbench. The length of

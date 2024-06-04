@@ -42,7 +42,7 @@ public class Detonate extends SpellRay {
 					* modifiers.get(WizardryItems.blast_upgrade), pos.getX(), pos.getY(), pos.getZ(), world);
 			
 			for(LivingEntity target : targets){
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
 						// Damage decreases with distance but cannot be less than 0, naturally.
 						Math.max(getProperty(MAX_DAMAGE).floatValue() - (float)target.getDistance(pos.getX() + 0.5,
 								pos.getY() + 0.5, pos.getZ() + 0.5) * 4, 0) * modifiers.get(SpellModifiers.POTENCY));

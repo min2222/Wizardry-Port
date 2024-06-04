@@ -4,7 +4,7 @@ import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * SpellBindEvent is fired when a player presses the apply button in the arcane workbench. <i>Note that this event is

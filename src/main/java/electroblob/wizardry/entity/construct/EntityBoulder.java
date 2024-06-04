@@ -228,7 +228,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 		super.readEntityFromNBT(nbt);
 		velX = nbt.getDouble("velX");
 		velZ = nbt.getDouble("velZ");
-		hitsRemaining = nbt.getInteger("hitsRemaining");
+		hitsRemaining = nbt.getInt("hitsRemaining");
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 		super.writeEntityToNBT(nbt);
 		nbt.setDouble("velX", velX);
 		nbt.setDouble("velZ", velZ);
-		nbt.setInteger("hitsRemaining", hitsRemaining);
+		nbt.putInt("hitsRemaining", hitsRemaining);
 	}
 
 	@Override

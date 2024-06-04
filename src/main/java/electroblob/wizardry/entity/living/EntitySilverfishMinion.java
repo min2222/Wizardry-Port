@@ -131,14 +131,14 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
-		nbttagcompound.setInteger("generation", this.generation);
+		nbttagcompound.putInt("generation", this.generation);
 	}
 
 	@Override
 	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
-		this.generation = nbttagcompound.getInteger("generation");
+		this.generation = nbttagcompound.getInt("generation");
 	}
 
 	// Recommended overrides

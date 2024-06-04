@@ -164,7 +164,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		slot.xPos = -999;
 		slot.yPos = -999;
 
-		ItemStack stack = slot.getStack();
+		ItemStack stack = slot.getItem();
 		// This doesn't cause an infinite loop because slot i can never be a SlotWandArmour. In effect, it's
 		// exactly the same as shift-clicking the slot, so why re-invent the wheel?
 		ItemStack remainder = this.transferStackInSlot(player, index);
@@ -240,7 +240,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 		if(slot != null && slot.getHasStack()){
 
-			ItemStack stack = slot.getStack(); // The stack that was there originally
+			ItemStack stack = slot.getItem(); // The stack that was there originally
 			remainder = stack.copy(); // A copy of that stack
 
 			// Workbench -> inventory/bookshelves
@@ -308,7 +308,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 		if(this.getSlot(0).isItemValid(stack)){ // Spell books
 
-			ItemStack centreStack = getSlot(CENTRE_SLOT).getStack();
+			ItemStack centreStack = getSlot(CENTRE_SLOT).getItem();
 
 			if(centreStack.getItem() instanceof IWorkbenchItem){
 				// Restrict the range to visible slots
@@ -373,7 +373,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		Set<VirtualSlot> slots = new LinkedHashSet<>(bookshelfSlots.size());
 
 		// Add all slots that currently contain a matching stack - collect to list to retain order
-		slots.addAll(bookshelfSlots.stream().filter(s -> InventoryUtils.canMerge(stack, s.getStack())).collect(Collectors.toList()));
+		slots.addAll(bookshelfSlots.stream().filter(s -> InventoryUtils.canMerge(stack, s.getItem())).collect(Collectors.toList()));
 		// Then add all empty slots that previously contained a matching stack, if they weren't already added
 		// No need to actually check if they're empty since inserting a new stack overwrites prevStack anyway
 		slots.addAll(bookshelfSlots.stream().filter(s -> InventoryUtils.canMerge(stack, s.getPrevStack())).collect(Collectors.toList()));
@@ -391,7 +391,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 		for(Slot slot : slots){
 
-			ItemStack contents = slot.getStack();
+			ItemStack contents = slot.getItem();
 
 			if(contents.isEmpty()){
 
@@ -438,15 +438,15 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		
 		Slot centre = this.getSlot(CENTRE_SLOT);
 		
-		if(centre.getStack().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
+		if(centre.getItem().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
 			
 			Slot[] spellBooks = this.inventorySlots.subList(0, 8).toArray(new Slot[8]);
 			
-			if(((IWorkbenchItem)centre.getStack().getItem())
+			if(((IWorkbenchItem)centre.getItem().getItem())
 				.onApplyButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks)){
 
 				if(player instanceof ServerPlayer){
-					WizardryAdvancementTriggers.arcane_workbench.trigger((ServerPlayer)player, centre.getStack());
+					WizardryAdvancementTriggers.arcane_workbench.trigger((ServerPlayer)player, centre.getItem());
 				}
 			}
 		}
@@ -462,11 +462,11 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 		Slot centre = this.getSlot(CENTRE_SLOT);
 
-		if(centre.getStack().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
+		if(centre.getItem().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
 
 			Slot[] spellBooks = this.inventorySlots.subList(0, 8).toArray(new Slot[8]);
 
-			((IWorkbenchItem) centre.getStack().getItem()).onClearButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks);
+			((IWorkbenchItem) centre.getItem().getItem()).onClearButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks);
 		}
 	}
 
@@ -515,12 +515,12 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 	/** Updates the active bookshelf slots with the current search term and sorting. <b>Client-side only!</b> */
 	public void updateActiveBookshelfSlots(){
-		activeBookshelfSlots = bookshelfSlots.stream().filter(s -> s.isValid() && !s.getStack().isEmpty()
+		activeBookshelfSlots = bookshelfSlots.stream().filter(s -> s.isValid() && !s.getItem().isEmpty()
 				// Slot 0 is a convenient way of testing if the item is a valid spell book
-				&& this.getSlot(0).isItemValid(s.getStack())
-				&& Spell.byMetadata(s.getStack().getMetadata()).matches(searchText))
+				&& this.getSlot(0).isItemValid(s.getItem())
+				&& Spell.byMetadata(s.getItem().getMetadata()).matches(searchText))
 				// TODO: This doesn't account for non-spell book items at the moment
-				.sorted(Comparator.comparing(s -> Spell.byMetadata(s.getStack().getMetadata()),
+				.sorted(Comparator.comparing(s -> Spell.byMetadata(s.getItem().getMetadata()),
 						sortDescending ? sortType.comparator.reversed() : sortType.comparator))
 				.collect(Collectors.toList());
 	}

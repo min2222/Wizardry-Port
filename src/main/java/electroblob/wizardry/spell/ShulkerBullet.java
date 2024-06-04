@@ -85,12 +85,12 @@ public class ShulkerBullet extends Spell {
 				// Where there's a will there's a way...
 				CompoundTag nbt = new CompoundTag();
 				bullet.writeToNBT(nbt);
-				nbt.setInteger("Dir", direction.getIndex());
+				nbt.putInt("Dir", direction.getIndex());
 				BlockPos pos = new BlockPos(target);
 				CompoundTag targetTag = NBTUtil.createUUIDTag(target.getUniqueID());
-				targetTag.setInteger("X", pos.getX());
-				targetTag.setInteger("Y", pos.getY());
-				targetTag.setInteger("Z", pos.getZ());
+				targetTag.putInt("X", pos.getX());
+				targetTag.putInt("Y", pos.getY());
+				targetTag.putInt("Z", pos.getZ());
 				NBTExtras.storeTagSafely(nbt, "Target", targetTag);
 				bullet.readFromNBT(nbt); // LOL I just modified private fields without reflection
 

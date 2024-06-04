@@ -78,7 +78,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 				double motionZ = target.motionZ;
 
 				if(this.isValidTarget(target)){
-					target.attackEntityFrom(
+					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.BLAST),
 							10 * this.damageMultiplier);
 					target.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, 400, 1));

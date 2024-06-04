@@ -41,7 +41,7 @@ public class ConjureArmour extends SpellConjuration {
 				armour = new ItemStack(SPECTRAL_ARMOUR_MAP.get(slot));
 				IConjuredItem.setDurationMultiplier(armour, modifiers.get(WizardryItems.duration_upgrade));
 				// Sets a blank "ench" tag to trick the renderer into showing the enchantment effect on the armour model
-				NBTExtras.storeTagSafely(armour.getTagCompound(), "ench", new ListTag());
+				NBTExtras.storeTagSafely(armour.getTag(), "ench", new ListTag());
 				caster.setItemStackToSlot(slot, armour);
 				flag = true;
 			}

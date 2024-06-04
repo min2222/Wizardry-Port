@@ -66,7 +66,7 @@ public class ContainerBookshelf extends Container {
 
 		if(slot != null && slot.getHasStack()){
 
-			ItemStack stack = slot.getStack(); // The stack that was there originally
+			ItemStack stack = slot.getItem(); // The stack that was there originally
 			remainder = stack.copy(); // A copy of that stack
 
 			// Bookshelf -> inventory
@@ -153,8 +153,8 @@ public class ContainerBookshelf extends Container {
 
 		@Override
 		public void putStack(ItemStack stack){
-			boolean statusChanged = this.getStack().isEmpty() != stack.isEmpty()
-					|| BlockBookshelf.getBookItems().indexOf(this.getStack().getItem())
+			boolean statusChanged = this.getItem().isEmpty() != stack.isEmpty()
+					|| BlockBookshelf.getBookItems().indexOf(this.getItem().getItem())
 					!= BlockBookshelf.getBookItems().indexOf(stack.getItem());
 			super.putStack(stack);
 			if(statusChanged) ContainerBookshelf.this.onSlotChanged();

@@ -86,7 +86,7 @@ public class Charge extends Spell {
 			float damage = Spells.charge.getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 			float knockback = Spells.charge.getProperty(KNOCKBACK_STRENGTH).floatValue();
 
-			collided.forEach(e -> e.attackEntityFrom(MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.SHOCK), damage));
+			collided.forEach(e -> e.hurt(MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.SHOCK), damage));
 			collided.forEach(e -> e.addVelocity(player.motionX * knockback, player.motionY * knockback + 0.3f, player.motionZ * knockback));
 
 			if(player.world.isRemote) player.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE,

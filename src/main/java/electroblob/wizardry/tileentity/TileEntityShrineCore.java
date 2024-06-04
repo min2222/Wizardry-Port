@@ -20,7 +20,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -209,7 +209,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		ListTag tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
 		int i = 0;
-		for(NBTBase tag : tagList){
+		for(Tag tag : tagList){
 			if(tag instanceof CompoundTag) linkedWizards[i++] = NBTUtil.getUUIDFromTag((CompoundTag)tag);
 			else Wizardry.logger.warn("Unexpected tag type in NBT tag list of compound tags!");
 		}

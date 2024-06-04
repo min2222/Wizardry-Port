@@ -6,8 +6,8 @@ import electroblob.wizardry.util.NBTExtras;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mirror;
@@ -209,8 +209,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 			structureMap.put(ChunkPos.asLong(origin.getX() >> 4, origin.getZ() >> 4), settings.getBoundingBox());
 
 			CompoundTag tag = new CompoundTag();
-			tag.setInteger("ChunkX", chunkX);
-			tag.setInteger("ChunkZ", chunkZ);
+			tag.putInt("ChunkX", chunkX);
+			tag.putInt("ChunkZ", chunkZ);
 			NBTExtras.storeTagSafely(tag, "BB", settings.getBoundingBox().toNBTTagIntArray());
 			structureData.writeInstance(tag, chunkX, chunkZ);
 			structureData.markDirty();
@@ -241,11 +241,11 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 			}else{
 
-				CompoundTag nbt = this.structureData.getTagCompound();
+				CompoundTag nbt = this.structureData.getTag();
 
 				for(String s : nbt.getKeySet()){
 
-					NBTBase nbtbase = nbt.getTag(s);
+					Tag nbtbase = nbt.getTag(s);
 
 					if(nbtbase.getId() == Constants.NBT.TAG_COMPOUND){
 
@@ -253,8 +253,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 						if(entry.hasKey("ChunkX") && entry.hasKey("ChunkZ") && entry.hasKey("BB")){
 
-							int i = entry.getInteger("ChunkX");
-							int j = entry.getInteger("ChunkZ");
+							int i = entry.getInt("ChunkX");
+							int j = entry.getInt("ChunkZ");
 							int[] coords = entry.getIntArray("BB");
 
 							this.structureMap.put(ChunkPos.asLong(i, j), new StructureBoundingBox(coords));

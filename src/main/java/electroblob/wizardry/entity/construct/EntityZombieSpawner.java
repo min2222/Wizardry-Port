@@ -81,14 +81,14 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 	@Override
 	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
-		nbt.setInteger("spawnTimer", spawnTimer);
+		nbt.putInt("spawnTimer", spawnTimer);
 		nbt.setBoolean("spawnHusks", spawnHusks);
 	}
 
 	@Override
 	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
-		this.spawnTimer = nbt.getInteger("spawnTimer");
+		this.spawnTimer = nbt.getInt("spawnTimer");
 		this.spawnHusks = nbt.getBoolean("spawnHusks");
 	}
 

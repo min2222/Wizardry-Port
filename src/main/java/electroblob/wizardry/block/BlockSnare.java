@@ -66,7 +66,7 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 					DamageSource source = tileentity.getCaster() == null ? DamageSource.CACTUS
 							: MagicDamage.causeDirectMagicDamage(tileentity.getCaster(), DamageType.MAGIC);
 
-					entity.attackEntityFrom(source, Spells.snare.getProperty(Spell.DAMAGE).floatValue());
+					entity.hurt(source, Spells.snare.getProperty(Spell.DAMAGE).floatValue());
 
 					((LivingEntity)entity).addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS,
 							Spells.snare.getProperty(Spell.EFFECT_DURATION).intValue(),

@@ -5,18 +5,18 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryEnchantments;
 import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
 import net.minecraft.inventory.ContainerChest;
-import net.minecraft.item.ItemEnchantedBook;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -44,7 +44,7 @@ public interface Imbuement {
 	@SubscribeEvent
 	public static void onLivingDropsEvent(LivingDropsEvent event){
 		// Instantly disenchants an imbued weapon if it is dropped when the player dies.
-		for(EntityItem item : event.getDrops()){
+		for(ItemEntity item : event.getDrops()){
 			// Apparently some mods don't behave and shove null items in the list, quite why I have no idea
 			if(item != null) removeImbuements(item.getItem());
 		}
@@ -61,9 +61,9 @@ public interface Imbuement {
 		if(stack.isItemEnchanted()){
 			// No need to check what enchantments the item has, since remove() does nothing if the element does not exist
 			ListTag enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
-					ItemEnchantedBook.getEnchantments(stack) : stack.getEnchantmentTagList();
+					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTagList();
 			// Check all enchantments of the item
-			Iterator<NBTBase> enchantmentIt = enchantmentList.iterator();
+			Iterator<Tag> enchantmentIt = enchantmentList.iterator();
 			while(enchantmentIt.hasNext()){
 				CompoundTag enchantmentTag = (CompoundTag) enchantmentIt.next();
 				Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
@@ -86,10 +86,10 @@ public interface Imbuement {
 			// Still not sure if it's better to set stacks in slots or modify the itemstack list directly, but I would
 			// imagine it's the former.
 			for(Slot slot : event.getContainer().inventorySlots){
-				ItemStack slotStack = slot.getStack();
-				if(slotStack.getItem() instanceof ItemEnchantedBook){
+				ItemStack slotStack = slot.getItem();
+				if(slotStack.getItem() instanceof EnchantedBookItem){
 					// We don't care about the level of the enchantments
-					ListTag enchantmentList = ItemEnchantedBook.getEnchantments(slotStack);
+					ListTag enchantmentList = EnchantedBookItem.getEnchantments(slotStack);
 					// Removes all imbuements
 					if(Iterables.removeIf(enchantmentList, tag -> {
 						CompoundTag enchantmentTag = (CompoundTag) tag;
@@ -146,7 +146,7 @@ public interface Imbuement {
 
 				if(level > 0){
 					if(arrow.getEntityData() != null){
-						arrow.getEntityData().setInteger(FreezingWeapon.FREEZING_ARROW_NBT_KEY, level);
+						arrow.getEntityData().putInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY, level);
 					}
 				}
 			}

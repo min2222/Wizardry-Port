@@ -112,7 +112,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 			// Get contents of altar before replacing it
 			BlockEntity te = world.getTileEntity(pos);
 			ItemStack stack = ItemStack.EMPTY;
-			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getStack();
+			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getItem();
 
 			world.setBlockState(pos, world.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
 
@@ -139,7 +139,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 			return false;
 		}
 
-		ItemStack currentStack = ((TileEntityImbuementAltar)tileEntity).getStack();
+		ItemStack currentStack = ((TileEntityImbuementAltar)tileEntity).getItem();
 		ItemStack toInsert = player.getHeldItem(hand);
 
 		if(currentStack.isEmpty()){
@@ -170,7 +170,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
         BlockEntity tileentity = world.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityImbuementAltar){
-            InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), ((TileEntityImbuementAltar)tileentity).getStack());
+            InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), ((TileEntityImbuementAltar)tileentity).getItem());
         }
 
         super.breakBlock(world, pos, block);

@@ -70,14 +70,14 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 	@Override
 	public CompoundTag writeToNBT(CompoundTag compound){
 		super.writeToNBT(compound); // Confusingly, this method both writes to the supplied compound and returns it
-		compound.setInteger("spell", currentSpell.metadata());
+		compound.putInt("spell", currentSpell.metadata());
 		return compound;
 	}
 
 	@Override
 	public void readFromNBT(CompoundTag compound){
 		super.readFromNBT(compound);
-		currentSpell = Spell.byMetadata(compound.getInteger("spell"));
+		currentSpell = Spell.byMetadata(compound.getInt("spell"));
 	}
 
 	@Override

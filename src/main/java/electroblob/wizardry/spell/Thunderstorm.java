@@ -95,7 +95,7 @@ public class Thunderstorm extends Spell {
 
 							playSound(world, secondaryTarget, 0, -1, modifiers);
 
-							secondaryTarget.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
+							secondaryTarget.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 									getProperty(SECONDARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 							// Tertiary chaining effect
@@ -121,7 +121,7 @@ public class Thunderstorm extends Spell {
 
 									playSound(world, tertiaryTarget, 0, -1, modifiers);
 
-									tertiaryTarget.attackEntityFrom(
+									tertiaryTarget.hurt(
 											MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 											getProperty(TERTIARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 								}

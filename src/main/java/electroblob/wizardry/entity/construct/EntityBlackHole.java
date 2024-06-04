@@ -179,11 +179,11 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 						}else{
 							if(this.getCaster() != null){
-								target.attackEntityFrom(
+								target.hurt(
 										MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.MAGIC),
 										2 * damageMultiplier);
 							}else{
-								target.attackEntityFrom(DamageSource.MAGIC, 2 * damageMultiplier);
+								target.hurt(DamageSource.MAGIC, 2 * damageMultiplier);
 							}
 						}
 					}

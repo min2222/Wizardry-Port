@@ -91,9 +91,9 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount){
+	public boolean hurt(DamageSource source, float amount){
 		// Immune to suffocation
-		return source == DamageSource.IN_WALL ? false : super.attackEntityFrom(source, amount);
+		return source == DamageSource.IN_WALL ? false : super.hurt(source, amount);
 	}
 
 	// Implementations
@@ -119,7 +119,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		if(this.getRidingEntity() != null && this.getRidingEntity() instanceof LivingEntity
 				&& ((LivingEntity)this.getRidingEntity()).getHealth() > 0){
 			if(this.ticksExisted % 16 == 1){
-				this.getRidingEntity().attackEntityFrom(DamageSource.MAGIC, 1);
+				this.getRidingEntity().hurt(DamageSource.MAGIC, 1);
 				if(this.getRidingEntity() != null){ // Some mobs force-dismount when attacked (normally when dying)
 					((LivingEntity)this.getRidingEntity())
 							.addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2));

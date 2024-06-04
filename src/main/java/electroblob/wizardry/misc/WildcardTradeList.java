@@ -62,7 +62,7 @@ public class WildcardTradeList extends MerchantRecipeList {
     			// Can't use ItemStack.areItemsEqualIgnoreDurability because that only works for items with durability, not subtypes.
     			&& stack1.getItem() == stack2.getItem()) return true;
     	
-        return ItemStack.areItemsEqual(stack1, stack2) && (!stack2.hasTagCompound() || stack1.hasTagCompound() && NBTUtil.areNBTEquals(stack2.getTagCompound(), stack1.getTagCompound(), false));
+        return ItemStack.areItemsEqual(stack1, stack2) && (!stack2.hasTagCompound() || stack1.hasTagCompound() && NBTUtil.areNBTEquals(stack2.getTag(), stack1.getTag(), false));
     }
 
 	@Override

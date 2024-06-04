@@ -308,7 +308,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 					Item newArmour = getArmour(this.element, armourClass, this.armorType);
 					ItemStack newStack = new ItemStack(newArmour);
 					((ItemWizardArmour)newArmour).setMana(newStack, this.getMana(stack));
-					newStack.setTagCompound(stack.getTagCompound());
+					newStack.setTag(stack.getTag());
 					upgrade.shrink(1);
 					return newStack;
 				}
@@ -324,33 +324,33 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 		boolean changed = false;
 
 		if(upgrade.getHasStack()){
-			ItemStack original = centre.getStack().copy();
-			centre.putStack(this.applyUpgrade(player, centre.getStack(), upgrade.getStack()));
-			changed = !ItemStack.areItemStacksEqual(centre.getStack(), original);
+			ItemStack original = centre.getItem().copy();
+			centre.putStack(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
+			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
 		}
 		
 		// Charges armour by appropriate amount
-		if(crystals.getStack() != ItemStack.EMPTY && !this.isManaFull(centre.getStack())){
+		if(crystals.getItem() != ItemStack.EMPTY && !this.isManaFull(centre.getItem())){
 
-			int chargeDepleted = this.getManaCapacity(centre.getStack()) - this.getMana(centre.getStack());
+			int chargeDepleted = this.getManaCapacity(centre.getItem()) - this.getMana(centre.getItem());
 
 			// Not too pretty but allows addons implementing the IManaStoringItem interface to provide their mana amount for custom crystals,
 			// previously this was defaulted to the regular crystal's amount, allowing players to exploit it if a crystal was worth less mana than that.
-			int manaPerItem = crystals.getStack().getItem() instanceof IManaStoringItem ?
-					((IManaStoringItem) crystals.getStack().getItem()).getMana(crystals.getStack()) :
-					crystals.getStack().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
+			int manaPerItem = crystals.getItem().getItem() instanceof IManaStoringItem ?
+					((IManaStoringItem) crystals.getItem().getItem()).getMana(crystals.getItem()) :
+					crystals.getItem().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
 
-			if(crystals.getStack().getItem() == WizardryItems.crystal_shard) manaPerItem = Constants.MANA_PER_SHARD;
-			if(crystals.getStack().getItem() == WizardryItems.grand_crystal) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
+			if(crystals.getItem().getItem() == WizardryItems.crystal_shard) manaPerItem = Constants.MANA_PER_SHARD;
+			if(crystals.getItem().getItem() == WizardryItems.grand_crystal) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
 
-			if(crystals.getStack().getCount() * manaPerItem < chargeDepleted){
+			if(crystals.getItem().getCount() * manaPerItem < chargeDepleted){
 				// If there aren't enough crystals to fully charge the armour
-				this.rechargeMana(centre.getStack(), crystals.getStack().getCount() * Constants.MANA_PER_CRYSTAL);
-				crystals.decrStackSize(crystals.getStack().getCount());
+				this.rechargeMana(centre.getItem(), crystals.getItem().getCount() * Constants.MANA_PER_CRYSTAL);
+				crystals.decrStackSize(crystals.getItem().getCount());
 
 			}else{
 				// If there are excess crystals (or just enough)
-				this.setMana(centre.getStack(), this.getManaCapacity(centre.getStack()));
+				this.setMana(centre.getItem(), this.getManaCapacity(centre.getItem()));
 				crystals.decrStackSize((int)Math.ceil(((double)chargeDepleted) / Constants.MANA_PER_CRYSTAL));
 			}
 

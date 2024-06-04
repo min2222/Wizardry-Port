@@ -43,7 +43,7 @@ public class Poison extends SpellRay {
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON),
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.POISON,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),

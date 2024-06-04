@@ -195,8 +195,8 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		xSize = MAIN_GUI_WIDTH;
 		guiLeft = (this.width - MAIN_GUI_WIDTH) / 2;
 
-		if(centreSlot.getHasStack() && centreSlot.getStack().getItem() instanceof IWorkbenchItem
-				&& ((IWorkbenchItem)centreSlot.getStack().getItem()).showTooltip(centreSlot.getStack())){
+		if(centreSlot.getHasStack() && centreSlot.getItem().getItem() instanceof IWorkbenchItem
+				&& ((IWorkbenchItem)centreSlot.getItem().getItem()).showTooltip(centreSlot.getItem())){
 			xSize += TOOLTIP_WIDTH;
 		}
 
@@ -207,7 +207,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		// Show/hide the relevant gui elements
 		this.applyBtn.enabled = centreSlot.getHasStack();
-		this.clearBtn.enabled = centreSlot.getHasStack() && centreSlot.getStack().getItem() instanceof IWorkbenchItem && ((IWorkbenchItem) centreSlot.getStack().getItem()).isClearable();
+		this.clearBtn.enabled = centreSlot.getHasStack() && centreSlot.getItem().getItem() instanceof IWorkbenchItem && ((IWorkbenchItem) centreSlot.getItem().getItem()).isClearable();
 		for(GuiButton button : this.sortButtons) button.visible = arcaneWorkbenchContainer.hasBookshelves();
 		this.searchField.setVisible(arcaneWorkbenchContainer.hasBookshelves());
 
@@ -339,7 +339,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		// Tooltip only drawn if there is a wand
 		if(this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
 
-			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getStack();
+			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
 
 			if(!(stack.getItem() instanceof IWorkbenchItem)){
 				Wizardry.logger.warn("Invalid item in central slot of arcane workbench, how did that get there?!");
@@ -396,7 +396,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		if(this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
 
-			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getStack();
+			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
 
 			if(!(stack.getItem() instanceof IWorkbenchItem)){
 				Wizardry.logger.warn("Invalid item in central slot of arcane workbench, how did that get there?!");
@@ -810,7 +810,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		private Spell getSpell(ItemStack stack){
 
-			ItemStack spellBook = inventorySlots.getSlot(index).getStack();
+			ItemStack spellBook = inventorySlots.getSlot(index).getItem();
 
 			if(!spellBook.isEmpty() && spellBook.getItem() instanceof ItemSpellBook){
 				return Spell.byMetadata(spellBook.getMetadata());
@@ -820,7 +820,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		private boolean shouldFlash(ItemStack stack){
-			ItemStack spellBook = inventorySlots.getSlot(index).getStack();
+			ItemStack spellBook = inventorySlots.getSlot(index).getItem();
 			return !spellBook.isEmpty() && spellBook.getItem() instanceof ItemSpellBook
 					&& Spell.byMetadata(spellBook.getMetadata()) != ((ISpellCastingItem)stack.getItem()).getSpells(stack)[index];
 		}

@@ -63,8 +63,8 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		if(stack.hasTagCompound() && stack.getTagCompound().hasKey(DURATION_NBT_KEY)){
-			return stack.getTagCompound().getInteger(DURATION_NBT_KEY);
+		if(stack.hasTagCompound() && stack.getTag().contains(DURATION_NBT_KEY)){
+			return stack.getTag().getInt(DURATION_NBT_KEY);
 		}
 		return super.getMaxDamage(stack);
 	}
@@ -75,8 +75,8 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	}
 
 	private float getDamageMultiplier(ItemStack stack){
-		if(stack.hasTagCompound() && stack.getTagCompound().hasKey(DAMAGE_MULTIPLIER_NBT_KEY)){
-			return stack.getTagCompound().getFloat(DAMAGE_MULTIPLIER_NBT_KEY);
+		if(stack.hasTagCompound() && stack.getTag().contains(DAMAGE_MULTIPLIER_NBT_KEY)){
+			return stack.getTag().getFloat(DAMAGE_MULTIPLIER_NBT_KEY);
 		}
 		return 1;
 	}
@@ -211,7 +211,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 				for(LivingEntity target : nearby){
 
-					target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(wielder, DamageType.SHOCK), CHAINING_DAMAGE * ((ItemLightningHammer)stack.getItem()).getDamageMultiplier(stack));
+					target.hurt(MagicDamage.causeDirectMagicDamage(wielder, DamageType.SHOCK), CHAINING_DAMAGE * ((ItemLightningHammer)stack.getItem()).getDamageMultiplier(stack));
 
 					if(hit.world.isRemote){
 						ParticleBuilder.create(Type.LIGHTNING).pos(hit.getPositionVector().add(0, hit.height / 2, 0))

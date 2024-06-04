@@ -45,7 +45,7 @@ public final class DamageSafetyChecker {
 	/**
 	 * Attacks the specified target with specified damage source and damage amount, checking for the blacklist and
 	 * excessive looping in the process. Under normal circumstances, this method simply calls
-	 * {@code target.attackEntityFrom(...)}. If excessive looping is detected, the damage source is substituted for
+	 * {@code target.hurt(...)}. If excessive looping is detected, the damage source is substituted for
 	 * the given fallback instead, and a warning is printed to the console.
 	 * <p></p>
 	 * This method should only be used within the attack events (LivingAttackEvent, LivingHurtEvent, LivingDamageEvent
@@ -69,7 +69,7 @@ public final class DamageSafetyChecker {
 				// Same as fallback behaviour, but without the log message
 				// No harm in still incrementing the counter
 				attacksThisTick++;
-				return knockback ? target.attackEntityFrom(fallback, damage)
+				return knockback ? target.hurt(fallback, damage)
 						: EntityUtils.attackEntityWithoutKnockback(target, fallback, damage);
 			}
 		}
@@ -87,13 +87,13 @@ public final class DamageSafetyChecker {
 			logInterception(originalSourceName, false);
 			// Fallback behaviour
 			attacksThisTick++;
-			return knockback ? target.attackEntityFrom(fallback, damage)
+			return knockback ? target.hurt(fallback, damage)
 					: EntityUtils.attackEntityWithoutKnockback(target, fallback, damage);
 
 		}else{
 			// Normal behaviour
 			attacksThisTick++;
-			return knockback ? target.attackEntityFrom(source, damage)
+			return knockback ? target.hurt(source, damage)
 					: EntityUtils.attackEntityWithoutKnockback(target, source, damage);
 		}
 	}

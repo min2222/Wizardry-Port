@@ -47,15 +47,15 @@ public class TileEntityTimer extends BlockEntity implements ITickable {
 	@Override
 	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
-		timer = tagCompound.getInteger("timer");
-		maxTimer = tagCompound.getInteger("maxTimer");
+		timer = tagCompound.getInt("timer");
+		maxTimer = tagCompound.getInt("maxTimer");
 	}
 
 	@Override
 	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
-		tagCompound.setInteger("timer", timer);
-		tagCompound.setInteger("maxTimer", maxTimer);
+		tagCompound.putInt("timer", timer);
+		tagCompound.putInt("maxTimer", maxTimer);
 		return tagCompound;
 	}
 

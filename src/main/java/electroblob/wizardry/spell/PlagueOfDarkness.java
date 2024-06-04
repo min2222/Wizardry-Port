@@ -32,7 +32,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(!MagicDamage.isEntityImmune(DamageType.WITHER, target)){
-			target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
+			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),

@@ -140,8 +140,8 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 		CompoundTag nbt = new CompoundTag();
 
-		nbt.setInteger("spell", spell.metadata());
-		nbt.setInteger("castingTick", castingTick);
+		nbt.putInt("spell", spell.metadata());
+		nbt.putInt("castingTick", castingTick);
 		NBTExtras.storeTagSafely(nbt, "modifiers", modifiers.toNBT());
 
 		return nbt;
@@ -152,8 +152,8 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 		if(nbt != null){
 
-			this.spell = Spell.byMetadata(nbt.getInteger("spell"));
-			this.castingTick = nbt.getInteger("castingTick");
+			this.spell = Spell.byMetadata(nbt.getInt("spell"));
+			this.castingTick = nbt.getInt("castingTick");
 			this.modifiers = SpellModifiers.fromNBT(nbt.getCompoundTag("modifiers"));
 		}
 	}

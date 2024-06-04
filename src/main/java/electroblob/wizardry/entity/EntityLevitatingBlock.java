@@ -9,6 +9,7 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BlockFalling;
 import net.minecraft.world.level.material.Material;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.EntityFallingBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -181,7 +181,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 											CompoundTag nbttagcompound = tileentity.writeToNBT(new CompoundTag());
 
 											for(String s : this.tileEntityData.getKeySet()){
-												NBTBase nbtbase = this.tileEntityData.getTag(s);
+												Tag nbtbase = this.tileEntityData.getTag(s);
 
 												if(!"x".equals(s) && !"y".equals(s) && !"z".equals(s)){
 													NBTExtras.storeTagSafely(nbttagcompound, s, nbtbase.copy());
@@ -223,7 +223,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 					float damage = Spells.greater_telekinesis.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 					damage *= Math.min(1, velocitySquared/0.4); // Reduce damage at low speeds
 
-					entity.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
+					entity.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 							MagicDamage.DamageType.FORCE), damage);
 
 					double dx = -this.motionX;

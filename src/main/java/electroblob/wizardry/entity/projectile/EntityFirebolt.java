@@ -26,7 +26,7 @@ public class EntityFirebolt extends EntityMagicProjectile {
 
 			float damage = Spells.firebolt.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-			entityHit.attackEntityFrom(
+			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FIRE).setProjectile(),
 					damage);
 

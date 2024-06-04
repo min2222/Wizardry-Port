@@ -133,7 +133,7 @@ public class EntityHammer extends EntityMagicConstruct {
 								this, getCaster(), DamageType.SHOCK), damage);
 						EntityUtils.applyStandardKnockback(this, target);
 					}else{
-						target.attackEntityFrom(DamageSource.MAGIC, damage);
+						target.hurt(DamageSource.MAGIC, damage);
 					}
 				}
 			}
@@ -147,7 +147,7 @@ public class EntityHammer extends EntityMagicConstruct {
 			float damage = Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
 			for(Entity entity : collided){
-				entity.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK), damage);
+				entity.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK), damage);
 				//if(entity instanceof EntityLivingBase) ((EntityLivingBase)entity).knockBack(this, 2, -this.motionX, -this.motionZ);
 			}
 		}
@@ -208,10 +208,10 @@ public class EntityHammer extends EntityMagicConstruct {
 			this.setDead();
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
-			if(!hammer.hasTagCompound()) hammer.setTagCompound(new CompoundTag());
-			hammer.getTagCompound().setInteger(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
+			if(!hammer.hasTagCompound()) hammer.setTag(new CompoundTag());
+			hammer.getTag().putInteger(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
 			hammer.setItemDamage(ticksExisted);
-			hammer.getTagCompound().setFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
+			hammer.getTag().putFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
 
 			player.setHeldItem(InteractionHand.MAIN_HAND, hammer);
 			return true;

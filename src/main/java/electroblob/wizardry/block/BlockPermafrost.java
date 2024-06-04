@@ -59,7 +59,7 @@ public class BlockPermafrost extends BlockDryFrostedIce {
 
 		if(EntityUtils.isLiving(entity) && entity.ticksExisted % 30 == 0){
 			// Can't make it player damage unless we make this block a tile entity, but there will be too many for that
-			entity.attackEntityFrom(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
+			entity.hurt(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
 			int duration = Spells.permafrost.getProperty(Spell.EFFECT_DURATION).intValue();
 			int amplifier = Spells.permafrost.getProperty(Spell.EFFECT_STRENGTH).intValue();
 			((LivingEntity)entity).addPotionEffect(new MobEffectInstance(WizardryPotions.frost, duration, amplifier));

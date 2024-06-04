@@ -51,7 +51,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 				double velZ = target.motionZ;
 
 				// Only works if target is actually damaged to account for hurtResistantTime
-				if(target.attackEntityFrom(getCaster() != null ? MagicDamage.causeIndirectMagicDamage(this, getCaster(),
+				if(target.hurt(getCaster() != null ? MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 						DamageType.SHOCK) : DamageSource.MAGIC, Spells.lightning_sigil.getProperty(Spell.DIRECT_DAMAGE)
 						.floatValue() * damageMultiplier)){
 
@@ -88,7 +88,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 							secondaryTarget.playSound(WizardrySounds.ENTITY_LIGHTNING_SIGIL_TRIGGER, 1.0F,
 									world.rand.nextFloat() * 0.4F + 1.5F);
 
-							secondaryTarget.attackEntityFrom(
+							secondaryTarget.hurt(
 									MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK),
 									Spells.lightning_sigil.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 						}

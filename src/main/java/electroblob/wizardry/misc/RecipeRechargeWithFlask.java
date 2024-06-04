@@ -71,7 +71,7 @@ public class RecipeRechargeWithFlask extends ShapelessOreRecipe {
 			ItemStack stack = findItemToCharge(inv);
 			if(!stack.isEmpty()) chargeable.setMana(toCharge, chargeable.getMana(stack));
 			chargeable.rechargeMana(toCharge, flask.size.capacity);
-			toCharge.setTagCompound(stack.getTagCompound()); // Copy NBT to new stack
+			toCharge.setTag(stack.getTag()); // Copy NBT to new stack
 		}else{
 			Wizardry.logger.warn("Tried to recharge item {} with mana flask, but it did not match the recipe result {}!", toCharge.getItem(), chargeable);
 		}

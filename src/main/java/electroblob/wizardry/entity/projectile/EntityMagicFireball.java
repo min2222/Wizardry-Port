@@ -78,7 +78,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				DamageSource source = getDamageSource(entityHit);
 
-				entityHit.attackEntityFrom(source, damage);
+				entityHit.hurt(source, damage);
 
 				if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit) && getBurnDuration() > 0)
 					entityHit.setFire(getBurnDuration());
@@ -144,7 +144,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount){
+	public boolean hurt(DamageSource source, float amount){
 
 		if(this.isEntityInvulnerable(source)){
 			return false;
@@ -215,13 +215,13 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	@Override
 	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
-		lifetime = nbttagcompound.getInteger("lifetime");
+		lifetime = nbttagcompound.getInt("lifetime");
 	}
 
 	@Override
 	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setInteger("lifetime", lifetime);
+		nbttagcompound.putInt("lifetime", lifetime);
 	}
 
 	@SubscribeEvent

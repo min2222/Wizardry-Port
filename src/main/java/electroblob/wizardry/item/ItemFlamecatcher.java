@@ -132,7 +132,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 
 		ItemStack stack = player.getHeldItem(hand);
 
-		int shotsLeft = stack.getTagCompound().getInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY);
+		int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY);
 		if(shotsLeft == 0) return InteractionResultHolder.newResult(InteractionResult.PASS, stack);
 
 		InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
@@ -200,9 +200,9 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 
 			if((double)velocity >= 0.1D){
 
-				if(stack.getTagCompound() != null){
-					int shotsLeft = stack.getTagCompound().getInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY) - 1;
-					stack.getTagCompound().setInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
+				if(stack.getTag() != null){
+					int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY) - 1;
+					stack.getTag().putInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
 					if(shotsLeft == 0 && !world.isRemote){
 						stack.setItemDamage(getMaxDamage(stack) - getAnimationFrames());
 					}

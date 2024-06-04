@@ -77,11 +77,11 @@ public class ShadowWard extends Spell {
 
 				// Now we can preserve the original damage source (sort of) as long as we make it retaliatory.
 				// For some reason this isn't working, so I've reverted to plain old magic damage for now.
-				//event.getEntityLiving().attackEntityFrom(
+				//event.getEntityLiving().hurt(
 				//		MagicDamage.causeDirectMagicDamage(event.getSource().getTrueSource(), DamageType.MAGIC, true), event.getAmount() * 0.5f);
 				DamageSafetyChecker.attackEntitySafely(event.getEntity(), DamageSource.MAGIC, event.getAmount()
 						* (1 - reflectedFraction), event.getSource().getDamageType());
-				event.getSource().getTrueSource().attackEntityFrom(MagicDamage.causeDirectMagicDamage(
+				event.getSource().getTrueSource().hurt(MagicDamage.causeDirectMagicDamage(
 						event.getEntityLiving(), DamageType.MAGIC, true), event.getAmount() * reflectedFraction);
 			}
 		}

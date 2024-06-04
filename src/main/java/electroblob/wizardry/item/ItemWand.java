@@ -719,7 +719,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				if(player != null) WizardData.get(player).setTierReached(tier);
 
 				ItemStack newWand = new ItemStack(getWand(tier, this.element));
-				newWand.setTagCompound(wand.getTagCompound());
+				newWand.setTag(wand.getTag());
 				// This needs to be done after copying the tag compound so the mana capacity for the new wand
 				// takes storage upgrades into account
 				// Note the usage of the new wand item and not 'this' to ensure the correct capacity is used
@@ -822,9 +822,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		boolean changed = false; // Used for advancements
 
 		if(upgrade.getHasStack()){
-			ItemStack original = centre.getStack().copy();
-			centre.putStack(this.applyUpgrade(player, centre.getStack(), upgrade.getStack()));
-			changed = !ItemStack.areItemStacksEqual(centre.getStack(), original);
+			ItemStack original = centre.getItem().copy();
+			centre.putStack(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
+			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
 		}
 
 		// Reads NBT spell metadata array to variable, edits this, then writes it back to NBT.
@@ -832,7 +832,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		// Accounts for spells which cannot be applied because they are above the wand's tier; these spells
 		// will not bind but the existing spell in that slot will remain and other applicable spells will
 		// be bound as normal, along with any upgrades and crystals.
-		Spell[] spells = WandHelper.getSpells(centre.getStack());
+		Spell[] spells = WandHelper.getSpells(centre.getItem());
 		
 		if(spells.length <= 0){
 			// Base value here because if the spell array doesn't exist, the wand can't possibly have attunement upgrades
@@ -840,9 +840,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 		
 		for(int i = 0; i < spells.length; i++){
-			if(spellBooks[i].getStack() != ItemStack.EMPTY){
+			if(spellBooks[i].getItem() != ItemStack.EMPTY){
 				
-				Spell spell = Spell.byMetadata(spellBooks[i].getStack().getItemDamage());
+				Spell spell = Spell.byMetadata(spellBooks[i].getItem().getItemDamage());
 				// If the wand is powerful enough for the spell, it's not already bound to that slot and it's enabled for wands
 				if(!(spell.getTier().level > this.tier.level) && spells[i] != spell && spell.isEnabled(SpellProperties.Context.WANDS)){
 
@@ -856,13 +856,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 					// setting to consume books upon use
 					if (Wizardry.settings.singleUseSpellBooks) {
-						spellBooks[i].getStack().shrink(1);
+						spellBooks[i].getItem().shrink(1);
 					}
 				}
 			}
 		}
 		
-		WandHelper.setSpells(centre.getStack(), spells);
+		WandHelper.setSpells(centre.getItem(), spells);
 
 		// Charges wand by appropriate amount
 		if (WandHelper.rechargeManaOnApplyButtonPressed(centre, crystals)) {
@@ -874,9 +874,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public void onClearButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
-		ItemStack stack = centre.getStack();
-		if (stack.hasTagCompound() && stack.getTagCompound().hasKey(WandHelper.SPELL_ARRAY_KEY)) {
-			CompoundTag nbt = stack.getTagCompound();
+		ItemStack stack = centre.getItem();
+		if (stack.hasTagCompound() && stack.getTag().contains(WandHelper.SPELL_ARRAY_KEY)) {
+			CompoundTag nbt = stack.getTag();
 			int[] spells = nbt.getIntArray(WandHelper.SPELL_ARRAY_KEY);
 			int expectedSlotCount = BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack,
 					WizardryItems.attunement_upgrade);
@@ -887,7 +887,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			}
 			Arrays.fill(spells, 0);
 			nbt.setIntArray(WandHelper.SPELL_ARRAY_KEY, spells);
-			stack.setTagCompound(nbt);
+			stack.setTag(nbt);
 		}
 	}
 

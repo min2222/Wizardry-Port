@@ -26,7 +26,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 
 		if(entityHit != null){
 			float damage = Spells.lightning_disc.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
-			entityHit.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, this.getThrower(),
+			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getThrower(),
 					DamageType.SHOCK), damage);
 		}
 

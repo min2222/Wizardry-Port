@@ -23,7 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.item.ItemEnchantedBook;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.common.MinecraftForge;
@@ -368,7 +368,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		if(stack.isItemEnchanted()){
 
 			NBTTagList enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
-					ItemEnchantedBook.getEnchantments(stack) : stack.getEnchantmentTagList();
+					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTagList();
 
 			Iterator<NBTBase> iterator = enchantmentList.iterator();
 			// For each of the item's enchantments
@@ -576,7 +576,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		}
 		properties.setIntArray("discoveredSpells", spells);
 
-		properties.setInteger("maxTierReached", maxTierReached.ordinal());
+		properties.putInt("maxTierReached", maxTierReached.ordinal());
 
 		NBTExtras.storeTagSafely(properties, "recentSpells", NBTExtras.listToNBT(recentSpells, s -> new NBTTagInt(s.metadata())));
 
@@ -601,7 +601,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 				spellsDiscovered.add(Spell.byMetadata(id));
 			}
 
-			this.maxTierReached = Tier.values()[nbt.getInteger("maxTierReached")];
+			this.maxTierReached = Tier.values()[nbt.getInt("maxTierReached")];
 
 			// Probably won't be null but we may as well just reinitialise it instead of clearing it
 			this.recentSpells = EvictingQueue.create(MAX_RECENT_SPELLS);

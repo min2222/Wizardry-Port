@@ -188,14 +188,14 @@ public class EntityRemnant extends EntityMob {
 	@Override
 	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
-		this.setElement(Element.values()[nbt.getInteger("Element")]);
+		this.setElement(Element.values()[nbt.getInt("Element")]);
 		if(nbt.hasKey("BoundOrigin")) boundOrigin = NBTUtil.getPosFromTag(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
 	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
-		nbt.setInteger("Element", this.getElement().ordinal());
+		nbt.putInt("Element", this.getElement().ordinal());
 		if(boundOrigin != null) nbt.setTag("BoundOrigin", NBTUtil.createPosTag(boundOrigin));
 	}
 

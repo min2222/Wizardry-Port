@@ -73,8 +73,8 @@ public class WizardTradeTweaksHandler {
 			if(trades == null) return;
 
 			// Using == the specific item rather than instanceof because that's how trades do it.
-			if(gui.inventorySlots.getSlot(0).getStack().getItem() == WizardryItems.spell_book
-					|| gui.inventorySlots.getSlot(1).getStack().getItem() == WizardryItems.spell_book){
+			if(gui.inventorySlots.getSlot(0).getItem().getItem() == WizardryItems.spell_book
+					|| gui.inventorySlots.getSlot(1).getItem().getItem() == WizardryItems.spell_book){
 
 				for(MerchantRecipe trade : trades){
 					if(trade.getItemToBuy().getItem() == WizardryItems.spell_book && trade.getSecondItemToBuy().isEmpty()){

@@ -413,8 +413,8 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		}
 
 		Element element = this.getElement();
-		nbt.setInteger("element", element == null ? 0 : element.ordinal());
-		nbt.setInteger("skin", this.textureIndex);
+		nbt.putInt("element", element == null ? 0 : element.ordinal());
+		nbt.putInt("skin", this.textureIndex);
 		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> new NBTTagInt(spell.metadata())));
 
 		if(this.towerBlocks != null && this.towerBlocks.size() > 0){
@@ -432,8 +432,8 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			this.trades = new WildcardTradeList(nbttagcompound1);
 		}
 
-		this.setElement(Element.values()[nbt.getInteger("element")]);
-		this.textureIndex = nbt.getInteger("skin");
+		this.setElement(Element.values()[nbt.getInt("element")]);
+		this.textureIndex = nbt.getInt("skin");
 		this.spells = (List<Spell>)NBTExtras.NBTToList(nbt.getTagList("spells", NBT.TAG_INT),
 				(NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
 
@@ -876,13 +876,13 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float damage){
+	public boolean hurt(DamageSource source, float damage){
 
 		if(source.getTrueSource() instanceof Player){
 			WizardryAdvancementTriggers.anger_wizard.triggerFor((Player)source.getTrueSource());
 		}
 
-		return super.attackEntityFrom(source, damage);
+		return super.hurt(source, damage);
 	}
 
 	/**

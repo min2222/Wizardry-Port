@@ -35,13 +35,13 @@ public class Location {
 	 * same as that returned by {@link NBTUtil#createPosTag(BlockPos)}, but with an extra "dimension" key. */
 	public CompoundTag toNBT(){
 		CompoundTag nbt = NBTUtil.createPosTag(pos);
-		nbt.setInteger("dimension", dimension);
+		nbt.putInt("dimension", dimension);
 		return nbt;
 	}
 
 	/** Creates a new {@code Location} from the given {@link CompoundTag}. The given compound tag should be the
 	 * same as that returned by {@link NBTUtil#createPosTag(BlockPos)}, but with an extra "dimension" key. */
 	public static Location fromNBT(CompoundTag nbt){
-		return new Location(NBTUtil.getPosFromTag(nbt), nbt.getInteger("dimension"));
+		return new Location(NBTUtil.getPosFromTag(nbt), nbt.getInt("dimension"));
 	}
 }

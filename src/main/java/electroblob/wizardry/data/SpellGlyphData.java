@@ -152,8 +152,8 @@ public class SpellGlyphData extends WorldSavedData {
 
 		for(int i = 0; i < tagList.tagCount(); i++){
 			CompoundTag tag = tagList.getCompoundTagAt(i);
-			randomNames.put(Spell.byMetadata(tag.getInteger("spell")), tag.getString("name"));
-			randomDescriptions.put(Spell.byMetadata(tag.getInteger("spell")), tag.getString("description"));
+			randomNames.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("name"));
+			randomDescriptions.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("description"));
 		}
 	}
 
@@ -166,7 +166,7 @@ public class SpellGlyphData extends WorldSavedData {
 			// Much like the enchantments tag for items, this stores a list of spell-id-to-name tag pairs
 			// The description is now also included; there's no point in making a second compound tag!
 			CompoundTag tag = new CompoundTag();
-			tag.setInteger("spell", spell.metadata());
+			tag.putInt("spell", spell.metadata());
 			tag.setString("name", this.randomNames.get(spell));
 			tag.setString("description", this.randomDescriptions.get(spell));
 			tagList.appendTag(tag);

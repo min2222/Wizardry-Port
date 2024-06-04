@@ -124,14 +124,14 @@ public class SpellEmitter implements ITickable {
 
 		CompoundTag nbt = new CompoundTag();
 
-		nbt.setInteger("spell", spell.metadata());
+		nbt.putInt("spell", spell.metadata());
 		nbt.setDouble("x", x);
 		nbt.setDouble("y", y);
 		nbt.setDouble("z", z);
-		nbt.setInteger("direction", direction.getIndex());
-		nbt.setInteger("duration", duration);
+		nbt.putInt("direction", direction.getIndex());
+		nbt.putInt("duration", duration);
 		NBTExtras.storeTagSafely(nbt, "modifiers", modifiers.toNBT());
-		nbt.setInteger("castingTick", castingTick);
+		nbt.putInt("castingTick", castingTick);
 
 		return nbt;
 	}
@@ -139,14 +139,14 @@ public class SpellEmitter implements ITickable {
 	/** Creates a new {@code SpellEmitter} from the given {@link CompoundTag} and returns it. */
 	public static SpellEmitter fromNBT(Level world, CompoundTag nbt){
 
-		Spell spell = Spell.byMetadata(nbt.getInteger("spell"));
+		Spell spell = Spell.byMetadata(nbt.getInt("spell"));
 		double x = nbt.getDouble("x");
 		double y = nbt.getDouble("y");
 		double z = nbt.getDouble("z");
-		Direction direction = Direction.byIndex(nbt.getInteger("direction"));
-		int duration = nbt.getInteger("duration");
+		Direction direction = Direction.byIndex(nbt.getInt("direction"));
+		int duration = nbt.getInt("duration");
 		SpellModifiers modifiers = SpellModifiers.fromNBT(nbt.getCompoundTag("modifiers"));
-		int castingTick = nbt.getInteger("castingTick");
+		int castingTick = nbt.getInt("castingTick");
 
 		SpellEmitter emitter = new SpellEmitter(spell, world, x, y, z, direction, duration, modifiers);
 		emitter.castingTick = castingTick;

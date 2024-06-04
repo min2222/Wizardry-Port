@@ -34,7 +34,7 @@ public class Freeze extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 
 			if(target instanceof EntityBlaze || target instanceof EntityMagmaCube){
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.FROST),
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.FROST),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			}
 

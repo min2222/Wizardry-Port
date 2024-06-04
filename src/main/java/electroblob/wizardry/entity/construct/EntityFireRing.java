@@ -51,10 +51,10 @@ public class EntityFireRing extends EntityScaledConstruct {
 						float damage = Spells.ring_of_fire.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 						if(this.getCaster() != null){
-							target.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
+							target.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 									DamageType.FIRE), damage);
 						}else{
-							target.attackEntityFrom(DamageSource.MAGIC, damage);
+							target.hurt(DamageSource.MAGIC, damage);
 						}
 					}
 

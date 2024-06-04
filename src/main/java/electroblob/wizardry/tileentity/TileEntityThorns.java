@@ -42,18 +42,18 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	@Override
 	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
-		ticksExisted = tagCompound.getInteger("timer");
-		lifetime = tagCompound.getInteger("maxTimer"); // Left as maxTimer for backwards compatibility
-		age = tagCompound.getInteger("age");
+		ticksExisted = tagCompound.getInt("timer");
+		lifetime = tagCompound.getInt("maxTimer"); // Left as maxTimer for backwards compatibility
+		age = tagCompound.getInt("age");
 		damageMultiplier = tagCompound.getFloat("damageMultiplier");
 	}
 
 	@Override
 	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
-		tagCompound.setInteger("timer", ticksExisted);
-		tagCompound.setInteger("maxTimer", lifetime);
-		tagCompound.setInteger("age", age);
+		tagCompound.putInt("timer", ticksExisted);
+		tagCompound.putInt("maxTimer", lifetime);
+		tagCompound.putInt("age", age);
 		tagCompound.setFloat("damageMultiplier", damageMultiplier);
 		return tagCompound;
 	}

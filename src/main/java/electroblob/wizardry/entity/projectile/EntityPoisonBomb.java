@@ -38,7 +38,7 @@ public class EntityPoisonBomb extends EntityBomb {
 			// This is if the poison bomb gets a direct hit
 			float damage = Spells.poison_bomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
-			entityHit.attackEntityFrom(
+			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.POISON).setProjectile(),
 					damage);
 
@@ -80,7 +80,7 @@ public class EntityPoisonBomb extends EntityBomb {
 			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()
 						&& !MagicDamage.isEntityImmune(DamageType.POISON, target)){
-					target.attackEntityFrom(
+					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.POISON),
 							Spells.poison_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 					target.addPotionEffect(new MobEffectInstance(MobEffects.POISON,

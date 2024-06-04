@@ -382,7 +382,7 @@ public abstract class Forfeit {
 
 		add(Tier.ADVANCED, Element.NECROMANCY, create("wither_self", (w, p) -> p.addPotionEffect(new MobEffectInstance(MobEffects.WITHER, 400))));
 
-		add(Tier.MASTER, Element.NECROMANCY, create("cripple_self", (w, p) -> p.attackEntityFrom(DamageSource.MAGIC, p.getHealth() - 1)));
+		add(Tier.MASTER, Element.NECROMANCY, create("cripple_self", (w, p) -> p.hurt(DamageSource.MAGIC, p.getHealth() - 1)));
 
 		add(Tier.MASTER, Element.NECROMANCY, create("shadow_wraiths", (w, p) -> {
 			if(!w.isRemote){
@@ -487,7 +487,7 @@ public abstract class Forfeit {
 
 		add(Tier.MASTER, Element.SORCERY, create("teleport_self_large_distance", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.rand.nextDouble() * 700)));
 
-		add(Tier.NOVICE, Element.HEALING, create("damage_self", (w, p) -> p.attackEntityFrom(DamageSource.MAGIC, 4)));
+		add(Tier.NOVICE, Element.HEALING, create("damage_self", (w, p) -> p.hurt(DamageSource.MAGIC, 4)));
 
 		add(Tier.NOVICE, Element.HEALING, create("spill_armour", (w, p) -> {
 			for(int i = 0; i < p.inventory.armorInventory.size(); i++){

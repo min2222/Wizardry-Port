@@ -356,7 +356,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 						damagesource = MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), this.getDamageType()).setProjectile();
 					}
 
-					if(raytraceresult.entityHit.attackEntityFrom(damagesource,
+					if(raytraceresult.entityHit.hurt(damagesource,
 							(float)(this.getDamage() * this.damageMultiplier))){
 						if(raytraceresult.entityHit instanceof LivingEntity){
 							LivingEntity entityHit = (LivingEntity)raytraceresult.entityHit;

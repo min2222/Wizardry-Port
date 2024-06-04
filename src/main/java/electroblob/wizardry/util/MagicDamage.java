@@ -6,7 +6,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.EntityDragon;
 import net.minecraft.world.entity.boss.EntityWither;
-import net.minecraft.util.EntityDamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -126,7 +126,7 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 	/**
 	 * Returns true if the given entity is immune to the given damage type according to the entity immunity mappings,
 	 * false otherwise. When you want to check for resistances, check this method rather than just checking the result
-	 * of attackEntityFrom, since that could return false for all sorts of reasons besides immunities. However, if you
+	 * of hurt, since that could return false for all sorts of reasons besides immunities. However, if you
 	 * don't need to know whether the damage succeeded or not, there's no point in checking this method. A common use of
 	 * this method is to check for immunity and if so display the "[mob] resisted [spell]" chat message. See
 	 * {@link electroblob.wizardry.spell.Arc Arc} for a good example of this, and also of when not to use it.

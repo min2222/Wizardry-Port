@@ -32,7 +32,7 @@ public class CurseOfEnfeeblement extends SpellRay {
 					Integer.MAX_VALUE, getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			// Reduce the target's health to its new max health if necessary
 			if(((LivingEntity)target).getHealth() > ((LivingEntity)target).getMaxHealth()){
-				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, MagicDamage.DamageType.WITHER),
+				target.hurt(MagicDamage.causeDirectMagicDamage(caster, MagicDamage.DamageType.WITHER),
 						((LivingEntity)target).getHealth() - ((LivingEntity)target).getMaxHealth());
 			}
 		}

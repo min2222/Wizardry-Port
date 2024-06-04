@@ -33,7 +33,7 @@ public class EntityThunderbolt extends EntityMagicProjectile {
 
 			float damage = Spells.thunderbolt.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-			entityHit.attackEntityFrom(
+			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.SHOCK).setProjectile(),
 					damage);
 

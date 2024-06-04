@@ -102,7 +102,7 @@ public class ChainLightning extends SpellRay {
 					new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()),
 					true);
 		}else{
-			target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
+			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
 		}
 
 		if(world.isRemote){

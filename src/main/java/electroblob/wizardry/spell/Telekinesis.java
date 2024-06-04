@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
@@ -29,7 +29,7 @@ public class Telekinesis extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(target instanceof EntityItem){
+		if(target instanceof ItemEntity){
 
 			target.motionX = (origin.x - target.posX) / 6;
 			target.motionY = (origin.y - target.posY) / 6;
@@ -45,7 +45,7 @@ public class Telekinesis extends SpellRay {
 			if (!player.getHeldItemMainhand().isEmpty()) {
 
 				if (!world.isRemote) {
-					EntityItem item = player.entityDropItem(player.getHeldItemMainhand(), 0);
+					ItemEntity item = player.entityDropItem(player.getHeldItemMainhand(), 0);
 					// Makes the item move towards the caster
 					item.motionX = (origin.x - player.posX) / 20;
 					item.motionZ = (origin.z - player.posZ) / 20;

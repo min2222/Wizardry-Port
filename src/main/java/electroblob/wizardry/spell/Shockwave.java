@@ -59,7 +59,7 @@ public class Shockwave extends SpellAreaEffect {
 		float proximity = (float)(1 - (Math.max(origin.distanceTo(target.getPositionVector()) - EPICENTRE_RADIUS, 0))/(radius - EPICENTRE_RADIUS));
 
 		// Damage increases closer to player up to a maximum of 4 hearts (at 1 block distance).
-		target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
+		target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
 				getProperty(DAMAGE).floatValue() * proximity * modifiers.get(SpellModifiers.POTENCY));
 
 		if(!world.isRemote){

@@ -68,7 +68,7 @@ public class EntityForceOrb extends EntityBomb {
 
 					float damage = Spells.force_orb.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
-					target.attackEntityFrom(
+					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.BLAST), damage);
 
 					target.motionX = dx;

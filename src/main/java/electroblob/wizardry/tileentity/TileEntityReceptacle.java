@@ -34,14 +34,14 @@ public class TileEntityReceptacle extends BlockEntity {
 	@Override
 	public CompoundTag writeToNBT(CompoundTag compound){
 		super.writeToNBT(compound);
-		compound.setInteger("Element", element == null ? -1 : element.ordinal());
+		compound.putInt("Element", element == null ? -1 : element.ordinal());
 		return compound;
 	}
 
 	@Override
 	public void readFromNBT(CompoundTag compound){
 		super.readFromNBT(compound);
-		int i = compound.getInteger("Element");
+		int i = compound.getInt("Element");
 		element = i == -1 ? null : Element.values()[i];
 	}
 

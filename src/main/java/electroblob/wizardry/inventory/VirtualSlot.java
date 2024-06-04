@@ -65,12 +65,12 @@ public class VirtualSlot extends Slot {
 	@Override
 	public void onSlotChanged(){
 		super.onSlotChanged();
-		if(this.getHasStack()) this.prevStack = this.getStack().copy(); // Ignore stack removal (insertion of empty stacks)
+		if(this.getHasStack()) this.prevStack = this.getItem().copy(); // Ignore stack removal (insertion of empty stacks)
 	}
 
 	@Override
 	public ItemStack getStack(){
-		return isValid() ? super.getStack() : ItemStack.EMPTY;
+		return isValid() ? super.getItem() : ItemStack.EMPTY;
 	}
 
 	/** Returns the stack that was last in this slot. */

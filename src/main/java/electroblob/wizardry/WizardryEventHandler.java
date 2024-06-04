@@ -225,7 +225,7 @@ public final class WizardryEventHandler {
 	}
 
 	/* There is a subtle but important difference between LivingAttackEvent and LivingHurtEvent - LivingAttackEvent
-	 * fires immediately when attackEntityFrom is called, whereas LivingHurtEvent only fires if the attack actually
+	 * fires immediately when hurt is called, whereas LivingHurtEvent only fires if the attack actually
 	 * succeeded, i.e. if the entity in question takes damage (though the event is fired before that so you can cancel
 	 * the damage). Things are processed in the following order:
 	 *
@@ -335,7 +335,7 @@ public final class WizardryEventHandler {
 				&& event.getSource().getImmediateSource().getEntityData() != null){
 
 			int level = event.getSource().getImmediateSource().getEntityData()
-					.getInteger(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
+					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
 				event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));

@@ -136,7 +136,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 					// Ring of interdiction
 					if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
 							WizardryItems.ring_interdiction) && EntityUtils.isLiving(target)){
-						target.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
+						target.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 								MagicDamage.DamageType.MAGIC), 1);
 					}
 

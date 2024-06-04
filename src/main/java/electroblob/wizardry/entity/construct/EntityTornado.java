@@ -104,10 +104,10 @@ public class EntityTornado extends EntityScaledConstruct {
 					float damage = Spells.tornado.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 					if(this.getCaster() != null){
-						target.attackEntityFrom( MagicDamage.causeIndirectMagicDamage(this, getCaster(),
+						target.hurt( MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 								DamageType.MAGIC), damage);
 					}else{
-						target.attackEntityFrom(DamageSource.MAGIC, damage);
+						target.hurt(DamageSource.MAGIC, damage);
 					}
 
 					target.motionX = dx;

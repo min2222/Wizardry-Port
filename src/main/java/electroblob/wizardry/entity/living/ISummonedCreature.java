@@ -9,13 +9,13 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.monster.IMob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -255,7 +255,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	/**
 	 * Called from the event handler after the damage change is applied. Does nothing by default, but can be overridden
 	 * to do something when a successful attack is made. This was added because the event-based damage source system can
-	 * cause parts of attackEntityAsMob not to fire, since attackEntityFrom is intercepted and canceled.
+	 * cause parts of attackEntityAsMob not to fire, since hurt is intercepted and canceled.
 	 * <p></p>
 	 * Usage examples: {@link EntitySilverfishMinion} uses this to summon more silverfish if the target is killed,
 	 * {@link EntitySkeletonMinion} and {@link EntitySpiderMinion} use this to add potion effects to the target.
@@ -273,7 +273,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 		if(this.getCaster() != null){
 			tagcompound.setUniqueId("casterUUID", this.getCaster().getUniqueID());
 		}
-		tagcompound.setInteger("lifetime", getLifetime());
+		tagcompound.putInt("lifetime", getLifetime());
 	}
 
 	/**
@@ -282,7 +282,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 */
 	default void readNBTDelegate(CompoundTag tagcompound){
 		this.setOwnerId(tagcompound.getUniqueId("casterUUID"));
-		this.setLifetime(tagcompound.getInteger("lifetime"));
+		this.setLifetime(tagcompound.getInt("lifetime"));
 	}
 
 	/**

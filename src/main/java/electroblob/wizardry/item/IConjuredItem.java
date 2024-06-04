@@ -4,7 +4,7 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConjuration;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityItem;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,20 +37,20 @@ public interface IConjuredItem {
 
 	/** Helper method for setting the duration multiplier (via NBT) for conjured items. */
 	static void setDurationMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTagCompound(new CompoundTag());
-		stack.getTagCompound().setFloat(DURATION_MULTIPLIER_KEY, multiplier);
+		if(!stack.hasTagCompound()) stack.setTag(new CompoundTag());
+		stack.getTag().putFloat(DURATION_MULTIPLIER_KEY, multiplier);
 	}
 
 	/** Helper method for setting the damage multiplier (via NBT) for conjured items. */
 	static void setDamageMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTagCompound(new CompoundTag());
-		stack.getTagCompound().setFloat(DAMAGE_MULTIPLIER, multiplier);
+		if(!stack.hasTagCompound()) stack.setTag(new CompoundTag());
+		stack.getTag().putFloat(DAMAGE_MULTIPLIER, multiplier);
 	}
 
 	/** Helper method for getting the damage multiplier (via NBT) for conjured items. */
 	static float getDamageMultiplier(ItemStack stack){
 		if(!stack.hasTagCompound()) return 1;
-		return stack.getTagCompound().getFloat(DAMAGE_MULTIPLIER);
+		return stack.getTag().getFloat(DAMAGE_MULTIPLIER);
 	}
 
 	/**
@@ -63,8 +63,8 @@ public interface IConjuredItem {
 
 		float baseDuration = spell.getProperty(SpellConjuration.ITEM_LIFETIME).floatValue();
 
-		if(stack.hasTagCompound() && stack.getTagCompound().hasKey(DURATION_MULTIPLIER_KEY)){
-			return (int)(baseDuration * stack.getTagCompound().getFloat(DURATION_MULTIPLIER_KEY));
+		if(stack.hasTagCompound() && stack.getTag().contains(DURATION_MULTIPLIER_KEY)){
+			return (int)(baseDuration * stack.getTag().getFloat(DURATION_MULTIPLIER_KEY));
 		}
 
 		return (int)baseDuration;
@@ -112,7 +112,7 @@ public interface IConjuredItem {
 	@SubscribeEvent
 	static void onLivingDropsEvent(LivingDropsEvent event){
 		// Destroys conjured items if their caster dies.
-		for(EntityItem item : event.getDrops()){
+		for(ItemEntity item : event.getDrops()){
 			// Apparently some mods don't behave and shove null items in the list, quite why I have no idea
 			if(item != null && item.getItem() != null && item.getItem().getItem() instanceof IConjuredItem){
 				item.setDead();

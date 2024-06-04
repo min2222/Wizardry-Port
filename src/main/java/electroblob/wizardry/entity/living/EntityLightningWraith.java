@@ -65,13 +65,13 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount){
+	public boolean hurt(DamageSource source, float amount){
 		// Removes the damage from being wet that applies to blazes by checking if the mob is actually drowning.
 		if(source == DamageSource.DROWN && (this.getAir() > 0 || this.isPotionActive(MobEffects.WATER_BREATHING))){
 			// In this case, the lightning wraith is not actually drowning, so cancel the damage.
 			return false;
 		}else{
-			return super.attackEntityFrom(source, amount);
+			return super.hurt(source, amount);
 		}
 	}
 

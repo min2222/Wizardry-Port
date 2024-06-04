@@ -212,7 +212,7 @@ public final class EntityUtils {
 
 	/**
 	 * Applies the standard (non-enchanted) amount of knockback to the given target, using the same calculation and
-	 * strength value (0.4) as {@link LivingEntity#attackEntityFrom(DamageSource, float)}. Use in conjunction with
+	 * strength value (0.4) as {@link LivingEntity#hurt(DamageSource, float)}. Use in conjunction with
 	 * {@link EntityUtils#attackEntityWithoutKnockback(Entity, DamageSource, float)} to change the source of
 	 * knockback for an attack.
 	 *
@@ -225,7 +225,7 @@ public final class EntityUtils {
 
 	/**
 	 * Applies the standard knockback calculation to the given target, using the same calculation as
-	 * {@link LivingEntity#attackEntityFrom(DamageSource, float)}.
+	 * {@link LivingEntity#hurt(DamageSource, float)}.
 	 *
 	 * @param attacker The entity that caused the knockback; the target will be pushed away from this entity
 	 * @param target The entity to be knocked back
@@ -324,7 +324,7 @@ public final class EntityUtils {
 	/**
 	 * Attacks the given entity with the given damage source and amount, but preserving the entity's original velocity
 	 * instead of applying knockback, as would happen with
-	 * {@link LivingEntity#attackEntityFrom(DamageSource, float)} <i>(More accurately, calls that method as normal
+	 * {@link LivingEntity#hurt(DamageSource, float)} <i>(More accurately, calls that method as normal
 	 * and then resets the entity's velocity to what it was before).</i> Handy for when you need to damage an entity
 	 * repeatedly in a short space of time.
 	 *
@@ -337,7 +337,7 @@ public final class EntityUtils {
 		double vx = entity.motionX;
 		double vy = entity.motionY;
 		double vz = entity.motionZ;
-		boolean succeeded = entity.attackEntityFrom(source, amount);
+		boolean succeeded = entity.hurt(source, amount);
 		entity.motionX = vx;
 		entity.motionY = vy;
 		entity.motionZ = vz;

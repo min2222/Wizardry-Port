@@ -64,12 +64,12 @@ public class EntityShield extends Entity {
 		this.setRotation(par7, par8);
 	}
 
-	public boolean attackEntityFrom(DamageSource source, float damage){
+	public boolean hurt(DamageSource source, float damage){
 		if(source != null && source.getImmediateSource() instanceof IProjectile){
 			world.playSound(null, source.getImmediateSource().posX, source.getImmediateSource().posY,
 					source.getImmediateSource().posZ, WizardrySounds.ENTITY_SHIELD_DEFLECT, WizardrySounds.SPELLS, 0.3f, 1.3f);
 		}
-		super.attackEntityFrom(source, damage);
+		super.hurt(source, damage);
 		return false;
 	}
 	
