@@ -118,7 +118,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
 				wizard.setTowerBlocks(blocksPlaced);
-				world.spawnEntity(wizard);
+				world.addFreshEntity(wizard);
 
 			}else if(entry.getValue().equals(EVIL_WIZARD_DATA_BLOCK_TAG)){
 
@@ -126,7 +126,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.hasStructure = true; // Stops it despawning
 				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
-				world.spawnEntity(wizard);
+				world.addFreshEntity(wizard);
 
 			}else{
 				// This probably shouldn't happen...

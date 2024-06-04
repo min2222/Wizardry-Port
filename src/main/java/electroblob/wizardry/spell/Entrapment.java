@@ -43,7 +43,7 @@ public class Entrapment extends SpellRay {
 				bubble.isDarkOrb = true;
 				bubble.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				
-				world.spawnEntity(bubble);
+				world.addFreshEntity(bubble);
 				target.startRiding(bubble);
 			}
 		}

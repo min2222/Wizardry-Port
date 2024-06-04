@@ -54,7 +54,7 @@ public class Decoy extends Spell {
 			// Ignores the show names setting, since this would allow a player to easily detect a decoy
 			// Instead, a decoy player has its caster's name tag shown permanently and non-player decoys have nothing
 			if(caster instanceof Player) decoy.setCustomNameTag(caster.getName());
-			world.spawnEntity(decoy);
+			world.addFreshEntity(decoy);
 
 			// Tricks any mobs that are targeting the caster into targeting the decoy instead.
 			for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, caster.getX(), caster.getY(),

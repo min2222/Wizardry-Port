@@ -30,7 +30,7 @@ public class SummonSnowGolem extends Spell {
 			
 			EntitySnowman snowman = new EntitySnowman(world);
 			snowman.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-			world.spawnEntity(snowman);
+			world.addFreshEntity(snowman);
 			
 		}else{
 			

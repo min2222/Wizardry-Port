@@ -161,7 +161,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 			if(tileentity != null && tileentity.position == 1 && tileentity.creature != null){
 				tileentity.creature.getEntityData().removeTag(BlockStatue.PETRIFIED_NBT_KEY);
 				tileentity.creature.isDead = false;
-				world.spawnEntity(tileentity.creature);
+				world.addFreshEntity(tileentity.creature);
 			}
 		}
 

@@ -65,7 +65,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 			}
 
 		}else if(id == WIZARD_HANDBOOK && (player.getMainHandItem().getItem() instanceof ItemWizardHandbook
-				|| player.getHeldItemOffhand().getItem() instanceof ItemWizardHandbook)){
+				|| player.getItemInHandOffhand().getItem() instanceof ItemWizardHandbook)){
 
 			return new electroblob.wizardry.client.gui.handbook.GuiWizardHandbook();
 
@@ -73,8 +73,8 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 			if(player.getMainHandItem().getItem() instanceof ItemSpellBook){
 				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getMainHandItem());
-			}else if(player.getHeldItemOffhand().getItem() instanceof ItemSpellBook){
-				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getHeldItemOffhand());
+			}else if(player.getItemInHandOffhand().getItem() instanceof ItemSpellBook){
+				return new electroblob.wizardry.client.gui.GuiSpellBook(player.getItemInHandOffhand());
 			}
 
 		}else if(id == PORTABLE_CRAFTING){

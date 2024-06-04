@@ -173,7 +173,7 @@ public interface ISpellCastingItem {
 	 *                    spells, this will be zero.
 	 * @param modifiers The modifiers with which the spell is being cast.
 	 * @return True if the spell succeeded, false if not. This is only really for the purpose of returning a result from
-	 * {@link Item#onItemRightClick(Level, Player, InteractionHand)} and similar methods; mana costs,
+	 * {@link Item#use(Level, Player, InteractionHand)} and similar methods; mana costs,
 	 * cooldowns and whatever else you might want to do post-spellcasting should be done within this method so that
 	 * external sources don't allow spells to be cast for free, for example.
 	 */

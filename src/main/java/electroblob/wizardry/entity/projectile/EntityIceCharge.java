@@ -129,7 +129,7 @@ public class EntityIceCharge extends EntityBomb {
 				iceshard.motionZ = dz * 1.5;
 				iceshard.setCaster(this.getThrower());
 				iceshard.damageMultiplier = this.damageMultiplier;
-				world.spawnEntity(iceshard);
+				world.addFreshEntity(iceshard);
 			}
 
 			this.discard();

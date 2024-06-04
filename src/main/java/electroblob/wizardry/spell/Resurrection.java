@@ -72,7 +72,7 @@ public class Resurrection extends Spell {
 				// in some entity lists - and weirdness will ensue!
 				world.removeEntity(nearestDeadAlly); // Clean up the old entity references
 				resurrect(nearestDeadAlly); // Reset isDead, must be before spawning the player again
-				world.spawnEntity(nearestDeadAlly); // Re-add the player to all the relevant entity lists
+				world.addFreshEntity(nearestDeadAlly); // Re-add the player to all the relevant entity lists
 
 				// Notify clients to reset the appropriate fields, spawn particles and play sounds
 				IMessage msg = new PacketResurrection.Message(nearestDeadAlly.getEntityId());
@@ -139,7 +139,7 @@ public class Resurrection extends Spell {
 					ItemStack wand = firstPersonPlayer.getMainHandItem();
 
 					if(!(wand.getItem() instanceof ISpellCastingItem)){
-						wand = firstPersonPlayer.getHeldItemOffhand();
+						wand = firstPersonPlayer.getItemInHandOffhand();
 						if(!(wand.getItem() instanceof ISpellCastingItem)) return;
 					}
 

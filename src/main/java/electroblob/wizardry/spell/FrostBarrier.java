@@ -102,7 +102,7 @@ public class FrostBarrier extends Spell {
 
 			if(barriers.isEmpty()) return false;
 
-			barriers.forEach(world::spawnEntity); // Finally spawn them all
+			barriers.forEach(world::addFreshEntity); // Finally spawn them all
 		}
 
 		return true;

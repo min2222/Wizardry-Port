@@ -76,9 +76,9 @@ public class ItemManaFlask extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack flask = player.getHeldItem(hand);
+		ItemStack flask = player.getItemInHand(hand);
 
 		List<ItemStack> stacks = InventoryUtils.getPrioritisedHotbarAndOffhand(player);
 		stacks.addAll(player.inventory.armorInventory); // player#getArmorInventoryList() only returns an Iterable
@@ -137,7 +137,7 @@ public class ItemManaFlask extends Item {
 			EntityUtils.playSoundAtPlayer(player, WizardrySounds.ITEM_MANA_FLASK_RECHARGE, 0.7f, 1.1f);
 
 			if(!player.isCreative()) stack.shrink(1);
-			player.getCooldownTracker().setCooldown(this, 20);
+			player.getCooldowns().addCooldown(this, 20);
 		}
 	}
 

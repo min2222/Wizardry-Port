@@ -99,7 +99,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 			addArrowExtras(projectile, caster, modifiers);
 			// Spawns the projectile in the world
-			world.spawnEntity(projectile);
+			world.addFreshEntity(projectile);
 		}
 		
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -123,7 +123,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 				projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				addArrowExtras(projectile, caster, modifiers);
 				// Spawns the projectile in the world
-				world.spawnEntity(projectile);
+				world.addFreshEntity(projectile);
 			}
 
 			caster.swingArm(hand);
@@ -150,7 +150,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 			addArrowExtras(projectile, null, modifiers);
 			// Spawns the projectile in the world
-			world.spawnEntity(projectile);
+			world.addFreshEntity(projectile);
 		}
 
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it

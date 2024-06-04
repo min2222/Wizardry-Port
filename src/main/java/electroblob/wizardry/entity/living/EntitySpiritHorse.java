@@ -95,7 +95,7 @@ public class EntitySpiritHorse extends EntityHorse {
 	@Override
 	public boolean processInteract(Player player, InteractionHand hand){
 
-		ItemStack itemstack = player.getHeldItem(hand);
+		ItemStack itemstack = player.getItemInHand(hand);
 
 		// Allows the owner (but not other players) to dispel the spirit horse using a wand (shift-clicking, because
 		// clicking mounts the horse in this case).

@@ -37,7 +37,7 @@ public class EntityArrowRain extends EntityScaledConstruct {
 			arrow.shootingEntity = this.getCaster();
 			arrow.setDamage(7.0d * damageMultiplier);
 
-			this.world.spawnEntity(arrow);
+			this.world.addFreshEntity(arrow);
 		}
 	}
 

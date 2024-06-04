@@ -146,7 +146,7 @@ public class GreaterTelekinesis extends SpellRay {
 				block.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				block.setCaster(caster);
 
-				world.spawnEntity(block);
+				world.addFreshEntity(block);
 				world.setBlockToAir(pos);
 			}
 				

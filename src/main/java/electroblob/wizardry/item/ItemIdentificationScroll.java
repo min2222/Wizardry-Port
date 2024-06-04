@@ -48,9 +48,9 @@ public class ItemIdentificationScroll extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(WizardData.get(player) != null){
 

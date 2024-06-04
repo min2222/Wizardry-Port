@@ -128,9 +128,9 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY);
 		if(shotsLeft == 0) return InteractionResultHolder.newResult(InteractionResult.PASS, stack);
@@ -211,7 +211,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 				if(!level.isClientSide){
 					EntityFlamecatcherArrow arrow = new EntityFlamecatcherArrow(world);
 					arrow.aim(player, EntityFlamecatcherArrow.SPEED * velocity);
-					world.spawnEntity(arrow);
+					world.addFreshEntity(arrow);
 				}
 
 				world.playSound(null, player.getX(), player.getY(), player.getZ(),

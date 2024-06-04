@@ -64,7 +64,7 @@ public class BlockCrystalFlowerPot extends Block {
 
 		ItemStack stack = new ItemStack(WizardryBlocks.crystal_flower);
 
-		if(player.getHeldItem(hand).isEmpty()){
+		if(player.getItemInHand(hand).isEmpty()){
 			player.setHeldItem(hand, stack);
 		}else if(!player.addItemStackToInventory(stack)){
 			player.dropItem(stack, false);

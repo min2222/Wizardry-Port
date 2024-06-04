@@ -42,7 +42,7 @@ public class DragonFireball extends Spell {
 			fireball.accelerationY = look.y * acceleration;
 			fireball.accelerationZ = look.z * acceleration;
 
-			world.spawnEntity(fireball);
+			world.addFreshEntity(fireball);
 		}
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -73,7 +73,7 @@ public class DragonFireball extends Spell {
 
 				fireball.setPosition(caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ());
 
-				world.spawnEntity(fireball);
+				world.addFreshEntity(fireball);
 			}
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);

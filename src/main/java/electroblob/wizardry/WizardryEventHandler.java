@@ -151,7 +151,7 @@ public final class WizardryEventHandler {
 
 			// Advancement triggers
 			if(player instanceof ServerPlayer){
-				WizardryAdvancementTriggers.cast_spell.trigger((ServerPlayer)player, event.getSpell(), player.getHeldItem(player.getActiveHand()));
+				WizardryAdvancementTriggers.cast_spell.trigger((ServerPlayer)player, event.getSpell(), player.getItemInHand(player.getActiveHand()));
 			}
 
 			// Spell discovery (only players can discover spells, obviously)

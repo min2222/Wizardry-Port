@@ -425,7 +425,7 @@ public class ItemArtefact extends Item {
 
 				if(artefact == WizardryItems.ring_battlemage){
 
-					if(player.getHeldItemOffhand().getItem() instanceof ISpellCastingItem
+					if(player.getItemInHandOffhand().getItem() instanceof ISpellCastingItem
 						&& ImbueWeapon.isSword(player.getMainHandItem())){
 						modifiers.set(SpellModifiers.POTENCY, 1.1f * potency, false);
 					}
@@ -501,7 +501,7 @@ public class ItemArtefact extends Item {
 						ItemStack wand = player.getMainHandItem();
 
 						if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)){
-							wand = player.getHeldItemOffhand();
+							wand = player.getItemInHandOffhand();
 							if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)) return;
 						}
 
@@ -767,7 +767,7 @@ public class ItemArtefact extends Item {
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;
 							iceshard.setCaster(player);
-							event.getEntity().world.spawnEntity(iceshard);
+							event.getEntity().world.addFreshEntity(iceshard);
 						}
 					}
 
@@ -881,7 +881,7 @@ public class ItemArtefact extends Item {
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;
 							iceshard.setCaster(player);
-							event.getEntity().world.spawnEntity(iceshard);
+							event.getEntity().world.addFreshEntity(iceshard);
 						}
 					}
 				}

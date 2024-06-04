@@ -60,8 +60,8 @@ public class ItemSpellBook extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
-		ItemStack stack = player.getHeldItem(hand);
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
+		ItemStack stack = player.getItemInHand(hand);
 		player.openGui(Wizardry.instance, WizardryGuiHandler.SPELL_BOOK, world, 0, 0, 0);
 		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}

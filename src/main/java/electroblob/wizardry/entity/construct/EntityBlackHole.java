@@ -117,7 +117,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 									pos.getY() + 0.5, pos.getZ() + 0.5, world.getBlockState(pos));
 //							fallingBlock.noClip = true;
 							fallingBlock.fallTime = 1; // Prevent it from trying to delete the block itself
-							world.spawnEntity(fallingBlock);
+							world.addFreshEntity(fallingBlock);
 							world.setBlockToAir(pos);
 
 							if(++blocksUnhooked >= BLOCK_UNHOOK_LIMIT) break; // Lag prevention

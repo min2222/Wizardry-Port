@@ -38,7 +38,7 @@ public class EntityHailstorm extends EntityScaledConstruct {
 			iceshard.setCaster(this.getCaster());
 			iceshard.damageMultiplier = this.damageMultiplier;
 
-			this.world.spawnEntity(iceshard);
+			this.world.addFreshEntity(iceshard);
 		}
 	}
 

@@ -108,7 +108,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
 			addProjectileExtras(projectile, caster, modifiers);
 			// Spawns the projectile in the world
-			world.spawnEntity(projectile);
+			world.addFreshEntity(projectile);
 		}
 
 		caster.swingArm(hand);
@@ -135,7 +135,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 				if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
 				addProjectileExtras(projectile, caster, modifiers);
 				// Spawns the projectile in the world
-				world.spawnEntity(projectile);
+				world.addFreshEntity(projectile);
 			}
 
 			caster.swingArm(hand);
@@ -163,7 +163,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
 			addProjectileExtras(projectile, null, modifiers);
 			// Spawns the projectile in the world
-			world.spawnEntity(projectile);
+			world.addFreshEntity(projectile);
 		}
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
 		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);

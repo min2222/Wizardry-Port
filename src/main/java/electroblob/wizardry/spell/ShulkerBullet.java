@@ -76,7 +76,7 @@ public class ShulkerBullet extends Spell {
 
 			// Y axis because the player is always upright
 			if(caster != null){
-				world.spawnEntity(new EntityShulkerBullet(world, caster, target, direction.getAxis()));
+				world.addFreshEntity(new EntityShulkerBullet(world, caster, target, direction.getAxis()));
 			}else{
 				// Can't use the normal constructor because it doesn't accept null for the owner
 				EntityShulkerBullet bullet = new EntityShulkerBullet(world);
@@ -96,7 +96,7 @@ public class ShulkerBullet extends Spell {
 
 				bullet.getEntityData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 
-				world.spawnEntity(bullet);
+				world.addFreshEntity(bullet);
 			}
 		}
 

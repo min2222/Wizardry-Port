@@ -117,7 +117,7 @@ public class Fangs extends Spell {
 		if(y != null){
 			EntityEvokerFangs fangs = new EntityEvokerFangs(world, vec.x, y, vec.z, yaw, delay, caster); // null is fine here
 			fangs.getEntityData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
-			world.spawnEntity(fangs);
+			world.addFreshEntity(fangs);
 			return true;
 		}
 

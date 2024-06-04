@@ -126,7 +126,7 @@ public interface Imbuement {
 				ItemStack bow = archer.getMainHandItem();
 
 				if(!ImbueWeapon.isBow(bow)){
-					bow = archer.getHeldItemOffhand();
+					bow = archer.getItemInHandOffhand();
 					if(!ImbueWeapon.isBow(bow)) return;
 				}
 

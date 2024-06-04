@@ -124,9 +124,9 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		Spell spell = Spell.byMetadata(stack.getItemDamage());
 		// By default, scrolls have no modifiers - but with the event system, they could be added.
@@ -210,7 +210,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 				if(!spell.isContinuous && !caster.isCreative()) stack.shrink(1);
 
 				// Now uses the vanilla cooldown mechanic to prevent spamming of spells
-				if(!spell.isContinuous && !caster.isCreative()) caster.getCooldownTracker().setCooldown(this, spell.getCooldown());
+				if(!spell.isContinuous && !caster.isCreative()) caster.getCooldowns().addCooldown(this, spell.getCooldown());
 			}
 
 			return true;
@@ -246,7 +246,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			spell.finishCasting(user.world, user, Double.NaN, Double.NaN, Double.NaN, null, castingTick, modifiers);
 
 			if(user instanceof Player && !((Player)user).isCreative()){
-				((Player)user).getCooldownTracker().setCooldown(this, spell.getCooldown());
+				((Player)user).getCooldowns().addCooldown(this, spell.getCooldown());
 			}
 		}
 	}

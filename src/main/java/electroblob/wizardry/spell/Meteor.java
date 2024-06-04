@@ -42,7 +42,7 @@ public class Meteor extends SpellRay {
 				meteor.motionY = direction.y;
 				meteor.motionZ = direction.z;
 
-				world.spawnEntity(meteor);
+				world.addFreshEntity(meteor);
 			}
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -68,7 +68,7 @@ public class Meteor extends SpellRay {
 			if(!world.isClientSide){
 				EntityMeteor meteor = new EntityMeteor(world, pos.getX(), pos.getY() + 50, pos.getZ(),
 						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
-				world.spawnEntity(meteor);
+				world.addFreshEntity(meteor);
 			}
 
 			return true;

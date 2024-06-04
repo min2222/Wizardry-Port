@@ -117,7 +117,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				this.addMinionExtras(minion, pos, null, modifiers, i);
 
-				world.spawnEntity(minion);
+				world.addFreshEntity(minion);
 			}
 		}
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
@@ -182,7 +182,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 
 				this.addMinionExtras(minion, pos, caster, modifiers, i);
 				
-				world.spawnEntity(minion);
+				world.addFreshEntity(minion);
 			}
 		}
 		

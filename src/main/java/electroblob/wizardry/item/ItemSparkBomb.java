@@ -19,9 +19,9 @@ public class ItemSparkBomb extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(!player.isCreative()){
 			stack.shrink(1);
@@ -29,12 +29,12 @@ public class ItemSparkBomb extends Item {
 
 		player.playSound(WizardrySounds.ENTITY_SPARK_BOMB_THROW, 0.5F, 0.4F / (itemrandom.nextFloat() * 0.4F + 0.8F));
 
-		player.getCooldownTracker().setCooldown(this, 20);
+		player.getCooldowns().addCooldown(this, 20);
 
 		if(!level.isClientSide){
 			EntitySparkBomb sparkBomb = new EntitySparkBomb(world);
 			sparkBomb.aim(player, 1);
-			world.spawnEntity(sparkBomb);
+			world.addFreshEntity(sparkBomb);
 		}
 
 		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);

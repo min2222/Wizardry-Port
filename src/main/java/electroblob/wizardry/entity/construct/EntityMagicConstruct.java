@@ -74,7 +74,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	public InteractionResult applyPlayerInteraction(Player player, Vec3 vec, InteractionHand hand){
 
 		// Permanent constructs can now be dispelled by sneak-right-clicking
-		if(lifetime == -1 && getCaster() == player && player.isShiftKeyDown() && player.getHeldItem(hand).getItem() instanceof ISpellCastingItem){
+		if(lifetime == -1 && getCaster() == player && player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof ISpellCastingItem){
 			this.despawn();
 			return InteractionResult.SUCCESS;
 		}

@@ -54,7 +54,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				zombie.hurtResistantTime = 30; // Prevent fall damage
 				zombie.hideParticles(); // Hide spawn particles or they pop out the top of the hidden box
 
-				world.spawnEntity(zombie);
+				world.addFreshEntity(zombie);
 			}
 
 			spawnTimer += Spells.zombie_apocalypse.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + random.nextInt(20);

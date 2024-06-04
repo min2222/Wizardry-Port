@@ -98,7 +98,7 @@ public class EntitySpiritWolf extends EntityWolf {
 	@Override
 	public boolean processInteract(Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(this.isTamed()){
 

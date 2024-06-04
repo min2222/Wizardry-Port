@@ -54,7 +54,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 					EntityFallingBlock fallingblock = new EntityFallingBlock(world, x + 0.5, y + 0.5, z + 0.5,
 							world.getBlockState(new BlockPos(x, y, z)));
 					fallingblock.motionY = 0.3;
-					world.spawnEntity(fallingblock);
+					world.addFreshEntity(fallingblock);
 				}
 			}
 

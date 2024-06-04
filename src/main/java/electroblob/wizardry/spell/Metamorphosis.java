@@ -93,7 +93,7 @@ public class Metamorphosis extends SpellRay {
 
 				target.discard();
 				newEntity.setPosition(xPos, yPos, zPos);
-				world.spawnEntity(newEntity);
+				world.addFreshEntity(newEntity);
 				
 			}else{
 				for(int i=0; i<20; i++){

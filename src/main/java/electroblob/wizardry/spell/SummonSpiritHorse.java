@@ -55,7 +55,7 @@ public class SummonSpiritHorse extends Spell {
 			horse.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 			horse.setTamedBy(caster);
 			horse.setHorseSaddled(true);
-			world.spawnEntity(horse);
+			world.addFreshEntity(horse);
 
 			horse.getEntityAttribute(Attributes.MOVEMENT_SPEED).applyModifier(
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));

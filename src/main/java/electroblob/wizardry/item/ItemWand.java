@@ -58,7 +58,7 @@ import java.util.Random;
  * <p></p>
  * This class handles spell casting as follows:
  * <p></p>
- * - {@code onItemRightClick} is where non-continuous spells are cast, and it sets the item in use for continuous spells<br>
+ * - {@code use} is where non-continuous spells are cast, and it sets the item in use for continuous spells<br>
  * - {@code onUsingTick} does the casting for continuous spells<br>
  * - {@code tick} deals with the cooldowns for the spells<br>
  * <br>
@@ -230,7 +230,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
-		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getHeldItemOffhand());
+		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getItemInHandOffhand());
 
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is false, the cooldowns will be decremented.
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is true and isHeld is true, the cooldowns will also be decremented.
@@ -285,7 +285,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	// https://github.com/TeamTwilight/twilightforest/blob/1.12.x/src/main/java/twilightforest/item/ItemTFScepterLifeDrain.java
 	// https://github.com/MinecraftForge/MinecraftForge/pull/4834
 	// Among the things mentioned were that it can be 'fixed' by doing the exact same hacks that I did, and that
-	// returning a result of PASS rather than SUCCESS from onItemRightClick also solves the problem (not sure why
+	// returning a result of PASS rather than SUCCESS from use also solves the problem (not sure why
 	// though, and again it's not a perfect solution)
 	// Edit: It seems that the hacky fix in previous versions actually introduced a wand duplication bug... oops
 
@@ -373,9 +373,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	 * holding the item (I call this client-inconsistency). This means if you spawn particles here they will not show up
 	 * on other players' screens. Instead, this must be done via packets. */
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, EnumHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		// Alternate right-click function; overrides spell casting.
 		if(this.selectMinionTarget(player, world)) return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
@@ -408,7 +408,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	// For continuous spells and spells with a charge-up time. The count argument actually decrements by 1 each tick.
-	// N.B. The first time this gets called is the tick AFTER onItemRightClick is called, not the same tick
+	// N.B. The first time this gets called is the tick AFTER use is called, not the same tick
 	@Override
 	public void onUsingTick(ItemStack stack, LivingEntity user, int count){
 
@@ -435,7 +435,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 					// castingTick needs to be relative to when the spell actually started
 					int castingTick = useTick - chargeup;
 					// Continuous spells (these must check if they can be cast each tick since the mana changes)
-					// Don't call canCast when castingTick == 0 because we already did it in onItemRightClick - even
+					// Don't call canCast when castingTick == 0 because we already did it in use - even
 					// with charge-up times, because we don't want to trigger events twice
 					if(castingTick == 0 || canCast(stack, spell, player, player.getActiveHand(), castingTick, modifiers)){
 						cast(stack, spell, player, player.getActiveHand(), castingTick, modifiers);
@@ -447,7 +447,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			}else{
 				// Non-continuous spells need to check they actually have a charge-up since ALL spells call setActiveHand
 				if(chargeup > 0 && useTick == chargeup){
-					// Once the spell is charged, it's exactly the same as in onItemRightClick
+					// Once the spell is charged, it's exactly the same as in use
 					cast(stack, spell, player, player.getActiveHand(), 0, modifiers);
 				}
 			}

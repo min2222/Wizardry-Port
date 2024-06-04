@@ -329,7 +329,7 @@ public class Possession extends SpellRay {
 			victim.setNoAI(false);
 			victim.getEntityData().removeTag(NBT_KEY);
 			victim.setPosition(player.getX(), player.getY(), player.getZ());
-			if(!player.world.isClientSide) player.world.spawnEntity(victim);
+			if(!player.world.isClientSide) player.world.addFreshEntity(victim);
 
 			for(MobEffectInstance effect : player.getActivePotionEffects()){
 				if(effect.getPotion() instanceof PotionSlowTime) continue; // Don't transfer slow time
@@ -617,7 +617,7 @@ public class Possession extends SpellRay {
 						if(projectile instanceof EntityMagicProjectile) ((EntityMagicProjectile)projectile).setCaster(possessor);
 						else if(projectile instanceof EntityMagicArrow) ((EntityMagicArrow)projectile).setCaster(possessor);
 
-						possessor.world.spawnEntity((Entity)projectile);
+						possessor.world.addFreshEntity((Entity)projectile);
 
 					}
 

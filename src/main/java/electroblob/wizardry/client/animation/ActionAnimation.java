@@ -42,7 +42,7 @@ public abstract class ActionAnimation extends Animation {
 			@Override
 			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				// Something (probably some sort of race condition) causes getActiveItemStack to sometimes be wrong
-				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
+				if(player.getActiveItemStack() != player.getItemInHand(player.getActiveHand())) return;
 
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 
@@ -61,7 +61,7 @@ public abstract class ActionAnimation extends Animation {
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.POINT_UP){
 			@Override
 			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
-				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
+				if(player.getActiveItemStack() != player.getItemInHand(player.getActiveHand())) return;
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);
 				arm.addRotation(-2.2f, side == EnumHandSide.RIGHT ? 0.2f : -0.2f, 0);
@@ -129,7 +129,7 @@ public abstract class ActionAnimation extends Animation {
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);
 				arm.addRotation(-1.2f, side == EnumHandSide.RIGHT ? -0.2f : 0.2f, side == EnumHandSide.RIGHT ? z : -z);
-				if(!player.getHeldItem(InventoryUtils.getHandForSide(player, side.opposite())).isEmpty()){
+				if(!player.getItemInHand(InventoryUtils.getHandForSide(player, side.opposite())).isEmpty()){
 					((ModelRendererExtended)getArmForSide(model, side.opposite())).addRotation(-0.8f, side == EnumHandSide.LEFT ? 0.3f : -0.3f, 0);
 				}
 			}
@@ -138,12 +138,12 @@ public abstract class ActionAnimation extends Animation {
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.THRUST){
 			@Override
 			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
-				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
+				if(player.getActiveItemStack() != player.getItemInHand(player.getActiveHand())) return;
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);
 				float y = side == EnumHandSide.RIGHT ? -0.6f : 0.6f;
 				arm.addRotation(-1.2f, y, 0);
-				if(player.getHeldItem(InventoryUtils.getHandForSide(player, side.opposite())).isEmpty()){
+				if(player.getItemInHand(InventoryUtils.getHandForSide(player, side.opposite())).isEmpty()){
 					ModelRendererExtended otherArm = (ModelRendererExtended)getArmForSide(model, side.opposite());
 					otherArm.setRotation(arm.rotateAngleX - 1.2f, -arm.rotateAngleY - y, otherArm.rotateAngleZ);
 				}

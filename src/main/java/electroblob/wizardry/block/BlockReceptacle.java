@@ -197,7 +197,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
 		BlockEntity tileEntity = world.getTileEntity(pos);
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 

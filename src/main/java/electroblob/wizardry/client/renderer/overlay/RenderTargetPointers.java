@@ -38,7 +38,7 @@ public class RenderTargetPointers {
 		ItemStack wand = mc.player.getMainHandItem();
 
 		if(!(wand.getItem() instanceof ISpellCastingItem)){
-			wand = mc.player.getHeldItemOffhand();
+			wand = mc.player.getItemInHandOffhand();
 		}
 
 		// Target selection pointer

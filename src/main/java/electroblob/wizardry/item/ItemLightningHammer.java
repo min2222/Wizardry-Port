@@ -118,9 +118,9 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(!level.isClientSide){
 			EntityHammer hammer = new EntityHammer(world);
@@ -138,7 +138,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 			hammer.setCaster(player);
 			hammer.damageMultiplier = getDamageMultiplier(stack);
 			hammer.spin = true;
-			world.spawnEntity(hammer);
+			world.addFreshEntity(hammer);
 		}
 
 		EntityUtils.playSoundAtPlayer(player, WizardrySounds.ENTITY_HAMMER_THROW, 1.0F, 0.8f);

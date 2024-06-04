@@ -179,7 +179,7 @@ public abstract class Forfeit {
 				ItemStack stack = player.getMainHandItem();
 
 				if(!(stack.getItem() instanceof ISpellCastingItem)){
-					stack = player.getHeldItemOffhand();
+					stack = player.getItemInHandOffhand();
 					if(!(stack.getItem() instanceof ISpellCastingItem)) stack = ItemStack.EMPTY;
 				}
 
@@ -214,7 +214,7 @@ public abstract class Forfeit {
 				Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(6));
 				fireball.setPosition(vec.x, vec.y, vec.z);
 				fireball.shoot(p.getX(), p.getY() + p.getEyeHeight(), p.getZ(), 1.5f, 1);
-				w.spawnEntity(fireball);
+				w.addFreshEntity(fireball);
 			}
 		}));
 
@@ -222,7 +222,7 @@ public abstract class Forfeit {
 			if(!w.isRemote){
 				EntityFirebomb firebomb = new EntityFirebomb(w);
 				firebomb.setPosition(p.getX(), p.getY() + 5, p.getZ());
-				w.spawnEntity(firebomb);
+				w.addFreshEntity(firebomb);
 			}
 		}));
 
@@ -235,7 +235,7 @@ public abstract class Forfeit {
 					if(pos == null) break;
 					EntityBlazeMinion blaze = new EntityBlazeMinion(w);
 					blaze.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(blaze);
+					w.addFreshEntity(blaze);
 				}
 			}
 		}));
@@ -251,7 +251,7 @@ public abstract class Forfeit {
 		}));
 
 		add(Tier.MASTER, Element.FIRE, create("meteors", (w, p) -> {
-			if(!w.isRemote) for(int i=0; i<5; i++) w.spawnEntity(new EntityMeteor(w, p.getX() + w.random.nextDouble() * 16 - 8,
+			if(!w.isRemote) for(int i=0; i<5; i++) w.addFreshEntity(new EntityMeteor(w, p.getX() + w.random.nextDouble() * 16 - 8,
 						p.getY() + 40 + w.random.nextDouble() * 30, p.getZ() + w.random.nextDouble() * 16 - 8,
 						1, EntityUtils.canDamageBlocks(p, w)));
 		}));
@@ -271,7 +271,7 @@ public abstract class Forfeit {
 					if(y == null) break;
 					iceSpike.setFacing(EnumFacing.UP);
 					iceSpike.setPosition(x, y, z);
-					w.spawnEntity(iceSpike);
+					w.addFreshEntity(iceSpike);
 				}
 			}
 		}));
@@ -280,7 +280,7 @@ public abstract class Forfeit {
 			if(!w.isRemote){
 				EntityBlizzard blizzard = new EntityBlizzard(w);
 				blizzard.setPosition(p.getX(), p.getY(), p.getZ());
-				w.spawnEntity(blizzard);
+				w.addFreshEntity(blizzard);
 			}
 		}));
 
@@ -291,7 +291,7 @@ public abstract class Forfeit {
 					if(pos == null) break;
 					EntityIceWraith iceWraith = new EntityIceWraith(w);
 					iceWraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(iceWraith);
+					w.addFreshEntity(iceWraith);
 				}
 			}
 		}));
@@ -300,7 +300,7 @@ public abstract class Forfeit {
 			if(!w.isRemote){
 				EntityHailstorm hailstorm = new EntityHailstorm(w);
 				hailstorm.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
-				w.spawnEntity(hailstorm);
+				w.addFreshEntity(hailstorm);
 			}
 		}));
 
@@ -308,7 +308,7 @@ public abstract class Forfeit {
 			if(!w.isRemote){
 				EntityIceGiant iceGiant = new EntityIceGiant(w);
 				iceGiant.setPosition(p.getX() + p.getLookVec().x * 4, p.getY(), p.getZ() + p.getLookVec().z * 4);
-				w.spawnEntity(iceGiant);
+				w.addFreshEntity(iceGiant);
 			}
 		}));
 
@@ -334,7 +334,7 @@ public abstract class Forfeit {
 					if(y == null) continue;
 					EntityLightningSigil sigil = new EntityLightningSigil(w);
 					sigil.setPosition(pos.getX() + 0.5, y, pos.getZ() + 0.5);
-					w.spawnEntity(sigil);
+					w.addFreshEntity(sigil);
 				}
 			}
 		}));
@@ -350,7 +350,7 @@ public abstract class Forfeit {
 					if(pos == null) break;
 					EntityLightningWraith lightningWraith = new EntityLightningWraith(w);
 					lightningWraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(lightningWraith);
+					w.addFreshEntity(lightningWraith);
 				}
 			}
 		}));
@@ -361,7 +361,7 @@ public abstract class Forfeit {
 					BlockPos pos = p.getPosition().offset(direction, 3);
 					EntityStormElemental stormElemental = new EntityStormElemental(w);
 					stormElemental.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(stormElemental);
+					w.addFreshEntity(stormElemental);
 				}
 			}
 		}));
@@ -375,7 +375,7 @@ public abstract class Forfeit {
 					if(pos == null) break;
 					EntityZombieMinion zombie = new EntityZombieMinion(w);
 					zombie.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(zombie);
+					w.addFreshEntity(zombie);
 				}
 			}
 		}));
@@ -390,7 +390,7 @@ public abstract class Forfeit {
 					BlockPos pos = p.getPosition().offset(direction, 3);
 					EntityShadowWraith wraith = new EntityShadowWraith(w);
 					wraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-					w.spawnEntity(wraith);
+					w.addFreshEntity(wraith);
 				}
 			}
 		}));
@@ -409,7 +409,7 @@ public abstract class Forfeit {
 			if(!w.isRemote){
 				EntitySquid squid = new EntitySquid(w);
 				squid.setPosition(p.getX(), p.getY() + 3, p.getZ());
-				w.spawnEntity(squid);
+				w.addFreshEntity(squid);
 			}
 		}));
 
@@ -439,7 +439,7 @@ public abstract class Forfeit {
 					EntityFallingBlock block = new EntityFallingBlock(w, pos.getX() + 0.5, pos.getY() + 0.5,
 							pos.getZ() + 0.5, w.getBlockState(pos));
 					block.motionY = 0.3 * (4 - (p.getPosition().getY() - pos.getY()));
-					w.spawnEntity(block);
+					w.addFreshEntity(block);
 				});
 			}
 		}));
@@ -465,7 +465,7 @@ public abstract class Forfeit {
 					if(pos == null) break;
 					EntityVexMinion vex = new EntityVexMinion(w);
 					vex.setPosition(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
-					w.spawnEntity(vex);
+					w.addFreshEntity(vex);
 				}
 			}
 		}));
@@ -474,14 +474,14 @@ public abstract class Forfeit {
 			EntityBlackHole blackHole = new EntityBlackHole(w);
 			Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(4));
 			blackHole.setPosition(vec.x, vec.y, vec.z);
-			w.spawnEntity(blackHole);
+			w.addFreshEntity(blackHole);
 		}));
 
 		add(Tier.MASTER, Element.SORCERY, create("arrow_rain", (w, p) -> {
 			if(!w.isRemote){
 				EntityArrowRain arrowRain = new EntityArrowRain(w);
 				arrowRain.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
-				w.spawnEntity(arrowRain);
+				w.addFreshEntity(arrowRain);
 			}
 		}));
 

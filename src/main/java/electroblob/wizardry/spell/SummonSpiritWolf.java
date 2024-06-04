@@ -62,7 +62,7 @@ public class SummonSpiritWolf extends Spell {
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.amplified(SpellModifiers.POTENCY, 1.5f) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 			wolf.setHealth(wolf.getMaxHealth());
 
-			world.spawnEntity(wolf);
+			world.addFreshEntity(wolf);
 
 			data.setVariable(UUID_KEY, wolf.getUniqueID());
 		}

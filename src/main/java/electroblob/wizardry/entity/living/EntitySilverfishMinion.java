@@ -110,7 +110,7 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 				silverfish.setCaster(this.getCaster());
 				silverfish.setLifetime(this.getLifetime());
 				silverfish.generation = this.generation + 1;
-				this.world.spawnEntity(silverfish);
+				this.world.addFreshEntity(silverfish);
 			}
 		}
 	}

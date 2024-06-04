@@ -366,7 +366,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/**
 	 * Casts the spell. Each subclass must override this method and within it execute the code to make the spell work.
-	 * Returns a boolean so that the main onItemRightClick or onUsingItemTick method can check if the spell was actually
+	 * Returns a boolean so that the main use or onUsingItemTick method can check if the spell was actually
 	 * cast or whether a spell specific condition caused it not to be (for example, heal won't work if the player is on
 	 * full health), preventing unfair drain of mana.
 	 * <p></p>

@@ -140,7 +140,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 		}
 
 		ItemStack currentStack = ((TileEntityImbuementAltar)tileEntity).getItem();
-		ItemStack toInsert = player.getHeldItem(hand);
+		ItemStack toInsert = player.getItemInHand(hand);
 
 		if(currentStack.isEmpty()){
 			ItemStack stack = toInsert.copy();

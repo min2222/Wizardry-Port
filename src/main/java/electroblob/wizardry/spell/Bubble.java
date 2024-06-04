@@ -47,7 +47,7 @@ public class Bubble extends SpellRay {
 				bubble.isDarkOrb = false;
 				bubble.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				
-				world.spawnEntity(bubble);
+				world.addFreshEntity(bubble);
 				target.startRiding(bubble);
 			}
 		}

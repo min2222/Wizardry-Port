@@ -138,7 +138,7 @@ public class GuiSpellDisplay {
 		boolean mainHand = true;
 
 		if(!(wand.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)wand.getItem()).showSpellHUD(player, wand))){
-			wand = player.getHeldItemOffhand();
+			wand = player.getItemInHandOffhand();
 			mainHand = false;
 			// If the player isn't holding a spellcasting item that shows the HUD, then nothing else needs to be done.
 			if(!(wand.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)wand.getItem()).showSpellHUD(player, wand)))
@@ -244,7 +244,7 @@ public class GuiSpellDisplay {
 
 		// The space available to render the spell HUD
 		float xSpace = (float)(width/2 - HALF_HOTBAR_WIDTH);
-		if(!player.getHeldItemOffhand().isEmpty()
+		if(!player.getItemInHandOffhand().isEmpty()
 				// Tests whether the offhand slot is rendered on the same side of the hotbar as the spell HUD
 				&& (player.getPrimaryHand() == EnumHandSide.LEFT) == flipX){
 			xSpace -= OFFHAND_SLOT_WIDTH;

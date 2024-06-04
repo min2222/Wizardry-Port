@@ -44,7 +44,7 @@ public class RenderTransportationUI {
 
 		ItemStack stack = player.getMainHandItem();
 		if(!(stack.getItem() instanceof ISpellCastingItem)){
-			stack = player.getHeldItemOffhand();
+			stack = player.getItemInHandOffhand();
 			if(!(stack.getItem() instanceof ISpellCastingItem)) return;
 		}
 

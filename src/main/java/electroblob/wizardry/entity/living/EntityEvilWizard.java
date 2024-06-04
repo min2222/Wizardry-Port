@@ -258,7 +258,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	@Override
 	protected boolean processInteract(Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		// Debugging
 		// player.addChatComponentMessage(Component.translatable("wizard.debug",

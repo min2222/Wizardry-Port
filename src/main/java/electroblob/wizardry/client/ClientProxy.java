@@ -443,7 +443,7 @@ public class ClientProxy extends CommonProxy {
 
 			Source source = Source.OTHER;
 
-			Item item = ((Player)caster).getHeldItem(message.hand).getItem();
+			Item item = ((Player)caster).getItemInHand(message.hand).getItem();
 
 			if(item instanceof ItemWand){
 				source = Source.WAND;
@@ -673,7 +673,7 @@ public class ClientProxy extends CommonProxy {
 		if(entity instanceof Player){
 			((Resurrection)Spells.resurrection).resurrect((Player)entity);
 			if(entity == Minecraft.getMinecraft().player){
-				Minecraft.getMinecraft().world.spawnEntity(entity);
+				Minecraft.getMinecraft().world.addFreshEntity(entity);
 				Minecraft.getMinecraft().displayGuiScreen(null);
 			}
 		}

@@ -330,7 +330,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 */
 	default boolean interactDelegate(Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		WizardData data = WizardData.get(player);
 		// Selects one of the player's minions.

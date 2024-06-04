@@ -103,7 +103,7 @@ public class BlockTransportationStone extends Block {
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		if(stack.getItem() instanceof ISpellCastingItem){
 			if(WizardData.get(player) != null){

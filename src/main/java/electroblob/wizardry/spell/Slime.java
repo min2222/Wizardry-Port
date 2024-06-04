@@ -44,7 +44,7 @@ public class Slime extends SpellRay {
 				if(!world.isClientSide){
 					EntityMagicSlime slime = new EntityMagicSlime(world, caster, (LivingEntity)target,
 							(int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
-					world.spawnEntity(slime);
+					world.addFreshEntity(slime);
 				}
 			}
 		}

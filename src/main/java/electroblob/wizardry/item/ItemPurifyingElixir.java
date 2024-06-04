@@ -89,8 +89,8 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level worldIn, Player playerIn, InteractionHand handIn){
+	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
 		playerIn.setActiveHand(handIn);
-		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getHeldItem(handIn));
+		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 	}
 }

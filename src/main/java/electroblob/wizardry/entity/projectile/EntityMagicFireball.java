@@ -242,7 +242,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 			fireball.motionY = ((EntitySmallFireball)event.getEntity()).accelerationY * ACCELERATION_CONVERSION_FACTOR;
 			fireball.motionZ = ((EntitySmallFireball)event.getEntity()).accelerationZ * ACCELERATION_CONVERSION_FACTOR;
 
-			event.getWorld().spawnEntity(fireball);
+			event.getWorld().addFreshEntity(fireball);
 		}
 	}
 }

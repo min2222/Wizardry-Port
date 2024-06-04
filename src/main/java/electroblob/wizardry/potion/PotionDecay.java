@@ -63,7 +63,7 @@ public class PotionDecay extends PotionMagicEffect {
 			EntityDecay decay = new EntityDecay(target.world);
 			decay.setCaster(target);
 			decay.setPosition(target.getX(), target.getY(), target.getZ());
-			target.world.spawnEntity(decay);
+			target.world.addFreshEntity(decay);
 		}
 	}
 

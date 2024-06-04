@@ -91,7 +91,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 			projectile.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, velocity, 1.0f);
 			projectile.getEntityData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 			addProjectileExtras(projectile, caster, modifiers);
-			world.spawnEntity(projectile);
+			world.addFreshEntity(projectile);
 		}
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -111,7 +111,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 						: EntityUtils.getDefaultAimingError(world.getDifficulty());
 				aim(projectile, caster, target, velocity, aimingError);
 				addProjectileExtras(projectile, caster, modifiers);
-				world.spawnEntity(projectile);
+				world.addFreshEntity(projectile);
 			}
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);

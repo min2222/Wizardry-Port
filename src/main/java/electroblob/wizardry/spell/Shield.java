@@ -50,7 +50,7 @@ public class Shield extends Spell {
 
 			WizardData.get(caster).setVariable(SHIELD_KEY, shield);
 			if(!world.isClientSide){
-				world.spawnEntity(shield);
+				world.addFreshEntity(shield);
 			}
 		}
 

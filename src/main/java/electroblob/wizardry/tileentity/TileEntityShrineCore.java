@@ -105,7 +105,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 					wizard.onInitialSpawn(world.getDifficultyForLocation(pos), null);
 					wizard.hasStructure = true;
 
-					world.spawnEntity(wizard);
+					world.addFreshEntity(wizard);
 					wizards[i] = wizard;
 					linkedWizards[i] = wizard.getUniqueID();
 				}

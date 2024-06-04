@@ -369,7 +369,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	@Override
 	public boolean processInteract(Player player, InteractionHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		// Debugging
 		// player.addChatComponentMessage(Component.translatable("wizard.debug",

@@ -38,7 +38,7 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 	@Override
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ){
 		// Let the player dispel any lights if they have the lantern charm, not just the permanent ones because that would be annoying!
-		if(player.getHeldItem(hand).getItem() instanceof ISpellCastingItem && ItemArtefact.isArtefactActive(player, WizardryItems.charm_light)){
+		if(player.getItemInHand(hand).getItem() instanceof ISpellCastingItem && ItemArtefact.isArtefactActive(player, WizardryItems.charm_light)){
 
 			world.setBlockToAir(pos);
 			return true;

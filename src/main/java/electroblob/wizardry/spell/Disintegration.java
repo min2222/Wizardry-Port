@@ -72,7 +72,7 @@ public class Disintegration extends SpellRay {
 				ember.motionX = x * speed;
 				ember.motionY = y * 0.5f * speed;
 				ember.motionZ = z * speed;
-				world.spawnEntity(ember);
+				world.addFreshEntity(ember);
 			}
 		}
 	}

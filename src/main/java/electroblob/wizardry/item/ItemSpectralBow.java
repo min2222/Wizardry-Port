@@ -124,9 +124,9 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, EnumHand hand){
 
-		ItemStack stack = player.getHeldItem(hand);
+		ItemStack stack = player.getItemInHand(hand);
 
 		InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
 				true);
@@ -226,7 +226,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 
 					entityarrow.setDamage(entityarrow.getDamage() * IConjuredItem.getDamageMultiplier(stack));
 
-					world.spawnEntity(entityarrow);
+					world.addFreshEntity(entityarrow);
 				}
 
 				world.playSound(null, entityplayer.getX(), entityplayer.getY(), entityplayer.getZ(),

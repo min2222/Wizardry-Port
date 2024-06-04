@@ -139,7 +139,7 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 				&& event.getPlayer().world.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
 
 			if((!(event.getPlayer().getMainHandItem().getItem() instanceof ISpellCastingItem)
-					&& !(event.getPlayer().getHeldItemOffhand().getItem() instanceof ISpellCastingItem))
+					&& !(event.getPlayer().getItemInHandOffhand().getItem() instanceof ISpellCastingItem))
 					|| !ItemArtefact.isArtefactActive(event.getPlayer(), WizardryItems.charm_light)){
 
 				event.setCanceled(true);

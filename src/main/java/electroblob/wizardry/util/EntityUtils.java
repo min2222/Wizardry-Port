@@ -434,7 +434,7 @@ public final class EntityUtils {
 
 			if(caster.isHandActive() && caster.getItemInUseMaxCount() >= spell.getChargeup()){
 
-				ItemStack stack = caster.getHeldItem(caster.getActiveHand());
+				ItemStack stack = caster.getItemInHand(caster.getActiveHand());
 
 				if(stack.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)stack.getItem()).getCurrentSpell(stack) == spell){
 					// Don't do this, it interferes with stuff! We effectively already tested this with caster.isHandActive() anyway

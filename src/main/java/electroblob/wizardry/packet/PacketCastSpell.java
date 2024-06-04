@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 /**
  * <b>[Server -> Client]</b> This packet is sent when a spell is cast by a player and returns true, and is sent to other
  * clients so they can spawn the particles themselves. What sending this packet effectively does is make the
- * {@link Item#onItemRightClick} method client-consistent just for the item that sends it. Interestingly,
+ * {@link Item#use} method client-consistent just for the item that sends it. Interestingly,
  * {@link Item#onUsingTick} is client-consistent already, so continuous spells don't need to send packets from there
  * (this is probably something to do with eating particles or usage actions).
  */
