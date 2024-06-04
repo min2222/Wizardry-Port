@@ -117,7 +117,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 
 		// Only executed server side.
 
-		double distanceSq = this.attacker.getDistanceSq(this.target.getX(), this.target.getY(),
+		double distanceSq = this.attacker.distanceToSqr(this.target.getX(), this.target.getY(),
 				this.target.getZ());
 		boolean targetIsVisible = this.attacker.getEntitySenses().canSee(this.target);
 

@@ -77,7 +77,7 @@ public class SpeedTime extends Spell {
 		// Ticks all the tile entities near the caster
 		// Copy the list first!
 		List<BlockEntity> tileentities = new ArrayList<>(world.tickableTileEntities);
-		tileentities.removeIf(t -> caster.getDistanceSq(t.getPos()) > radius*radius);
+		tileentities.removeIf(t -> caster.distanceToSqr(t.getPos()) > radius*radius);
 
 		if(!tileentities.isEmpty()){
 			for(int i = 0; i < potencyLevel; i++){

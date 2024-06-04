@@ -160,7 +160,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	@Override
 	public boolean isUsableByPlayer(Player player){
-		return world.getTileEntity(pos) == this && player.getDistanceSqToCenter(pos) < 64;
+		return world.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
 	}
 
 	@Override

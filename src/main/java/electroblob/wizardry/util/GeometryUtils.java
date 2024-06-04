@@ -52,7 +52,7 @@ public final class GeometryUtils {
 
 	/**
 	 * Returns a {@link Vec3} of the coordinates at the centre of the given entity's bounding box. This is more
-	 * efficient than {@code GeometryUtils.getCentre(entity.getEntityBoundingBox())} as it can use the entity's fields.
+	 * efficient than {@code GeometryUtils.getCentre(entity.getBoundingBox())} as it can use the entity's fields.
 	 */
 	public static Vec3 getCentre(Entity entity){
 		return new Vec3(entity.getX(), entity.getY() + entity.getBbHeight()/2, entity.getZ());

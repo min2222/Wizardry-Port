@@ -83,7 +83,7 @@ public class EntityShield extends Entity {
 	}
 
 	public AABB getCollisionBox(Entity par1Entity){
-		return par1Entity.getEntityBoundingBox();
+		return par1Entity.getBoundingBox();
 	}
 
 	@Override

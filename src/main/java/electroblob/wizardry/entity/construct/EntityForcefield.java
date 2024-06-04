@@ -109,7 +109,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 			if(this.isValidTarget(target)){
 
-				Vec3 currentPos = Arrays.stream(GeometryUtils.getVertices(target.getEntityBoundingBox()))
+				Vec3 currentPos = Arrays.stream(GeometryUtils.getVertices(target.getBoundingBox()))
 						.min(Comparator.comparingDouble(v -> v.distanceTo(this.getPositionVector())))
 						.orElse(target.getPositionVector()); // This will never happen, it's just here to make the compiler happy
 
@@ -217,7 +217,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	/** Returns true if the given entity is completely inside this forcefield (the surface counts as outside). */
 	public boolean contains(Entity entity){
-		return contains(entity.getEntityBoundingBox());
+		return contains(entity.getBoundingBox());
 	}
 
 	@Override
@@ -321,7 +321,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	@Nullable
 	private static EntityForcefield getSurroundingForcefield(Entity entity){
-		return getSurroundingForcefield(entity.world, entity.getEntityBoundingBox(), entity.getPositionVector());
+		return getSurroundingForcefield(entity.world, entity.getBoundingBox(), entity.getPositionVector());
 	}
 
 	@SubscribeEvent
@@ -334,9 +334,9 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 				.offset(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
 
 		if(event instanceof PlayerInteractEvent.EntityInteract){
-			box = ((PlayerInteractEvent.EntityInteract)event).getTarget().getEntityBoundingBox();
+			box = ((PlayerInteractEvent.EntityInteract)event).getTarget().getBoundingBox();
 		}else if(event instanceof PlayerInteractEvent.EntityInteractSpecific){
-			box = ((PlayerInteractEvent.EntityInteractSpecific)event).getTarget().getEntityBoundingBox();
+			box = ((PlayerInteractEvent.EntityInteractSpecific)event).getTarget().getBoundingBox();
 		}
 
 		// If the player is trying to interact across a forcefield boundary, cancel the event

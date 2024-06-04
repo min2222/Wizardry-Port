@@ -251,7 +251,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 	@Override
 	public BlockPos getPos(){
-        return new BlockPos(this);
+        return this.blockPosition();
     }
 
 	@Override
@@ -969,7 +969,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 	            if(entityplayer == null){
 	                return false;
-	            }else if(this.wizard.getDistanceSq(entityplayer) > 16.0D){
+	            }else if(this.wizard.distanceToSqr(entityplayer) > 16.0D){
 	                return false;
 	            }else{
 	                return entityplayer.openContainer != null;

@@ -76,7 +76,7 @@ public class EntityRemnant extends EntityMob {
 	@Override
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata){
 		this.setElement(Element.values()[1 + random.nextInt(Element.values().length - 1)]); // Exclude MAGIC
-		this.setBoundOrigin(new BlockPos(this));
+		this.setBoundOrigin(this.blockPosition());
 		return super.onInitialSpawn(difficulty, livingdata);
 	}
 
@@ -210,7 +210,7 @@ public class EntityRemnant extends EntityMob {
 		@Override
 		public boolean shouldExecute(){
 			if(EntityRemnant.this.getAttackTarget() != null && !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.random.nextInt(7) == 0){
-				return EntityRemnant.this.getDistanceSq(EntityRemnant.this.getAttackTarget()) > 4.0D;
+				return EntityRemnant.this.distanceToSqr(EntityRemnant.this.getAttackTarget()) > 4.0D;
 			}else{
 				return false;
 			}
@@ -243,11 +243,11 @@ public class EntityRemnant extends EntityMob {
 
 			if(entitylivingbase == null) return;
 
-			if(EntityRemnant.this.getEntityBoundingBox().intersects(entitylivingbase.getEntityBoundingBox())){
+			if(EntityRemnant.this.getBoundingBox().intersects(entitylivingbase.getBoundingBox())){
 				EntityRemnant.this.attackEntityAsMob(entitylivingbase);
 				EntityRemnant.this.setAttacking(false);
 			}else{
-				double d0 = EntityRemnant.this.getDistanceSq(entitylivingbase);
+				double d0 = EntityRemnant.this.distanceToSqr(entitylivingbase);
 
 				if(d0 < 9.0D){
 					Vec3 vec3d = entitylivingbase.getPositionEyes(1.0F);
@@ -275,7 +275,7 @@ public class EntityRemnant extends EntityMob {
 
 				d3 = Math.sqrt(d3);
 
-				if(d3 < EntityRemnant.this.getEntityBoundingBox().getAverageEdgeLength()){
+				if(d3 < EntityRemnant.this.getBoundingBox().getAverageEdgeLength()){
 
 					this.action = EntityMoveHelper.Action.WAIT;
 					EntityRemnant.this.motionX *= 0.5D;

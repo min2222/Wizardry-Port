@@ -79,7 +79,7 @@ public class Charge extends Spell {
 				}
 			}
 
-			List<LivingEntity> collided = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getEntityBoundingBox().grow(EXTRA_HIT_MARGIN));
+			List<LivingEntity> collided = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(EXTRA_HIT_MARGIN));
 
 			collided.remove(player);
 
@@ -115,7 +115,7 @@ public class Charge extends Spell {
 				Integer chargeTime = WizardData.get(player).getVariable(CHARGE_TIME);
 
 				if(chargeTime != null && chargeTime > 0
-						&& player.getEntityBoundingBox().grow(EXTRA_HIT_MARGIN).intersects(attacker.getEntityBoundingBox())){
+						&& player.getBoundingBox().grow(EXTRA_HIT_MARGIN).intersects(attacker.getBoundingBox())){
 					event.setCanceled(true);
 				}
 			}

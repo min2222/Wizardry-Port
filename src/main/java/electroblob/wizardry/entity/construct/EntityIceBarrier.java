@@ -80,11 +80,11 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 		if(!level.isClientSide){
 
-			for(Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox().grow(2))){
+			for(Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().grow(2))){
 
 				if(entity instanceof EntityMagicConstruct) continue;
 
-				if(!entity.getEntityBoundingBox().intersects(this.getEntityBoundingBox())) continue;
+				if(!entity.getBoundingBox().intersects(this.getBoundingBox())) continue;
 
 				// For some reason the player position seems to be off by 1 block in x and z, no idea how so for now
 				// I've just fudged it by adding 1 to x and z
@@ -146,12 +146,12 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 //		world.spawnParticle(EnumParticleTypes.END_ROD, intercept.x, intercept.y, intercept.z, 0, 0, 0);
 
 		// If the point is within the hitbox (expanded by the fuzziness), it was a hit
-		return getEntityBoundingBox().grow(fuzziness).contains(intercept) ? intercept : null;
+		return getBoundingBox().grow(fuzziness).contains(intercept) ? intercept : null;
 	}
 
 	@Override
 	public boolean contains(Vec3 point){
-		return this.getEntityBoundingBox().contains(point) && getPerpendicularDistance(point) < THICKNESS/2;
+		return this.getBoundingBox().contains(point) && getPerpendicularDistance(point) < THICKNESS/2;
 	}
 
 	private double getPerpendicularDistance(Vec3 point){

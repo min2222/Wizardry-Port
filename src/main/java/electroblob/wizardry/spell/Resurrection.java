@@ -58,8 +58,8 @@ public class Resurrection extends Spell {
 
 			ServerPlayer nearestDeadAlly = caster.getServer().getPlayerList().getPlayers().stream()
 					.filter(p -> !p.isEntityAlive() && p.deathTime > waitTime && (data.isPlayerAlly(p) || caster == p)
-							&& p.getDistanceSq(caster) < radius * radius)
-					.min(Comparator.comparingDouble(caster::getDistanceSq))
+							&& p.distanceToSqr(caster) < radius * radius)
+					.min(Comparator.comparingDouble(caster::distanceToSqr))
 					.orElse(null);
 
 			if(nearestDeadAlly != null){

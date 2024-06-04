@@ -171,7 +171,7 @@ public final class RayTracer {
 
 			}else{ // Normal hit detection
 
-				entityBounds = entity.getEntityBoundingBox();
+				entityBounds = entity.getBoundingBox();
 
 				if(entityBounds != null){
 

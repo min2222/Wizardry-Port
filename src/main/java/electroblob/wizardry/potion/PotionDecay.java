@@ -52,7 +52,7 @@ public class PotionDecay extends PotionMagicEffect {
 				&& target.isPotionActive(WizardryPotions.decay) && target.onGround){
 
 			List<Entity> entities = target.world.getEntitiesWithinAABBExcludingEntity(target,
-					target.getEntityBoundingBox());
+					target.getBoundingBox());
 			
 			for(Entity entity : entities){
 				if(entity instanceof EntityDecay) return; // Don't spawn another decay if there's already one there

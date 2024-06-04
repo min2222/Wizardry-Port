@@ -104,7 +104,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 				if(this.fallTime++ == 0){
 
-					BlockPos blockpos = new BlockPos(this);
+					BlockPos blockpos = this.blockPosition();
 
 					if(this.world.getBlockState(blockpos).getBlock() == block){
 						this.world.setBlockToAir(blockpos);
@@ -122,7 +122,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 				if(!this.level.isClientSide){
 
-					BlockPos blockpos1 = new BlockPos(this);
+					BlockPos blockpos1 = this.blockPosition();
 					boolean isConcrete = getBlock().getBlock() == Blocks.CONCRETE_POWDER;
 					boolean isConcreteInWater = isConcrete && this.world.getBlockState(blockpos1).getMaterial() == Material.WATER;
 					double d0 = this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ;
@@ -214,7 +214,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 		if(velocitySquared >= 0.2){
 
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox());
+			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox());
 
 			for(Entity entity : list){
 

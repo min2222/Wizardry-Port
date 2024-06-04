@@ -161,7 +161,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	public void onLivingUpdate(){
 
 		// Makes the phoenix hover.
-		Integer floorLevel = BlockUtils.getNearestFloor(world, new BlockPos(this), 4);
+		Integer floorLevel = BlockUtils.getNearestFloor(world, this.blockPosition(), 4);
 
 		if(floorLevel == null || this.getY() - floorLevel > 3){
 			this.motionY = -0.1;

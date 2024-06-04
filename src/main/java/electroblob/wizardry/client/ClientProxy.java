@@ -241,7 +241,7 @@ public class ClientProxy extends CommonProxy {
 
 		Player player = Minecraft.getMinecraft().player;
 
-		if(player.getDistanceSq(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
+		if(player.distanceToSqr(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
 			if(Minecraft.getMinecraft().currentScreen instanceof GuiLectern){
 				((GuiLectern)Minecraft.getMinecraft().currentScreen).refreshAvailableSpells();
 			}

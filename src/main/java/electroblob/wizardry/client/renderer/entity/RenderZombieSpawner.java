@@ -50,7 +50,7 @@ public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 
 		this.bindTexture(TEXTURE);
 
-		Vec3[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector().scale(-1)));
+		Vec3[] vertices = GeometryUtils.getVertices(entity.getBoundingBox().offset(entity.getPositionVector().scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		drawFace(buffer, vertices[0], vertices[1], vertices[3], vertices[2], 0, 0, 1, 1); // Bottom

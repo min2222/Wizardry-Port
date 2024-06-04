@@ -69,8 +69,8 @@ public class ShulkerBullet extends Spell {
 
 			if(possibleTargets.isEmpty()) return false;
 
-			// getDistanceSq doesn't require square-rooting so it's faster when only comparing
-			possibleTargets.sort(Comparator.comparingDouble(t -> t.getDistanceSq(x, y, z)));
+			// distanceToSqr doesn't require square-rooting so it's faster when only comparing
+			possibleTargets.sort(Comparator.comparingDouble(t -> t.distanceToSqr(x, y, z)));
 
 			Entity target = possibleTargets.get(0);
 

@@ -253,11 +253,11 @@ public final class EntityUtils {
 	public static Vec3 findSpaceForTeleport(Entity entity, Vec3 destination, boolean accountForPassengers){
 
 		Level world = entity.world;
-		AABB box = entity.getEntityBoundingBox();
+		AABB box = entity.getBoundingBox();
 
 		if(accountForPassengers){
 			for(Entity passenger : entity.getPassengers()){
-				box = box.union(passenger.getEntityBoundingBox());
+				box = box.union(passenger.getBoundingBox());
 			}
 		}
 

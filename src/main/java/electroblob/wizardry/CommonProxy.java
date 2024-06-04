@@ -324,7 +324,7 @@ public class CommonProxy {
 	 * container (both sides) to refresh its linked bookshelves (does not send packets). */
 	public void notifyBookshelfChange(Level world, BlockPos pos){
 		for(Player player : world.playerEntities){
-			if(player.getDistanceSq(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
+			if(player.distanceToSqr(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
 				if(player.openContainer instanceof ContainerArcaneWorkbench){
 					((ContainerArcaneWorkbench)player.openContainer).refreshBookshelfSlots();
 				}

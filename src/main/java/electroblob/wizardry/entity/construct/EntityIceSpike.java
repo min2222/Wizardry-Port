@@ -62,7 +62,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 		if(lifetime - this.tickCount == 30) this.playSound(WizardrySounds.ENTITY_ICE_SPIKE_EXTEND, 1, 2.5f);
 
 		if(!this.level.isClientSide){
-			for(Object entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox())){
+			for(Object entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox())){
 				if(entity instanceof LivingEntity && this.isValidTarget((LivingEntity)entity)){
 					DamageSource source = this.getCaster() == null ? DamageSource.MAGIC : MagicDamage.causeDirectMagicDamage(this.getCaster(), DamageType.FROST);
 					// Potion effect only gets added if the damage succeeded

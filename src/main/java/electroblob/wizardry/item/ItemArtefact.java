@@ -385,7 +385,7 @@ public class ItemArtefact extends Item {
 
 					if(!level.isClientSide && player.tickCount % 40 == 0){
 
-						List<EntityIceBarrier> barriers = world.getEntitiesWithinAABB(EntityIceBarrier.class, player.getEntityBoundingBox().grow(1.5));
+						List<EntityIceBarrier> barriers = world.getEntitiesWithinAABB(EntityIceBarrier.class, player.getBoundingBox().grow(1.5));
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
 						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.getPositionVector().subtract(player.getPositionVector())) > 0)){
@@ -616,7 +616,7 @@ public class ItemArtefact extends Item {
 
 					if(!event.getSource().isUnblockable()){
 
-						List<EntityFireRing> fireRings = player.world.getEntitiesWithinAABB(EntityFireRing.class, player.getEntityBoundingBox());
+						List<EntityFireRing> fireRings = player.world.getEntitiesWithinAABB(EntityFireRing.class, player.getBoundingBox());
 
 						for(EntityFireRing fireRing : fireRings){
 							if(fireRing.getCaster() instanceof Player && (fireRing.getCaster() == player
@@ -714,7 +714,7 @@ public class ItemArtefact extends Item {
 						EntityUtils.getLivingWithinRadius(3, player.getX(), player.getY(), player.getZ(), world).stream()
 								.filter(EntityUtils::isLiving)
 								.filter(e -> e != player)
-								.min(Comparator.comparingDouble(player::getDistanceSq))
+								.min(Comparator.comparingDouble(player::distanceToSqr))
 								.ifPresent(target -> {
 
 									if(level.isClientSide){

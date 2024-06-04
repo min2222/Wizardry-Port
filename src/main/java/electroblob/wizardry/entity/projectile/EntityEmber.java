@@ -28,7 +28,7 @@ public class EntityEmber extends EntityMagicProjectile {
 
 	@Override
 	public AABB getCollisionBoundingBox(){
-		return null;//this.getEntityBoundingBox();
+		return null;//this.getBoundingBox();
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class EntityEmber extends EntityMagicProjectile {
 			this.motionZ *= 0.5;
 		}
 
-		world.getEntitiesInAABBexcluding(thrower, this.getEntityBoundingBox(), e -> e instanceof LivingEntity)
+		world.getEntitiesInAABBexcluding(thrower, this.getBoundingBox(), e -> e instanceof LivingEntity)
 				.stream().filter(e -> !(e instanceof LivingEntity) || ((LivingEntity)e).getHealth() > 0)
 				.forEach(e -> e.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
 

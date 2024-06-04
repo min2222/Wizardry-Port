@@ -137,7 +137,7 @@ public abstract class SpellAreaEffect extends Spell {
 		}
 
 		// Sort by distance from the origin for consistency in ordering for spells with a limit
-		targets.sort(Comparator.comparingDouble(e -> e.getDistanceSq(origin.x, origin.y, origin.z)));
+		targets.sort(Comparator.comparingDouble(e -> e.distanceToSqr(origin.x, origin.y, origin.z)));
 
 		boolean result = alwaysSucceed;
 		int i = 0;

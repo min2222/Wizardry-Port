@@ -60,7 +60,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 	@Override
 	public AABB getCollisionBoundingBox(){
-		return this.getEntityBoundingBox();
+		return this.getBoundingBox();
 	}
 
 	@Override

@@ -62,7 +62,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 		this.move(MoverType.SELF, velX, motionY, velZ);
 
 		// Entity damage
-		List<LivingEntity> collided = world.getEntitiesWithinAABB(LivingEntity.class, this.getEntityBoundingBox());
+		List<LivingEntity> collided = world.getEntitiesWithinAABB(LivingEntity.class, this.getBoundingBox());
 
 		float damage = Spells.boulder.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 		float knockback = Spells.boulder.getProperty(Boulder.KNOCKBACK_STRENGTH).floatValue();
@@ -72,10 +72,10 @@ public class EntityBoulder extends EntityScaledConstruct {
 			if(!isValidTarget(entity)) break;
 
 			boolean crushBonus = entity.getY() < this.getY()
-					&& entity.getEntityBoundingBox().minX > this.getEntityBoundingBox().minX
-					&& entity.getEntityBoundingBox().maxX < this.getEntityBoundingBox().maxX
-					&& entity.getEntityBoundingBox().minZ > this.getEntityBoundingBox().minZ
-					&& entity.getEntityBoundingBox().maxZ < this.getEntityBoundingBox().maxZ;
+					&& entity.getBoundingBox().minX > this.getBoundingBox().minX
+					&& entity.getBoundingBox().maxX < this.getBoundingBox().maxX
+					&& entity.getBoundingBox().minZ > this.getBoundingBox().minZ
+					&& entity.getBoundingBox().maxZ < this.getBoundingBox().maxZ;
 
 			if(EntityUtils.attackEntityWithoutKnockback(entity, MagicDamage.causeIndirectMagicDamage(this,
 					getCaster(), DamageType.MAGIC), crushBonus ? damage * 1.5f : damage) && !crushBonus){
@@ -89,7 +89,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 		// Wall smashing
 		if(EntityUtils.canDamageBlocks(getCaster(), world) && collidedHorizontally){
-			AABB box = getEntityBoundingBox().offset(velX, 0, velZ);
+			AABB box = getBoundingBox().offset(velX, 0, velZ);
 			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
 					Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ)));
 			smashBlocks(cuboid, true);
@@ -101,7 +101,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 			double particleX = this.getX() + width * 0.7 * (random.nextDouble() - 0.5);
 			double particleZ = this.getZ() + width * 0.7 * (random.nextDouble() - 0.5);
 
-			BlockState block = world.getBlockState(new BlockPos(this).down());
+			BlockState block = world.getBlockState(this.blockPosition().down());
 
 			if(block.getBlock() != Blocks.AIR){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
@@ -180,7 +180,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 		// Floor smashing
 		if(EntityUtils.canDamageBlocks(getCaster(), world) && distance > 3){
-			AABB box = getEntityBoundingBox().offset(velX, motionY, velZ);
+			AABB box = getBoundingBox().offset(velX, motionY, velZ);
 			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
 					Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ)));
 			if(smashBlocks(cuboid, distance > 8)) return;
@@ -220,7 +220,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 	@Override
 	public AABB getCollisionBoundingBox(){
-		return this.getEntityBoundingBox();
+		return this.getBoundingBox();
 	}
 
 	@Override

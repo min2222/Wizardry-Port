@@ -131,7 +131,7 @@ public class RenderWitheringTotem extends Render<EntityWitheringTotem> {
 
 		bindEntityTexture(entity);
 
-		Vec3[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector()
+		Vec3[] vertices = GeometryUtils.getVertices(entity.getBoundingBox().offset(entity.getPositionVector()
 				.add(0, entity.getBbHeight()/2, 0).scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

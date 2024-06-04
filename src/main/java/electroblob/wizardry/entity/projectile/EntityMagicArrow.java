@@ -302,7 +302,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			// overwrites the block hit with an entity
 
 			Entity entity = null;
-			List<?> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox()
+			List<?> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox()
 					.expand(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D));
 			double d0 = 0.0D;
 			int i;
@@ -313,7 +313,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 				if(entity1.canBeCollidedWith() && (entity1 != this.getCaster() || this.ticksInAir >= 5)){
 					f1 = 0.3F;
-					AABB axisalignedbb1 = entity1.getEntityBoundingBox().grow((double)f1, (double)f1,
+					AABB axisalignedbb1 = entity1.getBoundingBox().grow((double)f1, (double)f1,
 							(double)f1);
 					HitResult RayTraceResult1 = axisalignedbb1.calculateIntercept(vec3d1, vec3d);
 

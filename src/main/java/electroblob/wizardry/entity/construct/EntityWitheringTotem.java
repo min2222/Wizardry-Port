@@ -93,7 +93,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), world);
 		nearby.removeIf(e -> !isValidTarget(e));
-		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
+		nearby.sort(Comparator.comparingDouble(e -> e.distanceToSqr(this)));
 
 		int targetsRemaining = Spells.withering_totem.getProperty(WitheringTotem.MAX_TARGETS).intValue()
 				+ (int)((damageMultiplier - 1) / Constants.POTENCY_INCREASE_PER_TIER);

@@ -72,7 +72,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 		}
 
 		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), world);
-		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
+		nearby.sort(Comparator.comparingDouble(e -> e.distanceToSqr(this)));
 
 		List<LivingEntity> nearbyAllies = nearby.stream().filter(e -> e == getCaster()
 				|| AllyDesignationSystem.isAllied(getCaster(), e)).collect(Collectors.toList());

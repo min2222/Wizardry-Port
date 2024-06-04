@@ -41,7 +41,7 @@ public interface ISyncedPotion {
 
 			if(!event.getEntity().level.isClientSide){
 				event.getEntity().world.playerEntities.stream()
-						.filter(p -> p.getDistanceSq(event.getEntity()) < SYNC_RADIUS * SYNC_RADIUS)
+						.filter(p -> p.distanceToSqr(event.getEntity()) < SYNC_RADIUS * SYNC_RADIUS)
 						// Apparently unchecked casting in a lambda expression doesn't generate a warning. Who knew?
 						// (We know this cast is safe though)
 						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketEntityEffect(
@@ -67,7 +67,7 @@ public interface ISyncedPotion {
 
 			if(!host.level.isClientSide){
 				host.world.playerEntities.stream()
-						.filter(p -> p.getDistanceSq(host) < SYNC_RADIUS * SYNC_RADIUS)
+						.filter(p -> p.distanceToSqr(host) < SYNC_RADIUS * SYNC_RADIUS)
 						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketRemoveEntityEffect(
 								host.getEntityId(), effect.getPotion())));
 			}

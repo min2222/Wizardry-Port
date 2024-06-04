@@ -93,20 +93,20 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 		if(!this.level.isClientSide){
 
-			double radius = 2 * height * sizeMultiplier;
+			double radius = 2 * getBbHeight() * sizeMultiplier;
 
 			boolean suckInBlocks = getCaster() instanceof Player && EntityUtils.canDamageBlocks(getCaster(), world)
 					&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_black_hole);
 
 			if(suckInBlocks){
 
-				List<BlockPos> sphere = BlockUtils.getBlockSphere(new BlockPos(this), radius);
+				List<BlockPos> sphere = BlockUtils.getBlockSphere(this.blockPosition(), radius);
 
 				int blocksUnhooked = 0;
 
 				for(BlockPos pos : sphere){
 
-					if(random.nextInt(Math.max(1, (int)this.getDistanceSq(pos) * 3)) == 0){
+					if(random.nextInt(Math.max(1, (int)this.distanceToSqr(pos) * 3)) == 0){
 
 						if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isAirBlock(pos)
 								&& world.isBlockNormalCube(pos, false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){

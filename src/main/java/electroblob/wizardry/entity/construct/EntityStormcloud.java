@@ -47,7 +47,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 		boolean stormcloudRingActive = getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.ring_stormcloud);
 
 		List<LivingEntity> targets = world.getEntitiesWithinAABB(LivingEntity.class,
-				this.getEntityBoundingBox().expand(0, -10, 0));
+				this.getBoundingBox().expand(0, -10, 0));
 
 		targets.removeIf(t -> !this.isValidTarget(t));
 
@@ -75,7 +75,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 		if(stormcloudRingActive){
 			EntityUtils.getLivingWithinRadius(width * 3, getX(), getY(), getZ(), world).stream()
-					.filter(this::isValidTarget).min(Comparator.comparingDouble(this::getDistanceSq)).ifPresent(e -> {
+					.filter(this::isValidTarget).min(Comparator.comparingDouble(this::distanceToSqr)).ifPresent(e -> {
 				Vec3 vel = e.getPositionVector().subtract(this.getPositionVector()).normalize().scale(0.2);
 				this.motionX = vel.x;
 				this.motionZ = vel.z;

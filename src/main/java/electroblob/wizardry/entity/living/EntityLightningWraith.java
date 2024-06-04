@@ -135,7 +135,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 			--this.attackTime;
 			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
 			if(entitylivingbase == null) return; // Dynamic stealth breaks things, let's un-break them
-			double d0 = this.blaze.getDistanceSq(entitylivingbase);
+			double d0 = this.blaze.distanceToSqr(entitylivingbase);
 
 			if(d0 < 4.0D){
 				if(this.attackTime <= 0){

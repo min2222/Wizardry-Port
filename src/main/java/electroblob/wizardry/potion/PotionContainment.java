@@ -48,14 +48,14 @@ public class PotionContainment extends PotionMagicEffect {
 		double x = target.getX(), y = target.getY(), z = target.getZ();
 
 		// Containment fields are cubes so we're dealing with each axis separately
-		if(target.getEntityBoundingBox().maxX > origin.x + maxDistance) x = origin.x + maxDistance - target.width/2;
-		if(target.getEntityBoundingBox().minX < origin.x - maxDistance) x = origin.x - maxDistance + target.width/2;
+		if(target.getBoundingBox().maxX > origin.x + maxDistance) x = origin.x + maxDistance - target.width/2;
+		if(target.getBoundingBox().minX < origin.x - maxDistance) x = origin.x - maxDistance + target.width/2;
 
-		if(target.getEntityBoundingBox().maxY > origin.y + maxDistance) y = origin.y + maxDistance - target.getBbHeight();
-		if(target.getEntityBoundingBox().minY < origin.y - maxDistance) y = origin.y - maxDistance;
+		if(target.getBoundingBox().maxY > origin.y + maxDistance) y = origin.y + maxDistance - target.getBbHeight();
+		if(target.getBoundingBox().minY < origin.y - maxDistance) y = origin.y - maxDistance;
 
-		if(target.getEntityBoundingBox().maxZ > origin.z + maxDistance) z = origin.z + maxDistance - target.width/2;
-		if(target.getEntityBoundingBox().minZ < origin.z - maxDistance) z = origin.z - maxDistance + target.width/2;
+		if(target.getBoundingBox().maxZ > origin.z + maxDistance) z = origin.z + maxDistance - target.width/2;
+		if(target.getBoundingBox().minZ < origin.z - maxDistance) z = origin.z - maxDistance + target.width/2;
 
 		if(x != target.getX() || y != target.getY() || z != target.getZ())
 		{

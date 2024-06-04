@@ -64,7 +64,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 		this.move(MoverType.SELF, velX, motionY, velZ);
 
-		BlockPos pos = new BlockPos(this);
+		BlockPos pos = this.blockPosition();
 		Integer y = BlockUtils.getNearestSurface(world, pos.up(3), Direction.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
 
 		if(y != null){
