@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import electroblob.wizardry.client.DrawingUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JsonUtils;
@@ -44,7 +44,7 @@ class Image {
 	}
 
 	/** Returns the total height of the image, including caption if it has one. */
-	int getHeight(FontRenderer font){
+	int getHeight(Font font){
 		return caption.isEmpty() ? height : height + CAPTION_OFFSET + font.FONT_HEIGHT;
 	}
 
@@ -72,7 +72,7 @@ class Image {
 	 * @param left       The x coordinate of the left side of the GUI.
 	 * @param top        The y coordinate of the top of the GUI.
 	 */
-	void draw(FontRenderer font, int doublePage, int left, int top){
+	void draw(Font font, int doublePage, int left, int top){
 		// Images
 		for(int[] instance : instances){
 			if(GuiWizardHandbook.singleToDoublePage(instance[0]) == doublePage){

@@ -24,31 +24,29 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
+import net.minecraft.world.entity.ai.EntityAIAttackMelee;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.monster.*;
-import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.passive.EntityChicken;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityPotion;
-import net.minecraft.entity.projectile.EntitySnowball;
+import net.minecraft.world.entity.projectile.EntityPotion;
+import net.minecraft.world.entity.projectile.EntitySnowball;
 import net.minecraft.init.Enchantments;
 import net.minecraft.world.item.Items;
 import net.minecraft.init.PotionTypes;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,6 +54,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -63,13 +62,12 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -100,7 +98,7 @@ public class Possession extends SpellRay {
 	private static final Map<Class<? extends Mob>, Function<Level, ? extends IProjectile>> projectiles = new HashMap<>();
 	private static final Set<Class<? extends Mob>> blacklist = new HashSet<>();
 
-	private static final Map<IAttribute, UUID> INHERITED_ATTRIBUTES;
+	private static final Map<Attribute, UUID> INHERITED_ATTRIBUTES;
 
 	static {
 
@@ -130,7 +128,7 @@ public class Possession extends SpellRay {
 	}
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return false; }
 
 	@Override
 	public boolean requiresPacket(){
@@ -225,7 +223,7 @@ public class Possession extends SpellRay {
 
 			// Attributes
 
-			if(target instanceof EntityFlying || target instanceof net.minecraft.entity.passive.EntityFlying){
+			if(target instanceof EntityFlying || target instanceof net.minecraft.world.entity.passive.EntityFlying){
 				possessor.capabilities.allowFlying = true;
 				possessor.capabilities.isFlying = true;
 			}
@@ -233,9 +231,9 @@ public class Possession extends SpellRay {
 			// Apply attribute modifiers which change the player's attribute value to the target's value
 			// Uses predefined UUIDs so we can easily remove them later
 			attributes:
-			for(IAttribute attribute : INHERITED_ATTRIBUTES.keySet()){
+			for(Attribute attribute : INHERITED_ATTRIBUTES.keySet()){
 
-				IAttributeInstance instance = target.getAttributeMap().getAttributeInstance(attribute);
+				AttributeInstance instance = target.getAttributeMap().getAttributeInstance(attribute);
 
 				if(instance != null){
 
@@ -244,7 +242,7 @@ public class Possession extends SpellRay {
 					// Don't ask me why, but the player's base movement speed seems to be 0.1
 					if(attribute == Attributes.MOVEMENT_SPEED) currentValue /= possessor.capabilities.getWalkSpeed();
 
-					for(EntityEquipmentSlot slot : EntityEquipmentSlot.values()){
+					for(EquipmentSlot slot : EquipmentSlot.values()){
 						if(target.getItemStackFromSlot(slot).getAttributeModifiers(slot).containsKey(attribute.getName())){
 							// If the mob has equipment, use the modifiers for that equipment instead of the mob's normal ones
 							// Not doing this results in the player being able to one-hit most mobs when possessing a zombie pigman!
@@ -278,7 +276,7 @@ public class Possession extends SpellRay {
 				// Inventory and items
 
 				if(possessor.getEntityData() != null){
-					NBTExtras.storeTagSafely(possessor.getEntityData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new NBTTagList()));
+					NBTExtras.storeTagSafely(possessor.getEntityData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new ListTag()));
 				}
 
 				possessor.inventory.clear();
@@ -301,7 +299,7 @@ public class Possession extends SpellRay {
 					possessor.setHeldItem(EnumHand.OFF_HAND, arrow);
 				}
 
-				possessor.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, stack);
+				possessor.setItemStackToSlot(EquipmentSlot.MAINHAND, stack);
 
 				// Packets
 
@@ -360,7 +358,7 @@ public class Possession extends SpellRay {
 			Wizardry.proxy.playBlinkEffect(player);
 		}
 
-		for(IAttribute attribute : INHERITED_ATTRIBUTES.keySet()){
+		for(Attribute attribute : INHERITED_ATTRIBUTES.keySet()){
 			player.getAttributeMap().getAttributeInstance(attribute).removeModifier(INHERITED_ATTRIBUTES.get(attribute));
 		}
 

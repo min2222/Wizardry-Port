@@ -5,7 +5,7 @@ import electroblob.wizardry.entity.living.EntitySpiritWolf;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderWolf;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.world.entity.passive.EntityWolf;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -61,7 +61,7 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(TileEntityDispenser dispenser){
+	public boolean canBeCastBy(DispenserBlockEntity dispenser){
 		return true;
 	}
 

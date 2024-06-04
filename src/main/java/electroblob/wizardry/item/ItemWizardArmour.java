@@ -18,19 +18,19 @@ import electroblob.wizardry.util.EntityUtils.Operations;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.EntityEquipmentSlot.Type;
+import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -64,14 +64,14 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	private static final UUID[] ARMOR_MODIFIERS = new UUID[] {UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
 
 	@Override
-	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot slot) {
+	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EquipmentSlot slot) {
 		// The vanilla armor handling logic from ItemArmor.getItemAttributeModifiers was moved to ItemWizardArmour.getAttributeModifiers to allow checking if the stack has enough mana
 		Multimap<String, AttributeModifier> multimap = ArrayListMultimap.create();
 		return multimap;
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+	public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
 		Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
 
 		// only grant armor if the equipment has mana
@@ -101,7 +101,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 		/** The first part of the texture filenames for this armour class. Also defines certain translation keys. */
 		final String name;
 		/** The middle part of each item name (in the registry) for this armour class, e.g. "hat" or "chestplate". */
-		final Map<EntityEquipmentSlot, String> armourPieceNames;
+		final Map<EquipmentSlot, String> armourPieceNames;
 
 		ArmourClass(ArmorMaterial material, Supplier<Item> upgradeItem, String name, float elementalCostReduction,
 					float cooldownReduction, String... armourPieceNames){
@@ -111,11 +111,11 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			this.elementalCostReduction = elementalCostReduction;
 			this.cooldownReduction = cooldownReduction;
 			if(armourPieceNames.length != 4) throw new IllegalArgumentException("armourPieceNames must have a length of 4");
-			this.armourPieceNames = new EnumMap<>(EntityEquipmentSlot.class);
-			this.armourPieceNames.put(EntityEquipmentSlot.HEAD,  armourPieceNames[0]);
-			this.armourPieceNames.put(EntityEquipmentSlot.CHEST, armourPieceNames[1]);
-			this.armourPieceNames.put(EntityEquipmentSlot.LEGS,  armourPieceNames[2]);
-			this.armourPieceNames.put(EntityEquipmentSlot.FEET,  armourPieceNames[3]);
+			this.armourPieceNames = new EnumMap<>(EquipmentSlot.class);
+			this.armourPieceNames.put(EquipmentSlot.HEAD,  armourPieceNames[0]);
+			this.armourPieceNames.put(EquipmentSlot.CHEST, armourPieceNames[1]);
+			this.armourPieceNames.put(EquipmentSlot.LEGS,  armourPieceNames[2]);
+			this.armourPieceNames.put(EquipmentSlot.FEET,  armourPieceNames[3]);
 		}
 
 	}
@@ -124,7 +124,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public final ArmourClass armourClass;
 
 	@Deprecated // Retained for backwards-compatibility with addons, will be removed in future
-	public ItemWizardArmour(ArmorMaterial material, int renderIndex, EntityEquipmentSlot armourType, Element element){
+	public ItemWizardArmour(ArmorMaterial material, int renderIndex, EquipmentSlot armourType, Element element){
 		super(material, renderIndex, armourType);
 		this.armourClass = ArmourClass.WIZARD;
 		this.element = element;
@@ -132,7 +132,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 		WizardryRecipes.addToManaFlaskCharging(this);
 	}
 
-	public ItemWizardArmour(ArmourClass armourClass, EntityEquipmentSlot armourType, Element element){
+	public ItemWizardArmour(ArmourClass armourClass, EquipmentSlot armourType, Element element){
 		super(armourClass.material, 1, armourType);
 		this.armourClass = armourClass;
 		this.element = element;
@@ -209,7 +209,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 	@Override
 	public void onArmorTick(Level world, Player player, ItemStack itemStack){
-		if(armorType == EntityEquipmentSlot.HEAD && player.ticksExisted % 20 == 0
+		if(armorType == EquipmentSlot.HEAD && player.ticksExisted % 20 == 0
 				&& isWearingFullSet(player, element, ArmourClass.BATTLEMAGE) && doAllArmourPiecesHaveMana(player)){
 			player.addPotionEffect(new MobEffectInstance(WizardryPotions.ward, 219, 0, true, false));
 		}
@@ -237,7 +237,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 		modifiers.set(WizardryItems.cooldown_upgrade, modifiers.get(WizardryItems.cooldown_upgrade) - armourClass.cooldownReduction, true);
 
 		// Full set bonuses
-		if(this.armorType == EntityEquipmentSlot.HEAD && isWearingFullSet(caster, element, armourClass) && doAllArmourPiecesHaveMana(caster)){
+		if(this.armorType == EquipmentSlot.HEAD && isWearingFullSet(caster, element, armourClass) && doAllArmourPiecesHaveMana(caster)){
 			if(armourClass == ArmourClass.SAGE && spell.getElement() != this.element){
 				modifiers.set(SpellModifiers.COST, 1 - SAGE_OTHER_COST_REDUCTION, false);
 			}
@@ -253,16 +253,16 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public net.minecraft.client.model.ModelBiped getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-                                                               EntityEquipmentSlot armourSlot, net.minecraft.client.model.ModelBiped original){
+                                                               EquipmentSlot armourSlot, net.minecraft.client.model.ModelBiped original){
 
 		// Legs use modelBiped
-		if(armourSlot == EntityEquipmentSlot.LEGS && !entityLiving.isInvisible()) return null;
+		if(armourSlot == EquipmentSlot.LEGS && !entityLiving.isInvisible()) return null;
 
 		return Wizardry.proxy.getWizardArmourModel(getArmorMaterial());
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type){
+	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type){
 
 		String s = armourClass.name + "_armour";
 
@@ -272,7 +272,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(this.element != null) s = s + "_" + this.element.getName();
 		}
 
-		if(slot == EntityEquipmentSlot.LEGS) s = s + "_legs";
+		if(slot == EquipmentSlot.LEGS) s = s + "_legs";
 
 		return "ebwizardry:textures/armour/" + s + ".png";
 	}
@@ -366,7 +366,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	@SubscribeEvent
 	public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event){
 
-		IAttributeInstance movementSpeed = event.getEntityLiving().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
+		AttributeInstance movementSpeed = event.getEntityLiving().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
 
 		if(isWearingFullSet(event.getEntityLiving(), null, ArmourClass.WARLOCK) && doAllArmourPiecesHaveMana(event.getEntityLiving())){
 			// Only apply the modifier once (can't just check this is the helmet since it might not be the last piece equipped)
@@ -422,7 +422,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	// As noted above, in a few SPECIFIC cases this method is necessary (without using a data-driven system, at least,
 	// which I'm not going to spend the time making in the near future). Wizard trades and gear have been left using the
 	// WizardryItems version because they need to be replaced with a better system that doesn't use this at all.
-	public static Item getArmour(Element element, ArmourClass armourClass, EntityEquipmentSlot slot){
+	public static Item getArmour(Element element, ArmourClass armourClass, EquipmentSlot slot){
 		if(slot == null || slot.getSlotType() != Type.ARMOR)
 			throw new IllegalArgumentException("Must be a valid armour slot");
 		if(element == null) element = Element.MAGIC;
@@ -439,7 +439,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	 * @return True if the entity is wearing a full set of the given element and class, false otherwise.
 	 */
 	public static boolean isWearingFullSet(LivingEntity entity, @Nullable Element element, @Nullable ArmourClass armourClass){
-		ItemStack helmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+		ItemStack helmet = entity.getItemStackFromSlot(EquipmentSlot.HEAD);
 		if(!(helmet.getItem() instanceof ItemWizardArmour)) return false;
 		Element e = element == null ? ((ItemWizardArmour)helmet.getItem()).element : element;
 		ArmourClass ac = armourClass == null ? ((ItemWizardArmour)helmet.getItem()).armourClass : armourClass;
@@ -473,7 +473,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(armourPieces == 0) return;
 
 			// Repeat the calculation from EntityAIFindNearestPlayer, but ignoring wizard armour
-			IAttributeInstance attribute = event.getEntityLiving().getEntityAttribute(Attributes.FOLLOW_RANGE);
+			AttributeInstance attribute = event.getEntityLiving().getEntityAttribute(Attributes.FOLLOW_RANGE);
 			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
 			if(event.getTarget().isSneaking()) followRange *= 0.8;
 			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();

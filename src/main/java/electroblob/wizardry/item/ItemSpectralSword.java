@@ -5,10 +5,10 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,11 +30,11 @@ public class ItemSpectralSword extends ItemSword implements IConjuredItem {
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack){
+	public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
 
 		Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
 
-		if(slot == EntityEquipmentSlot.MAINHAND){
+		if(slot == EquipmentSlot.MAINHAND){
 			multimap.put(Attributes.ATTACK_DAMAGE.getName(), new AttributeModifier(POTENCY_MODIFIER,
 					"Potency modifier", IConjuredItem.getDamageMultiplier(stack) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 		}

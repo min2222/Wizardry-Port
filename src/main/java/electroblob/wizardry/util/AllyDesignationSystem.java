@@ -4,7 +4,6 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.MindControl;
-import net.minecraft.entity.*;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
@@ -103,7 +102,7 @@ public final class AllyDesignationSystem {
 	 *         - The target is a creature that was summoned/controlled by the attacker or by an ally of the attacker.
 	 *         <p></p>
 	 *         - The target is a creature that was tamed by the attacker or by an ally of the attacker
-	 *         (see {@link net.minecraft.entity.IEntityOwnable}).
+	 *         (see {@link net.minecraft.world.entity.IEntityOwnable}).
 	 *         <p></p>
 	 *         <i>As of wizardry 4.1.2, this method now returns <b>true</b> instead of false if the attacker is null. This
 	 *         is because in the vast majority of cases, it makes more sense this way: if a construct has no caster, it
@@ -233,7 +232,7 @@ public final class AllyDesignationSystem {
 		return data != null && data.isPlayerAlly(possibleAlly);
 	}
 
-	/** Helper method for testing if the given {@link net.minecraft.entity.IEntityOwnable}'s owner is an ally of the
+	/** Helper method for testing if the given {@link net.minecraft.world.entity.IEntityOwnable}'s owner is an ally of the
 	 * given player. This works even when the owner is not logged in, though it may not correctly respect teams when
 	 * that is the case. */
 	public static boolean isOwnerAlly(Player allyOf, IEntityOwnable ownable){

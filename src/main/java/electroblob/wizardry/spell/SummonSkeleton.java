@@ -6,10 +6,10 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -31,8 +31,8 @@ public class SummonSkeleton extends SpellMinion<EntitySkeletonMinion> {
 
 	@Override
 	protected void addMinionExtras(EntitySkeletonMinion minion, BlockPos pos, LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
-		minion.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
-		minion.setDropChance(EntityEquipmentSlot.MAINHAND, 0.0f);
+		minion.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+		minion.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 	}
 
 }

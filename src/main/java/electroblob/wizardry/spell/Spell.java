@@ -21,9 +21,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.Item;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
@@ -154,7 +154,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	private Set<String> propertyKeys = new HashSet<>();
 
 	/** The action the player does when this spell is cast. */
-	public final EnumAction action;
+	public final UseAnim action;
 	/** Whether or not the spell is continuous (keeps going as long as the mouse button is held) */
 	public final boolean isContinuous;
 
@@ -195,14 +195,14 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * This constructor should be called from any subclasses, either feeding in the constants directly or through their
 	 * own constructor from wherever the spell is registered. This is the constructor for wizardry's own spells; spells
 	 * added by other mods should use
-	 * {@link Spell#Spell(String, String, EnumAction, boolean)}.
+	 * {@link Spell#Spell(String, String, UseAnim, boolean)}.
 	 * @param name The <i>registry name</i> of the spell. This will also be the name of the icon file. The spell's
 	 *        unlocalised name will be a resource location with the format [modid]:[name].
 	 * @param action The vanilla usage action to be displayed when casting this spell.
 	 * @param isContinuous Whether this spell is continuous, meaning you cast it for a length of time by holding the
 	 *                     use item button.
 	 */
-	Spell(String name, EnumAction action, boolean isContinuous){
+	Spell(String name, UseAnim action, boolean isContinuous){
 		this(Wizardry.MODID, name, action, isContinuous);
 	}
 
@@ -217,7 +217,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * @param isContinuous Whether this spell is continuous, meaning you cast it for a length of time by holding the
 	 *                     use item button.
 	 */
-	public Spell(String modID, String name, EnumAction action, boolean isContinuous){
+	public Spell(String modID, String name, UseAnim action, boolean isContinuous){
 		this.setRegistryName(modID, name);
 		this.unlocalisedName = this.getRegistryName().toString();
 		this.action = action;
@@ -435,7 +435,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * won't work if the caster is on full health).
 	 * <p></p>
 	 * This method is intended for use by dispensers and command blocks so that they can cast spells. Override it if
-	 * you want a spell to be cast by dispensers. Note that you must also override {@link Spell#canBeCastBy(TileEntityDispenser)} to
+	 * you want a spell to be cast by dispensers. Note that you must also override {@link Spell#canBeCastBy(DispenserBlockEntity)} to
 	 * return true to allow dispensers to select the spell. For some spells, this method may well be exactly the same as
 	 * the regular cast method; for others it won't be - for example, projectile-based spells are normally done using
 	 * the player's look vector, but dispensers need to use a facing-based method instead.
@@ -513,7 +513,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * to return true (either always or under certain circumstances).
 	 * @param dispenser The dispenser to query.
 	 */
-	public boolean canBeCastBy(TileEntityDispenser dispenser){
+	public boolean canBeCastBy(DispenserBlockEntity dispenser){
 		return false;
 	}
 

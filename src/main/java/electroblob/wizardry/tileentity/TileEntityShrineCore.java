@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
@@ -192,7 +192,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 		compound.setBoolean("activated", this.activated);
 		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NBTUtil.createPosTag(linkedContainer.getPos()));
 
-		NBTTagList tagList = new NBTTagList();
+		ListTag tagList = new ListTag();
 		for(UUID uuid : linkedWizards){
 			if(uuid != null) tagList.appendTag(NBTUtil.createUUIDTag(uuid));
 		}
@@ -207,7 +207,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 		this.activated = compound.getBoolean("activated");
 		this.linkedContainerPos = NBTUtil.getPosFromTag(compound.getCompoundTag("linkedContainerPos"));
 
-		NBTTagList tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
+		ListTag tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
 		int i = 0;
 		for(NBTBase tag : tagList){
 			if(tag instanceof CompoundTag) linkedWizards[i++] = NBTUtil.getUUIDFromTag((CompoundTag)tag);

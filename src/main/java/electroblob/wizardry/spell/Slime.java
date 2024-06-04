@@ -10,7 +10,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.world.entity.monster.EntitySlime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;

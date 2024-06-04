@@ -3,22 +3,22 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.entity.EntityFlying;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +31,7 @@ import java.util.UUID;
 
 public class EntityZombieMinion extends EntityZombie implements ISummonedCreature {
 
-	private static final DataParameter<Boolean> SPAWN_PARTICLES = EntityDataManager.createKey(EntityZombieMinion.class, DataSerializers.BOOLEAN);
+	private static final EntityDataSerializer<Boolean> SPAWN_PARTICLES = SynchedEntityData.createKey(EntityZombieMinion.class, EntityDataSerializers.BOOLEAN);
 
 	// Field implementations
 	private int lifetime = -1;
@@ -90,7 +90,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 		if(this.dataManager.get(SPAWN_PARTICLES)) this.spawnParticleEffect();
 		if(shouldBurnInDay() && getCaster() instanceof Player
 				&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_undead_helmets)){
-			setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+			setItemStackToSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 	}
 

@@ -8,12 +8,12 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.world.entity.IEntityLivingData;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.world.entity.passive.EntityAnimal;
+import net.minecraft.world.entity.passive.EntityHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ import net.minecraft.world.level.Level;
 @SuppressWarnings("deprecation") // It's what Entity does, so...
 public class EntitySpiritHorse extends EntityHorse {
 
-	public static final IAttribute JUMP_STRENGTH = AbstractHorse.JUMP_STRENGTH;
+	public static final Attribute JUMP_STRENGTH = AbstractHorse.JUMP_STRENGTH;
 
 	private int idleTimer = 0;
 

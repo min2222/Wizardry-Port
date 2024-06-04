@@ -5,8 +5,8 @@ import electroblob.wizardry.potion.*;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.Potion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
@@ -33,37 +33,37 @@ public final class WizardryPotions {
 	@SuppressWarnings("ConstantConditions")
 	private static <T> T placeholder(){ return null; }
 
-	public static final Potion frost = placeholder();
-	public static final Potion transience = placeholder();
-	public static final Potion fireskin = placeholder();
-	public static final Potion ice_shroud = placeholder();
-	public static final Potion static_aura = placeholder();
-	public static final Potion decay = placeholder();
-	public static final Potion sixth_sense = placeholder();
-	public static final Potion arcane_jammer = placeholder();
-	public static final Potion mind_trick = placeholder();
-	public static final Potion mind_control = placeholder();
-	public static final Potion font_of_mana = placeholder();
-	public static final Potion fear = placeholder();
-	public static final Potion curse_of_soulbinding = placeholder();
-	public static final Potion paralysis = placeholder();
-	public static final Potion muffle = placeholder();
-	public static final Potion ward = placeholder();
-	public static final Potion slow_time = placeholder();
-	public static final Potion empowerment = placeholder();
-	public static final Potion curse_of_enfeeblement = placeholder();
-	public static final Potion curse_of_undeath = placeholder();
-	public static final Potion containment = placeholder();
-	public static final Potion frost_step = placeholder();
-	public static final Potion mark_of_sacrifice = placeholder();
-	public static final Potion mirage = placeholder();
-	public static final Potion oakflesh = placeholder();
-	public static final Potion ironflesh = placeholder();
-	public static final Potion diamondflesh = placeholder();
+	public static final MobEffect frost = placeholder();
+	public static final MobEffect transience = placeholder();
+	public static final MobEffect fireskin = placeholder();
+	public static final MobEffect ice_shroud = placeholder();
+	public static final MobEffect static_aura = placeholder();
+	public static final MobEffect decay = placeholder();
+	public static final MobEffect sixth_sense = placeholder();
+	public static final MobEffect arcane_jammer = placeholder();
+	public static final MobEffect mind_trick = placeholder();
+	public static final MobEffect mind_control = placeholder();
+	public static final MobEffect font_of_mana = placeholder();
+	public static final MobEffect fear = placeholder();
+	public static final MobEffect curse_of_soulbinding = placeholder();
+	public static final MobEffect paralysis = placeholder();
+	public static final MobEffect muffle = placeholder();
+	public static final MobEffect ward = placeholder();
+	public static final MobEffect slow_time = placeholder();
+	public static final MobEffect empowerment = placeholder();
+	public static final MobEffect curse_of_enfeeblement = placeholder();
+	public static final MobEffect curse_of_undeath = placeholder();
+	public static final MobEffect containment = placeholder();
+	public static final MobEffect frost_step = placeholder();
+	public static final MobEffect mark_of_sacrifice = placeholder();
+	public static final MobEffect mirage = placeholder();
+	public static final MobEffect oakflesh = placeholder();
+	public static final MobEffect ironflesh = placeholder();
+	public static final MobEffect diamondflesh = placeholder();
 
 	/**
 	 * Sets both the registry and unlocalised names of the given potion, then registers it with the given registry. Use
-	 * this instead of {@link Potion#setRegistryName(String)} and {@link Potion#setPotionName(String)} during
+	 * this instead of {@link MobEffect#setRegistryName(String)} and {@link MobEffect#setPotionName(String)} during
 	 * construction, for convenience and consistency.
 	 * 
 	 * @param registry The registry to register the given potion to.
@@ -71,7 +71,7 @@ public final class WizardryPotions {
 	 *        {@code ebwizardry:[name]}. The unlocalised name will be {@code potion.ebwizardry:[name].name}.
 	 * @param potion The potion to register.
 	 */
-	public static void registerPotion(IForgeRegistry<Potion> registry, String name, Potion potion){
+	public static void registerPotion(IForgeRegistry<MobEffect> registry, String name, MobEffect potion){
 		potion.setRegistryName(Wizardry.MODID, name);
 		// For some reason, Potion#getName() doesn't prepend "potion." itself, so it has to be done here.
 		potion.setPotionName("potion." + potion.getRegistryName().toString());
@@ -79,9 +79,9 @@ public final class WizardryPotions {
 	}
 
 	@SubscribeEvent
-	public static void register(RegistryEvent.Register<Potion> event){
+	public static void register(RegistryEvent.Register<MobEffect> event){
 
-		IForgeRegistry<Potion> registry = event.getRegistry();
+		IForgeRegistry<MobEffect> registry = event.getRegistry();
 
 		// Interestingly, setting the colour to black stops the particles from rendering.
 
@@ -163,7 +163,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "curse_of_soulbinding", new Curse(true, 0x0f000f,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_soulbinding.png")){
 			@Override // We're not removing any attributes, but it's called when we want it to be so...
-			public void removeAttributesModifiersFromEntity(LivingEntity entity, net.minecraft.entity.ai.attributes.AbstractAttributeMap attributeMapIn, int amplifier){
+			public void removeAttributesModifiersFromEntity(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AbstractAttributeMap attributeMapIn, int amplifier){
 				// TODO: Hmmmm...
 			}
 		});

@@ -5,7 +5,7 @@ import electroblob.wizardry.entity.living.EntitySpiritHorse;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderHorse;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.world.entity.passive.EntityHorse;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 

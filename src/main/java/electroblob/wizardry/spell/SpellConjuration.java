@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 /**
  * Generic superclass for all spells which conjure an item for a certain duration.
@@ -27,7 +28,7 @@ import net.minecraft.world.level.Level;
  * <p></p>
  * By default, this type of spell cannot be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(net.minecraft.tileentity.TileEntityDispenser)}
+ * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell requires a packet to be sent. {@link Spell#requiresPacket()}
  * 

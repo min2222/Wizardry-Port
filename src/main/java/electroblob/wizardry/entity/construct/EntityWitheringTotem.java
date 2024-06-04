@@ -12,13 +12,13 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -30,7 +30,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 	private static final int PERIMETER_PARTICLE_DENSITY = 6;
 
-	private static final DataParameter<Float> HEALTH_DRAINED = EntityDataManager.createKey(EntityWitheringTotem.class, DataSerializers.FLOAT);
+	private static final EntityDataSerializer<Float> HEALTH_DRAINED = SynchedEntityData.createKey(EntityWitheringTotem.class, EntityDataSerializers.FLOAT);
 
 	public EntityWitheringTotem(Level world){
 		super(world);

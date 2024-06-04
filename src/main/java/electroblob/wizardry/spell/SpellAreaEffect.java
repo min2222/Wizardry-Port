@@ -10,8 +10,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ import java.util.List;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell requires a packet to be sent. {@link Spell#requiresPacket()}
  *
@@ -52,11 +52,11 @@ public abstract class SpellAreaEffect extends Spell {
 	/** The average number of particles to spawn per block in this spell's area of effect. */
 	protected float particleDensity = 0.65f;
 	
-	public SpellAreaEffect(String name, EnumAction action, boolean continuous){
+	public SpellAreaEffect(String name, UseAnim action, boolean continuous){
 		this(Wizardry.MODID, name, action, continuous);
 	}
 
-	public SpellAreaEffect(String modID, String name, EnumAction action, boolean continuous){
+	public SpellAreaEffect(String modID, String name, UseAnim action, boolean continuous){
 		super(modID, name, action, continuous);
 		this.addProperties(EFFECT_RADIUS);
 		this.npcSelector((e, o) -> true);
@@ -98,7 +98,7 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(TileEntityDispenser dispenser){
+	public boolean canBeCastBy(DispenserBlockEntity dispenser){
 		return true;
 	}
 

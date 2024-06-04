@@ -17,13 +17,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -47,7 +47,7 @@ public class Clairvoyance extends Spell {
 	}
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return false; }
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){

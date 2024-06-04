@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -204,7 +204,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 
 		super.readFromNBT(tagCompound);
 
-		NBTTagList tagList = tagCompound.getTagList("Inventory", NBT.TAG_COMPOUND);
+		ListTag tagList = tagCompound.getTagList("Inventory", NBT.TAG_COMPOUND);
 		for(int i = 0; i < tagList.tagCount(); i++){
 			CompoundTag tag = tagList.getCompoundTagAt(i);
 			byte slot = tag.getByte("Slot");
@@ -219,7 +219,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 
 		super.writeToNBT(tagCompound);
 
-		NBTTagList itemList = new NBTTagList();
+		ListTag itemList = new ListTag();
 		for(int i = 0; i < getSizeInventory(); i++){
 			ItemStack stack = getStackInSlot(i);
 			CompoundTag tag = new CompoundTag();

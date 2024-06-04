@@ -9,14 +9,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +33,7 @@ public class ArcaneLock extends SpellRay {
 
 	@Override public boolean requiresPacket(){ return true; }
 
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser){ return false; }
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override){ return false; }
 

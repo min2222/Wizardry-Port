@@ -3,27 +3,27 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.entity.EntityFlying;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookAtVillager;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAIMoveTowardsTarget;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.world.entity.ai.EntityAIAttackMelee;
+import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.world.entity.ai.EntityAILookAtVillager;
+import net.minecraft.world.entity.ai.EntityAILookIdle;
+import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.world.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.world.entity.ai.EntityAIMoveTowardsTarget;
+import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.ai.EntityAIWanderAvoidWater;
+import net.minecraft.world.entity.ai.EntityAIWatchClosest;
+import net.minecraft.world.entity.monster.EntityIronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -34,7 +34,7 @@ import java.util.UUID;
 
 public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCreature {
 
-	private static final DataParameter<Boolean> SPAWN_PARTICLES = EntityDataManager.createKey(EntitySpectralGolem.class, DataSerializers.BOOLEAN);
+	private static final EntityDataSerializer<Boolean> SPAWN_PARTICLES = SynchedEntityData.createKey(EntitySpectralGolem.class, EntityDataSerializers.BOOLEAN);
 
 	// Field implementations
 	private int lifetime = -1;

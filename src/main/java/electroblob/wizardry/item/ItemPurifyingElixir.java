@@ -12,11 +12,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraft.item.EnumAction;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -87,8 +84,8 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack stack){
-		return EnumAction.DRINK;
+	public UseAnim getItemUseAction(ItemStack stack){
+		return UseAnim.DRINK;
 	}
 
 	@Override

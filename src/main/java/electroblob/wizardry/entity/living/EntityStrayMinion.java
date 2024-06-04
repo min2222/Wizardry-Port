@@ -1,7 +1,7 @@
 package electroblob.wizardry.entity.living;
 
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.world.entity.projectile.EntityTippedArrow;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;

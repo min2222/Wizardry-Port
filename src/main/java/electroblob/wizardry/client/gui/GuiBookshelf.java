@@ -5,7 +5,7 @@ import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.world.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

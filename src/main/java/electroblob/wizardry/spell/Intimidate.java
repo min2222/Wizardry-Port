@@ -9,12 +9,12 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.world.entity.ai.RandomPositionGenerator;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -41,7 +41,7 @@ public class Intimidate extends SpellAreaEffect {
 	}
 
 	@Override
-	public boolean canBeCastBy(TileEntityDispenser dispenser){
+	public boolean canBeCastBy(DispenserBlockEntity dispenser){
 		return false;
 	}
 

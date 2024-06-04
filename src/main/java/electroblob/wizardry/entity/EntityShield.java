@@ -7,7 +7,7 @@ import electroblob.wizardry.spell.Shield;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.IProjectile;
+import net.minecraft.world.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;

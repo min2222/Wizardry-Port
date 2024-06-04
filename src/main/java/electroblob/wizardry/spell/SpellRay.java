@@ -10,8 +10,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell requires a packet to be sent. {@link Spell#requiresPacket()}
  * 
@@ -66,11 +66,11 @@ public abstract class SpellRay extends Spell {
 	/** The aim assist to use when raytracing. Defaults to 0. */
 	protected float aimAssist = 0;
 
-	public SpellRay(String name, EnumAction action, boolean isContinuous){
+	public SpellRay(String name, UseAnim action, boolean isContinuous){
 		this(Wizardry.MODID, name, action, isContinuous);
 	}
 
-	public SpellRay(String modID, String name, EnumAction action, boolean isContinuous){
+	public SpellRay(String modID, String name, UseAnim action, boolean isContinuous){
 		super(modID, name, action, isContinuous);
 		this.addProperties(RANGE);
 		this.npcSelector((e, o) -> true);
@@ -153,7 +153,7 @@ public abstract class SpellRay extends Spell {
 		return this;
 	}
 
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return true; }
 
 	// Finally everything in here is standardised and written in a form that's actually readable - it was long overdue!
 	@Override
@@ -253,7 +253,7 @@ public abstract class SpellRay extends Spell {
 	 * @return True if the caster should swing their arm when casting this spell, false if not.
 	 */
 	protected boolean casterSwingsArm(Level world, LivingEntity caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		return !this.isContinuous && this.action == EnumAction.NONE;
+		return !this.isContinuous && this.action == UseAnim.NONE;
 	}
 
 	/** Takes care of the shared stuff for the three casting methods. This is mainly for internal use. */

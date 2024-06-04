@@ -17,11 +17,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.world.entity.item.EntityTNTPrimed;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -46,7 +46,7 @@ public class GreaterTelekinesis extends SpellRay {
 	}
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return false; }
 
 	@Override
 	protected SoundEvent[] createSounds(){

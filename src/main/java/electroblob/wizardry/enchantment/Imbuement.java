@@ -5,10 +5,11 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryEnchantments;
 import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -32,7 +32,7 @@ import java.util.Iterator;
  * {@link EnchantmentMagicSword} and {@link EnchantmentTimed} to both be treated as instances of a single type, rather
  * than having to deal with each of them separately, which would be inefficient and cumbersome (the former of those
  * classes cannot extend the latter because they both need to extend different subclasses of
- * {@link net.minecraft.enchantment.Enchantment}).
+ * {@link Enchantment}).
  *
  * @since Wizardry 1.2
  */
@@ -60,7 +60,7 @@ public interface Imbuement {
 	static void removeImbuements(ItemStack stack){
 		if(stack.isItemEnchanted()){
 			// No need to check what enchantments the item has, since remove() does nothing if the element does not exist
-			NBTTagList enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
+			ListTag enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
 					ItemEnchantedBook.getEnchantments(stack) : stack.getEnchantmentTagList();
 			// Check all enchantments of the item
 			Iterator<NBTBase> enchantmentIt = enchantmentList.iterator();
@@ -89,7 +89,7 @@ public interface Imbuement {
 				ItemStack slotStack = slot.getStack();
 				if(slotStack.getItem() instanceof ItemEnchantedBook){
 					// We don't care about the level of the enchantments
-					NBTTagList enchantmentList = ItemEnchantedBook.getEnchantments(slotStack);
+					ListTag enchantmentList = ItemEnchantedBook.getEnchantments(slotStack);
 					// Removes all imbuements
 					if(Iterables.removeIf(enchantmentList, tag -> {
 						CompoundTag enchantmentTag = (CompoundTag) tag;

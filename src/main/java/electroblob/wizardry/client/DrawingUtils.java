@@ -1,7 +1,7 @@
 package electroblob.wizardry.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.item.ItemStack;
@@ -196,7 +196,7 @@ public final class DrawingUtils {
 	 * would be if it was not scaled (automatically or manually).
 	 * @param alignR True to right-align the text, false for normal left alignment.
 	 */
-	public static void drawScaledStringToWidth(FontRenderer font, String text, float x, float y, float scale, int colour, float width, boolean centre, boolean alignR){
+	public static void drawScaledStringToWidth(Font font, String text, float x, float y, float scale, int colour, float width, boolean centre, boolean alignR){
 		
 		float textWidth = font.getStringWidth(text) * scale;
 		float textHeight = font.FONT_HEIGHT * scale;
@@ -214,7 +214,7 @@ public final class DrawingUtils {
 
 	/** Draws the given string at the given position, scaling the text by the specified factor. Also enables blending to
 	 * render text in semitransparent colours (e.g. 0x88ffffff). */
-	public static void drawScaledTranslucentString(FontRenderer font, String text, float x, float y, float scale, int colour){
+	public static void drawScaledTranslucentString(Font font, String text, float x, float y, float scale, int colour){
 		
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();

@@ -12,6 +12,7 @@ import electroblob.wizardry.item.ItemWizardArmour.ArmourClass;
 import electroblob.wizardry.misc.BehaviourSpellDispense;
 import electroblob.wizardry.registry.WizardryTabs.CreativeTabListed;
 import electroblob.wizardry.registry.WizardryTabs.CreativeTabSorted;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -20,8 +21,7 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.dispenser.BehaviorProjectileDispense;
 import net.minecraft.dispenser.IPosition;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.world.entity.IProjectile;
 import net.minecraft.world.item.Item.ToolMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.world.item.ItemStack;
@@ -431,7 +431,7 @@ public final class WizardryItems {
 
 	/**
 	 * Helper method to return the appropriate armour item based on element and slot. As of Wizardry 4.3.3, this
-	 * delegates to the cleaner replacement method {@link ItemWizardArmour#getArmour(Element, ArmourClass, EntityEquipmentSlot)},
+	 * delegates to the cleaner replacement method {@link ItemWizardArmour#getArmour(Element, ArmourClass, EquipmentSlot)},
 	 * which accesses the item registry dynamically by generating the registry name on the fly.
 	 * <p></p>
 	 * <i>This method only returns the original, basic armour set ({@link ArmourClass#WIZARD}).</i>
@@ -446,7 +446,7 @@ public final class WizardryItems {
 	 * cases where it is appropriate to ignore all armour that is not in the base mod.
 	 */
 	@Deprecated
-	public static Item getArmour(Element element, EntityEquipmentSlot slot){
+	public static Item getArmour(Element element, EquipmentSlot slot){
 		return ItemWizardArmour.getArmour(element, ArmourClass.WIZARD, slot); // Delegate to replacement method
 	}
 
@@ -656,170 +656,170 @@ public final class WizardryItems {
 
 		registerItem(registry, "spectral_dust", 					new ItemSpectralDust());
 
-		registerItem(registry, "wizard_hat", 						new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, null), true);
-		registerItem(registry, "wizard_robe", 					new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, null));
-		registerItem(registry, "wizard_leggings", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, null));
-		registerItem(registry, "wizard_boots", 					new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, null));
+		registerItem(registry, "wizard_hat", 						new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, null), true);
+		registerItem(registry, "wizard_robe", 					new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, null));
+		registerItem(registry, "wizard_leggings", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, null));
+		registerItem(registry, "wizard_boots", 					new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, null));
 
-		registerItem(registry, "wizard_hat_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.FIRE));
-		registerItem(registry, "wizard_robe_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.FIRE));
-		registerItem(registry, "wizard_leggings_fire", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.FIRE));
-		registerItem(registry, "wizard_boots_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.FIRE));
+		registerItem(registry, "wizard_hat_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.FIRE));
+		registerItem(registry, "wizard_robe_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.FIRE));
+		registerItem(registry, "wizard_leggings_fire", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.FIRE));
+		registerItem(registry, "wizard_boots_fire", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.FIRE));
 
-		registerItem(registry, "wizard_hat_ice", 					new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.ICE));
-		registerItem(registry, "wizard_robe_ice", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.ICE));
-		registerItem(registry, "wizard_leggings_ice", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.ICE));
-		registerItem(registry, "wizard_boots_ice", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.ICE));
+		registerItem(registry, "wizard_hat_ice", 					new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.ICE));
+		registerItem(registry, "wizard_robe_ice", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.ICE));
+		registerItem(registry, "wizard_leggings_ice", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.ICE));
+		registerItem(registry, "wizard_boots_ice", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.ICE));
 
-		registerItem(registry, "wizard_hat_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.LIGHTNING));
-		registerItem(registry, "wizard_robe_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.LIGHTNING));
-		registerItem(registry, "wizard_leggings_lightning", 		new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.LIGHTNING));
-		registerItem(registry, "wizard_boots_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.LIGHTNING));
+		registerItem(registry, "wizard_hat_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.LIGHTNING));
+		registerItem(registry, "wizard_robe_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.LIGHTNING));
+		registerItem(registry, "wizard_leggings_lightning", 		new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.LIGHTNING));
+		registerItem(registry, "wizard_boots_lightning", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.LIGHTNING));
 
-		registerItem(registry, "wizard_hat_necromancy", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.NECROMANCY));
-		registerItem(registry, "wizard_robe_necromancy", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.NECROMANCY));
-		registerItem(registry, "wizard_leggings_necromancy", 		new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.NECROMANCY));
-		registerItem(registry, "wizard_boots_necromancy", 		new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.NECROMANCY));
+		registerItem(registry, "wizard_hat_necromancy", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.NECROMANCY));
+		registerItem(registry, "wizard_robe_necromancy", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.NECROMANCY));
+		registerItem(registry, "wizard_leggings_necromancy", 		new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.NECROMANCY));
+		registerItem(registry, "wizard_boots_necromancy", 		new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.NECROMANCY));
 
-		registerItem(registry, "wizard_hat_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.EARTH));
-		registerItem(registry, "wizard_robe_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.EARTH));
-		registerItem(registry, "wizard_leggings_earth", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.EARTH));
-		registerItem(registry, "wizard_boots_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.EARTH));
+		registerItem(registry, "wizard_hat_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.EARTH));
+		registerItem(registry, "wizard_robe_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.EARTH));
+		registerItem(registry, "wizard_leggings_earth", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.EARTH));
+		registerItem(registry, "wizard_boots_earth", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.EARTH));
 
-		registerItem(registry, "wizard_hat_sorcery", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.SORCERY));
-		registerItem(registry, "wizard_robe_sorcery", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.SORCERY));
-		registerItem(registry, "wizard_leggings_sorcery", 		new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.SORCERY));
-		registerItem(registry, "wizard_boots_sorcery", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.SORCERY));
+		registerItem(registry, "wizard_hat_sorcery", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.SORCERY));
+		registerItem(registry, "wizard_robe_sorcery", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.SORCERY));
+		registerItem(registry, "wizard_leggings_sorcery", 		new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.SORCERY));
+		registerItem(registry, "wizard_boots_sorcery", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.SORCERY));
 
-		registerItem(registry, "wizard_hat_healing", 				new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.HEAD, Element.HEALING));
-		registerItem(registry, "wizard_robe_healing", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.CHEST, Element.HEALING));
-		registerItem(registry, "wizard_leggings_healing", 		new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.LEGS, Element.HEALING));
-		registerItem(registry, "wizard_boots_healing", 			new ItemWizardArmour(ArmourClass.WIZARD, EntityEquipmentSlot.FEET, Element.HEALING));
+		registerItem(registry, "wizard_hat_healing", 				new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.HEAD, Element.HEALING));
+		registerItem(registry, "wizard_robe_healing", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.CHEST, Element.HEALING));
+		registerItem(registry, "wizard_leggings_healing", 		new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.LEGS, Element.HEALING));
+		registerItem(registry, "wizard_boots_healing", 			new ItemWizardArmour(ArmourClass.WIZARD, EquipmentSlot.FEET, Element.HEALING));
 
-		registerItem(registry, "sage_hat", 						new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, null));
-		registerItem(registry, "sage_robe", 						new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, null));
-		registerItem(registry, "sage_leggings", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, null));
-		registerItem(registry, "sage_boots", 						new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, null));
+		registerItem(registry, "sage_hat", 						new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, null));
+		registerItem(registry, "sage_robe", 						new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, null));
+		registerItem(registry, "sage_leggings", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, null));
+		registerItem(registry, "sage_boots", 						new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, null));
 
-		registerItem(registry, "sage_hat_fire", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.FIRE));
-		registerItem(registry, "sage_robe_fire", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.FIRE));
-		registerItem(registry, "sage_leggings_fire", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.FIRE));
-		registerItem(registry, "sage_boots_fire", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.FIRE));
+		registerItem(registry, "sage_hat_fire", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.FIRE));
+		registerItem(registry, "sage_robe_fire", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.FIRE));
+		registerItem(registry, "sage_leggings_fire", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.FIRE));
+		registerItem(registry, "sage_boots_fire", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.FIRE));
 
-		registerItem(registry, "sage_hat_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.ICE));
-		registerItem(registry, "sage_robe_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.ICE));
-		registerItem(registry, "sage_leggings_ice", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.ICE));
-		registerItem(registry, "sage_boots_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.ICE));
+		registerItem(registry, "sage_hat_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.ICE));
+		registerItem(registry, "sage_robe_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.ICE));
+		registerItem(registry, "sage_leggings_ice", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.ICE));
+		registerItem(registry, "sage_boots_ice", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.ICE));
 
-		registerItem(registry, "sage_hat_lightning", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.LIGHTNING));
-		registerItem(registry, "sage_robe_lightning", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.LIGHTNING));
-		registerItem(registry, "sage_leggings_lightning", 		new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.LIGHTNING));
-		registerItem(registry, "sage_boots_lightning", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.LIGHTNING));
+		registerItem(registry, "sage_hat_lightning", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.LIGHTNING));
+		registerItem(registry, "sage_robe_lightning", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.LIGHTNING));
+		registerItem(registry, "sage_leggings_lightning", 		new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.LIGHTNING));
+		registerItem(registry, "sage_boots_lightning", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.LIGHTNING));
 
-		registerItem(registry, "sage_hat_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.NECROMANCY));
-		registerItem(registry, "sage_robe_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.NECROMANCY));
-		registerItem(registry, "sage_leggings_necromancy", 		new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.NECROMANCY));
-		registerItem(registry, "sage_boots_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.NECROMANCY));
+		registerItem(registry, "sage_hat_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.NECROMANCY));
+		registerItem(registry, "sage_robe_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.NECROMANCY));
+		registerItem(registry, "sage_leggings_necromancy", 		new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.NECROMANCY));
+		registerItem(registry, "sage_boots_necromancy", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.NECROMANCY));
 
-		registerItem(registry, "sage_hat_earth", 					new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.EARTH));
-		registerItem(registry, "sage_robe_earth", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.EARTH));
-		registerItem(registry, "sage_leggings_earth", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.EARTH));
-		registerItem(registry, "sage_boots_earth", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.EARTH));
+		registerItem(registry, "sage_hat_earth", 					new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.EARTH));
+		registerItem(registry, "sage_robe_earth", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.EARTH));
+		registerItem(registry, "sage_leggings_earth", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.EARTH));
+		registerItem(registry, "sage_boots_earth", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.EARTH));
 
-		registerItem(registry, "sage_hat_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.SORCERY));
-		registerItem(registry, "sage_robe_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.SORCERY));
-		registerItem(registry, "sage_leggings_sorcery", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.SORCERY));
-		registerItem(registry, "sage_boots_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.SORCERY));
+		registerItem(registry, "sage_hat_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.SORCERY));
+		registerItem(registry, "sage_robe_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.SORCERY));
+		registerItem(registry, "sage_leggings_sorcery", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.SORCERY));
+		registerItem(registry, "sage_boots_sorcery", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.SORCERY));
 
-		registerItem(registry, "sage_hat_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.HEAD, Element.HEALING));
-		registerItem(registry, "sage_robe_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.CHEST, Element.HEALING));
-		registerItem(registry, "sage_leggings_healing", 			new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.LEGS, Element.HEALING));
-		registerItem(registry, "sage_boots_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EntityEquipmentSlot.FEET, Element.HEALING));
+		registerItem(registry, "sage_hat_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.HEAD, Element.HEALING));
+		registerItem(registry, "sage_robe_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.CHEST, Element.HEALING));
+		registerItem(registry, "sage_leggings_healing", 			new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.LEGS, Element.HEALING));
+		registerItem(registry, "sage_boots_healing", 				new ItemWizardArmour(ArmourClass.SAGE, EquipmentSlot.FEET, Element.HEALING));
 
-		registerItem(registry, "battlemage_helmet", 				new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, null));
-		registerItem(registry, "battlemage_chestplate", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, null));
-		registerItem(registry, "battlemage_leggings", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, null));
-		registerItem(registry, "battlemage_boots", 				new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, null));
+		registerItem(registry, "battlemage_helmet", 				new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, null));
+		registerItem(registry, "battlemage_chestplate", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, null));
+		registerItem(registry, "battlemage_leggings", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, null));
+		registerItem(registry, "battlemage_boots", 				new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, null));
 
-		registerItem(registry, "battlemage_helmet_fire", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.FIRE));
-		registerItem(registry, "battlemage_chestplate_fire", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.FIRE));
-		registerItem(registry, "battlemage_leggings_fire", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.FIRE));
-		registerItem(registry, "battlemage_boots_fire", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.FIRE));
+		registerItem(registry, "battlemage_helmet_fire", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.FIRE));
+		registerItem(registry, "battlemage_chestplate_fire", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.FIRE));
+		registerItem(registry, "battlemage_leggings_fire", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.FIRE));
+		registerItem(registry, "battlemage_boots_fire", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.FIRE));
 
-		registerItem(registry, "battlemage_helmet_ice", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.ICE));
-		registerItem(registry, "battlemage_chestplate_ice", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.ICE));
-		registerItem(registry, "battlemage_leggings_ice", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.ICE));
-		registerItem(registry, "battlemage_boots_ice", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.ICE));
+		registerItem(registry, "battlemage_helmet_ice", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.ICE));
+		registerItem(registry, "battlemage_chestplate_ice", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.ICE));
+		registerItem(registry, "battlemage_leggings_ice", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.ICE));
+		registerItem(registry, "battlemage_boots_ice", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.ICE));
 
-		registerItem(registry, "battlemage_helmet_lightning", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.LIGHTNING));
-		registerItem(registry, "battlemage_chestplate_lightning", new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.LIGHTNING));
-		registerItem(registry, "battlemage_leggings_lightning", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.LIGHTNING));
-		registerItem(registry, "battlemage_boots_lightning", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.LIGHTNING));
+		registerItem(registry, "battlemage_helmet_lightning", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.LIGHTNING));
+		registerItem(registry, "battlemage_chestplate_lightning", new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.LIGHTNING));
+		registerItem(registry, "battlemage_leggings_lightning", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.LIGHTNING));
+		registerItem(registry, "battlemage_boots_lightning", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.LIGHTNING));
 
-		registerItem(registry, "battlemage_helmet_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.NECROMANCY));
-		registerItem(registry, "battlemage_chestplate_necromancy", new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.NECROMANCY));
-		registerItem(registry, "battlemage_leggings_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.NECROMANCY));
-		registerItem(registry, "battlemage_boots_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.NECROMANCY));
+		registerItem(registry, "battlemage_helmet_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.NECROMANCY));
+		registerItem(registry, "battlemage_chestplate_necromancy", new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.NECROMANCY));
+		registerItem(registry, "battlemage_leggings_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.NECROMANCY));
+		registerItem(registry, "battlemage_boots_necromancy", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.NECROMANCY));
 
-		registerItem(registry, "battlemage_helmet_earth", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.EARTH));
-		registerItem(registry, "battlemage_chestplate_earth", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.EARTH));
-		registerItem(registry, "battlemage_leggings_earth", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.EARTH));
-		registerItem(registry, "battlemage_boots_earth", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.EARTH));
+		registerItem(registry, "battlemage_helmet_earth", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.EARTH));
+		registerItem(registry, "battlemage_chestplate_earth", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.EARTH));
+		registerItem(registry, "battlemage_leggings_earth", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.EARTH));
+		registerItem(registry, "battlemage_boots_earth", 			new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.EARTH));
 
-		registerItem(registry, "battlemage_helmet_sorcery", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.SORCERY));
-		registerItem(registry, "battlemage_chestplate_sorcery", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.SORCERY));
-		registerItem(registry, "battlemage_leggings_sorcery", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.SORCERY));
-		registerItem(registry, "battlemage_boots_sorcery", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.SORCERY));
+		registerItem(registry, "battlemage_helmet_sorcery", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.SORCERY));
+		registerItem(registry, "battlemage_chestplate_sorcery", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.SORCERY));
+		registerItem(registry, "battlemage_leggings_sorcery", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.SORCERY));
+		registerItem(registry, "battlemage_boots_sorcery", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.SORCERY));
 
-		registerItem(registry, "battlemage_helmet_healing", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.HEAD, Element.HEALING));
-		registerItem(registry, "battlemage_chestplate_healing", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.CHEST, Element.HEALING));
-		registerItem(registry, "battlemage_leggings_healing", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.LEGS, Element.HEALING));
-		registerItem(registry, "battlemage_boots_healing", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EntityEquipmentSlot.FEET, Element.HEALING));
+		registerItem(registry, "battlemage_helmet_healing", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.HEAD, Element.HEALING));
+		registerItem(registry, "battlemage_chestplate_healing", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.CHEST, Element.HEALING));
+		registerItem(registry, "battlemage_leggings_healing", 	new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.LEGS, Element.HEALING));
+		registerItem(registry, "battlemage_boots_healing", 		new ItemWizardArmour(ArmourClass.BATTLEMAGE, EquipmentSlot.FEET, Element.HEALING));
 
-		registerItem(registry, "warlock_hood", 					new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, null));
-		registerItem(registry, "warlock_robe", 					new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, null));
-		registerItem(registry, "warlock_leggings", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, null));
-		registerItem(registry, "warlock_boots", 					new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, null));
+		registerItem(registry, "warlock_hood", 					new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, null));
+		registerItem(registry, "warlock_robe", 					new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, null));
+		registerItem(registry, "warlock_leggings", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, null));
+		registerItem(registry, "warlock_boots", 					new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, null));
 
-		registerItem(registry, "warlock_hood_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.FIRE));
-		registerItem(registry, "warlock_robe_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.FIRE));
-		registerItem(registry, "warlock_leggings_fire", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.FIRE));
-		registerItem(registry, "warlock_boots_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.FIRE));
+		registerItem(registry, "warlock_hood_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.FIRE));
+		registerItem(registry, "warlock_robe_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.FIRE));
+		registerItem(registry, "warlock_leggings_fire", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.FIRE));
+		registerItem(registry, "warlock_boots_fire", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.FIRE));
 
-		registerItem(registry, "warlock_hood_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.ICE));
-		registerItem(registry, "warlock_robe_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.ICE));
-		registerItem(registry, "warlock_leggings_ice", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.ICE));
-		registerItem(registry, "warlock_boots_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.ICE));
+		registerItem(registry, "warlock_hood_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.ICE));
+		registerItem(registry, "warlock_robe_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.ICE));
+		registerItem(registry, "warlock_leggings_ice", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.ICE));
+		registerItem(registry, "warlock_boots_ice", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.ICE));
 
-		registerItem(registry, "warlock_hood_lightning", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.LIGHTNING));
-		registerItem(registry, "warlock_robe_lightning", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.LIGHTNING));
-		registerItem(registry, "warlock_leggings_lightning", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.LIGHTNING));
-		registerItem(registry, "warlock_boots_lightning", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.LIGHTNING));
+		registerItem(registry, "warlock_hood_lightning", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.LIGHTNING));
+		registerItem(registry, "warlock_robe_lightning", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.LIGHTNING));
+		registerItem(registry, "warlock_leggings_lightning", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.LIGHTNING));
+		registerItem(registry, "warlock_boots_lightning", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.LIGHTNING));
 
-		registerItem(registry, "warlock_hood_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.NECROMANCY));
-		registerItem(registry, "warlock_robe_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.NECROMANCY));
-		registerItem(registry, "warlock_leggings_necromancy", 	new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.NECROMANCY));
-		registerItem(registry, "warlock_boots_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.NECROMANCY));
+		registerItem(registry, "warlock_hood_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.NECROMANCY));
+		registerItem(registry, "warlock_robe_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.NECROMANCY));
+		registerItem(registry, "warlock_leggings_necromancy", 	new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.NECROMANCY));
+		registerItem(registry, "warlock_boots_necromancy", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.NECROMANCY));
 
-		registerItem(registry, "warlock_hood_earth", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.EARTH));
-		registerItem(registry, "warlock_robe_earth", 				new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.EARTH));
-		registerItem(registry, "warlock_leggings_earth", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.EARTH));
-		registerItem(registry, "warlock_boots_earth", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.EARTH));
+		registerItem(registry, "warlock_hood_earth", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.EARTH));
+		registerItem(registry, "warlock_robe_earth", 				new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.EARTH));
+		registerItem(registry, "warlock_leggings_earth", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.EARTH));
+		registerItem(registry, "warlock_boots_earth", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.EARTH));
 
-		registerItem(registry, "warlock_hood_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.SORCERY));
-		registerItem(registry, "warlock_robe_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.SORCERY));
-		registerItem(registry, "warlock_leggings_sorcery", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.SORCERY));
-		registerItem(registry, "warlock_boots_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.SORCERY));
+		registerItem(registry, "warlock_hood_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.SORCERY));
+		registerItem(registry, "warlock_robe_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.SORCERY));
+		registerItem(registry, "warlock_leggings_sorcery", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.SORCERY));
+		registerItem(registry, "warlock_boots_sorcery", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.SORCERY));
 
-		registerItem(registry, "warlock_hood_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.HEAD, Element.HEALING));
-		registerItem(registry, "warlock_robe_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.CHEST, Element.HEALING));
-		registerItem(registry, "warlock_leggings_healing", 		new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.LEGS, Element.HEALING));
-		registerItem(registry, "warlock_boots_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EntityEquipmentSlot.FEET, Element.HEALING));
+		registerItem(registry, "warlock_hood_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.HEAD, Element.HEALING));
+		registerItem(registry, "warlock_robe_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.CHEST, Element.HEALING));
+		registerItem(registry, "warlock_leggings_healing", 		new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.LEGS, Element.HEALING));
+		registerItem(registry, "warlock_boots_healing", 			new ItemWizardArmour(ArmourClass.WARLOCK, EquipmentSlot.FEET, Element.HEALING));
 
-		registerItem(registry, "spectral_helmet", 				new ItemSpectralArmour(ArmorMaterial.IRON, 1, EntityEquipmentSlot.HEAD));
-		registerItem(registry, "spectral_chestplate", 			new ItemSpectralArmour(ArmorMaterial.IRON, 1, EntityEquipmentSlot.CHEST));
-		registerItem(registry, "spectral_leggings", 				new ItemSpectralArmour(ArmorMaterial.IRON, 1, EntityEquipmentSlot.LEGS));
-		registerItem(registry, "spectral_boots", 					new ItemSpectralArmour(ArmorMaterial.IRON, 1, EntityEquipmentSlot.FEET));
+		registerItem(registry, "spectral_helmet", 				new ItemSpectralArmour(ArmorMaterial.IRON, 1, EquipmentSlot.HEAD));
+		registerItem(registry, "spectral_chestplate", 			new ItemSpectralArmour(ArmorMaterial.IRON, 1, EquipmentSlot.CHEST));
+		registerItem(registry, "spectral_leggings", 				new ItemSpectralArmour(ArmorMaterial.IRON, 1, EquipmentSlot.LEGS));
+		registerItem(registry, "spectral_boots", 					new ItemSpectralArmour(ArmorMaterial.IRON, 1, EquipmentSlot.FEET));
 
 		registerItem(registry, "lightning_hammer", 				new ItemLightningHammer());
 		registerItem(registry, "flamecatcher", 					new ItemFlamecatcher());

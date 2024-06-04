@@ -1,8 +1,8 @@
 package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.Wizardry;
-import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityFlying;
+import net.minecraft.world.entity.EntityCreature;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;

@@ -11,8 +11,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -33,7 +33,7 @@ import java.util.function.Function;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell does not require a packet to be sent. {@link Spell#requiresPacket()}
  * 
@@ -52,11 +52,11 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	/** Whether constructs spawned by this spell may overlap. Defaults to false. */
 	protected boolean allowOverlap = false;
 
-	public SpellConstruct(String name, EnumAction action, Function<Level, T> constructFactory, boolean permanent){
+	public SpellConstruct(String name, UseAnim action, Function<Level, T> constructFactory, boolean permanent){
 		this(Wizardry.MODID, name, action, constructFactory, permanent);
 	}
 
-	public SpellConstruct(String modID, String name, EnumAction action, Function<Level, T> constructFactory, boolean permanent){
+	public SpellConstruct(String modID, String name, UseAnim action, Function<Level, T> constructFactory, boolean permanent){
 		super(modID, name, action, false);
 		this.constructFactory = constructFactory;
 		this.permanent = permanent;
@@ -66,7 +66,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	
 	@Override public boolean requiresPacket(){ return false; }
 	
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return true; }
 	
 	/**
 	 * Sets whether the construct must be spawned on the ground.

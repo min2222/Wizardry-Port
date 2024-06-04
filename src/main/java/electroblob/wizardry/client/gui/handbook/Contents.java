@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.util.JavaUtils;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.JsonUtils;
 
@@ -66,7 +66,7 @@ class Contents {
 	 * @param left       The x coordinate of the left side of the GUI.
 	 * @param top        The y coordinate of the top of the GUI.
 	 */
-	void draw(FontRenderer font, int doublePage, int left, int top){
+	void draw(Font font, int doublePage, int left, int top){
 
 		// Show/hide buttons
 
@@ -128,7 +128,7 @@ class Contents {
 	 * @return The number of lines this contents takes up.
 	 * @throws JsonSyntaxException if at any point the formatting is found to be invalid.
 	 */
-	int format(FontRenderer font, int startPage, int startLine, int left, int top){
+	int format(Font font, int startPage, int startLine, int left, int top){
 
 		this.buttons.clear();
 

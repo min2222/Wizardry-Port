@@ -9,7 +9,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.util.JavaUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.ResourceLocation;
@@ -113,7 +113,7 @@ class Section {
 	 */
 	// This method is supposed to be 'idiot-proof' in the sense that the code calling it need not check whether the
 	// section actually needs drawing, so it can just dumbly call draw(...) for all the sections in order.
-	void draw(FontRenderer font, int doublePage, int left, int top){
+	void draw(Font font, int doublePage, int left, int top){
 
 		// Show/hide buttons
 
@@ -168,7 +168,7 @@ class Section {
 	 * @return The <b>single-page</b> index of the next blank page after the end of this section.
 	 * @throws JsonSyntaxException if at any point the formatting is found to be invalid.
 	 */
-	int format(FontRenderer font, int startPage, int left, int top){
+	int format(Font font, int startPage, int left, int top){
 
 		this.buttons.clear();
 		this.pages.clear();
@@ -359,7 +359,7 @@ class Section {
 	/**
 	 * Parses the given JSON object and constructs a new {@code Section} from it, setting all the relevant fields
 	 * and references. This method converts the JSON object to a {@code Section} object and retrieves any resources;
-	 * the section is not formatted in any way until GUI load, in {@link Section#format(FontRenderer, int, int, int)}.
+	 * the section is not formatted in any way until GUI load, in {@link Section#format(Font, int, int, int)}.
 	 *
 	 * @param json A JSON object representing the section to be constructed. This must contain at least a "title"
 	 *             string.

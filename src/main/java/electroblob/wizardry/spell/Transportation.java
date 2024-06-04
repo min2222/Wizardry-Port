@@ -17,7 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -37,7 +37,7 @@ public class Transportation extends Spell {
 	public static final int MAX_REMEMBERED_LOCATIONS = 4;
 
 	// For some reason 'the diamond' doesn't work if I chain methods onto this. Type inference is weird.
-	public static final IStoredVariable<List<Location>> LOCATIONS_KEY = new IStoredVariable.StoredVariable<List<Location>, NBTTagList>("stoneCirclePos",
+	public static final IStoredVariable<List<Location>> LOCATIONS_KEY = new IStoredVariable.StoredVariable<List<Location>, ListTag>("stoneCirclePos",
 			s -> NBTExtras.listToNBT(s, Location::toNBT), t -> new ArrayList<>(NBTExtras.NBTToList(t, Location::fromNBT)), Persistence.ALWAYS).setSynced();
 	public static final IStoredVariable<Integer> COUNTDOWN_KEY = IStoredVariable.StoredVariable.ofInt("tpCountdown", Persistence.NEVER).withTicker(Transportation::update);
 

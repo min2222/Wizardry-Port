@@ -5,7 +5,7 @@ import electroblob.wizardry.enchantment.EnchantmentMagicProtection;
 import electroblob.wizardry.enchantment.EnchantmentMagicSword;
 import electroblob.wizardry.enchantment.EnchantmentTimed;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

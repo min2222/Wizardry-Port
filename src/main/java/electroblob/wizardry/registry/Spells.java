@@ -6,7 +6,7 @@ import electroblob.wizardry.entity.living.*;
 import electroblob.wizardry.entity.projectile.*;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.spell.*;
-import net.minecraft.entity.projectile.EntitySnowball;
+import net.minecraft.world.entity.projectile.EntitySnowball;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;

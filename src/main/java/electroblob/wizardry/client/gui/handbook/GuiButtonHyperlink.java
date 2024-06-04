@@ -6,7 +6,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.Mth;
 import net.minecraft.util.text.ITextComponent;
@@ -28,7 +28,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 	final List<String> lines;
 	final int linesLeft;
 
-	GuiButtonHyperlink(int id, int x, int y, FontRenderer font, String text, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
+	GuiButtonHyperlink(int id, int x, int y, Font font, String text, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 
 		super(id, x, y, font.getStringWidth(text), font.FONT_HEIGHT, text);
 
@@ -75,7 +75,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 		}
 	}
 
-	public boolean isHovered(net.minecraft.client.gui.FontRenderer font, int mouseX, int mouseY){
+	public boolean isHovered(Font font, int mouseX, int mouseY){
 
 		int i = 0;
 
@@ -151,7 +151,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 	 * @throws IllegalArgumentException if the given argument array is empty or contains more than 2 arguments
 	 * @throws JsonSyntaxException if the specified link target is not a URL or a valid section ID
 	 */
-	public static GuiButtonHyperlink create(int x, int y, FontRenderer font, List<String> upToLink, String[] arguments, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
+	public static GuiButtonHyperlink create(int x, int y, Font font, List<String> upToLink, String[] arguments, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 
 		if(arguments.length == 0 || arguments.length > 2) throw new IllegalArgumentException("Incorrect array length!");
 
@@ -179,7 +179,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 
 		final Section target;
 
-		Internal(int id, int x, int y, FontRenderer font, String text, Section target, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
+		Internal(int id, int x, int y, Font font, String text, Section target, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 			super(id, x, y, font, text, indent, suffix, linesLeft, rightPage, spaceless);
 			this.target = target;
 		}
@@ -218,7 +218,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 
 		final ITextComponent link;
 
-		External(int id, int x, int y, FontRenderer font, String text, String url, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
+		External(int id, int x, int y, Font font, String text, String url, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 			super(id, x, y, font, text, indent, suffix, linesLeft, rightPage, spaceless);
 			this.link = new TextComponentString(text);
 			link.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)).setColor(ChatFormatting.DARK_BLUE);

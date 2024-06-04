@@ -5,9 +5,9 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Set;
 

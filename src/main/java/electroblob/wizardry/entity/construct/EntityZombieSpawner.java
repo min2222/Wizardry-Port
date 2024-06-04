@@ -9,9 +9,9 @@ import electroblob.wizardry.spell.ZombieApocalypse;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
@@ -47,7 +47,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				zombie.setLifetime(Spells.zombie_apocalypse.getProperty(SpellMinion.MINION_LIFETIME).intValue());
-				IAttributeInstance attribute = zombie.getEntityAttribute(Attributes.ATTACK_DAMAGE);
+				AttributeInstance attribute = zombie.getEntityAttribute(Attributes.ATTACK_DAMAGE);
 				attribute.applyModifier(new AttributeModifier(SpellMinion.POTENCY_ATTRIBUTE_MODIFIER,
 						damageMultiplier - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				zombie.setHealth(zombie.getMaxHealth()); // Need to set this because we may have just modified the value

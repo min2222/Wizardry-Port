@@ -7,6 +7,7 @@ import electroblob.wizardry.packet.*;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -84,7 +85,7 @@ public class CommonProxy {
 		return false;
 	}
 
-	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
+	public Font getFontRenderer(ItemStack stack){
 		return null;
 	}
 

@@ -16,7 +16,7 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
@@ -637,7 +637,7 @@ public class GuiSpellDisplay {
 			if(flipX && !mirrorX) x -= width;
 			if(flipY && !mirrorY) y += height;
 			
-			FontRenderer font = ClientProxy.mixedFontRenderer; // On this occasion we're client-side so this is OK
+			Font font = ClientProxy.mixedFontRenderer; // On this occasion we're client-side so this is OK
 			
 			// Position of the selected spell name in normal display, also used for interpolation when animating
 			int x1 = flipX && mirrorX ? x - width : x + textInsetX;

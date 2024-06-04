@@ -10,7 +10,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.world.entity.ai.EntityAIBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

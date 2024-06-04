@@ -1,7 +1,7 @@
 package electroblob.wizardry.enchantment;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 // This one is for everything other than imbued swords.
@@ -9,7 +9,7 @@ public class EnchantmentTimed extends Enchantment implements Imbuement {
 
 	public EnchantmentTimed(){
 		// Setting enchantment type to null stops the book appearing in the creative inventory
-		super(Enchantment.Rarity.COMMON, null, new EntityEquipmentSlot[]{EntityEquipmentSlot.MAINHAND});
+		super(Enchantment.Rarity.COMMON, null, new EquipmentSlot[]{EquipmentSlot.MAINHAND});
 	}
 
 	@Override

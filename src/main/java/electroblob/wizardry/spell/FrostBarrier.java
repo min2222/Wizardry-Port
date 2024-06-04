@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -36,7 +36,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(TileEntityDispenser dispenser){
+	public boolean canBeCastBy(DispenserBlockEntity dispenser){
 		return true;
 	}
 

@@ -9,8 +9,8 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.projectile.EntityLargeFireball;
+import net.minecraft.world.entity.monster.EntityGhast;
+import net.minecraft.world.entity.projectile.EntityLargeFireball;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * It's like {@link EntityMagicFireball}, but bigger... the wizardry version of vanilla's
- * {@link net.minecraft.entity.projectile.EntityLargeFireball}
+ * {@link net.minecraft.world.entity.projectile.EntityLargeFireball}
  */
 @Mod.EventBusSubscriber
 public class EntityLargeMagicFireball extends EntityMagicFireball {

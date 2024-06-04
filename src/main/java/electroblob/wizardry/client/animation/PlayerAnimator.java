@@ -17,8 +17,8 @@ import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.EnumHandSide;
@@ -155,7 +155,7 @@ public class PlayerAnimator {
 				// This needs to be lazy-loaded because we need access to an actual item
 				for(LayerRenderer<? extends LivingEntity> layer : layers){
 					if(layer instanceof LayerBipedArmor){
-						for(EntityEquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
+						for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 
 							ItemStack armour = player.getItemStackFromSlot(slot);
 							// This method could behave dynamically depending on stuff like NBT so there's not really any way to
@@ -209,7 +209,7 @@ public class PlayerAnimator {
 
 		LocalPlayer player = Minecraft.getMinecraft().player;
 
-		EnumAction action = event.getItemStack().getItemUseAction();
+		UseAnim action = event.getItemStack().getItemUseAction();
 
 		if(player.isHandActive() && player.getActiveHand() == event.getHand() && SpellActions.getSpellActions().contains(action)){
 			// Minecraft's item renderer helpfully doesn't have a default case for the usage action so it doesn't do any

@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -20,9 +20,9 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
  * @author Electroblob
  */
 @Mod.EventBusSubscriber
-public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> {
+public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity> {
 
 	/** Static instance of what I like to refer to as the capability key. Private because, well, it's internal! */
 	// This annotation does some crazy Forge magic behind the scenes and assigns this field a value.
@@ -55,7 +55,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 		this(null); // Nullary constructor for the registration method factory parameter
 	}
 
-	public DispenserCastingData(TileEntityDispenser dispenser){
+	public DispenserCastingData(DispenserBlockEntity dispenser){
 		super(dispenser);
 	}
 
@@ -126,7 +126,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 	}
 
 	/** Returns the DispenserCastingData instance for the specified dispenser. */
-	public static DispenserCastingData get(TileEntityDispenser dispenser){
+	public static DispenserCastingData get(DispenserBlockEntity dispenser){
 		return dispenser.getCapability(DISPENSER_CASTING_CAPABILITY, null);
 	}
 	
@@ -152,9 +152,9 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 	// The type parameter here has to be SoundLoopSpellDispenser, not TileEntityDispenser, or the event won't get fired.
 	public static void onCapabilityLoad(AttachCapabilitiesEvent<BlockEntity> event){
 
-		if(event.getObject() instanceof TileEntityDispenser)
+		if(event.getObject() instanceof DispenserBlockEntity)
 			event.addCapability(new ResourceLocation(Wizardry.MODID, "casting_data"),
-					new DispenserCastingData.Provider((TileEntityDispenser)event.getObject()));
+					new DispenserCastingData.Provider((DispenserBlockEntity)event.getObject()));
 	}
 
 	// Only fired server-side
@@ -170,9 +170,9 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 			List<BlockEntity> tileEntities = new ArrayList<>(event.world.loadedTileEntityList);
 
 			for(BlockEntity tileentity : tileEntities){
-				if(tileentity instanceof TileEntityDispenser){
-					if(DispenserCastingData.get((TileEntityDispenser)tileentity) != null){
-						DispenserCastingData.get((TileEntityDispenser)tileentity).update();
+				if(tileentity instanceof DispenserBlockEntity){
+					if(DispenserCastingData.get((DispenserBlockEntity)tileentity) != null){
+						DispenserCastingData.get((DispenserBlockEntity)tileentity).update();
 					}
 				}
 			}
@@ -188,7 +188,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 
 		private final DispenserCastingData data;
 
-		public Provider(TileEntityDispenser dispenser){
+		public Provider(DispenserBlockEntity dispenser){
 			data = new DispenserCastingData(dispenser);
 		}
 

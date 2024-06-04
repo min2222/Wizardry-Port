@@ -1,8 +1,8 @@
 package electroblob.wizardry.potion;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.Potion;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,7 +11,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * As of Wizardry 4.2, this class is used by all of wizardry's potions. Potions that work solely on events
  * instantiate this class directly, all other potions extend it.
  */
-public class PotionMagicEffect extends Potion {
+public class PotionMagicEffect extends MobEffect {
 
 	private final ResourceLocation texture;
 

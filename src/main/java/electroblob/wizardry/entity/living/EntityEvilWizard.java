@@ -13,22 +13,20 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.world.entity.monster.EntityMob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvent;
@@ -66,14 +64,14 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	protected Predicate<Entity> targetSelector;
 
 	/** Data parameter for the cooldown time for wizards healing themselves. */
-	private static final DataParameter<Integer> HEAL_COOLDOWN = EntityDataManager.createKey(EntityEvilWizard.class,
-			DataSerializers.VARINT);
+	private static final EntityDataSerializer<Integer> HEAL_COOLDOWN = SynchedEntityData.createKey(EntityEvilWizard.class,
+			EntityDataSerializers.VARINT);
 	/** Data parameter for the wizard's element. */
-	private static final DataParameter<Integer> ELEMENT = EntityDataManager.createKey(EntityEvilWizard.class,
-			DataSerializers.VARINT);
+	private static final EntityDataSerializer<Integer> ELEMENT = SynchedEntityData.createKey(EntityEvilWizard.class,
+			EntityDataSerializers.VARINT);
 	/** Data parameters for the wizard's current continuous spell. */
-	private static final DataParameter<String> CONTINUOUS_SPELL = EntityDataManager.createKey(EntityEvilWizard.class, DataSerializers.STRING);
-	private static final DataParameter<Integer> SPELL_COUNTER = EntityDataManager.createKey(EntityEvilWizard.class, DataSerializers.VARINT);
+	private static final EntityDataSerializer<String> CONTINUOUS_SPELL = SynchedEntityData.createKey(EntityEvilWizard.class, EntityDataSerializers.STRING);
+	private static final EntityDataSerializer<Integer> SPELL_COUNTER = SynchedEntityData.createKey(EntityEvilWizard.class, EntityDataSerializers.VARINT);
 
 	/** The resource location for the evil wizard's loot table. */
 	private static final ResourceLocation LOOT_TABLE = new ResourceLocation(Wizardry.MODID, "entities/evil_wizard");
@@ -377,12 +375,12 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		Element element = this.getElement();
 
 		// Adds armour.
-		for(EntityEquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
+		for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 			this.setItemStackToSlot(slot, new ItemStack(WizardryItems.getArmour(element, slot)));
 		}
 
 		// Default chance is 0.085f, for reference.
-		for(EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+		for(EquipmentSlot slot : EquipmentSlot.values())
 			this.setDropChance(slot, 0.0f);
 
 		// All wizards know magic missile, even if it is disabled.
@@ -393,7 +391,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		// Now done after the spells so it can take the tier into account. For evil wizards this is slightly different;
 		// it picks a random wand which is at least a high enough tier for the spells the wizard has.
 		Tier tier = Tier.values()[maxTier.ordinal() + rand.nextInt(Tier.values().length - maxTier.ordinal())];
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(WizardryItems.getWand(tier, element)));
+		this.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(WizardryItems.getWand(tier, element)));
 
 		return data;
 	}

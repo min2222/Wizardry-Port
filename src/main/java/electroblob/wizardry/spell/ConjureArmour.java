@@ -6,21 +6,21 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 
 import java.util.Map;
 
 public class ConjureArmour extends SpellConjuration {
 	
-	private static final Map<EntityEquipmentSlot, Item> SPECTRAL_ARMOUR_MAP = ImmutableMap.of(
-			EntityEquipmentSlot.HEAD, WizardryItems.spectral_helmet,
-			EntityEquipmentSlot.CHEST, WizardryItems.spectral_chestplate,
-			EntityEquipmentSlot.LEGS, WizardryItems.spectral_leggings,
-			EntityEquipmentSlot.FEET, WizardryItems.spectral_boots);
+	private static final Map<EquipmentSlot, Item> SPECTRAL_ARMOUR_MAP = ImmutableMap.of(
+			EquipmentSlot.HEAD, WizardryItems.spectral_helmet,
+			EquipmentSlot.CHEST, WizardryItems.spectral_chestplate,
+			EquipmentSlot.LEGS, WizardryItems.spectral_leggings,
+			EquipmentSlot.FEET, WizardryItems.spectral_boots);
 
 	public ConjureArmour(){
 		super("conjure_armour", null);
@@ -33,7 +33,7 @@ public class ConjureArmour extends SpellConjuration {
 		boolean flag = false;
 
 		// Used this rather than getArmorInventoryList because I need to access the slot itself
-		for(EntityEquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
+		for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 			
 			if(caster.getItemStackFromSlot(slot).isEmpty() &&
 					!InventoryUtils.doesPlayerHaveItem(caster, SPECTRAL_ARMOUR_MAP.get(slot))){
@@ -41,7 +41,7 @@ public class ConjureArmour extends SpellConjuration {
 				armour = new ItemStack(SPECTRAL_ARMOUR_MAP.get(slot));
 				IConjuredItem.setDurationMultiplier(armour, modifiers.get(WizardryItems.duration_upgrade));
 				// Sets a blank "ench" tag to trick the renderer into showing the enchantment effect on the armour model
-				NBTExtras.storeTagSafely(armour.getTagCompound(), "ench", new NBTTagList());
+				NBTExtras.storeTagSafely(armour.getTagCompound(), "ench", new ListTag());
 				caster.setItemStackToSlot(slot, armour);
 				flag = true;
 			}

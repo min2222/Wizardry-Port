@@ -4,7 +4,7 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.entity.EntityList;
+import net.minecraft.world.entity.EntityList;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;

@@ -12,7 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -66,8 +66,8 @@ public class ItemManaFlask extends Item {
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack stack){
-		return EnumAction.BLOCK;
+	public UseAnim getItemUseAction(ItemStack stack){
+		return UseAnim.BLOCK;
 	}
 
 	@Override

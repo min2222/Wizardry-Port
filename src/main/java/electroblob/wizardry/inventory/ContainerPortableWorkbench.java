@@ -2,7 +2,7 @@ package electroblob.wizardry.inventory;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.world.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.world.level.Level;
 

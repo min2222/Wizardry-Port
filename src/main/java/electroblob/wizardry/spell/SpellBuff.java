@@ -12,8 +12,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.Potion;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
  * applying a non-potion buff, then methods can be overridden (perhaps using an anonymous class) to add the required
  * functionality.
  * <p></p>
- * Properties added by this type of spell: {@link SpellBuff#getDurationKey(Potion)}, {@link SpellBuff#getStrengthKey(Potion)}
+ * Properties added by this type of spell: {@link SpellBuff#getDurationKey(MobEffect)}, {@link SpellBuff#getStrengthKey(MobEffect)}
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell requires a packet to be sent. {@link Spell#requiresPacket()}
  * 
@@ -47,10 +47,10 @@ public class SpellBuff extends Spell {
 	
 	/** An array of factories for the status effects that this spell applies to its caster. The effect factory
 	 * avoids the issue of the potions being registered after the spell. */
-	protected final Supplier<Potion>[] effects;
+	protected final Supplier<MobEffect>[] effects;
 	/** A set of all the different potions (status effects) that this spell applies to its caster. Loaded during
 	 * init(). */
-	protected Set<Potion> potionSet;
+	protected Set<MobEffect> potionSet;
 	/** The RGB colour values of the particles spawned when this spell is cast. */
 	protected final float r, g, b;
 	
@@ -58,12 +58,12 @@ public class SpellBuff extends Spell {
 	protected float particleCount = 10;
 
 	@SafeVarargs
-	public SpellBuff(String name, float r, float g, float b, Supplier<Potion>... effects){
+	public SpellBuff(String name, float r, float g, float b, Supplier<MobEffect>... effects){
 		this(Wizardry.MODID, name, r, g, b, effects);
 	}
 
 	@SafeVarargs
-	public SpellBuff(String modID, String name, float r, float g, float b, Supplier<Potion>... effects){
+	public SpellBuff(String modID, String name, float r, float g, float b, Supplier<MobEffect>... effects){
 		super(modID, name, SpellActions.POINT_UP, false);
 		this.effects = effects;
 		this.r = r;
@@ -77,7 +77,7 @@ public class SpellBuff extends Spell {
 		// Loads the potion set
 		this.potionSet = Arrays.stream(effects).map(Supplier::get).collect(Collectors.toSet());
 
-		for(Potion potion : potionSet){
+		for(MobEffect potion : potionSet){
 			// I don't like having this for all buff spells when some potions aren't affected by amplifiers
 			// TODO: Find a way of only adding the strength key if the potion is affected by amplifiers (dynamically if possible)
 			// BrewingRecipeRegistry#getOutput might be a good place to start
@@ -86,18 +86,18 @@ public class SpellBuff extends Spell {
 		}
 	}
 
-	/** Returns an unmodifiable view of the set of {@link Potion} objects that this spell applies to its caster. */
-	public Set<Potion> getPotionSet(){
+	/** Returns an unmodifiable view of the set of {@link MobEffect} objects that this spell applies to its caster. */
+	public Set<MobEffect> getPotionSet(){
 		return Collections.unmodifiableSet(potionSet);
 	}
 
 	// Potion-specific equivalent to defining the identifiers as constants
 
-	protected static String getDurationKey(Potion potion){
+	protected static String getDurationKey(MobEffect potion){
 		return potion.getRegistryName().getPath() + "_duration";
 	}
 
-	protected static String getStrengthKey(Potion potion){
+	protected static String getStrengthKey(MobEffect potion){
 		return potion.getRegistryName().getPath() + "_strength";
 	}
 
@@ -111,7 +111,7 @@ public class SpellBuff extends Spell {
 		return this;
 	}
 	
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return true; }
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
@@ -172,7 +172,7 @@ public class SpellBuff extends Spell {
 		// TODO: Once we've found a way of detecting if amplifiers actually affect the potion type, implement it here.
 		int bonusAmplifier = getBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
-		for(Potion potion : potionSet){
+		for(MobEffect potion : potionSet){
 			caster.addPotionEffect(new MobEffectInstance(potion, potion.isInstant() ? 1 :
 					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)getProperty(getStrengthKey(potion)).floatValue() + bonusAmplifier,

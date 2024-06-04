@@ -5,9 +5,9 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ITickable;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.HashSet;

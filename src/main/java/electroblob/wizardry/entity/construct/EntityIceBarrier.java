@@ -4,7 +4,7 @@ import electroblob.wizardry.entity.ICustomHitbox;
 import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.MoverType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.damagesource.DamageSource;

@@ -9,7 +9,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;

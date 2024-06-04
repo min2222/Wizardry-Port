@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
@@ -76,7 +76,7 @@ class CraftingRecipe {
 	 * @param left         The x coordinate of the left side of the GUI.
 	 * @param top          The y coordinate of the top of the GUI.
 	 */
-	void draw(FontRenderer font, RenderItem itemRenderer, int doublePage, int left, int top){
+	void draw(Font font, RenderItem itemRenderer, int doublePage, int left, int top){
 
 		int index = (int)(Minecraft.getSystemTime() % Integer.MAX_VALUE)/2000;
 
@@ -96,7 +96,7 @@ class CraftingRecipe {
 	 * @param left         The x coordinate of the left side of the GUI.
 	 * @param top          The y coordinate of the top of the GUI.
 	 */
-	void drawTooltips(GuiWizardHandbook gui, FontRenderer font, RenderItem itemRenderer, int doublePage, int left, int top, int mouseX, int mouseY){
+	void drawTooltips(GuiWizardHandbook gui, Font font, RenderItem itemRenderer, int doublePage, int left, int top, int mouseX, int mouseY){
 
 		if(recipes.isEmpty()) return;
 
@@ -139,7 +139,7 @@ class CraftingRecipe {
 		}
 	}
 
-	private static void renderCraftingRecipe(FontRenderer font, RenderItem itemRenderer, int x, int y, @Nullable IRecipe recipe){
+	private static void renderCraftingRecipe(Font font, RenderItem itemRenderer, int x, int y, @Nullable IRecipe recipe){
 
 		GlStateManager.color(1, 1, 1, 1);
 		Minecraft.getMinecraft().renderEngine.bindTexture(GuiWizardHandbook.texture);

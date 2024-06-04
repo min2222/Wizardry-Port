@@ -4,9 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.monster.*;
+import net.minecraft.world.entity.boss.EntityDragon;
+import net.minecraft.world.entity.boss.EntityWither;
 import net.minecraft.util.EntityDamageSource;
 
 import java.util.Collections;

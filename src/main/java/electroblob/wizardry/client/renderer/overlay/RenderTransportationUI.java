@@ -10,7 +10,7 @@ import electroblob.wizardry.spell.Transportation;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.Location;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -136,7 +136,7 @@ public class RenderTransportationUI {
 	}
 
 	// Copied from EntityRenderer#drawNameplate and tweaked a bit
-	private static void drawLabel(FontRenderer fontRendererIn, String str, float x, float y, float z, float scale, int verticalShift, float viewerYaw, float viewerPitch){
+	private static void drawLabel(Font fontRendererIn, String str, float x, float y, float z, float scale, int verticalShift, float viewerYaw, float viewerPitch){
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);

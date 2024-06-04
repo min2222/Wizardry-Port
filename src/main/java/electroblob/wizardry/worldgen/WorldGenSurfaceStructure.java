@@ -9,7 +9,7 @@ import net.minecraft.block.BlockLog;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;

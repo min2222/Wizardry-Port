@@ -2,22 +2,22 @@ package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.entity.EntityFlying;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.world.entity.IEntityLivingData;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.monster.EntityWitherSkeleton;
+import net.minecraft.world.entity.monster.EntityWitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -67,8 +67,8 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	// Shouldn't have randomised armour, but does still need a sword!
 	@Override
 	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty){
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
-		this.setDropChance(EntityEquipmentSlot.MAINHAND, 0.0f);
+		this.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+		this.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 	}
 
 	@Override
@@ -83,17 +83,17 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 			this.setLeftHanded(false);
 		}
 		
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
-		this.setDropChance(EntityEquipmentSlot.MAINHAND, 0.0f);
+		this.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+		this.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 
 		// Halloween pumpkin heads! Why not?
-		if(this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()){
+		if(this.getItemStackFromSlot(EquipmentSlot.HEAD).isEmpty()){
 			Calendar calendar = this.world.getCurrentDate();
 
 			if(calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F){
-				this.setItemStackToSlot(EntityEquipmentSlot.HEAD,
+				this.setItemStackToSlot(EquipmentSlot.HEAD,
 						new ItemStack(this.rand.nextFloat() < 0.1F ? Blocks.LIT_PUMPKIN : Blocks.PUMPKIN));
-				this.inventoryArmorDropChances[EntityEquipmentSlot.HEAD.getIndex()] = 0.0F;
+				this.inventoryArmorDropChances[EquipmentSlot.HEAD.getIndex()] = 0.0F;
 			}
 		}
 

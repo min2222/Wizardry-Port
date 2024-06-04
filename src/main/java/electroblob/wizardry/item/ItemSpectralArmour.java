@@ -4,7 +4,7 @@ import electroblob.wizardry.registry.Spells;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
-	public ItemSpectralArmour(ArmorMaterial material, int renderIndex, EntityEquipmentSlot armourType){
+	public ItemSpectralArmour(ArmorMaterial material, int renderIndex, EquipmentSlot armourType){
 		super(material, renderIndex, armourType);
 		setCreativeTab(null);
 		setMaxDamage(1200);
@@ -89,9 +89,9 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 	}
 
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type){
+	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type){
 
-		if(slot == EntityEquipmentSlot.LEGS) return "ebwizardry:textures/armour/spectral_armour_legs.png";
+		if(slot == EquipmentSlot.LEGS) return "ebwizardry:textures/armour/spectral_armour_legs.png";
 
 		return "ebwizardry:textures/armour/spectral_armour.png";
 	}
@@ -99,7 +99,7 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public net.minecraft.client.model.ModelBiped getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-                                                               EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default){
+                                                               EquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default){
 		net.minecraft.client.renderer.GlStateManager.enableBlend();
 		net.minecraft.client.renderer.GlStateManager.tryBlendFuncSeparate(
 				net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA,

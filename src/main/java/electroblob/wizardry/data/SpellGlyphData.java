@@ -7,7 +7,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -148,7 +148,7 @@ public class SpellGlyphData extends WorldSavedData {
 		this.randomNames = new HashMap<>();
 		this.randomDescriptions = new HashMap<>();
 
-		NBTTagList tagList = nbt.getTagList("spellGlyphData", NBT.TAG_COMPOUND);
+		ListTag tagList = nbt.getTagList("spellGlyphData", NBT.TAG_COMPOUND);
 
 		for(int i = 0; i < tagList.tagCount(); i++){
 			CompoundTag tag = tagList.getCompoundTagAt(i);
@@ -160,7 +160,7 @@ public class SpellGlyphData extends WorldSavedData {
 	@Override
 	public CompoundTag writeToNBT(CompoundTag nbt){
 
-		NBTTagList tagList = new NBTTagList();
+		ListTag tagList = new ListTag();
 
 		for(Spell spell : Spell.getAllSpells()){
 			// Much like the enchantments tag for items, this stores a list of spell-id-to-name tag pairs

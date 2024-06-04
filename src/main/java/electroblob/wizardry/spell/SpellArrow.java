@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.level.Level;
@@ -32,7 +32,7 @@ import java.util.function.Function;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell does not require a packet to be sent. {@link Spell#requiresPacket()}
  * 
@@ -64,7 +64,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 	
 	@Override public boolean requiresPacket(){ return false; }
 	
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return true; }
 
 	/** Computes the velocity the projectile should be launched at to achieve the required range. */
 	// Long story short, it doesn't make much sense to me to have the JSON file specify the velocity - even less so if

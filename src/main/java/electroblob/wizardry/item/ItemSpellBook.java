@@ -8,6 +8,7 @@ import electroblob.wizardry.data.SpellGlyphData;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
+import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -113,7 +114,7 @@ public class ItemSpellBook extends Item {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
+	public Font getFontRenderer(ItemStack stack){
 		return Wizardry.proxy.getFontRenderer(stack);
 	}
 

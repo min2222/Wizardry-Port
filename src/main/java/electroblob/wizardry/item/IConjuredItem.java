@@ -4,7 +4,7 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConjuration;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.world.entity.item.EntityItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

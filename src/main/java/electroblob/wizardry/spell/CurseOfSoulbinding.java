@@ -14,10 +14,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -37,7 +37,7 @@ public class CurseOfSoulbinding extends SpellRay {
 	public static final IStoredVariable<Set<UUID>> TARGETS_KEY = new IStoredVariable.StoredVariable<>("soulboundCreatures",
 			s -> NBTExtras.listToNBT(s, NBTUtil::createUUIDTag),
 			// For some reason gradle screams at me unless I explicitly declare the type of t here, despite IntelliJ being fine without it
-			(NBTTagList t) -> new HashSet<>(NBTExtras.NBTToList(t, NBTUtil::getUUIDFromTag)),
+			(ListTag t) -> new HashSet<>(NBTExtras.NBTToList(t, NBTUtil::getUUIDFromTag)),
 			// Curse of soulbinding is lifted when the caster dies, but not when they switch dimensions.
 			Persistence.DIMENSION_CHANGE);
 
@@ -49,7 +49,7 @@ public class CurseOfSoulbinding extends SpellRay {
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	// You can't damage a dispenser so this would be nonsense!
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return false; }
 
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){

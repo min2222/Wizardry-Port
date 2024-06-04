@@ -7,6 +7,7 @@ import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.Direction;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -14,14 +15,13 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.world.entity.effect.EntityLightningBolt;
+import net.minecraft.world.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.monster.EntityCreeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.world.entity.projectile.EntityThrowable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -51,7 +51,7 @@ public final class EntityUtils {
 	private EntityUtils(){} // No instances!
 
 	/** Changed to a constant in wizardry 2.1, since this is a lot more efficient. */
-	private static final DataParameter<Boolean> POWERED;
+	private static final EntityDataSerializer<Boolean> POWERED;
 
 	static {
 		// Null is passed in deliberately since POWERED is a static field.

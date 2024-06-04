@@ -2,10 +2,10 @@ package electroblob.wizardry.enchantment;
 
 import electroblob.wizardry.util.IElementalDamage;
 import electroblob.wizardry.util.MagicDamage;
-import net.minecraft.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageSource;
 
 import java.util.function.Predicate;
@@ -19,7 +19,7 @@ public class EnchantmentMagicProtection extends Enchantment {
 	/** The type of protection this enchantment gives. */
 	public final EnchantmentMagicProtection.Type protectionType;
 
-	public EnchantmentMagicProtection(Enchantment.Rarity rarity, EnchantmentMagicProtection.Type protectionType, EntityEquipmentSlot... slots){
+	public EnchantmentMagicProtection(Enchantment.Rarity rarity, EnchantmentMagicProtection.Type protectionType, EquipmentSlot... slots){
 		super(rarity, EnumEnchantmentType.ARMOR, slots);
 		this.protectionType = protectionType;
 	}

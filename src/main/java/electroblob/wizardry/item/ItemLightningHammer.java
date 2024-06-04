@@ -13,11 +13,11 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -82,11 +82,11 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot slot){
+	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EquipmentSlot slot){
 
 		Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
 
-		if(slot == EntityEquipmentSlot.MAINHAND){
+		if(slot == EquipmentSlot.MAINHAND){
 			float attackDamage = Spells.lightning_hammer.arePropertiesInitialised() ?
 					Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() : 10; // Fallback for search tree init, value doesn't really matter
 			multimap.put(Attributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamage, EntityUtils.Operations.ADD));

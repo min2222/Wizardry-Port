@@ -15,9 +15,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.item.EnumAction;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.entity.projectile.EntityThrowable;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -39,7 +39,7 @@ import java.util.function.BiFunction;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell does not require a packet to be sent. {@link Spell#requiresPacket()}
  *
@@ -64,7 +64,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	public SpellThrowable(String modID, String name, BiFunction<Level, LivingEntity, T> projectileFactory){
-		super(modID, name, EnumAction.NONE, false);
+		super(modID, name, UseAnim.NONE, false);
 		this.projectileFactory = projectileFactory;
 		addProperties(RANGE);
 		this.npcSelector((e, o) -> true);

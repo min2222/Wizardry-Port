@@ -1,6 +1,6 @@
 package electroblob.wizardry.entity.living;
 
-import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.world.entity.ai.EntityAIBase;
 
 public class EntityAISelectSpell extends EntityAIBase {
 

@@ -7,8 +7,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityWitherSkull;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.entity.projectile.EntityWitherSkull;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
@@ -22,7 +22,7 @@ public class WitherSkull extends Spell {
 	public static final String ACCELERATION = "acceleration";
 
 	public WitherSkull(){
-		super("wither_skull", EnumAction.NONE, false);
+		super("wither_skull", UseAnim.NONE, false);
 		addProperties(ACCELERATION);
 		soundValues(1, 1.1f, 0.2f);
 	}

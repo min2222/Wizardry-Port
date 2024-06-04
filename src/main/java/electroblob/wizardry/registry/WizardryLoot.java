@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.loot.RandomSpell;
 import electroblob.wizardry.loot.WizardSpell;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.entity.EnumCreatureType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryTable;

@@ -1,7 +1,7 @@
 package electroblob.wizardry.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
  * @since Wizardry 1.1
  */
 //@SideOnly(Side.CLIENT)
-public class MixedFontRenderer extends FontRenderer {
+public class MixedFontRenderer extends Font {
 
 	public MixedFontRenderer(GameSettings p_i1035_1_, ResourceLocation p_i1035_2_, TextureManager p_i1035_3_,
                              boolean p_i1035_4_){

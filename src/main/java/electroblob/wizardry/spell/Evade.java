@@ -3,7 +3,7 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -14,7 +14,7 @@ public class Evade extends Spell {
 	private static final float UPWARD_VELOCITY = 0.25f;
 
 	public Evade(){
-		super("evade", EnumAction.NONE, false);
+		super("evade", UseAnim.NONE, false);
 		addProperties(EVADE_VELOCITY);
 	}
 

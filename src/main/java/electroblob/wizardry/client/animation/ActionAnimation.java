@@ -9,13 +9,13 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * An animation that is associated with a particular {@link net.minecraft.item.EnumAction}. This animation will display
+ * An animation that is associated with a particular {@link UseAnim}. This animation will display
  * when a player is using an item with that action.
  * @author Electroblob
  * @since Wizardry 4.3
@@ -23,9 +23,9 @@ import net.minecraft.world.phys.Vec3;
  */
 public abstract class ActionAnimation extends Animation {
 
-	private final EnumAction action;
+	private final UseAnim action;
 
-	public ActionAnimation(EnumAction action){
+	public ActionAnimation(UseAnim action){
 		super(action.name());
 		this.action = action;
 	}

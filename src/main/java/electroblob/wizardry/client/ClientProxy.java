@@ -54,10 +54,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBlaze;
@@ -71,13 +72,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.monster.EntityBlaze;
+import net.minecraft.world.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -316,7 +316,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public FontRenderer getFontRenderer(ItemStack stack){
+	public Font getFontRenderer(ItemStack stack){
 
 		Spell spell = Spells.none;
 
@@ -534,7 +534,7 @@ public class ClientProxy extends CommonProxy {
 
 		Level world = Minecraft.getMinecraft().world;
 
-		if(world.getTileEntity(message.pos) instanceof TileEntityDispenser){ // Should always be true
+		if(world.getTileEntity(message.pos) instanceof DispenserBlockEntity){ // Should always be true
 
 			Spell spell = Spell.byNetworkID(message.spellID);
 
@@ -545,7 +545,7 @@ public class ClientProxy extends CommonProxy {
 
 			if(spell.isContinuous || spell instanceof None){
 
-				DispenserCastingData data = DispenserCastingData.get((TileEntityDispenser)world.getTileEntity(message.pos));
+				DispenserCastingData data = DispenserCastingData.get((DispenserBlockEntity)world.getTileEntity(message.pos));
 
 				if(spell.isContinuous){
 					data.startCasting(spell, message.x, message.y, message.z, message.duration, message.modifiers);

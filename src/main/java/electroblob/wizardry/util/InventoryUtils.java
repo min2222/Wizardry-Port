@@ -5,8 +5,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.EntityEquipmentSlot.Type;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
@@ -29,13 +29,13 @@ public final class InventoryUtils {
 
 	/** Constant which is simply an array of the four armour slots. (Could've sworn this exists somewhere in vanilla,
 	 * but I can't find it anywhere...) */
-	public static final EntityEquipmentSlot[] ARMOUR_SLOTS;
+	public static final EquipmentSlot[] ARMOUR_SLOTS;
 
 	static {
 		// The list of slots needs to be mutable.
-		List<EntityEquipmentSlot> slots = new ArrayList<>(Arrays.asList(EntityEquipmentSlot.values()));
+		List<EquipmentSlot> slots = new ArrayList<>(Arrays.asList(EquipmentSlot.values()));
 		slots.removeIf(slot -> slot.getSlotType() != Type.ARMOR);
-		ARMOUR_SLOTS = slots.toArray(new EntityEquipmentSlot[0]);
+		ARMOUR_SLOTS = slots.toArray(new EquipmentSlot[0]);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public final class InventoryUtils {
 	public static boolean replaceItemInInventory(Entity entity, int slot, ItemStack original, ItemStack replacement){
 		// Check slots that aren't in the main inventory first by comparing with the existing item
 		if(entity instanceof LivingEntity){
-			for(EntityEquipmentSlot eslot : EntityEquipmentSlot.values()){
+			for(EquipmentSlot eslot : EquipmentSlot.values()){
 				if(((LivingEntity)entity).getItemStackFromSlot(eslot) == original){
 					entity.setItemStackToSlot(eslot, replacement);
 					return true;

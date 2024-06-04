@@ -14,13 +14,13 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.IMob;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.world.entity.monster.IMob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -29,10 +29,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.ITextComponent;
@@ -46,7 +44,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -81,12 +79,12 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	private boolean updateRecipes;
 
 	/** Data parameter for the cooldown time for wizards healing themselves. */
-	private static final DataParameter<Integer> HEAL_COOLDOWN = EntityDataManager.createKey(EntityWizard.class, DataSerializers.VARINT);
+	private static final EntityDataSerializer<Integer> HEAL_COOLDOWN = SynchedEntityData.createKey(EntityWizard.class, EntityDataSerializers.VARINT);
 	/** Data parameter for the wizard's element. */
-	private static final DataParameter<Integer> ELEMENT = EntityDataManager.createKey(EntityWizard.class, DataSerializers.VARINT);
+	private static final EntityDataSerializer<Integer> ELEMENT = SynchedEntityData.createKey(EntityWizard.class, EntityDataSerializers.VARINT);
 	/** Data parameters for the wizard's current continuous spell. */
-	private static final DataParameter<String> CONTINUOUS_SPELL = EntityDataManager.createKey(EntityWizard.class, DataSerializers.STRING);
-	private static final DataParameter<Integer> SPELL_COUNTER = EntityDataManager.createKey(EntityWizard.class, DataSerializers.VARINT);
+	private static final EntityDataSerializer<String> CONTINUOUS_SPELL = SynchedEntityData.createKey(EntityWizard.class, EntityDataSerializers.STRING);
+	private static final EntityDataSerializer<Integer> SPELL_COUNTER = SynchedEntityData.createKey(EntityWizard.class, EntityDataSerializers.VARINT);
 
 	// Field implementations
 	private List<Spell> spells = new ArrayList<Spell>(4);
@@ -681,7 +679,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			}else if(randomiser < 8){
 				return new ItemStack(WizardryItems.arcane_tome, 1, 1);
 			}else if(randomiser < 10){
-				EntityEquipmentSlot slot = InventoryUtils.ARMOUR_SLOTS[rand.nextInt(InventoryUtils.ARMOUR_SLOTS.length)];
+				EquipmentSlot slot = InventoryUtils.ARMOUR_SLOTS[rand.nextInt(InventoryUtils.ARMOUR_SLOTS.length)];
 				if(this.getElement() != Element.MAGIC && rand.nextInt(4) > 0){
 					// This means it is more likely for armour sold to be of the same element as the wizard if the
 					// wizard has an element.
@@ -761,12 +759,12 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		Element element = this.getElement();
 
 		// Adds armour.
-		for(EntityEquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
+		for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 			this.setItemStackToSlot(slot, new ItemStack(WizardryItems.getArmour(element, slot)));
 		}
 
 		// Default chance is 0.085f, for reference.
-		for(EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+		for(EquipmentSlot slot : EquipmentSlot.values())
 			this.setDropChance(slot, 0.0f);
 
 		// All wizards know magic missile, even if it is disabled.
@@ -779,7 +777,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		ArrayList<Spell> list = new ArrayList<>(spells);
 		list.add(Spells.heal);
 		WandHelper.setSpells(wand, list.toArray(new Spell[5]));
-		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, wand);
+		this.setItemStackToSlot(EquipmentSlot.MAINHAND, wand);
 
 		this.setHealCooldown(50);
 

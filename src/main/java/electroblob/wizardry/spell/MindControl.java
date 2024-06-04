@@ -12,9 +12,8 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.*;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.world.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.passive.EntitySheep;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,7 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -50,7 +49,7 @@ public class MindControl extends SpellRay {
 	}
 	
 	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return false; }
 	
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){

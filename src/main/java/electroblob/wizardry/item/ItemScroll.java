@@ -9,6 +9,7 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
@@ -252,7 +253,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
+	public Font getFontRenderer(ItemStack stack){
 		return Wizardry.proxy.getFontRenderer(stack);
 	}
 

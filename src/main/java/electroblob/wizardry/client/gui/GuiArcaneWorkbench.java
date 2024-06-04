@@ -18,7 +18,7 @@ import electroblob.wizardry.util.WandHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.world.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.world.inventory.Slot;
@@ -637,7 +637,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 			return text;
 		}
 
-		protected FontRenderer getFontRenderer(ItemStack stack){
+		protected Font getFontRenderer(ItemStack stack){
 			return fontRenderer;
 		}
 
@@ -836,7 +836,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		@Override
-		protected FontRenderer getFontRenderer(ItemStack stack){
+		protected Font getFontRenderer(ItemStack stack){
 			return Wizardry.proxy.shouldDisplayDiscovered(getSpell(stack), null) ? super.getFontRenderer(stack)
 					: mc.standardGalacticFontRenderer;
 		}

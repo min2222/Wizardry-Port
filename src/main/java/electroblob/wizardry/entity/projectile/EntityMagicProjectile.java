@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.world.entity.projectile.EntityThrowable;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;

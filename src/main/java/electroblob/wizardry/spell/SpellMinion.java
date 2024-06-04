@@ -11,12 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.world.entity.IEntityLivingData;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ import java.util.function.Function;
  * <p></p>
  * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
- * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
+ * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(DispenserBlockEntity)}
  * <p></p>
  * By default, this type of spell does not require a packet to be sent. {@link Spell#requiresPacket()}
  * 
@@ -82,7 +82,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	
 	@Override public boolean requiresPacket(){ return false; }
 	
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser) { return true; }
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
@@ -172,7 +172,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
-				IAttributeInstance attribute = minion.getEntityAttribute(Attributes.ATTACK_DAMAGE);
+				AttributeInstance attribute = minion.getEntityAttribute(Attributes.ATTACK_DAMAGE);
 				if(attribute != null) attribute.applyModifier( // Apparently some things don't have an attack damage
 						new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				// This is only used for artefacts, but it's a nice example of custom spell modifiers

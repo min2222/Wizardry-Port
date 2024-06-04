@@ -18,18 +18,19 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.HitResult;
@@ -189,7 +190,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
+	public Font getFontRenderer(ItemStack stack){
 		return Wizardry.proxy.getFontRenderer(stack);
 	}
 
@@ -246,11 +247,11 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack){
+	public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
 
 		Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
 
-		if(slot == EntityEquipmentSlot.MAINHAND){
+		if(slot == EquipmentSlot.MAINHAND){
 			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 			// This check doesn't affect the damage output, but it does stop a blank line from appearing in the tooltip.
 			if(level > 0 && !this.isManaEmpty(stack)){
@@ -321,7 +322,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public EnumAction getItemUseAction(ItemStack itemstack){
+	public UseAnim getItemUseAction(ItemStack itemstack){
 		return WandHelper.getCurrentSpell(itemstack).action;
 	}
 

@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.Level;
 
 /** Abstract base class for sound loops associated with spells; see subclasses below for implementations. */
@@ -73,7 +73,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 	/** Implements a sound loop for continuous spells cast by dispensers. */
 	public static class SoundLoopSpellDispenser extends SoundLoopSpellPosition {
 
-		private final TileEntityDispenser source;
+		private final DispenserBlockEntity source;
 
 		public SoundLoopSpellDispenser(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, Level world,
 									   double x, double y, double z, float sndVolume, float sndPitch){
@@ -81,7 +81,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 
 			BlockEntity tileentity = world.getTileEntity(new BlockPos(x, y, z));
 
-			if(tileentity instanceof TileEntityDispenser) this.source = (TileEntityDispenser)tileentity;
+			if(tileentity instanceof DispenserBlockEntity) this.source = (DispenserBlockEntity)tileentity;
 			else throw new NullPointerException(String.format("Playing continuous spell sound: no dispenser found at %s, %s, %s", x, y, z));
 		}
 

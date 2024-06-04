@@ -3,7 +3,7 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 /**
@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 public class None extends Spell {
 
 	public None(){
-		super("none", EnumAction.NONE, false);
+		super("none", UseAnim.NONE, false);
 	}
 
 	@Override

@@ -6,22 +6,21 @@ import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.world.entity.IEntityLivingData;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.world.entity.monster.EntityMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
@@ -31,9 +30,9 @@ import javax.annotation.Nullable;
 public class EntityRemnant extends EntityMob {
 
 	/** Data parameter for the remnant's element. */
-	private static final DataParameter<Integer> ELEMENT = EntityDataManager.createKey(EntityRemnant.class, DataSerializers.VARINT);
+	private static final EntityDataSerializer<Integer> ELEMENT = SynchedEntityData.createKey(EntityRemnant.class, EntityDataSerializers.VARINT);
 	/** Data parameter that tracks whether the remnant is currently attacking (charging). */
-	private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(EntityRemnant.class, DataSerializers.BOOLEAN);
+	private static final EntityDataSerializer<Boolean> ATTACKING = SynchedEntityData.createKey(EntityRemnant.class, EntityDataSerializers.BOOLEAN);
 
 	private ResourceLocation lootTable;
 

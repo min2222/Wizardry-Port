@@ -2,7 +2,7 @@ package electroblob.wizardry.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.item.EntityArmorStand;
 
 /**
  * Fixes custom armour models 'breathing' on the stand and rotates the helmet properly.

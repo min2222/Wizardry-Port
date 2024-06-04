@@ -3,7 +3,7 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
@@ -13,7 +13,7 @@ public class Leap extends Spell {
 	public static final String VERTICAL_SPEED = "vertical_speed";
 
 	public Leap(){
-		super("leap", EnumAction.NONE, false);
+		super("leap", UseAnim.NONE, false);
 		addProperties(HORIZONTAL_SPEED, VERTICAL_SPEED);
 		soundValues(0.5f, 1, 0);
 	}

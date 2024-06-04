@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -30,7 +30,7 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.TickEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -91,9 +91,9 @@ public final class WizardryClientEventHandler {
 			List<BlockEntity> tileEntities = new ArrayList<>(world.loadedTileEntityList);
 
 			for(BlockEntity tileentity : tileEntities){
-				if(tileentity instanceof TileEntityDispenser){
-					if(DispenserCastingData.get((TileEntityDispenser)tileentity) != null){
-						DispenserCastingData.get((TileEntityDispenser)tileentity).update();
+				if(tileentity instanceof DispenserBlockEntity){
+					if(DispenserCastingData.get((DispenserBlockEntity)tileentity) != null){
+						DispenserCastingData.get((DispenserBlockEntity)tileentity).update();
 					}
 				}
 			}

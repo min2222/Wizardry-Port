@@ -9,7 +9,7 @@ import electroblob.wizardry.entity.living.*;
 import electroblob.wizardry.entity.projectile.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.entity.EnumCreatureType;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

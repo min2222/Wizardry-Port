@@ -5,11 +5,11 @@ import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.world.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -187,7 +187,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 		if(!this.checkLootAndRead(nbt)){
 
-			NBTTagList tagList = nbt.getTagList("Inventory", NBT.TAG_COMPOUND);
+			ListTag tagList = nbt.getTagList("Inventory", NBT.TAG_COMPOUND);
 
 			for(int i = 0; i < tagList.tagCount(); i++){
 				CompoundTag tag = tagList.getCompoundTagAt(i);
@@ -211,7 +211,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 		if(!this.checkLootAndWrite(nbt)){
 
-			NBTTagList itemList = new NBTTagList();
+			ListTag itemList = new ListTag();
 
 			for(int i = 0; i < getSizeInventory(); i++){
 				ItemStack stack = getStackInSlot(i);

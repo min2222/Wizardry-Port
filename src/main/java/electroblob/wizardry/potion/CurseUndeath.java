@@ -4,8 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemWizardArmour;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ISpecialArmor;
@@ -36,13 +36,13 @@ public class CurseUndeath extends Curse {
 					entitylivingbase.posY + (double)entitylivingbase.getEyeHeight(), entitylivingbase.posZ))){
 
 				boolean flag = true;
-				ItemStack itemstack = entitylivingbase.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+				ItemStack itemstack = entitylivingbase.getItemStackFromSlot(EquipmentSlot.HEAD);
 
 				if (!itemstack.isEmpty()) {
 					if (itemstack.isItemStackDamageable()) {
 
 						if (itemstack.getItem() instanceof ISpecialArmor) {
-							((ISpecialArmor) itemstack.getItem()).damageArmor(entitylivingbase, itemstack, DamageSource.ON_FIRE, entitylivingbase.world.rand.nextInt(2), EntityEquipmentSlot.HEAD.getSlotIndex());
+							((ISpecialArmor) itemstack.getItem()).damageArmor(entitylivingbase, itemstack, DamageSource.ON_FIRE, entitylivingbase.world.rand.nextInt(2), EquipmentSlot.HEAD.getSlotIndex());
 						} else {
 							itemstack.setItemDamage(itemstack.getItemDamage() + entitylivingbase.world.rand.nextInt(2));
 							if (itemstack.getItemDamage() >= itemstack.getMaxDamage()) {
@@ -50,7 +50,7 @@ public class CurseUndeath extends Curse {
 									entitylivingbase.setFire(8);
 								} else {
 									entitylivingbase.renderBrokenItemStack(itemstack);
-									entitylivingbase.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
+									entitylivingbase.setItemStackToSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
 								}
 							}
 						}

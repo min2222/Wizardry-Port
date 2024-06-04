@@ -5,8 +5,8 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityDragonFireball;
-import net.minecraft.item.EnumAction;
+import net.minecraft.world.entity.projectile.EntityDragonFireball;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ public class DragonFireball extends Spell {
 	public static final String ACCELERATION = "acceleration";
 
 	public DragonFireball(){
-		super("dragon_fireball", EnumAction.NONE, false);
+		super("dragon_fireball", UseAnim.NONE, false);
 		addProperties(ACCELERATION);
 	}
 

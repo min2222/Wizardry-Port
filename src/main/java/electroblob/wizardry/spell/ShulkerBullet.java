@@ -11,11 +11,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.world.entity.item.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityShulkerBullet;
+import net.minecraft.world.entity.projectile.EntityShulkerBullet;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntityDispenser;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
@@ -33,7 +33,7 @@ public class ShulkerBullet extends Spell {
 
 	@Override public boolean canBeCastBy(Mob npc, boolean override){ return true; }
 
-	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
+	@Override public boolean canBeCastBy(DispenserBlockEntity dispenser){ return true; }
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
