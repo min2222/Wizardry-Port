@@ -7,7 +7,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ import java.util.function.Function;
  * <p></p>
  * Properties added by this type of spell: {@link Spell#DURATION} (if the construct is not permanent)
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -103,7 +103,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 			if(caster.onGround || !requiresFloor){

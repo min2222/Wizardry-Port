@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -189,7 +189,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	 * @return True if the entity was successfully turned into a statue, false if not (i.e. something was in the way).
 	 */
 	// Making this an instance method means it works equally well for both types of statue
-	public boolean convertToStatue(EntityLiving target, @Nullable LivingEntity caster, int duration){
+	public boolean convertToStatue(Mob target, @Nullable LivingEntity caster, int duration){
 		
 		if(target.deathTime > 0) return false;
 

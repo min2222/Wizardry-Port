@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.*;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +19,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class ArcaneLock extends SpellRay {
@@ -35,7 +35,7 @@ public class ArcaneLock extends SpellRay {
 
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return false; }
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override){ return false; }
 
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){

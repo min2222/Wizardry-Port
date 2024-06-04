@@ -9,7 +9,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 
 public class Glide extends Spell {

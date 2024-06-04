@@ -7,7 +7,7 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -25,7 +25,7 @@ import java.util.List;
  * @param <T> The type of entity that this AI belongs to; must both extend EntityLiving <i>and</i> implement ISpellCaster
  */
 // Mmmm generics...
-public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends EntityAIBase {
+public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIBase {
 
 	/** The entity the AI instance has been applied to. Thanks to type parameters, methods from both EntityLiving and
 	 * ISummonedCreature may be invoked on this field. */

@@ -30,10 +30,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nullable;

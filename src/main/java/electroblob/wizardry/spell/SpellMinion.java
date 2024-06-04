@@ -9,7 +9,7 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,7 +33,7 @@ import java.util.function.Function;
  * <p></p>
  * Properties added by this type of spell: {@link SpellMinion#MINION_LIFETIME}
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -42,7 +42,7 @@ import java.util.function.Function;
  * @author Electroblob
  * @since Wizardry 4.2
  */
-public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spell {
+public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 
 	public static final String MINION_LIFETIME = "minion_lifetime";
 	public static final String MINION_COUNT = "minion_count";
@@ -93,7 +93,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		if(!this.spawnMinions(world, caster, modifiers)) return false;
@@ -137,7 +137,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	 * @param modifiers The spell modifiers this spell was cast with.
 	 * @return False to cause the spell to fail, true to allow it to continue.
 	 * 
-	 * @see SpellMinion#addMinionExtras(EntityLiving, BlockPos, LivingEntity, SpellModifiers, int)
+	 * @see SpellMinion#addMinionExtras(Mob, BlockPos, LivingEntity, SpellModifiers, int)
 	 */
 	// Protected since someone might want to extend this class and change the behaviour of this method.
 	protected boolean spawnMinions(Level world, LivingEntity caster, SpellModifiers modifiers){
@@ -203,7 +203,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	}
 	
 	/**
-	 * Called just before each minion is spawned. Calls {@link EntityLiving#onInitialSpawn(DifficultyInstance, IEntityLivingData)}
+	 * Called just before each minion is spawned. Calls {@link Mob#onInitialSpawn(DifficultyInstance, IEntityLivingData)}
 	 * by default, but subclasses can override to call extra methods on the summoned entity, for example to add
 	 * special equipment. This method is only called server-side so cannot be used to spawn particles directly.
 	 * @param minion The entity being spawned.

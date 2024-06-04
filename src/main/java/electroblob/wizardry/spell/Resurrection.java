@@ -20,9 +20,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.Arrays;
@@ -124,7 +124,7 @@ public class Resurrection extends Spell {
 	}
 
 	@SubscribeEvent
-	public static void onPlayerTickEvent(LivingUpdateEvent event){
+	public static void onPlayerTickEvent(LivingEvent.LivingTickEvent event){
 
 		if(event.getEntity() instanceof Player){
 

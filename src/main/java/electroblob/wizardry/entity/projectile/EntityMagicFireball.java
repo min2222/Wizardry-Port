@@ -21,8 +21,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * It's a fireball - but unlike vanilla fireballs, it actually looks like a fireball, and isn't completely useless for

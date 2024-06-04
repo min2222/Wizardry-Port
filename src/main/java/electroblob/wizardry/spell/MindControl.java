@@ -16,9 +16,10 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -28,11 +29,11 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +49,7 @@ public class MindControl extends SpellRay {
 		addProperties(EFFECT_DURATION);
 	}
 	
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 	
 	@Override
@@ -65,12 +66,12 @@ public class MindControl extends SpellRay {
 					}
 				}
 
-			}else if(target instanceof EntityLiving){
+			}else if(target instanceof Mob){
 
 				if(!world.isRemote){
-					if(!MindControl.findMindControlTarget((EntityLiving)target, caster, world)){
+					if(!MindControl.findMindControlTarget((Mob)target, caster, world)){
 						// If no valid target was found, this just acts like mind trick.
-						((EntityLiving)target).setAttackTarget(null);
+						((Mob)target).setAttackTarget(null);
 					}
 				}
 
@@ -80,7 +81,7 @@ public class MindControl extends SpellRay {
 					world.playSound(caster.posX, caster.posY, caster.posZ, SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
 				}
 
-				if(!world.isRemote) startControlling((EntityLiving)target, caster,
+				if(!world.isRemote) startControlling((Mob)target, caster,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 			}
 
@@ -117,12 +118,12 @@ public class MindControl extends SpellRay {
 
 		// TODO: Add a max health limit that scales with potency
 
-		return target instanceof EntityLiving && target.isNonBoss() && !(target instanceof INpc)
+		return target instanceof Mob && target.isNonBoss() && !(target instanceof INpc)
 				&& !(target instanceof EntityEvilWizard) && !Arrays.asList(Wizardry.settings.mindControlTargetsBlacklist)
 				.contains(EntityList.getKey(target.getClass()));
 	}
 
-	public static void startControlling(EntityLiving target, LivingEntity controller, int duration){
+	public static void startControlling(Mob target, LivingEntity controller, int duration){
 		target.getEntityData().setUniqueId(NBT_KEY, controller.getUniqueID());
 		target.addPotionEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
 	}
@@ -137,7 +138,7 @@ public class MindControl extends SpellRay {
 	 * @param world The world to look for targets in
 	 * @return True if a new target was found and set, false if not.
 	 */
-	public static boolean findMindControlTarget(EntityLiving target, LivingEntity caster, Level world){
+	public static boolean findMindControlTarget(Mob target, LivingEntity caster, Level world){
 
 		// As of 1.1, this now uses the creature's follow range, like normal targeting. It also
 		// no longer lasts until the creature dies; instead it is a potion effect which continues to
@@ -169,7 +170,7 @@ public class MindControl extends SpellRay {
 	}
 	
 	/** Retrieves the given entity's controller and decides whether it needs to search for a target. */
-	private static void processTargeting(Level world, EntityLiving entity, LivingEntity currentTarget){
+	private static void processTargeting(Level world, Mob entity, LivingEntity currentTarget){
 		
 		if(entity.isPotionActive(WizardryPotions.mind_control) && MindControl.canControl(entity)){
 
@@ -196,7 +197,7 @@ public class MindControl extends SpellRay {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 		// Tries to find a new target for mind-controlled creatures that do not currently have one
 		// When the mind-controlled creature does have a target, LivingSetAttackTargetEvent is used instead since it is
 		// more efficient (because it only fires when the entity tries to set a target)
@@ -204,13 +205,13 @@ public class MindControl extends SpellRay {
 		// player and hence will rarely have no target.
 		// No need to do it every tick either!
 		if(event.getEntity().ticksExisted % 50 == 0 && event.getEntityLiving().isPotionActive(WizardryPotions.mind_control)
-				&& event.getEntityLiving() instanceof EntityLiving){
+				&& event.getEntityLiving() instanceof Mob){
 			
-			EntityLiving entity = (EntityLiving)event.getEntityLiving();
+			Mob entity = (Mob)event.getEntityLiving();
 			
 			// Processes targeting if the current target is null or has died
-			if(((EntityLiving)event.getEntityLiving()).getAttackTarget() == null
-				|| !((EntityLiving)event.getEntityLiving()).getAttackTarget().isEntityAlive()){
+			if(((Mob)event.getEntityLiving()).getAttackTarget() == null
+				|| !((Mob)event.getEntityLiving()).getAttackTarget().isEntityAlive()){
 			
 				processTargeting(entity.world, entity, null);
 			}
@@ -220,8 +221,8 @@ public class MindControl extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// The != null check prevents infinite loops with mind trick
-		if(event.getTarget() != null && event.getEntityLiving() instanceof EntityLiving)
-			processTargeting(event.getEntity().world, (EntityLiving)event.getEntityLiving(), event.getTarget());
+		if(event.getTarget() != null && event.getEntityLiving() instanceof Mob)
+			processTargeting(event.getEntity().world, (Mob)event.getEntityLiving(), event.getTarget());
 	}
 
 	@SubscribeEvent
@@ -235,9 +236,9 @@ public class MindControl extends SpellRay {
 	}
 
 	private static void onEffectEnd(MobEffectInstance effect, Entity entity){
-		if(effect != null && effect.getPotion() == WizardryPotions.mind_control && entity instanceof EntityLiving){
-			((EntityLiving)entity).setAttackTarget(null); // End effect
-			((EntityLiving)entity).setRevengeTarget(null); // End effect
+		if(effect != null && effect.getPotion() == WizardryPotions.mind_control && entity instanceof Mob){
+			((Mob)entity).setAttackTarget(null); // End effect
+			((Mob)entity).setRevengeTarget(null); // End effect
 		}
 	}
 

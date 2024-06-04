@@ -4,13 +4,13 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
@@ -222,7 +222,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 						entityarrow.setFire(100);
 					}
 
-					entityarrow.pickupStatus = EntityArrow.PickupStatus.DISALLOWED;
+					entityarrow.pickupStatus = Arrow.PickupStatus.DISALLOWED;
 
 					entityarrow.setDamage(entityarrow.getDamage() * IConjuredItem.getDamageMultiplier(stack));
 

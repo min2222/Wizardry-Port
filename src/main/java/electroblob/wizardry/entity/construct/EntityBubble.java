@@ -15,7 +15,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.lang.ref.WeakReference;
 

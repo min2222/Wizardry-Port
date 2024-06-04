@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -46,8 +47,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.api.distmarker.Dist;
@@ -123,7 +124,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		this.tasks.addTask(7, new EntityAIWatchClosest2(this, Player.class, 3.0F, 1.0F));
 		this.tasks.addTask(7, new EntityAIWatchClosest2(this, EntityWizard.class, 5.0F, 0.02F));
 		this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
-		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
+		this.tasks.addTask(8, new EntityAIWatchClosest(this, Mob.class, 8.0F));
 
 		this.targetSelector = entity -> {
 
@@ -153,7 +154,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
 		// By default, wizards don't attack players unless the player has attacked them.
-		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<EntityLiving>(this, EntityLiving.class, 0,
+		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<Mob>(this, Mob.class, 0,
 				false, true, this.targetSelector));
 	}
 
@@ -797,7 +798,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	 * @param random A random number generator to use.
 	 * @return The tier of the highest-tier spell that was added to the list.
 	 */
-	static Tier populateSpells(final EntityLiving wizard, List<Spell> spells, Element e, boolean master, int n, Random random){
+	static Tier populateSpells(final Mob wizard, List<Spell> spells, Element e, boolean master, int n, Random random){
 
 		// This is the tier of the highest tier spell added.
 		Tier maxTier = Tier.NOVICE;

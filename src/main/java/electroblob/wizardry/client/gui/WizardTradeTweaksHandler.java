@@ -20,8 +20,8 @@ import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 @EventBusSubscriber(Dist.CLIENT)

@@ -22,7 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -42,7 +42,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import javax.annotation.Nullable;
@@ -670,9 +670,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 				ISummonedCreature minion = WizardData.get(player).selectedMinion.get();
 
-				if(minion instanceof EntityLiving && minion != entity){
+				if(minion instanceof Mob && minion != entity){
 					// There is now only the new AI! (which greatly improves things)
-					((EntityLiving)minion).setAttackTarget(entity);
+					((Mob)minion).setAttackTarget(entity);
 					// Deselects the selected minion
 					WizardData.get(player).selectedMinion = null;
 					return true;

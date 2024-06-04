@@ -3,8 +3,8 @@ package electroblob.wizardry.client;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @EventBusSubscriber(Dist.CLIENT)

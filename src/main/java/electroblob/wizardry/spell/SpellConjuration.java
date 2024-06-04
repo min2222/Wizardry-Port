@@ -10,6 +10,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +25,7 @@ import net.minecraft.world.level.Level;
  * <p></p>
  * Properties added by this type of spell: {@link SpellConjuration#ITEM_LIFETIME}
  * <p></p>
- * By default, this type of spell cannot be cast by NPCs. {@link Spell#canBeCastBy(net.minecraft.entity.EntityLiving, boolean)}
+ * By default, this type of spell cannot be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(net.minecraft.tileentity.TileEntityDispenser)}
  * <p></p>

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -305,7 +305,7 @@ public final class BlockUtils {
 		BlockState state = world.getBlockState(pos);
 		if(!state.getBlock().canEntityDestroy(state, world, pos, breaker)) return -1;
 		// Although the forge event only needs an EntityLivingBase, it seems it's not supposed to be for players
-		if(breaker instanceof EntityLiving && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
+		if(breaker instanceof Mob && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
 		// Need to trigger PlayerEvent.BreakSpeed as some claim mods (e.g. LandManager) use it instead of BlockEvent.BreakEvent
 		if(breaker instanceof Player && ForgeEventFactory.getBreakSpeed((Player)breaker, state, 1, pos) < 0) return -1;
 

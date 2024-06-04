@@ -1,10 +1,10 @@
 package electroblob.wizardry.entity.living;
 
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
@@ -22,9 +22,9 @@ public class EntityStrayMinion extends EntitySkeletonMinion {
 	@Override protected SoundEvent getStepSound(){ return SoundEvents.ENTITY_STRAY_STEP; }
 
 	@Override
-	protected EntityArrow getArrow(float distanceFactor){
+	protected Arrow getArrow(float distanceFactor){
 
-		EntityArrow entityarrow = super.getArrow(distanceFactor);
+		Arrow entityarrow = super.getArrow(distanceFactor);
 
 		if(entityarrow instanceof EntityTippedArrow){
 			((EntityTippedArrow)entityarrow).addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600));

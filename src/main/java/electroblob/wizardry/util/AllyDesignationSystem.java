@@ -5,14 +5,15 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.MindControl;
 import net.minecraft.entity.*;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Contains some useful static methods for interacting with the ally designation system. Also handles the friendly fire
@@ -144,12 +145,12 @@ public final class AllyDesignationSystem {
 		}
 
 		// Tests whether the target is a creature that was summoned/tamed (or is otherwise owned) by the attacker
-		if(target instanceof IEntityOwnable && attacker instanceof EntityLiving && !(((EntityLiving)attacker).getRevengeTarget() == ((IEntityOwnable)target).getOwner() || ((EntityLiving)attacker).getAttackTarget() == ((IEntityOwnable)target).getOwner())){
+		if(target instanceof IEntityOwnable && attacker instanceof Mob && !(((Mob)attacker).getRevengeTarget() == ((IEntityOwnable)target).getOwner() || ((Mob)attacker).getAttackTarget() == ((IEntityOwnable)target).getOwner())){
 			return false;
 		}
 
 		// Tests whether the target is a creature that was mind controlled by the attacker
-		if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
+		if(target instanceof Mob && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 
 			CompoundTag entityNBT = target.getEntityData();
 
@@ -181,7 +182,7 @@ public final class AllyDesignationSystem {
 				// Tests whether the target is a creature that was summoned/tamed by an ally of the attacker
 				if(isOwnerAlly((Player)attacker, (IEntityOwnable)target)) return false;
 
-			}else if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
+			}else if(target instanceof Mob && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 				// Tests whether the target is a creature that was mind controlled by an ally of the attacker
 				CompoundTag entityNBT = target.getEntityData();
 

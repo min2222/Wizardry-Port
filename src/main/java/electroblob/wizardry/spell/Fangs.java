@@ -5,7 +5,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,8 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +47,7 @@ public class Fangs extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!spawnFangs(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()).normalize(), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;

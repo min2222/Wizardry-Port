@@ -7,7 +7,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * <p></p>
  * Properties added by this type of spell: {@link SpellBuff#getDurationKey(Potion)}, {@link SpellBuff#getStrengthKey(Potion)}
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -123,7 +123,7 @@ public class SpellBuff extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Wizards can only cast a buff spell if they don't already have its effects.
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
 		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;

@@ -10,17 +10,17 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class Paralysis extends SpellRay {
@@ -102,13 +102,13 @@ public class Paralysis extends SpellRay {
 	// See WizardryClientEventHandler for prevention of players' movement under the effects of paralysis
 	
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 		// Disables entities' AI when under the effects of paralysis and re-enables it on the last update of the effect
 		// - this can't be in the potion class because it requires access to the duration and hence the actual
 		// PotionEffect instance
-		if(event.getEntity() instanceof EntityLiving && event.getEntityLiving().isPotionActive(WizardryPotions.paralysis)){
+		if(event.getEntity() instanceof Mob && event.getEntityLiving().isPotionActive(WizardryPotions.paralysis)){
 			int timeLeft = event.getEntityLiving().getActivePotionEffect(WizardryPotions.paralysis).getDuration();
-			((EntityLiving)event.getEntity()).setNoAI(timeLeft > 1);
+			((Mob)event.getEntity()).setNoAI(timeLeft > 1);
 		}
 	}
 	

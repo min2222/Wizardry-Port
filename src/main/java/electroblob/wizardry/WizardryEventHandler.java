@@ -20,15 +20,15 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -39,14 +39,13 @@ import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraftforge.event.PlayLevelSoundEvent;
 import net.minecraftforge.event.entity.living.*;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 import java.util.ArrayList;
@@ -89,7 +88,7 @@ public final class WizardryEventHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public static void onPlaySoundAtEntityEvent(PlaySoundAtEntityEvent event){
+	public static void onPlaySoundAtEntityEvent(PlayLevelSoundEvent.AtEntity event){
 		// Muffle (there's no spell class for it so it's here instead)
 		if(event.getEntity() instanceof LivingEntity
 				&& ((LivingEntity)event.getEntity()).isPotionActive(WizardryPotions.muffle)){
@@ -194,7 +193,7 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 
-		if(event.getEntityLiving() instanceof EntityLiving && event.getTarget() != null){
+		if(event.getEntityLiving() instanceof Mob && event.getTarget() != null){
 
 			// Muffle
 			if(event.getTarget().isPotionActive(WizardryPotions.muffle)){
@@ -205,14 +204,14 @@ public final class WizardryEventHandler {
 				double angle = Math.acos(vec.dotProduct(event.getEntity().getLookVec()) / vec.length());
 				// If the player is not within the 144-degree arc in front of the mob, it won't detect them
 				if(angle > 0.4 * Math.PI){
-					((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
+					((Mob)event.getEntityLiving()).setAttackTarget(null);
 				}
 			}
 
 			// Mirage
 			if(event.getTarget().isPotionActive(WizardryPotions.mirage)){
 				// Can't find players under mirage at all! (Pretty sure this excludes revenge-targeting)
-				((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
+				((Mob)event.getEntityLiving()).setAttackTarget(null);
 			}
 
 			// Blindness tweak
@@ -220,7 +219,7 @@ public final class WizardryEventHandler {
 			if(event.getEntityLiving().isPotionActive(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
 					&& Wizardry.settings.blindnessTweak && event.getTarget().getDistanceSq(event.getEntity()) > 3.5 * 3.5){
 				// Can't detect anything more than 3.5 blocks away (roughly the player's view distance when blinded)
-				((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
+				((Mob)event.getEntityLiving()).setAttackTarget(null);
 			}
 		}
 	}
@@ -332,7 +331,7 @@ public final class WizardryEventHandler {
 		}
 
 		// Freezing bow
-		if(event.getSource().getImmediateSource() instanceof EntityArrow
+		if(event.getSource().getImmediateSource() instanceof Arrow
 				&& event.getSource().getImmediateSource().getEntityData() != null){
 
 			int level = event.getSource().getImmediateSource().getEntityData()
@@ -354,13 +353,13 @@ public final class WizardryEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		if(event.getEntityLiving().world.isRemote){
 
 			// Client-side continuous spell casting for NPCs
 
-			if(event.getEntity() instanceof ISpellCaster && event.getEntity() instanceof EntityLiving){
+			if(event.getEntity() instanceof ISpellCaster && event.getEntity() instanceof Mob){
 
 				Spell spell = ((ISpellCaster)event.getEntity()).getContinuousSpell();
 				SpellModifiers modifiers = ((ISpellCaster)event.getEntity()).getModifiers();
@@ -371,10 +370,10 @@ public final class WizardryEventHandler {
 					if(!MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(SpellCastEvent.Source.NPC, spell, event.getEntityLiving(),
 							modifiers, count))){
 
-						spell.cast(event.getEntity().world, (EntityLiving)event.getEntity(), InteractionHand.MAIN_HAND, count,
+						spell.cast(event.getEntity().world, (Mob)event.getEntity(), InteractionHand.MAIN_HAND, count,
 								// TODO: This implementation of modifiers relies on them being accessible client-side.
 								// 		 Right now that doesn't matter because NPCs don't use modifiers, but they might in future
-								((EntityLiving)event.getEntity()).getAttackTarget(), modifiers);
+								((Mob)event.getEntity()).getAttackTarget(), modifiers);
 
 						((ISpellCaster)event.getEntity()).setSpellCounter(count + 1);
 					}

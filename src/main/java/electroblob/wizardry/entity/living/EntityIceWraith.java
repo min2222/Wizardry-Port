@@ -18,9 +18,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.ArrayUtils;
 
 @Mod.EventBusSubscriber

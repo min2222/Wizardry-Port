@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -56,7 +56,7 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return true;
 	}
 
@@ -205,7 +205,7 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target == null) return false;
 
@@ -352,8 +352,8 @@ public class Grapple extends Spell {
 					HitResult hit = data.getVariable(TARGET_KEY);
 					if(hit != null) target = hit.hitVec;
 				}
-			}else if(caster instanceof EntityLiving){
-				Entity entity = ((EntityLiving)caster).getAttackTarget();
+			}else if(caster instanceof Mob){
+				Entity entity = ((Mob)caster).getAttackTarget();
 				if(entity != null) target = GeometryUtils.getCentre(entity);
 			}
 

@@ -5,6 +5,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.entity.Mob;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -38,7 +39,7 @@ public interface ISpellCaster {
 	 * 
 	 * @return A list of {@link Spell} instances. A random spell from this list will be cast when the entity attacks.
 	 *         The list will not be modified by the AI class and can therefore be an immutable list. The spells in the
-	 *         list <b>must</b> be castable by NPCs (i.e. {@link Spell#canBeCastBy(net.minecraft.entity.EntityLiving, boolean)} returns true).
+	 *         list <b>must</b> be castable by NPCs (i.e. {@link Spell#canBeCastBy(Mob, boolean)} returns true).
 	 */
 	@Nonnull
 	List<Spell> getSpells();

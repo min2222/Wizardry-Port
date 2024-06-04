@@ -13,7 +13,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -49,9 +49,9 @@ public class WallOfFrost extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		// Wall of frost now freezes entities solid too!
-		if(target instanceof EntityLiving && !world.isRemote){
+		if(target instanceof Mob && !world.isRemote){
 			// Unchecked cast is fine because the block is a static final field
-			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((EntityLiving)target,
+			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
 				
 				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);

@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Random;
 

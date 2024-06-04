@@ -6,10 +6,10 @@ import electroblob.wizardry.registry.WizardryEnchantments;
 import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Items;
 import net.minecraft.inventory.ContainerChest;
@@ -23,7 +23,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Iterator;
 
@@ -115,9 +115,9 @@ public interface Imbuement {
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event){
 		// Rather long-winded (but necessary) way of getting an arrow just after it has been fired, checking if the bow
 		// that fired it has the imbuement enchantment, and applying extra damage accordingly.
-		if(!event.getEntity().world.isRemote && event.getEntity() instanceof EntityArrow){
+		if(!event.getEntity().world.isRemote && event.getEntity() instanceof Arrow){
 
-			EntityArrow arrow = (EntityArrow)event.getEntity();
+			Arrow arrow = (Arrow)event.getEntity();
 
 			if(arrow.shootingEntity instanceof LivingEntity){
 

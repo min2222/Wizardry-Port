@@ -2,11 +2,11 @@ package electroblob.wizardry.entity.living;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 

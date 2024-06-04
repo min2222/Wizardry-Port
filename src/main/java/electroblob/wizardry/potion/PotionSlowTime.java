@@ -13,13 +13,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -61,7 +61,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		// Other entities with the slow time effect are unaffected
 		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).isPotionActive(WizardryPotions.slow_time));
 		if(!Wizardry.settings.slowTimeAffectsPlayers) targetsInRange.removeIf(t -> t instanceof Player);
-		targetsInRange.removeIf(t -> t instanceof EntityArrow && t.isEntityInsideOpaqueBlock());
+		targetsInRange.removeIf(t -> t instanceof Arrow && t.isEntityInsideOpaqueBlock());
 
 		for(Entity entity : targetsInRange){
 
@@ -160,7 +160,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		LivingEntity entity = event.getEntityLiving();
 

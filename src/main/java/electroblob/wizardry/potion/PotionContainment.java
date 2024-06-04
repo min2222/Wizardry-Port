@@ -11,9 +11,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class PotionContainment extends PotionMagicEffect {
@@ -73,7 +73,7 @@ public class PotionContainment extends PotionMagicEffect {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 		// This is LAST-RESORT CLEANUP. It does NOT need checking every tick! We always check for the actual potion anyway.
 		if(event.getEntity().ticksExisted % 20 == 0 && event.getEntityLiving().getEntityData().hasKey(ENTITY_TAG)
 				&& !event.getEntityLiving().isPotionActive(WizardryPotions.containment)){

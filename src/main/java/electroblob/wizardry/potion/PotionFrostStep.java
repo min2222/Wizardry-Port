@@ -18,10 +18,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.lang.reflect.Field;
 
@@ -50,7 +50,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 	// regardless of whether the player is wearing frost walker boots or not
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		LivingEntity host = event.getEntityLiving();
 

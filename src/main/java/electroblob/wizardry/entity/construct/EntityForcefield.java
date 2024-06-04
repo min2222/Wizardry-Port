@@ -18,7 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.phys.AABB;
@@ -27,8 +27,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -102,7 +102,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 				WizardryItems.ring_defender)){
 			targets.removeIf(t -> t instanceof EntityMagicArrow && !this.isValidTarget(((EntityMagicArrow)t).getCaster())
 								|| t instanceof EntityThrowable && !this.isValidTarget(((EntityThrowable)t).getThrower())
-								|| t instanceof EntityArrow && !this.isValidTarget(((EntityArrow)t).shootingEntity));
+								|| t instanceof Arrow && !this.isValidTarget(((Arrow)t).shootingEntity));
 		}
 
 		for(Entity target : targets){

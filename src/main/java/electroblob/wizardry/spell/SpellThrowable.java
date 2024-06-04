@@ -12,7 +12,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -21,8 +21,8 @@ import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.function.BiFunction;
 
@@ -37,7 +37,7 @@ import java.util.function.BiFunction;
  * <p></p>
  * Properties added by this type of spell: {@link Spell#RANGE}
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell cannot be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -100,7 +100,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 

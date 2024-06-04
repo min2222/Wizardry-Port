@@ -5,7 +5,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +33,7 @@ import java.util.List;
  * <p></p>
  * Properties added by this type of spell: {@link Spell#EFFECT_RADIUS}
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -111,7 +111,7 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		boolean result = findAndAffectEntities(world, caster.getPositionVector(), caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return result;

@@ -17,9 +17,9 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nullable;
 
@@ -117,7 +117,7 @@ public class Intimidate extends SpellAreaEffect {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		// No need to do this every tick either
 		if(event.getEntity().ticksExisted % 50 == 0 && event.getEntityLiving().isPotionActive(WizardryPotions.fear)

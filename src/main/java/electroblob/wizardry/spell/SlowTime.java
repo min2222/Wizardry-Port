@@ -3,7 +3,7 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.InteractionHand;
@@ -42,7 +42,7 @@ public class SlowTime extends SpellBuff {
 	}
 
 	@Override
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return false;
 	}
 }

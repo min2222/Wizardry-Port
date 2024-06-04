@@ -11,7 +11,7 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagList;
@@ -24,7 +24,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,7 +47,7 @@ public class CurseOfSoulbinding extends SpellRay {
 		WizardData.registerStoredVariables(TARGETS_KEY);
 	}
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	// You can't damage a dispenser so this would be nonsense!
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 

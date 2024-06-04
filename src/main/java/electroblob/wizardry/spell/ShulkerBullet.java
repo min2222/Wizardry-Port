@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ public class ShulkerBullet extends Spell {
 		addProperties(RANGE);
 	}
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return true; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override){ return true; }
 
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
@@ -43,7 +43,7 @@ public class ShulkerBullet extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;

@@ -52,6 +52,7 @@ import electroblob.wizardry.util.WandHelper;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
@@ -69,7 +70,6 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
@@ -506,20 +506,20 @@ public class ClientProxy extends CommonProxy {
 		Entity target = message.targetID == -1 ? null : world.getEntityByID(message.targetID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
-		if(caster instanceof EntityLiving){
+		if(caster instanceof Mob){
 
 			if(target instanceof LivingEntity){
 
-				spell.cast(world, (EntityLiving)caster, message.hand, 0, (LivingEntity)target, message.modifiers);
+				spell.cast(world, (Mob)caster, message.hand, 0, (LivingEntity)target, message.modifiers);
 				// Again, no need to check if the spell succeeded, because the packet is only ever sent when it
 				// succeeds.
-				MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.NPC, spell, (EntityLiving)caster, message.modifiers));
+				MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.NPC, spell, (Mob)caster, message.modifiers));
 
 				if(caster instanceof ISpellCaster){
 					if(spell.isContinuous || spell instanceof None){
 						((ISpellCaster)caster).setContinuousSpell(spell);
 						((ISpellCaster)caster).setSpellCounter(spell instanceof None ? 0 : 1);
-						((EntityLiving)caster).setAttackTarget((LivingEntity)target);
+						((Mob)caster).setAttackTarget((LivingEntity)target);
 					}
 				}
 			}
@@ -693,8 +693,8 @@ public class ClientProxy extends CommonProxy {
 				((Possession)Spells.possession).endPossession(player);
 			}else{
 				Entity target = Minecraft.getMinecraft().world.getEntityByID(message.targetID);
-				if(target instanceof EntityLiving){
-					((Possession)Spells.possession).possess(player, (EntityLiving)target, message.duration);
+				if(target instanceof Mob){
+					((Possession)Spells.possession).possess(player, (Mob)target, message.duration);
 					player.sendStatusMessage(new TextComponentTranslation("spell." + Spells.possession.getRegistryName()
 							+ ".success", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()), true);
 				}

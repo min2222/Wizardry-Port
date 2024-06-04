@@ -1,7 +1,7 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +18,7 @@ public class Satiety extends SpellBuff {
 		addProperties(HUNGER_POINTS, SATURATION_MODIFIER);
 	}
 	
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override){ return false; }
 	
 	@Override
 	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){

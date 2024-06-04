@@ -4,10 +4,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.PotionColorCalculationEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingTickEvent event){
 		if(event.getEntityLiving().world.isRemote){
 			// Behold the power of interfaces!
 			for(MobEffectInstance effect : event.getEntityLiving().getActivePotionEffects()){

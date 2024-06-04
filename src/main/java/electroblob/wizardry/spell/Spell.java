@@ -15,7 +15,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -31,9 +31,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -183,8 +183,8 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	/** List of items for which this spell is applicable (used by default behaviour of {@link Spell#applicableForItem(Item)}). */
 	protected Item[] applicableItems;
 	/** Predicate that specifies a condition that NPCs must satisfy in order to spawn with this spell equipped (used by
-	 * default behaviour of {@link Spell#canBeCastBy(EntityLiving, boolean)}). */
-	protected BiPredicate<EntityLiving, Boolean> npcSelector; // Kinda ugly but it's better than boilerplate classes
+	 * default behaviour of {@link Spell#canBeCastBy(Mob, boolean)}). */
+	protected BiPredicate<Mob, Boolean> npcSelector; // Kinda ugly but it's better than boilerplate classes
 
 	private static int nextSpellId = 0;
 	/** The spell's integer ID, mainly used for networking. */
@@ -399,7 +399,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * work if the caster is on full health).
 	 * <p></p>
 	 * This method is intended for use by NPCs (see {@link EntityWizard}) so that they can cast spells. Override it if
-	 * you want a spell to be cast by wizards. Note that you must also override {@link Spell#canBeCastBy(EntityLiving, boolean)} to
+	 * you want a spell to be cast by wizards. Note that you must also override {@link Spell#canBeCastBy(Mob, boolean)} to
 	 * return true to allow wizards to select the spell. For some spells, this method may well be exactly the same as
 	 * the regular cast method; for others it won't be - for example, projectile-based spells are normally done using
 	 * the player's look vector, but NPCs need to use a target-based method instead.
@@ -423,7 +423,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded, false if not. Returns false by default.
 	 */
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 		return false;
 	}
@@ -493,7 +493,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/**
 	 * Whether the given entity can cast this spell. If you have overridden
-	 * {@link Spell#cast(Level, EntityLiving, InteractionHand, int, LivingEntity, SpellModifiers)}, you should override
+	 * {@link Spell#cast(Level, Mob, InteractionHand, int, LivingEntity, SpellModifiers)}, you should override
 	 * this to return true (either always or under certain circumstances), or alternatively assign an NPC selector via
 	 * {@link Spell#npcSelector(BiPredicate)} (recommended for general spell classes).
 	 * @param npc The entity to query.
@@ -503,7 +503,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	// We could make this final and force everyone to move over to the predicate system, but for particularly complex
 	// behaviour (i.e. several lines of code) it gets too ugly, and then you end up moving the contents of the predicate
 	// to a static method anyway and referring to it via method reference... so we may as well leave people the option.
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return npcSelector.test(npc, override);
 	}
 
@@ -945,7 +945,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * @return The spell instance, allowing this method to be chained onto the constructor. Note that since this method
 	 * only returns a {@code Spell}, if you are chaining multiple methods onto the constructor this should be called last.
 	 */
-	public Spell npcSelector(BiPredicate<EntityLiving, Boolean> selector){
+	public Spell npcSelector(BiPredicate<Mob, Boolean> selector){
 		this.npcSelector = selector;
 		return this;
 	}

@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class MindTrick extends SpellRay {
@@ -43,9 +43,9 @@ public class MindTrick extends SpellRay {
 					((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.NAUSEA,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 
-				}else if(target instanceof EntityLiving){
+				}else if(target instanceof Mob){
 
-					((EntityLiving)target).setAttackTarget(null);
+					((Mob)target).setAttackTarget(null);
 					((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.mind_trick,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 				}
@@ -94,8 +94,8 @@ public class MindTrick extends SpellRay {
 		// If the target is null already, no need to set it to null, or infinite loops will occur.
 		if((event.getEntityLiving().isPotionActive(WizardryPotions.mind_trick)
 				|| event.getEntityLiving().isPotionActive(WizardryPotions.fear))
-				&& event.getEntityLiving() instanceof EntityLiving && event.getTarget() != null){
-			((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
+				&& event.getEntityLiving() instanceof Mob && event.getTarget() != null){
+			((Mob)event.getEntityLiving()).setAttackTarget(null);
 		}
 	}
 }

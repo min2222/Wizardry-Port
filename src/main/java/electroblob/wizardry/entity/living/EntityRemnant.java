@@ -6,7 +6,7 @@ import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -61,7 +61,7 @@ public class EntityRemnant extends EntityMob {
 		this.tasks.addTask(4, new EntityRemnant.AIChargeAttack());
 		this.tasks.addTask(8, new EntityRemnant.AIMoveRandom());
 		this.tasks.addTask(9, new EntityAIWatchClosest(this, Player.class, 3.0F, 1.0F));
-		this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
+		this.tasks.addTask(10, new EntityAIWatchClosest(this, Mob.class, 8.0F));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityRemnant.class));
 		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, Player.class, true));
 	}

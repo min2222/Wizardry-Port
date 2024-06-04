@@ -6,8 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
 import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Interface for potion effects that need syncing to ensure client and server side are consistent. Simply implement

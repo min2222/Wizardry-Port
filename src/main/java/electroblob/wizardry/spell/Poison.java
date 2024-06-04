@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -29,7 +29,7 @@ public class Poison extends SpellRay {
 	}
 
 	@Override
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return true;
 	}
 

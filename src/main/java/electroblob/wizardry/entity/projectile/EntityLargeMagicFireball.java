@@ -16,7 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * It's like {@link EntityMagicFireball}, but bigger... the wizardry version of vanilla's

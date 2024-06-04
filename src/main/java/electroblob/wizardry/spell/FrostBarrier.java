@@ -9,7 +9,7 @@ import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -58,7 +58,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(caster.onGround){
 			if(!createBarriers(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()),

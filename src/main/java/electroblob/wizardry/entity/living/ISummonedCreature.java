@@ -13,6 +13,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
@@ -21,9 +22,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.Nullable;
@@ -204,7 +205,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 			if((target instanceof IMob || target instanceof ISummonedCreature
 					|| (target instanceof EntityWizard && !(getCaster() instanceof EntityWizard))
 					// ...or something that's attacking the owner...
-					|| (target instanceof EntityLiving && ((EntityLiving)target).getAttackTarget() == getCaster())
+					|| (target instanceof Mob && ((Mob)target).getAttackTarget() == getCaster())
 					// ...or in the whitelist...
 					|| Arrays.asList(Wizardry.settings.summonedCreatureTargetsWhitelist)
 					.contains(EntityList.getKey(target.getClass())))

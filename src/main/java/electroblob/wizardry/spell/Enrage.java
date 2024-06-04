@@ -4,7 +4,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.phys.Vec3;
@@ -29,7 +29,7 @@ public class Enrage extends SpellAreaEffect {
 	@Override
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster != null && target instanceof EntityLiving){
+		if(caster != null && target instanceof Mob){
 			target.setRevengeTarget(caster); // Yours truly, angry mobs
 		}
 

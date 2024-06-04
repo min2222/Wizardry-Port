@@ -29,9 +29,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nullable;
@@ -327,7 +327,7 @@ public class GuiSpellDisplay {
 	}
 	
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingTickEvent event){
 		if(event.getEntity() == Minecraft.getMinecraft().player){ // Makes sure this only gets called once each tick.
 			if(switchTimer > 0) switchTimer--;
 			else if(switchTimer < 0) switchTimer++;

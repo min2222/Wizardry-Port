@@ -12,7 +12,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
@@ -53,7 +53,7 @@ public class Metamorphosis extends SpellRay {
 		this.soundValues(0.5f, 1f, 0);
 	}
 	
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){

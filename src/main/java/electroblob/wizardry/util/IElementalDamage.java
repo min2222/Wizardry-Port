@@ -4,8 +4,8 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * This interface allows {@link MagicDamage} and {@link IndirectMagicDamage} to both be treated as instances of a single

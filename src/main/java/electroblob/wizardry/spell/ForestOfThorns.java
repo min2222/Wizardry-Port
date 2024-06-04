@@ -9,7 +9,7 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,7 +30,7 @@ public class ForestOfThorns extends Spell {
 	}
 
 	@Override public boolean requiresPacket(){ return false; }
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return true; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override){ return true; }
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
 	@Override
@@ -41,7 +41,7 @@ public class ForestOfThorns extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;

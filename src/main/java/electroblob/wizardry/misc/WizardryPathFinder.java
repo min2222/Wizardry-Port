@@ -3,7 +3,7 @@ package electroblob.wizardry.misc;
 import com.google.common.collect.Sets;
 import electroblob.wizardry.spell.Clairvoyance;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathHeap;
@@ -31,13 +31,13 @@ public class WizardryPathFinder {
 	}
 
 	@Nullable
-	public Path findPath(IBlockAccess world, EntityLiving entity, BlockPos destination, float range){
+	public Path findPath(IBlockAccess world, Mob entity, BlockPos destination, float range){
 		return this.findPath(world, entity, (double)((float)destination.getX() + 0.5F),
 				(double)((float)destination.getY() + 0.5F), (double)((float)destination.getZ() + 0.5F), range);
 	}
 
 	@Nullable
-	private Path findPath(IBlockAccess world, EntityLiving entity, double x, double y, double z, float range){
+	private Path findPath(IBlockAccess world, Mob entity, double x, double y, double z, float range){
 		this.path.clearPath();
 		this.nodeProcessor.init(world, entity);
 		PathPoint pathpoint = this.nodeProcessor.getStart();

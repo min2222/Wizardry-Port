@@ -11,7 +11,7 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemBow;

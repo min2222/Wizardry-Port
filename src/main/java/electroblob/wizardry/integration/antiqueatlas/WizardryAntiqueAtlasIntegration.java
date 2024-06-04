@@ -9,9 +9,9 @@ import hunternif.mc.atlas.registry.MarkerType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * This class handles all of wizardry's integration with the <i>Antique Atlas</i> mod. This class contains only the code

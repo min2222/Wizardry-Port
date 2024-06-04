@@ -24,7 +24,7 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nullable;

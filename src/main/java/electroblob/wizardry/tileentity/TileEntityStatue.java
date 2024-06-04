@@ -5,7 +5,7 @@ import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class TileEntityStatue extends BlockEntity implements ITickable {
 
-	public EntityLiving creature;
+	public Mob creature;
 	private CompoundTag entityCompound;
 	private ResourceLocation entityName;
 	private float entityYawHead;
@@ -50,7 +50,7 @@ public class TileEntityStatue extends BlockEntity implements ITickable {
 	// 		 creatures, which should show the block breaking animation on all parts... except this is also broken!
 	public int position = 1;
 
-	public void setCreatureAndPart(EntityLiving entity, int position, int parts){
+	public void setCreatureAndPart(Mob entity, int position, int parts){
 		this.creature = entity;
 		this.position = position;
 		this.parts = parts;
@@ -98,7 +98,7 @@ public class TileEntityStatue extends BlockEntity implements ITickable {
 
 		// System.out.println(entityName);
 		if(this.creature == null && entityName != null){
-			this.creature = (EntityLiving)EntityList.createEntityByIDFromName(this.entityName, this.world);
+			this.creature = (Mob)EntityList.createEntityByIDFromName(this.entityName, this.world);
 			if(this.creature != null){
 				this.creature.readFromNBT(entityCompound);
 				this.creature.rotationYawHead = this.entityYawHead;

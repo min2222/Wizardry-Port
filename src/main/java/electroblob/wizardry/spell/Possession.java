@@ -25,7 +25,8 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.server.level.ServerPlayer;
@@ -64,9 +65,9 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -92,12 +93,12 @@ public class Possession extends SpellRay {
 	private static final int PROJECTILE_COOLDOWN = 30;
 
 	public static final IVariable<Integer> TIMER_KEY = new Variable<Integer>(Persistence.DIMENSION_CHANGE).withTicker(Possession::update);
-	public static final IVariable<EntityLiving> POSSESSEE_KEY = new Variable<>(Persistence.DIMENSION_CHANGE);
+	public static final IVariable<Mob> POSSESSEE_KEY = new Variable<>(Persistence.DIMENSION_CHANGE);
 	public static final IVariable<Integer> SHOOT_COOLDOWN_KEY = new Variable<Integer>(Persistence.DIMENSION_CHANGE).withTicker((p, n) -> Math.max(n-1, 0));
 
-	private static final Multimap<Class<? extends EntityLiving>, BiConsumer<?, Player>> abilities = HashMultimap.create();
-	private static final Map<Class<? extends EntityLiving>, Function<Level, ? extends IProjectile>> projectiles = new HashMap<>();
-	private static final Set<Class<? extends EntityLiving>> blacklist = new HashSet<>();
+	private static final Multimap<Class<? extends Mob>, BiConsumer<?, Player>> abilities = HashMultimap.create();
+	private static final Map<Class<? extends Mob>, Function<Level, ? extends IProjectile>> projectiles = new HashMap<>();
+	private static final Set<Class<? extends Mob>> blacklist = new HashSet<>();
 
 	private static final Map<IAttribute, UUID> INHERITED_ATTRIBUTES;
 
@@ -110,7 +111,7 @@ public class Possession extends SpellRay {
 
 		addAbility(EntitySpider.class, (spider, player) -> { if(player.collidedHorizontally) player.motionY = 0.2; });
 		addAbility(EntityChicken.class, (chicken, player) -> { if(!player.onGround && player.motionY < 0) player.motionY *= 0.6D; });
-		addAbility(EntityLiving.class, (entity, player) -> { if(!entity.isImmuneToFire() && player.isBurning()) player.extinguish(); });
+		addAbility(Mob.class, (entity, player) -> { if(!entity.isImmuneToFire() && player.isBurning()) player.extinguish(); });
 
 		addProjectile(EntitySnowman.class, EntitySnowball::new); // Woooo snowballs!
 		addProjectile(EntityBlaze.class, EntityMagicFireball::new); // Ugh normal fireballs don't fit so let's just use mine!
@@ -128,7 +129,7 @@ public class Possession extends SpellRay {
 		addProperties(EFFECT_DURATION, CRITICAL_HEALTH);
 	}
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 
 	@Override
@@ -158,7 +159,7 @@ public class Possession extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse,
                                   SpellModifiers modifiers){
 
-		if(target instanceof EntityLiving && !blacklist.contains(target.getClass()) && caster instanceof Player
+		if(target instanceof Mob && !blacklist.contains(target.getClass()) && caster instanceof Player
 				&& !isPossessing((Player)caster)){
 
 			Player player = (Player)caster;
@@ -171,7 +172,7 @@ public class Possession extends SpellRay {
 
 			if(!world.isRemote){
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
-				if(possess(player, (EntityLiving)target, duration)){
+				if(possess(player, (Mob)target, duration)){
 					return true;
 				}
 			}
@@ -203,7 +204,7 @@ public class Possession extends SpellRay {
 	 * @return True if the possession succeeded, false if for some reason it did not (only happens if the player's
 	 * {@link WizardData} is null).
 	 */
-	public boolean possess(Player possessor, EntityLiving target, int duration){
+	public boolean possess(Player possessor, Mob target, int duration){
 
 		if(possessor.isSneaking()) return false;
 
@@ -266,8 +267,8 @@ public class Possession extends SpellRay {
 
 				// Targeting
 
-				for(EntityLiving creature : EntityUtils.getEntitiesWithinRadius(16, possessor.posX,
-						possessor.posY, possessor.posZ, possessor.world, EntityLiving.class)){
+				for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, possessor.posX,
+						possessor.posY, possessor.posZ, possessor.world, Mob.class)){
 					// Mobs are dumb, if a player possesses something they're like "Huh?! Where'd you go?"
 					// Of course, this won't last long if the player attacks them, since they'll revenge-target them
 					if(creature.getAttackTarget() == possessor && !creature.canAttackClass(target.getClass()))
@@ -322,7 +323,7 @@ public class Possession extends SpellRay {
 
 		// Reverts the possessed entity back to normal
 
-		EntityLiving victim = getPossessee(player);
+		Mob victim = getPossessee(player);
 
 		if(victim != null){
 
@@ -385,7 +386,7 @@ public class Possession extends SpellRay {
 	/** Returns the {@code EntityLiving} that is currently being possessed by the given player, or null if the player is
 	 * not currently possessing an entity. */
 	@Nullable
-	public static EntityLiving getPossessee(Player player){
+	public static Mob getPossessee(Player player){
 		return WizardData.get(player) == null ? null : WizardData.get(player).getVariable(POSSESSEE_KEY);
 	}
 
@@ -425,14 +426,14 @@ public class Possession extends SpellRay {
 	/** Adds the given {@link BiConsumer} to the list of abilities. An <i>ability</i> is an entity-specific action or
 	 * effect that happens when a certain type of entity is possessed. For example, spiders can climb walls, endermen
 	 * can pick up blocks, creepers explode, etc. Other mods may use this method to add their own possession abilities. */
-	public static <T extends EntityLiving> void addAbility(Class<T> entityType, BiConsumer<T, Player> ability){
+	public static <T extends Mob> void addAbility(Class<T> entityType, BiConsumer<T, Player> ability){
 		abilities.put(entityType, ability);
 	}
 
 	@SuppressWarnings("unchecked") // Guess what? Type erasure again!
-	private static <T extends EntityLiving> void performAbilities(EntityLiving entity, Player player){
+	private static <T extends Mob> void performAbilities(Mob entity, Player player){
 		// Now we have a type parameter T to work with we can ram the entity into the consumer without a compiler error
-		for(Class<? extends EntityLiving> entityType : abilities.keySet()){
+		for(Class<? extends Mob> entityType : abilities.keySet()){
 			if(entityType.isAssignableFrom(entity.getClass())){
 				abilities.get(entityType).forEach(a -> ((BiConsumer<T, Player>)a).accept((T)entity, player));
 			}
@@ -441,7 +442,7 @@ public class Possession extends SpellRay {
 
 	/** Adds the given factory to the list of projectiles. When a player right-clicks while possessing an entity of the
 	 * given type, the given projectile factory will be invoked to create a projectile, which is then aimed and spawned. */
-	public static <T extends Entity & IProjectile> void addProjectile(Class<? extends EntityLiving> entityType, Function<Level, T> factory){
+	public static <T extends Entity & IProjectile> void addProjectile(Class<? extends Mob> entityType, Function<Level, T> factory){
 		projectiles.put(entityType, factory);
 	}
 
@@ -467,7 +468,7 @@ public class Possession extends SpellRay {
 
 		if(event.phase == TickEvent.Phase.START){
 
-			EntityLiving possessee = getPossessee(event.player);
+			Mob possessee = getPossessee(event.player);
 
 			if(possessee != null){
 				// Updating these to the player's variables won't have an effect on player movement, but it will
@@ -492,7 +493,7 @@ public class Possession extends SpellRay {
 		// Right at the end of EntityPlayer#onUpdate() it calls EntityPlayer#updateSize(), which resets the player's
 		// size (and is also where this event is fired from, oddly enough) ... but not on my watch!
 		if(event.phase == TickEvent.Phase.END){
-			EntityLiving possessee = getPossessee(event.player);
+			Mob possessee = getPossessee(event.player);
 			if(possessee != null){
 				setSize(event.player, possessee.width, possessee.height);
 			}
@@ -506,7 +507,7 @@ public class Possession extends SpellRay {
 
 		if(event.getEntity() instanceof Player && event.getSource() != DamageSource.OUT_OF_WORLD){
 
-			EntityLiving possessee = getPossessee((Player)event.getEntity());
+			Mob possessee = getPossessee((Player)event.getEntity());
 
 			if(possessee != null){
 				DamageSafetyChecker.attackEntitySafely(possessee, event.getSource(), event.getAmount(), event.getSource().getDamageType());
@@ -522,7 +523,7 @@ public class Possession extends SpellRay {
 
 		for(Player player : event.getEntity().world.playerEntities){
 
-			EntityLiving possessee = getPossessee(player);
+			Mob possessee = getPossessee(player);
 
 			if(possessee == event.getEntity()){
 				// Possessors take half of all damage taken by the entity they are possessing. If the possessor receives
@@ -548,7 +549,7 @@ public class Possession extends SpellRay {
 
 		if(event instanceof PlayerInteractEvent.RightClickItem) return; // Can always do this
 
-		EntityLiving possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntityPlayer());
 
 		if(possessee != null){
 
@@ -593,7 +594,7 @@ public class Possession extends SpellRay {
 
 			if(cooldown == null || cooldown == 0){
 
-				EntityLiving possessee = getPossessee(possessor);
+				Mob possessee = getPossessee(possessor);
 
 				if(possessee != null){
 
@@ -630,11 +631,11 @@ public class Possession extends SpellRay {
 
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){ // Not fired for revenge-targeting
-		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof EntityLiving){
-			EntityLiving possessee = getPossessee((Player)event.getTarget());
-			EntityLiving attacker = (EntityLiving)event.getEntityLiving();
+		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof Mob){
+			Mob possessee = getPossessee((Player)event.getTarget());
+			Mob attacker = (Mob)event.getEntityLiving();
 			if(possessee != null && !attacker.canAttackClass(possessee.getClass())){
-				((EntityLiving)event.getEntityLiving()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
+				((Mob)event.getEntityLiving()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
 			}
 		}
 	}
@@ -656,7 +657,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onBlockBreakEvent(BlockEvent.BreakEvent event){
 
-		EntityLiving possessee = getPossessee(event.getPlayer());
+		Mob possessee = getPossessee(event.getPlayer());
 
 		if(possessee instanceof EntityEnderman){
 			if(((EntityEnderman)possessee).getHeldBlockState() == null){
@@ -673,7 +674,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onBlockPlaceEvent(BlockEvent.PlaceEvent event){
 
-		EntityLiving possessee = getPossessee(event.getPlayer());
+		Mob possessee = getPossessee(event.getPlayer());
 
 		if(possessee instanceof EntityEnderman){
 			if(((EntityEnderman)possessee).getHeldBlockState() == event.getState()){
@@ -687,7 +688,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onEntityItemPickupEvent(EntityItemPickupEvent event){ // Why are there two item pickup events?
 
-		EntityLiving possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntityPlayer());
 
 		if(possessee != null){
 
@@ -712,7 +713,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onAttackEntityEvent(AttackEntityEvent event){
 
-		EntityLiving possessee = getPossessee(event.getEntityPlayer());
+		Mob possessee = getPossessee(event.getEntityPlayer());
 
 		if(possessee == null) return;
 

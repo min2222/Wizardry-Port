@@ -24,7 +24,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityItem;
@@ -46,10 +46,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -566,7 +566,7 @@ public class ItemArtefact extends Item {
 
 					if(isArtefactActive((Player)caster, WizardryItems.ring_mind_control)){
 
-						EntityUtils.getEntitiesWithinRadius(3, entity.posX, entity.posY, entity.posZ, entity.world, EntityLiving.class).stream()
+						EntityUtils.getEntitiesWithinRadius(3, entity.posX, entity.posY, entity.posZ, entity.world, Mob.class).stream()
 								.filter(e -> e.world.rand.nextInt(10) == 0)
 								.filter(MindControl::canControl)
 								.filter(e -> AllyDesignationSystem.isValidTarget(caster, e))
@@ -652,7 +652,7 @@ public class ItemArtefact extends Item {
 
 					if(!event.getSource().isUnblockable() && player.world.rand.nextFloat() < 0.15f){
 
-						List<EntityLiving> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.posX, player.posY, player.posZ, player.world, EntityLiving.class);
+						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.posX, player.posY, player.posZ, player.world, Mob.class);
 						nearbyMobs.removeIf(e -> !(e instanceof ISummonedCreature && ((ISummonedCreature)e).getCaster() == player));
 
 						if(!nearbyMobs.isEmpty()){

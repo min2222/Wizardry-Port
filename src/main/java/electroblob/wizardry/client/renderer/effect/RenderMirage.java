@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Random;

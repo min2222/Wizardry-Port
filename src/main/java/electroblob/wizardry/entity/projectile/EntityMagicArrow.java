@@ -17,7 +17,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;

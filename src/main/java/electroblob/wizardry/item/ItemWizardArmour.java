@@ -23,7 +23,7 @@ import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -41,9 +41,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -463,7 +463,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// Undo the mob detection penalty for wearing armour when invisible
 		// Only bother doing this for players because the penalty only applies to them
-		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof EntityLiving
+		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof Mob
 				&& event.getEntityLiving().isInvisible()){
 
 			int armourPieces = (int)Streams.stream(event.getTarget().getArmorInventoryList())
@@ -480,7 +480,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(f < 0.1F) f = 0.1F;
 			followRange *= 0.7F * f;
 			// Don't need to worry about the isSuitableTarget check since it must already have been checked to get this far
-			if(event.getTarget().getDistance(event.getEntity()) > followRange) ((EntityLiving)event.getEntityLiving()).setAttackTarget(null);
+			if(event.getTarget().getDistance(event.getEntity()) > followRange) ((Mob)event.getEntityLiving()).setAttackTarget(null);
 		}
 	}
 

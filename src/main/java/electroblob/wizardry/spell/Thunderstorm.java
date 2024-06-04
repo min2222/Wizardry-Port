@@ -5,7 +5,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -44,7 +44,7 @@ public class Thunderstorm extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		return doCasting(world, caster, modifiers);
 	}
 	

@@ -2,7 +2,7 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityDragonFireball;
@@ -51,7 +51,7 @@ public class DragonFireball extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		if(target != null){
@@ -85,7 +85,7 @@ public class DragonFireball extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return true;
 	}
 

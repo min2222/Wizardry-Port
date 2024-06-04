@@ -18,7 +18,7 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
@@ -204,7 +204,7 @@ public final class EntityUtils {
 		if(!entity.hasNoGravity()){
 			double gravity = 0.04;
 			if(entity instanceof EntityThrowable) gravity = 0.03;
-			else if(entity instanceof EntityArrow) gravity = 0.05;
+			else if(entity instanceof Arrow) gravity = 0.05;
 			else if(entity instanceof LivingEntity) gravity = 0.08;
 			entity.motionY += gravity;
 		}

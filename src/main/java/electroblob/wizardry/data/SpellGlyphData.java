@@ -13,7 +13,7 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.*;

@@ -7,7 +7,7 @@ import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * <p></p>
  * Properties added by this type of spell: {@link Spell#RANGE}
  * <p></p>
- * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(EntityLiving, boolean)}
+ * By default, this type of spell can be cast by NPCs. {@link Spell#canBeCastBy(Mob, boolean)}
  * <p></p>
  * By default, this type of spell can be cast by dispensers. {@link Spell#canBeCastBy(TileEntityDispenser)}
  * <p></p>
@@ -173,7 +173,7 @@ public abstract class SpellRay extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// IDEA: Add in an aiming error and trigger onMiss accordingly
 		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
 		Vec3 targetPos = null;

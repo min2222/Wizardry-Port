@@ -12,6 +12,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import java.util.Set;
 /**
  * <i>"Never fear, {@code WandHelper} is here!"</i>
  * <p></p>
- * Much like {@link net.minecraft.enchantment.EnchantmentHelper EnchantmentHelper}, this class has some static methods
+ * Much like {@link EnchantmentHelper EnchantmentHelper}, this class has some static methods
  * which allow cleaner and more concise interaction with the wand NBT data, which is quite a complex structure. Such
  * interaction previously resulted in rather verbose and repetitive code which was hard to read and even harder to
  * debug! For example, this class allowed {@link electroblob.wizardry.item.ItemWand ItemWand} to be shortened by about

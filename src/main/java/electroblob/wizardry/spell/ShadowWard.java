@@ -17,8 +17,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class ShadowWard extends Spell {

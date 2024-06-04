@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.world.entity.player.Player;
@@ -75,7 +75,7 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		float angle = (float)(Math.atan2(target.posZ - caster.posZ, target.posX - caster.posX)
@@ -130,7 +130,7 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean canBeCastBy(EntityLiving npc, boolean override){
+	public boolean canBeCastBy(Mob npc, boolean override){
 		return true;
 	}
 

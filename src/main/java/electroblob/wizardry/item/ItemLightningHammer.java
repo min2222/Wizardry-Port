@@ -27,8 +27,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
 import java.util.UUID;

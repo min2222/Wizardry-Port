@@ -3,7 +3,7 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +44,7 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	public void setCaster(@Nullable LivingEntity caster){
 		// Integrates the summoned creature caster system with the (subtly different) vex owner system for NPC casters
 		ISummonedCreature.super.setCaster(caster);
-		if(caster instanceof EntityLiving) this.setOwner((EntityLiving)caster);
+		if(caster instanceof Mob) this.setOwner((Mob)caster);
 	}
 
 	// EntityVex overrides

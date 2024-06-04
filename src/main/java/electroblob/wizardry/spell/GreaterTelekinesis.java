@@ -15,7 +15,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +45,7 @@ public class GreaterTelekinesis extends SpellRay {
 		this.soundValues(0.8f, 1, 0.2f);
 	}
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 
 	@Override

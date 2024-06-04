@@ -14,7 +14,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.EntityZombie;
@@ -28,8 +28,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 public class Clairvoyance extends Spell {
@@ -46,7 +46,7 @@ public class Clairvoyance extends Spell {
 		WizardData.registerStoredVariables(LOCATION_KEY, DIMENSION_KEY);
 	}
 
-	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
+	@Override public boolean canBeCastBy(Mob npc, boolean override) { return false; }
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 
 	@Override

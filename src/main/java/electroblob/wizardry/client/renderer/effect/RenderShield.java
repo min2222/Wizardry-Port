@@ -17,7 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)

@@ -2,11 +2,11 @@ package electroblob.wizardry.client.renderer.entity;
 
 import electroblob.wizardry.spell.Possession;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
@@ -17,11 +17,11 @@ public class RenderPossessingPlayer {
 	public static void onRenderPlayerPreEvent(RenderPlayerEvent.Pre event){
 
 		Player player = event.getEntityPlayer();
-		EntityLiving possessee = Possession.getPossessee(player);
+		Mob possessee = Possession.getPossessee(player);
 
 		if(possessee != null){
 			// I reject your renderer and substitute my own!
-			Render<EntityLiving> renderer = (Render<EntityLiving>)event.getRenderer().getRenderManager().entityRenderMap.get(possessee.getClass());
+			Render<Mob> renderer = (Render<Mob>)event.getRenderer().getRenderManager().entityRenderMap.get(possessee.getClass());
 			float yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * event.getPartialRenderTick();
 			possessee.swingProgress = player.swingProgress;
 			possessee.prevSwingProgress = player.prevSwingProgress;
