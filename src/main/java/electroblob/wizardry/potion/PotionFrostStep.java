@@ -8,7 +8,7 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.enchantment.EnchantmentFrostWalker;
 import net.minecraft.resources.ResourceLocation;

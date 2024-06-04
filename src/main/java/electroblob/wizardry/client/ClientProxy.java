@@ -75,7 +75,7 @@ import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.particles.ParticleTypes;
