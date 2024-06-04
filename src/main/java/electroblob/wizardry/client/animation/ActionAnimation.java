@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -94,8 +94,8 @@ public abstract class ActionAnimation extends Animation {
 			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 
 				WizardData data = WizardData.get(player);
-				RayTraceResult hit = data.getVariable(Grapple.TARGET_KEY);
-				if(hit == null || hit.typeOfHit == RayTraceResult.Type.MISS) return;
+				HitResult hit = data.getVariable(Grapple.TARGET_KEY);
+				if(hit == null || hit.typeOfHit == HitResult.Type.MISS) return;
 				Vec3 target = hit.hitVec;
 
 				if(hit.entityHit instanceof LivingEntity){

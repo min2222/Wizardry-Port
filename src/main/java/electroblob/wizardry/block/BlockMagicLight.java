@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
@@ -71,7 +71,7 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityMagicLight(600);
 	}
 

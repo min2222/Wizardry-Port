@@ -8,7 +8,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntityLightningDisc extends EntityMagicProjectile {
@@ -20,7 +20,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult result){
+	protected void onImpact(HitResult result){
 		
 		Entity entityHit = result.entityHit;
 
@@ -32,7 +32,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 
 		this.playSound(WizardrySounds.ENTITY_LIGHTNING_DISC_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 
-		if(result.typeOfHit == RayTraceResult.Type.BLOCK) this.setDead();
+		if(result.typeOfHit == HitResult.Type.BLOCK) this.setDead();
 	}
 
 	@Override

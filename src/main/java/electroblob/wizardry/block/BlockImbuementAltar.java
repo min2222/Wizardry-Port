@@ -9,13 +9,13 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.InteractionHand;
@@ -61,7 +61,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityImbuementAltar();
 	}
 
@@ -110,7 +110,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 		if(world.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
 
 			// Get contents of altar before replacing it
-			TileEntity te = world.getTileEntity(pos);
+			BlockEntity te = world.getTileEntity(pos);
 			ItemStack stack = ItemStack.EMPTY;
 			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getStack();
 
@@ -123,7 +123,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 			world.checkLight(pos);
 		}
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityImbuementAltar){
 			((TileEntityImbuementAltar)tileEntity).checkRecipe();
 		}
@@ -133,7 +133,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(!(tileEntity instanceof TileEntityImbuementAltar) || player.isSneaking()){
 			return false;
@@ -167,7 +167,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
-        TileEntity tileentity = world.getTileEntity(pos);
+        BlockEntity tileentity = world.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityImbuementAltar){
             InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), ((TileEntityImbuementAltar)tileentity).getStack());

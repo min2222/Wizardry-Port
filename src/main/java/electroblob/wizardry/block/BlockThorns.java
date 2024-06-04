@@ -15,13 +15,13 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ChunkCache;
@@ -70,7 +70,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 
 		if(state.getValue(HALF) == EnumBlockHalf.UPPER) pos = pos.down();
 		// Copied from BlockFlowerPot on authority of the Forge docs, which say it needs to be here
-		TileEntity tileentity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
+		BlockEntity tileentity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
 
 		if(tileentity instanceof TileEntityThorns){
 			return state.withProperty(AGE, ((TileEntityThorns)tileentity).getAge());
@@ -129,7 +129,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 		DamageSource source = DamageSource.CACTUS;
 		float damage = Spells.forest_of_thorns.getProperty(Spell.DAMAGE).floatValue();
 
-		TileEntity tileentity = world.getTileEntity(state.getValue(HALF) == EnumBlockHalf.UPPER ? pos.down() : pos);
+		BlockEntity tileentity = world.getTileEntity(state.getValue(HALF) == EnumBlockHalf.UPPER ? pos.down() : pos);
 
 		if(tileentity instanceof TileEntityThorns){
 
@@ -157,7 +157,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityThorns();
 	}
 

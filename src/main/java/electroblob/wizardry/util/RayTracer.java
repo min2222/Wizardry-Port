@@ -4,7 +4,7 @@ import electroblob.wizardry.entity.ICustomHitbox;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -36,12 +36,12 @@ public final class RayTracer {
 	 * @param ignoreUncollidables Whether blocks with no collisions should be ignored
 	 * @param returnLastUncollidable If blocks with no collisions are ignored, whether to return the last one (useful if,
 	 *                               for example, you want to replace snow layers or tall grass)
-	 * @return A {@link RayTraceResult} representing the object that was hit, which may be either a block or nothing.
+	 * @return A {@link HitResult} representing the object that was hit, which may be either a block or nothing.
 	 * Returns {@code null} only if the origin and endpoint are within the same block.
 	 */
 	@Nullable
-	public static RayTraceResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids,
-                                                       boolean ignoreUncollidables, boolean returnLastUncollidable){
+	public static HitResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids,
+                                                  boolean ignoreUncollidables, boolean returnLastUncollidable){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
 		Vec3 origin = entity.getPositionEyes(1);
 		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
@@ -55,7 +55,7 @@ public final class RayTracer {
 	 * and returnLastUncollidable default to false.
 	 */
 	@Nullable
-	public static RayTraceResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids){
+	public static HitResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids){
 		return standardBlockRayTrace(world, entity, range, hitLiquids, false, false);
 	}
 
@@ -70,11 +70,11 @@ public final class RayTracer {
 	 * @param range The distance over which the ray trace will be performed.
 	 * @param hitLiquids True to return hits on the surfaces of liquids, false to ignore liquid blocks as if they were
 	 * not there. {@code ignoreUncollidables} must be set to false for this setting to have an effect.
-	 * @return A {@link RayTraceResult} representing the object that was hit, which may be an entity, a block or
+	 * @return A {@link HitResult} representing the object that was hit, which may be an entity, a block or
 	 * nothing. Returns {@code null} only if the origin and endpoint are within the same block and no entity was hit.
 	 */
 	@Nullable
-	public static RayTraceResult standardEntityRayTrace(Level world, Entity entity, double range, boolean hitLiquids){
+	public static HitResult standardEntityRayTrace(Level world, Entity entity, double range, boolean hitLiquids){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
 		Vec3 origin = entity.getPositionEyes(1);
 		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
@@ -119,7 +119,7 @@ public final class RayTracer {
 	 * @param filter A {@link Predicate} which filters out entities that can be ignored; often used to exclude the
 	 * player that is performing the ray trace.
 	 *
-	 * @return A {@link RayTraceResult} representing the object that was hit, which may be an entity, a block or
+	 * @return A {@link HitResult} representing the object that was hit, which may be an entity, a block or
 	 * nothing. Returns {@code null} only if the origin and endpoint are within the same block and no entity was hit.
 	 *
 	 * @see RayTracer#standardEntityRayTrace(Level, Entity, double, boolean)
@@ -127,8 +127,8 @@ public final class RayTracer {
 	 */
 	// Interestingly enough, aimAssist can be negative, which means hits have to be in the middle of entities!
 	@Nullable
-	public static RayTraceResult rayTrace(Level world, Vec3 origin, Vec3 endpoint, float aimAssist,
-                                          boolean hitLiquids, boolean ignoreUncollidables, boolean returnLastUncollidable, Class<? extends Entity> entityType, Predicate<? super Entity> filter){
+	public static HitResult rayTrace(Level world, Vec3 origin, Vec3 endpoint, float aimAssist,
+                                     boolean hitLiquids, boolean ignoreUncollidables, boolean returnLastUncollidable, Class<? extends Entity> entityType, Predicate<? super Entity> filter){
 
 		// 1 is the standard amount of extra search volume, and aim assist needs to increase this further as well as
 		// expanding the entities' bounding boxes.
@@ -144,7 +144,7 @@ public final class RayTracer {
 		entities.removeIf(filter);
 
 		// Finds the first block hit by the ray trace, if any.
-		RayTraceResult result = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, returnLastUncollidable);
+		HitResult result = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, returnLastUncollidable);
 
 		// Clips the entity search range to the part of the ray trace before the block hit, if it hit a block.
 		if(result != null){
@@ -186,7 +186,7 @@ public final class RayTracer {
 					if(fuzziness != 0) entityBounds = entityBounds.grow(fuzziness, fuzziness, fuzziness);
 
 					// Finds the first point at which the ray trace intercepts the entity's bounding box, if any.
-					RayTraceResult hit = entityBounds.calculateIntercept(origin, endpoint);
+					HitResult hit = entityBounds.calculateIntercept(origin, endpoint);
 					if(hit != null) intercept = hit.hitVec;
 				}
 			}
@@ -205,7 +205,7 @@ public final class RayTracer {
 
 		// If the ray trace hit an entity, return that entity; otherwise return the result of the block ray trace.
 		if(closestHitEntity != null){
-			result = new RayTraceResult(closestHitEntity, closestHitPosition);
+			result = new HitResult(closestHitEntity, closestHitPosition);
 		}
 
 		return result;

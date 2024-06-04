@@ -6,6 +6,10 @@ import electroblob.wizardry.item.ItemSpectralBow;
 import electroblob.wizardry.packet.*;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -14,10 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.config.Property;
@@ -131,7 +131,7 @@ public class CommonProxy {
 
 	/** Like {@link CommonProxy#addMultiLineDescription(List, String, Style, Object...)}, but style defaults to light grey. */
 	public void addMultiLineDescription(List<String> tooltip, String key, Object... args){
-		this.addMultiLineDescription(tooltip, key, new Style().setColor(TextFormatting.GRAY), args);
+		this.addMultiLineDescription(tooltip, key, new Style().setColor(ChatFormatting.GRAY), args);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class CommonProxy {
 	 * @param pitch Pitch relative to 1
 	 * @param repeat Whether to repeat the sound for as long as the entity is alive (or until stopped manually)
 	 */
-	public void playMovingSound(Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean repeat){}
+	public void playMovingSound(Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, boolean repeat){}
 
 	/**
 	 * Plays the spell charge-up sound at the given entity.
@@ -216,7 +216,7 @@ public class CommonProxy {
 	 * @param volume Volume relative to 1
 	 * @param pitch Pitch relative to 1
 	 */
-	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){}
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundSource category, float volume, float pitch){}
 
 	/**
 	 * Plays a continuous spell sound which moves with the given entity.
@@ -229,7 +229,7 @@ public class CommonProxy {
 	 * @param pitch Pitch relative to 1
 	 * @throws IllegalArgumentException if the given array contains less than 3 sound events
 	 */
-	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch){
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent[] sounds, SoundSource category, float volume, float pitch){
 		if(sounds.length < 3) throw new IllegalArgumentException("Tried to play a continuous spell sound using an array "
 				+ "of sound events, but the given array contained less than 3 sound events!");
 		playSpellSoundLoop(entity, spell, sounds[0], sounds[1], sounds[2], category, volume, pitch);
@@ -250,7 +250,7 @@ public class CommonProxy {
 	 * @param pitch Pitch relative to 1
 	 * @param duration The duration of the sound, or -1 to link it to a dispenser at the given coordinates
 	 */
-	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){}
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundSource category, float volume, float pitch, int duration){}
 
 	/**
 	 * Plays a continuous spell sound at the given position.
@@ -267,7 +267,7 @@ public class CommonProxy {
 	 * @param duration The duration of the sound, or -1 to link it to a dispenser at the given coordinates
 	 * @throws IllegalArgumentException if the given array contains less than 3 sound events
 	 */
-	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch, int duration){
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent[] sounds, SoundSource category, float volume, float pitch, int duration){
 		if(sounds.length < 3) throw new IllegalArgumentException("Tried to play a continuous spell sound using an array "
 				+ "of sound events, but the given array contained less than 3 sound events!");
 		playSpellSoundLoop(world, x, y, z, spell, sounds[0], sounds[1], sounds[2], category, volume, pitch, duration);

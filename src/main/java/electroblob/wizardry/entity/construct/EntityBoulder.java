@@ -12,6 +12,7 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
@@ -135,7 +135,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				blocks.forEach(p -> world.destroyBlock(p, false));
 				if(--hitsRemaining <= 0) this.despawn();
 			}else{
-				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundCategory.BLOCKS, 1, 1, false);
+				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 			}
 		}
 
@@ -161,7 +161,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 						(y - posY + height / 2) * 0.1, (z - posZ) * 0.1, Block.getStateId(Blocks.DIRT.getDefaultState()));
 			}
 
-			world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundCategory.BLOCKS, 1, 1, false);
+			world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 		}
 
 		super.despawn();
@@ -205,7 +205,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 			// Other landing effects
 			if(distance > 1.2){
-				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_LAND, SoundCategory.BLOCKS, Math.min(2, distance / 4), 1, false);
+				world.playSound(posX, posY, posZ, WizardrySounds.ENTITY_BOULDER_LAND, SoundSource.BLOCKS, Math.min(2, distance / 4), 1, false);
 				shakeNearbyPlayers();
 //				EntityUtils.getEntitiesWithinRadius(Math.min(12, distance * 2), posX, posY, posZ, world, EntityPlayer.class)
 //						.forEach(p -> Wizardry.proxy.shakeScreen(p, Math.min(12, distance * 2)));

@@ -9,7 +9,7 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.tileentity.TileEntityShrineCore;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
@@ -68,8 +68,8 @@ public class WorldGenShrine extends WorldGenSurfaceStructure {
 				world.setBlockState(entry.getKey(), WizardryBlocks.runestone_pedestal.getDefaultState()
 						.withProperty(BlockPedestal.ELEMENT, element).withProperty(BlockPedestal.NATURAL, true));
 
-				TileEntity core = world.getTileEntity(entry.getKey());
-				TileEntity container = world.getTileEntity(entry.getKey().up());
+				BlockEntity core = world.getTileEntity(entry.getKey());
+				BlockEntity container = world.getTileEntity(entry.getKey().up());
 
 				if(container != null){
 

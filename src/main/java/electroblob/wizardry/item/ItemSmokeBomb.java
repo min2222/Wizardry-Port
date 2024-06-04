@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 
 public class ItemSmokeBomb extends Item {
@@ -37,7 +37,7 @@ public class ItemSmokeBomb extends Item {
 			world.spawnEntity(smokebomb);
 		}
 
-		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}
 
 }

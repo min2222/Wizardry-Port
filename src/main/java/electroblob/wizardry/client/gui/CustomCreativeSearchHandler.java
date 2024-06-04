@@ -7,9 +7,9 @@ import electroblob.wizardry.spell.Spell;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -26,8 +26,8 @@ public class CustomCreativeSearchHandler {
 
 	private static final int SEARCH_TOOLTIP_HOVER_TIME = 20;
 
-	private static final Style TOOLTIP_SYNTAX = new Style().setColor(TextFormatting.YELLOW);
-	private static final Style TOOLTIP_BODY = new Style().setColor(TextFormatting.WHITE);
+	private static final Style TOOLTIP_SYNTAX = new Style().setColor(ChatFormatting.YELLOW);
+	private static final Style TOOLTIP_BODY = new Style().setColor(ChatFormatting.WHITE);
 
 	/** Reflected into {@code GuiContainerCreative#searchField} */
 	private static final Field searchField;
@@ -59,7 +59,7 @@ public class CustomCreativeSearchHandler {
 		if(event.getGui() instanceof GuiContainerCreative){
 
 			GuiContainerCreative gui = (GuiContainerCreative)event.getGui();
-			CreativeTabs tab = CreativeTabs.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
+			CreativeModeTab tab = CreativeModeTab.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
 
 			if(tab == WizardryTabs.SPELLS){
 
@@ -89,7 +89,7 @@ public class CustomCreativeSearchHandler {
 		if(event.getGui() instanceof GuiContainerCreative && currentSearchField != null){
 
 			GuiContainerCreative gui = (GuiContainerCreative)event.getGui();
-			CreativeTabs tab = CreativeTabs.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
+			CreativeModeTab tab = CreativeModeTab.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
 
 			if(tab == WizardryTabs.SPELLS && DrawingUtils.isPointInRegion(currentSearchField.x, currentSearchField.y, currentSearchField.width, currentSearchField.height, event.getMouseX(), event.getMouseY())){
 

@@ -7,7 +7,10 @@ import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,12 +23,9 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -456,7 +456,7 @@ public final class EntityUtils {
 
 	/** Returns the default aiming arror used by skeletons for the given difficulty. For reference, these are: Easy - 10,
 	 * Normal - 6, Hard - 2, Peaceful - 10 (rarely used). */
-	public static int getDefaultAimingError(EnumDifficulty difficulty){
+	public static int getDefaultAimingError(Difficulty difficulty){
 		switch(difficulty){
 			case EASY: return 10;
 			case NORMAL: return 6;
@@ -479,21 +479,21 @@ public final class EntityUtils {
 
 	/**
 	 * Shortcut for
-	 * {@link Level#playSound(Player, double, double, double, SoundEvent, SoundCategory, float, float)} where the
+	 * {@link Level#playSound(Player, double, double, double, SoundEvent, SoundSource, float, float)} where the
 	 * player is null but the x, y and z coordinates are those of the passed in player. Use in preference to
 	 * {@link Player#playSound(SoundEvent, float, float)} if there are client-server discrepancies.
 	 */
-	public static void playSoundAtPlayer(Player player, SoundEvent sound, SoundCategory category, float volume,
+	public static void playSoundAtPlayer(Player player, SoundEvent sound, SoundSource category, float volume,
                                          float pitch){
 		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, category, volume, pitch);
 	}
 
 	/**
-	 * See {@link EntityUtils#playSoundAtPlayer(Player, SoundEvent, SoundCategory, float, float)}. Category
-	 * defaults to {@link SoundCategory#PLAYERS}.
+	 * See {@link EntityUtils#playSoundAtPlayer(Player, SoundEvent, SoundSource, float, float)}. Category
+	 * defaults to {@link SoundSource#PLAYERS}.
 	 */
 	public static void playSoundAtPlayer(Player player, SoundEvent sound, float volume, float pitch){
-		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, SoundCategory.PLAYERS, volume, pitch);
+		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, SoundSource.PLAYERS, volume, pitch);
 	}
 
 }

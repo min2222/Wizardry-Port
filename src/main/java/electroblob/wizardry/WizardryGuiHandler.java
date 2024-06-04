@@ -10,7 +10,7 @@ import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.tileentity.TileEntityLectern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -31,7 +31,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		if(id == ARCANE_WORKBENCH){
 
-			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityArcaneWorkbench){
 				return new ContainerArcaneWorkbench(player.inventory, (TileEntityArcaneWorkbench)tileEntity);
@@ -42,7 +42,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == BOOKSHELF){
 
-			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityBookshelf){
 				return new ContainerBookshelf(player.inventory, (TileEntityBookshelf)tileEntity);
@@ -57,7 +57,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		if(id == ARCANE_WORKBENCH){
 
-			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityArcaneWorkbench){
 				return new electroblob.wizardry.client.gui.GuiArcaneWorkbench(player.inventory,
@@ -82,7 +82,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == BOOKSHELF){
 
-			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityBookshelf){
 				return new electroblob.wizardry.client.gui.GuiBookshelf(player.inventory,
@@ -91,7 +91,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == LECTERN){
 
-			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityLectern){
 				return new electroblob.wizardry.client.gui.GuiLectern((TileEntityLectern)tileEntity);

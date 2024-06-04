@@ -16,6 +16,7 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.level.Level;
@@ -103,7 +103,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
-		TileEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = world.getTileEntity(pos);
 
 		if(tileentity instanceof TileEntityBookshelf){
 			InventoryHelper.dropInventoryItems(world, pos, (TileEntityBookshelf)tileentity);
@@ -151,7 +151,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(Level world, int meta){
+	public BlockEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityBookshelf();
 	}
 
@@ -159,7 +159,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, EnumHand hand,
                                     EnumFacing side, float hitX, float hitY, float hitZ){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity == null || player.isSneaking()){
 			return false;
@@ -177,7 +177,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityBookshelf){
 
@@ -197,7 +197,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public boolean eventReceived(BlockState state, Level world, BlockPos pos, int id, int param){
 		super.eventReceived(state, world, pos, id, param);
-		TileEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = world.getTileEntity(pos);
 		return tileentity != null && tileentity.receiveClientEvent(id, param);
 	}
 
@@ -293,7 +293,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	 * @param exclude Any tile entities that should be excluded from the returned list
 	 * @return A list of nearby {@link IInventory} objects that count as valid bookshelves
 	 */
-	public static List<IInventory> findNearbyBookshelves(Level world, BlockPos centre, TileEntity... exclude){
+	public static List<IInventory> findNearbyBookshelves(Level world, BlockPos centre, BlockEntity... exclude){
 
 		List<IInventory> bookshelves = new ArrayList<>();
 
@@ -306,7 +306,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 					BlockPos pos = centre.add(x, y, z);
 
 					if(Settings.containsMetaBlock(Wizardry.settings.bookshelfBlocks, world.getBlockState(pos))){
-						TileEntity te = world.getTileEntity(pos);
+						BlockEntity te = world.getTileEntity(pos);
 						if(te instanceof IInventory && !ArrayUtils.contains(exclude, te)) bookshelves.add((IInventory)te);
 					}
 

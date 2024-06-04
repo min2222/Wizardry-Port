@@ -49,7 +49,10 @@ import electroblob.wizardry.tileentity.*;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.WandHelper;
+import net.minecraft.network.chat.Style;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -74,12 +77,9 @@ import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.Style;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.level.Level;
@@ -252,7 +252,7 @@ public class ClientProxy extends CommonProxy {
 	// ===============================================================================================================
 
 	@Override
-	public void playMovingSound(Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean repeat){
+	public void playMovingSound(Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, boolean repeat){
 		Minecraft.getMinecraft().getSoundHandler().playSound(new MovingSoundEntity<>(entity, sound, category, volume, pitch, repeat));
 	}
 
@@ -262,12 +262,12 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundSource category, float volume, float pitch){
 		SoundLoop.addLoop(new SoundLoopSpell.SoundLoopSpellEntity(start, loop, end, spell, entity, volume, pitch));
 	}
 
 	@Override
-	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundSource category, float volume, float pitch, int duration){
 		if(duration == -1){
 			SoundLoop.addLoop(new SoundLoopSpell.SoundLoopSpellDispenser(start, loop, end, spell, world, x, y, z, volume, pitch));
 		}else{
@@ -706,7 +706,7 @@ public class ClientProxy extends CommonProxy {
 
 	public void handleConquerShrinePacket(PacketConquerShrine.Message message){
 
-		TileEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(message.x, message.y, message.z));
+		BlockEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(message.x, message.y, message.z));
 
 		if(tileEntity instanceof TileEntityShrineCore){
 			((TileEntityShrineCore)tileEntity).conquer();

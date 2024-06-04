@@ -11,9 +11,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class SpeedTime extends Spell {
 
 		// Ticks all the tile entities near the caster
 		// Copy the list first!
-		List<TileEntity> tileentities = new ArrayList<>(world.tickableTileEntities);
+		List<BlockEntity> tileentities = new ArrayList<>(world.tickableTileEntities);
 		tileentities.removeIf(t -> caster.getDistanceSq(t.getPos()) > radius*radius);
 
 		if(!tileentities.isEmpty()){

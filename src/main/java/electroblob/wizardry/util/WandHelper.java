@@ -8,7 +8,7 @@ import electroblob.wizardry.item.ItemWand;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

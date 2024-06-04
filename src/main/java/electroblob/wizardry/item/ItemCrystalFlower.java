@@ -7,7 +7,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntityFlowerPot;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -19,7 +19,7 @@ public class ItemCrystalFlower extends ItemBlock {
 	}
 
 	@Override
-	public EnumActionResult onItemUseFirst(Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, InteractionHand hand){
+	public InteractionResult onItemUseFirst(Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, InteractionHand hand){
 
 		if(world.getTileEntity(pos) instanceof TileEntityFlowerPot){
 
@@ -29,7 +29,7 @@ public class ItemCrystalFlower extends ItemBlock {
 				player.addStat(StatList.FLOWER_POTTED);
 				if(!player.capabilities.isCreativeMode) player.getHeldItem(hand).shrink(1);
 				world.setBlockState(pos, WizardryBlocks.crystal_flower_pot.getDefaultState());
-				return EnumActionResult.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 		}
 

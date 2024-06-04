@@ -6,10 +6,10 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.level.Level;
 
 /** Abstract base class for sound loops associated with spells; see subclasses below for implementations. */
@@ -79,7 +79,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 									   double x, double y, double z, float sndVolume, float sndPitch){
 			super(start, loop, end, spell, x, y, z, sndVolume, sndPitch);
 
-			TileEntity tileentity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileentity = world.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileentity instanceof TileEntityDispenser) this.source = (TileEntityDispenser)tileentity;
 			else throw new NullPointerException(String.format("Playing continuous spell sound: no dispenser found at %s, %s, %s", x, y, z));
@@ -98,7 +98,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 		private int timeLeft;
 
 		public SoundLoopSpellPosTimed(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, int duration,
-								double x, double y, double z, float sndVolume, float sndPitch){
+                                      double x, double y, double z, float sndVolume, float sndPitch){
 			super(start, loop, end, spell, x, y, z, sndVolume, sndPitch);
 			this.timeLeft = duration;
 		}

@@ -12,7 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.Mth;
@@ -84,7 +84,7 @@ public class ForestOfThorns extends Spell {
 
 					((BlockThorns)WizardryBlocks.thorns).placeAt(world, pos, 3);
 
-					TileEntity tileentity = world.getTileEntity(pos);
+					BlockEntity tileentity = world.getTileEntity(pos);
 
 					if(tileentity instanceof TileEntityThorns){
 

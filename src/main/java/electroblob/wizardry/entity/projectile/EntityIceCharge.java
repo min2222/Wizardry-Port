@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class EntityIceCharge extends EntityBomb {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult rayTrace){
+	protected void onImpact(HitResult rayTrace){
 
 		Entity entityHit = rayTrace.entityHit;
 

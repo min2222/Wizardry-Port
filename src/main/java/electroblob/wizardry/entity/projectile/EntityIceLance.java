@@ -10,7 +10,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntityIceLance extends EntityMagicArrow {
@@ -48,7 +48,7 @@ public class EntityIceLance extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(RayTraceResult hit){
+	public void onBlockHit(HitResult hit){
 		// Adds a particle effect when the ice lance hits a block.
 		if(this.world.isRemote){
 			for(int j = 0; j < 10; j++){

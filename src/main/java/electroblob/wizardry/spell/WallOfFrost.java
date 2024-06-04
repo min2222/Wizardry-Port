@@ -11,11 +11,11 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 

@@ -2,8 +2,8 @@ package electroblob.wizardry.registry;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,7 +24,7 @@ public final class WizardrySounds {
 
 	/** Sound category for all spell-related sounds. This includes inanimate magical entities, but not minions.
 	 * @see electroblob.wizardry.util.CustomSoundCategory */
-	public static SoundCategory SPELLS;
+	public static SoundSource SPELLS;
 
 	private static final List<SoundEvent> sounds = new ArrayList<>();
 	

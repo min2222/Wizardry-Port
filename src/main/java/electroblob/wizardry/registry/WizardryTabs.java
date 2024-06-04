@@ -3,7 +3,7 @@ package electroblob.wizardry.registry;
 import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -24,9 +24,9 @@ public final class WizardryTabs {
 
 	private WizardryTabs(){} // No instances!
 
-	public static final CreativeTabs WIZARDRY = new CreativeTabListed("ebwizardry");
-	public static final CreativeTabs GEAR = new CreativeTabListed("ebwizardrygear");
-	public static final CreativeTabs SPELLS = new CreativeTabSorted("ebwizardryspells",
+	public static final CreativeModeTab WIZARDRY = new CreativeTabListed("ebwizardry");
+	public static final CreativeModeTab GEAR = new CreativeTabListed("ebwizardrygear");
+	public static final CreativeModeTab SPELLS = new CreativeTabSorted("ebwizardryspells",
 			
 			(stack1, stack2) -> {
 
@@ -48,7 +48,7 @@ public final class WizardryTabs {
 			
 			true);
 	
-	public static class CreativeTabSorted extends CreativeTabs {
+	public static class CreativeTabSorted extends CreativeModeTab {
 		
 		private ItemStack iconItem;
 		private final Comparator<? super ItemStack> sorter;

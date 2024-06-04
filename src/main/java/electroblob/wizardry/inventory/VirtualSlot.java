@@ -3,9 +3,9 @@ package electroblob.wizardry.inventory;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * A {@code VirtualSlot} represents a slot in an inventory other than the one that is currently open. Like regular slots,
@@ -19,14 +19,14 @@ import net.minecraft.tileentity.TileEntity;
  */
 public class VirtualSlot extends Slot {
 
-	private final TileEntity tileEntity;
+	private final BlockEntity tileEntity;
 	/** Allows the virtual slot to remember what was last stored in it, so items can be put back in the same place. */
 	private ItemStack prevStack; // For now this doesn't persist over GUI close
 
 	public VirtualSlot(IInventory inventory, int index){
 		super(inventory, index, -999, -999);
-		if(!(inventory instanceof TileEntity)) throw new IllegalArgumentException("Inventory must be a tile entity!");
-		this.tileEntity = (TileEntity)inventory;
+		if(!(inventory instanceof BlockEntity)) throw new IllegalArgumentException("Inventory must be a tile entity!");
+		this.tileEntity = (BlockEntity)inventory;
 		this.prevStack = getStack().copy(); // We MUST copy the stack or it will get changed from elsewhere later!
 	}
 

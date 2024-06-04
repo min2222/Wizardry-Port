@@ -12,7 +12,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -73,7 +73,7 @@ public class ItemIdentificationScroll extends Item {
 							if(!world.isRemote) player.sendMessage(new TextComponentTranslation("spell.discover",
 									spell.getNameForTranslationFormatted()));
 
-							return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+							return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 						}
 					}
 				}
@@ -83,7 +83,7 @@ public class ItemIdentificationScroll extends Item {
 					new TextComponentTranslation("item." + Wizardry.MODID + ":identification_scroll.nothing_to_identify"));
 		}
 
-		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 
 }

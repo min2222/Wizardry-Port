@@ -9,13 +9,13 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class TileEntityStatue extends TileEntity implements ITickable {
+public class TileEntityStatue extends BlockEntity implements ITickable {
 
 	public EntityLiving creature;
 	private CompoundTag entityCompound;

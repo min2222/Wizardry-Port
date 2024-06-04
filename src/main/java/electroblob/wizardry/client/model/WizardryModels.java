@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -195,7 +195,7 @@ public final class WizardryModels {
 	 * Registers an item model, using the itemstack-sensitive {@link IMultiTexturedItem#getModelName(ItemStack)} as the
 	 * model name. This allows items to change their texture based on metadata/NBT. Variant defaults to "normal". Registers the
 	 * model for metadata 0 automatically, plus all the other metadata values that the item can take, as defined in
-	 * {@link Item#getSubItems(CreativeTabs, NonNullList)}. The creative tab supplied
+	 * {@link Item#getSubItems(CreativeModeTab, NonNullList)}. The creative tab supplied
 	 * to the aforementioned method will be whichever one the item is in.
 	 */
 	private static <T extends Item & IMultiTexturedItem> void registerMultiTexturedModel(T item){

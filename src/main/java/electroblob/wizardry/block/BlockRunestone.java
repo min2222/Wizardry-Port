@@ -8,7 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
@@ -54,7 +54,7 @@ public class BlockRunestone extends Block {
 	}
 	
 	@Override
-	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items){
+	public void getSubBlocks(CreativeModeTab tab, NonNullList<ItemStack> items){
 		if(this.getCreativeTab() == tab){
         	for(Element element : Arrays.copyOfRange(Element.values(), 1, Element.values().length)){
         		items.add(new ItemStack(this, 1, element.ordinal()));

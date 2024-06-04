@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderStatue extends TileEntitySpecialRenderer<TileEntityStatue> {
@@ -19,7 +19,7 @@ public class RenderStatue extends TileEntitySpecialRenderer<TileEntityStatue> {
 		// Multiblock support for the breaking animation. The chest has its own way of doing this in
 		// TileEntityRendererDispatcher, but I don't have access to that.
 		if(statue.position != 1 && destroyStage >= 0){
-			TileEntity tileentity = statue.getWorld().getTileEntity(statue.getPos().down(statue.position - 1));
+			BlockEntity tileentity = statue.getWorld().getTileEntity(statue.getPos().down(statue.position - 1));
 			// System.out.println(tileentity);
 			if(tileentity instanceof TileEntityStatue){
 				// If this is the block breaking animation pass and this isn't the bottom block, divert the call to

@@ -6,6 +6,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,12 +15,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 
@@ -50,7 +50,7 @@ public class BlockCrystalFlowerPot extends Block {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(Level world, BlockState state){
+	public BlockEntity createTileEntity(Level world, BlockState state){
 		return new TileEntityFlowerPot(Item.getItemFromBlock(WizardryBlocks.crystal_flower), 0);
 	}
 
@@ -76,7 +76,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public ItemStack getPickBlock(BlockState state, RayTraceResult target, Level world, BlockPos pos, Player player){
+	public ItemStack getPickBlock(BlockState state, HitResult target, Level world, BlockPos pos, Player player){
 		return new ItemStack(WizardryBlocks.crystal_flower);
 	}
 
@@ -140,7 +140,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack tool){
+	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
 		world.setBlockToAir(pos);
 	}

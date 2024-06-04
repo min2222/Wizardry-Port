@@ -20,7 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -304,7 +304,7 @@ public class CommandCastSpell extends CommandBase {
 	private void displayFailMessage(ICommandSender sender, Spell spell){
 		ITextComponent message = new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.fail",
 				spell.getNameForTranslationFormatted());
-		message.getStyle().setColor(TextFormatting.RED);
+		message.getStyle().setColor(ChatFormatting.RED);
 		sender.sendMessage(message);
 	}
 

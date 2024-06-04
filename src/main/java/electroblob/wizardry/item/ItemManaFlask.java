@@ -9,6 +9,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -91,10 +91,10 @@ public class ItemManaFlask extends Item {
 				player.setActiveHand(hand);
 			}
 
-			return new InteractionResultHolder<>(EnumActionResult.SUCCESS, flask);
+			return new InteractionResultHolder<>(InteractionResult.SUCCESS, flask);
 
 		}else{
-			return new InteractionResultHolder<>(EnumActionResult.FAIL, flask);
+			return new InteractionResultHolder<>(InteractionResult.FAIL, flask);
 		}
 	}
 

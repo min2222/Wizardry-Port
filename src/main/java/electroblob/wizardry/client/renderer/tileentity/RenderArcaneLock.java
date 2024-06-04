@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -47,7 +47,7 @@ public class RenderArcaneLock {
 		// It's only cosmetic so if a tileentity somehow gets removed while we're rendering them it's not a big deal
 		for(int i=0; i<world.loadedTileEntityList.size(); i++){
 
-			TileEntity tileentity = world.loadedTileEntityList.get(i);
+			BlockEntity tileentity = world.loadedTileEntityList.get(i);
 
 			if(tileentity == null) continue; // What the heck VoxelMap
 

@@ -8,7 +8,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntitySpark extends EntityMagicProjectile {
@@ -18,7 +18,7 @@ public class EntitySpark extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult rayTrace){
+	protected void onImpact(HitResult rayTrace){
 		
 		Entity entityHit = rayTrace.entityHit;
 

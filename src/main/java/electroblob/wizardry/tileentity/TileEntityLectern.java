@@ -7,13 +7,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
 
 import java.util.Random;
 
 /** Controls the book animations and remembers the GUI state when not in use. */
-public class TileEntityLectern extends TileEntity implements ITickable {
+public class TileEntityLectern extends BlockEntity implements ITickable {
 
 	public static final double BOOK_OPEN_DISTANCE = 5;
 

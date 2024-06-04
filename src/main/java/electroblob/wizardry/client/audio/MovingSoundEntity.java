@@ -2,8 +2,8 @@ package electroblob.wizardry.client.audio;
 
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
 
 // Copied from MovingSoundMinecart; if it ever breaks between updates take a look at that.
 //@SideOnly(Side.CLIENT)
@@ -12,7 +12,7 @@ public class MovingSoundEntity<T extends Entity> extends MovingSound {
 	protected final T source;
 	protected float distance = 0.0F;
 
-	public MovingSoundEntity(T entity, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean repeat){
+	public MovingSoundEntity(T entity, SoundEvent sound, SoundSource category, float volume, float pitch, boolean repeat){
 		super(sound, category);
 		this.source = entity;
 		this.repeat = repeat;

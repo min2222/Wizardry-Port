@@ -12,8 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -116,7 +116,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 
 			Vec3 velocity = new Vec3(motionX, motionY, motionZ);
 
-			RayTraceResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
+			HitResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
 					this.getPositionVector().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
 					true, false, LivingEntity.class, RayTracer.ignoreEntityFilter(null));
 
@@ -162,7 +162,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	}
 	
 	@Override
-	public SoundCategory getSoundCategory(){
+	public SoundSource getSoundCategory(){
 		return WizardrySounds.SPELLS;
 	}
 

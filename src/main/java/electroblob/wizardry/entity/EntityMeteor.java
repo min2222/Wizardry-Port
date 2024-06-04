@@ -7,11 +7,11 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Meteor;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -131,7 +131,7 @@ public class EntityMeteor extends EntityFallingBlock {
 	}
 	
 	@Override
-	public SoundCategory getSoundCategory(){
+	public SoundSource getSoundCategory(){
 		return WizardrySounds.SPELLS;
 	}
 

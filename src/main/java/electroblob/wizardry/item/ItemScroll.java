@@ -9,19 +9,19 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -55,7 +55,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list){
+	public void getSubItems(CreativeModeTab tab, NonNullList<ItemStack> list){
 
 		if(tab == WizardryTabs.SPELLS){
 
@@ -110,7 +110,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
 			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":scroll") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				String name = new Style().setColor(TextFormatting.BLUE).setItalic(true).getFormattingCode() +
+				String name = new Style().setColor(ChatFormatting.BLUE).setItalic(true).getFormattingCode() +
 						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
 				tooltip.add(name);
 			}
@@ -138,16 +138,16 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 					player.setActiveHand(hand);
 					// Store the modifiers for use each tick (there aren't any by default but there could be, as above)
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
-					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 				}
 			}else{
 				if(cast(stack, spell, player, hand, 0, modifiers)){
-					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 				}
 			}
 		}
 
-		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 	
 	// For continuous spells. The count argument actually decrements by 1 each tick.

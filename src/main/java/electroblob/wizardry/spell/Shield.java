@@ -5,13 +5,13 @@ import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.EntityShield;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.item.EnumAction;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.level.Level;
 
 public class Shield extends Spell {

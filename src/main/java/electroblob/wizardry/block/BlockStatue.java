@@ -6,12 +6,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.phys.AABB;
@@ -120,7 +120,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityStatue(this.isIce);
 	}
 

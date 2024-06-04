@@ -11,7 +11,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class EntitySparkBomb extends EntityBomb {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult rayTrace){
+	protected void onImpact(HitResult rayTrace){
 		
 		this.playSound(WizardrySounds.ENTITY_SPARK_BOMB_HIT_BLOCK, 0.5f, 0.5f);
 

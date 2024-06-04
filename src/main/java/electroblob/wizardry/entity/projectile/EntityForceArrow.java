@@ -14,7 +14,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -76,7 +76,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(RayTraceResult hit){
+	public void onBlockHit(HitResult hit){
 		this.playSound(WizardrySounds.ENTITY_FORCE_ARROW_HIT, 1.0F, 1.0F);
 		if(this.world.isRemote){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face

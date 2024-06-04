@@ -4,11 +4,11 @@ import electroblob.wizardry.constants.Element;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
-public class TileEntityReceptacle extends TileEntity {
+public class TileEntityReceptacle extends BlockEntity {
 
 	private Element element;
 

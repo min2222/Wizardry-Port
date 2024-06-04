@@ -10,7 +10,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class EntityForceOrb extends EntityBomb {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult par1RayTraceResult){
+	protected void onImpact(HitResult par1RayTraceResult){
 
 		if(par1RayTraceResult.entityHit != null){
 			// This is if the force orb gets a direct hit

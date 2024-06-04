@@ -22,7 +22,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -148,7 +148,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 		// Use this instead of stack.shrink so it works regardless of whether the player is in creative mode or not
 		player.setHeldItem(hand, ItemStack.EMPTY);
 
-		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}
 
 	@Override

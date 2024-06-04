@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -165,7 +165,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
+		return this.world.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

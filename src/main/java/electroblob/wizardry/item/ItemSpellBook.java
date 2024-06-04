@@ -8,17 +8,17 @@ import electroblob.wizardry.data.SpellGlyphData;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -45,7 +45,7 @@ public class ItemSpellBook extends Item {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list){
+	public void getSubItems(CreativeModeTab tab, NonNullList<ItemStack> list){
 
 		if(tab == WizardryTabs.SPELLS){
 
@@ -62,7 +62,7 @@ public class ItemSpellBook extends Item {
 	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		player.openGui(Wizardry.instance, WizardryGuiHandler.SPELL_BOOK, world, 0, 0, 0);
-		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}
 
 	// This is accessed during loading (before we even get to the main menu) for search tree population
@@ -93,7 +93,7 @@ public class ItemSpellBook extends Item {
 			// If the spell should *appear* discovered but isn't *actually* discovered, show a 'new spell' message
 			// A bit annoying to check this again but it's the easiest way
 			if(Wizardry.settings.discoveryMode && !player.isCreative() && discovered && WizardData.get(player) != null && !WizardData.get(player).hasSpellBeenDiscovered(spell)){
-				tooltip.add(Wizardry.proxy.translate("item." + this.getRegistryName() + ".new", new Style().setColor(TextFormatting.LIGHT_PURPLE)));
+				tooltip.add(Wizardry.proxy.translate("item." + this.getRegistryName() + ".new", new Style().setColor(ChatFormatting.LIGHT_PURPLE)));
 			}
 
 			// Advanced tooltips display more information, mainly for searching purposes in creative
@@ -104,7 +104,7 @@ public class ItemSpellBook extends Item {
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
 			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":spell_book") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				String name = new Style().setColor(TextFormatting.BLUE).setItalic(true).getFormattingCode() +
+				String name = new Style().setColor(ChatFormatting.BLUE).setItalic(true).getFormattingCode() +
 						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
 				tooltip.add(name);
 			}

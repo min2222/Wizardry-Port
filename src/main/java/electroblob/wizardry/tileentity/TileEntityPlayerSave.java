@@ -7,12 +7,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class TileEntityPlayerSave extends TileEntity {
+public class TileEntityPlayerSave extends BlockEntity {
 
 	/** The UUID of the caster. As of Wizardry 4.2, this <b>is</b> synced, and rather than storing the caster
 	 * instance via a weak reference, it is fetched from the UUID each time it is needed in

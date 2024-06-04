@@ -24,16 +24,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,8 +63,8 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 
 	private static final int SEARCH_TOOLTIP_HOVER_TIME = 20;
 
-	private static final Style TOOLTIP_SYNTAX = new Style().setColor(TextFormatting.YELLOW);
-	private static final Style TOOLTIP_BODY = new Style().setColor(TextFormatting.WHITE);
+	private static final Style TOOLTIP_SYNTAX = new Style().setColor(ChatFormatting.YELLOW);
+	private static final Style TOOLTIP_BODY = new Style().setColor(ChatFormatting.WHITE);
 
 	private final TileEntityLectern lectern;
 
@@ -300,7 +300,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 
 						if(spell == this.currentSpell){
 
-							BlockPos pos = (((TileEntity)bookshelf).getPos());
+							BlockPos pos = (((BlockEntity)bookshelf).getPos());
 
 							for(Direction side : Direction.VALUES){
 								ParticleBuilder.create(ParticleBuilder.Type.BLOCK_HIGHLIGHT).pos(
@@ -310,7 +310,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 										.face(side).clr(0.9f, 0.5f, 0.8f).fade(0.7f, 0, 1).spawn(mc.world);
 							}
 
-							mc.world.playSound(pos, WizardrySounds.BLOCK_LECTERN_LOCATE_SPELL, SoundCategory.BLOCKS, 1, 0.7f, false);
+							mc.world.playSound(pos, WizardrySounds.BLOCK_LECTERN_LOCATE_SPELL, SoundSource.BLOCKS, 1, 0.7f, false);
 
 							break; // This bookshelf has the spell, skip to the next bookshelf
 						}

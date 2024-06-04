@@ -17,8 +17,10 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,15 +28,13 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -338,7 +338,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		if (player == null) { return; }
 		// +0.5f is necessary due to the error in the way floats are calculated.
 		if(element != null) text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.buff",
-				new Style().setColor(TextFormatting.DARK_GRAY),
+				new Style().setColor(ChatFormatting.DARK_GRAY),
 				(int)((tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER * 100 + 0.5f), element.getDisplayName()));
 
 		Spell spell = WandHelper.getCurrentSpell(stack);
@@ -349,15 +349,15 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			discovered = false;
 		}
 
-		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", new Style().setColor(TextFormatting.GRAY),
-				discovered ? spell.getDisplayNameWithFormatting() : "#" + TextFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.world)));
+		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", new Style().setColor(ChatFormatting.GRAY),
+				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.world)));
 
 		if(advanced.isAdvanced()){
 			// Advanced tooltips for debugging
-			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.mana", new Style().setColor(TextFormatting.BLUE),
+			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.mana", new Style().setColor(ChatFormatting.BLUE),
 					this.getMana(stack), this.getManaCapacity(stack)));
 
-			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.progression", new Style().setColor(TextFormatting.GRAY),
+			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.progression", new Style().setColor(ChatFormatting.GRAY),
 					WandHelper.getProgression(stack), this.tier.level < Tier.MASTER.level ? tier.next().getProgression() : 0));
 		}
 	}
@@ -659,7 +659,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	private boolean selectMinionTarget(Player player, Level world){
 
-		RayTraceResult rayTrace = RayTracer.standardEntityRayTrace(world, player, 16, false);
+		HitResult rayTrace = RayTracer.standardEntityRayTrace(world, player, 16, false);
 
 		if(rayTrace != null && EntityUtils.isLiving(rayTrace.entityHit)){
 

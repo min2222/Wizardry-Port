@@ -8,7 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
@@ -61,7 +61,7 @@ public class ArcaneLock extends SpellRay {
 
 	private boolean toggleLock(Level world, BlockPos pos, Player player){
 
-		TileEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = world.getTileEntity(pos);
 
 		if(tileentity != null){
 
@@ -95,7 +95,7 @@ public class ArcaneLock extends SpellRay {
 
 		if(!canBypassLocks(event.getEntityPlayer())){
 
-			TileEntity tileentity = event.getWorld().getTileEntity(event.getPos());
+			BlockEntity tileentity = event.getWorld().getTileEntity(event.getPos());
 
 			// Prevents arcane-locked containers from being opened
 			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID
@@ -136,7 +136,7 @@ public class ArcaneLock extends SpellRay {
 
 		if(!(breaker instanceof Player) || !canBypassLocks((Player)breaker)){
 
-			TileEntity tileentity = world.getTileEntity(pos);
+			BlockEntity tileentity = world.getTileEntity(pos);
 
 			// Prevents arcane-locked containers from being broken
 			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID

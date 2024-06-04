@@ -6,7 +6,7 @@ import electroblob.wizardry.tileentity.TileEntityLectern;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -25,7 +25,7 @@ public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMe
 
 			player.getServerWorld().addScheduledTask(() -> {
 
-				TileEntity tileentity = player.world.getTileEntity(message.pos);
+				BlockEntity tileentity = player.world.getTileEntity(message.pos);
 
 				if(tileentity instanceof TileEntityLectern){
 

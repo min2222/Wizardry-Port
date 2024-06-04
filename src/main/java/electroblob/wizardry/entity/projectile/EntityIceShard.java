@@ -10,7 +10,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -46,7 +46,7 @@ public class EntityIceShard extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(RayTraceResult hit){
+	public void onBlockHit(HitResult hit){
 		
 		// Adds a particle effect when the ice shard hits a block.
 		if(this.world.isRemote){

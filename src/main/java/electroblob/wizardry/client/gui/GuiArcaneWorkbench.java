@@ -15,6 +15,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.WandHelper;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
@@ -28,13 +29,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -85,8 +85,8 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 	private static final int SEARCH_TOOLTIP_HOVER_TIME = 20;
 
-	private static final Style TOOLTIP_SYNTAX = new Style().setColor(TextFormatting.YELLOW);
-	private static final Style TOOLTIP_BODY = new Style().setColor(TextFormatting.WHITE);
+	private static final Style TOOLTIP_SYNTAX = new Style().setColor(ChatFormatting.YELLOW);
+	private static final Style TOOLTIP_BODY = new Style().setColor(ChatFormatting.WHITE);
 
 	private InventoryPlayer playerInventory;
 	private IInventory arcaneWorkbenchInventory;
@@ -141,7 +141,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		this.searchField.setFocused(true);
 
 		this.tooltipElements.clear();
-		this.tooltipElements.add(new TooltipElementItemName(new Style().setColor(TextFormatting.WHITE), LINE_SPACING_WIDE));
+		this.tooltipElements.add(new TooltipElementItemName(new Style().setColor(ChatFormatting.WHITE), LINE_SPACING_WIDE));
 		this.tooltipElements.add(new TooltipElementManaReadout(LINE_SPACING_WIDE));
 		this.tooltipElements.add(new TooltipElementProgressionBar(LINE_SPACING_WIDE));
 		this.tooltipElements.add(new TooltipElementSpellList(LINE_SPACING_WIDE));
@@ -686,7 +686,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 	private class TooltipElementManaReadout extends TooltipElementText {
 
 		public TooltipElementManaReadout(int spaceAfter){
-			super(null, new Style().setColor(TextFormatting.BLUE), spaceAfter);
+			super(null, new Style().setColor(ChatFormatting.BLUE), spaceAfter);
 		}
 
 		@Override
@@ -749,7 +749,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 			if(tier != Tier.MASTER){
 				Tier nextTier = Tier.values()[tier.level + 1];
-				String s = TextFormatting.DARK_GRAY.toString() + nextTier.getDisplayName();
+				String s = ChatFormatting.DARK_GRAY.toString() + nextTier.getDisplayName();
 				if(WandHelper.getProgression(stack) >= nextTier.getProgression()) s = nextTier.getDisplayNameWithFormatting();
 				fontRenderer.drawStringWithShadow(s, x + TOOLTIP_WIDTH - TOOLTIP_BORDER * 2 - fontRenderer.getStringWidth(s), y, 0);
 			}
@@ -804,7 +804,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		private final int index;
 
 		public TooltipElementSpellEntry(int index){
-			super(null, new Style().setColor(TextFormatting.BLUE), LINE_SPACING_NARROW);
+			super(null, new Style().setColor(ChatFormatting.BLUE), LINE_SPACING_NARROW);
 			this.index = index;
 		}
 
@@ -888,7 +888,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		public TooltipElementUpgradeList(int spaceAfter){
 			super(I18n.format("container." + Wizardry.MODID + ":arcane_workbench.upgrades"),
-					new Style().setColor(TextFormatting.WHITE), spaceAfter, new TooltipElementUpgrades(0));
+					new Style().setColor(ChatFormatting.WHITE), spaceAfter, new TooltipElementUpgrades(0));
 		}
 
 		@Override

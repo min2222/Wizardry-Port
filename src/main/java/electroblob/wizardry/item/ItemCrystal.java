@@ -3,7 +3,7 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +33,7 @@ public class ItemCrystal extends Item implements IMultiTexturedItem {
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items){
+    public void getSubItems(CreativeModeTab tab, NonNullList<ItemStack> items){
         if(tab == WizardryTabs.WIZARDRY){
         	for(Element element : Element.values()){
         		items.add(new ItemStack(this, 1, element.ordinal()));

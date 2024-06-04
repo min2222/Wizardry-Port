@@ -3,7 +3,7 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.registry.WizardryTabs;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ public class ItemArcaneTome extends Item {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list){
+	public void getSubItems(CreativeModeTab tab, NonNullList<ItemStack> list){
 		if(tab == WizardryTabs.WIZARDRY){ // Don't use isInCreativeTab here.
 			for(int i = 1; i < Tier.values().length; i++){
 				list.add(new ItemStack(this, 1, i));

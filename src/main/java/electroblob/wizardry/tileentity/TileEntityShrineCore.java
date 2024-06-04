@@ -23,9 +23,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -34,14 +34,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class TileEntityShrineCore extends TileEntity implements ITickable {
+public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 	private static final double ACTIVATION_RADIUS = 5;
 
 	private boolean activated = false;
 	private AABB containmentField;
 	private final UUID[] linkedWizards = new UUID[3];
-	private TileEntity linkedContainer;
+	private BlockEntity linkedContainer;
 	private BlockPos linkedContainerPos; // Temporary stores the container position read from NBT until the world is set
 
 	@Override
@@ -55,7 +55,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 		this.containmentField = new AABB(-r, -r, -r, r, r, r).offset(GeometryUtils.getCentre(pos));
 	}
 
-	public void linkContainer(TileEntity container){
+	public void linkContainer(BlockEntity container){
 		this.linkedContainer = container;
 	}
 
@@ -79,7 +79,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 			}
 
 			world.playSound(x, y, z,
-					WizardrySounds.BLOCK_PEDESTAL_ACTIVATE, SoundCategory.BLOCKS, 1.5f, 1, false);
+					WizardrySounds.BLOCK_PEDESTAL_ACTIVATE, SoundSource.BLOCKS, 1.5f, 1, false);
 
 			if(!world.isRemote){
 
@@ -157,13 +157,13 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 		if(!world.isRemote){
 			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getTileData(), ArcaneLock.NBT_KEY);
 		}else{
-			TileEntity tileEntity = world.getTileEntity(this.pos.up());
+			BlockEntity tileEntity = world.getTileEntity(this.pos.up());
 			if(tileEntity != null){ // Bit of a dirty fix but it's only visual, so meh
 				NBTExtras.removeUniqueId(tileEntity.getTileData(), ArcaneLock.NBT_KEY);
 			}
 		}
 
-		world.playSound(x, y, z, WizardrySounds.BLOCK_PEDESTAL_CONQUER, SoundCategory.BLOCKS, 1, 1, false);
+		world.playSound(x, y, z, WizardrySounds.BLOCK_PEDESTAL_CONQUER, SoundSource.BLOCKS, 1, 1, false);
 
 		if(world.isRemote){
 			ParticleBuilder.create(Type.SPHERE).scale(5).pos(x, y + 1, z).clr(0xf06495).time(12).spawn(world);

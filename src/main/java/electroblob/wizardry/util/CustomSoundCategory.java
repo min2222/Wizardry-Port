@@ -1,7 +1,7 @@
 package electroblob.wizardry.util;
 
 import com.google.common.collect.Maps;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.EnumHelper;
@@ -48,19 +48,19 @@ public final class CustomSoundCategory {
 	 * @return The resulting SoundCategory object
 	 * @throws IllegalArgumentException if name is not unique
 	 */
-	public static SoundCategory add(String name){
+	public static SoundSource add(String name){
 
-		Map<String, SoundCategory> SOUND_CATEGORIES;
+		Map<String, SoundSource> SOUND_CATEGORIES;
 
 		String constantName;
 		String referenceName;
-		SoundCategory soundCategory;
+		SoundSource soundCategory;
 		// >> Electroblob: Constructors were unnecessary since strings are immutable
 		constantName = name.toUpperCase().replace(" ", "");
 		referenceName = constantName.toLowerCase();
 		// >> Electroblob: Removed array surrounding varargs argument
-		soundCategory =  EnumHelper.addEnum(SoundCategory.class , constantName, new Class<?>[]{String.class}, referenceName);
-		SOUND_CATEGORIES = ObfuscationReflectionHelper.getPrivateValue(SoundCategory.class, SoundCategory.VOICE, SRG_SOUND_CATEGORIES);
+		soundCategory =  EnumHelper.addEnum(SoundSource.class , constantName, new Class<?>[]{String.class}, referenceName);
+		SOUND_CATEGORIES = ObfuscationReflectionHelper.getPrivateValue(SoundSource.class, SoundSource.VOICE, SRG_SOUND_CATEGORIES);
 		if (SOUND_CATEGORIES.containsKey(referenceName))
 			// >> Electroblob: changed from Error to IllegalArgumentException
 			throw new IllegalArgumentException("Clash in Sound Category name pools! Cannot insert " + constantName);
@@ -75,7 +75,7 @@ public final class CustomSoundCategory {
 	private static void setSoundLevels(){
 		// SoundCategory now contains 'name' sound category so build a new map
 		// >> Electroblob: Converted to local variable
-		Map<SoundCategory, Float> soundLevels = Maps.newEnumMap(SoundCategory.class);
+		Map<SoundSource, Float> soundLevels = Maps.newEnumMap(SoundSource.class);
 		// Replace the map in the GameSettings.class
 		// >> Electroblob: Fully qualified names, because this class gets loaded on both sides
 		ObfuscationReflectionHelper.setPrivateValue(net.minecraft.client.settings.GameSettings.class,

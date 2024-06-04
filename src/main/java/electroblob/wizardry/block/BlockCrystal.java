@@ -9,7 +9,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.IBlockAccess;
@@ -51,7 +51,7 @@ public class BlockCrystal extends Block {
 	}
 
 	@Override
-	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items){
+	public void getSubBlocks(CreativeModeTab tab, NonNullList<ItemStack> items){
 		if(this.getCreativeTab() == tab){
         	for(Element element : Element.values()){
         		items.add(new ItemStack(this, 1, element.ordinal()));

@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityLockableLoot;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
@@ -128,7 +128,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	/** Sets the {@value NATURAL_NBT_KEY} flag to true in the given NBT tag compound, <b>if</b> the compound belongs to
 	 * a bookshelf tile entity (more specifically, if it has an "id" tag matching the bookshelf TE's registry name). */
 	public static void markAsNatural(CompoundTag nbt){
-		if(nbt != null && nbt.getString("id").equals(TileEntity.getKey(TileEntityBookshelf.class).toString())){
+		if(nbt != null && nbt.getString("id").equals(BlockEntity.getKey(TileEntityBookshelf.class).toString())){
 			nbt.setBoolean(NATURAL_NBT_KEY, true);
 		}
 	}

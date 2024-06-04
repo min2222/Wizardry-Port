@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class PhaseStep extends Spell {
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids, false);
+		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids, false);
 
 		// This is here because the conditions are false on the client for whatever reason. (see the Javadoc for cast()
 		// for an explanation)
@@ -53,7 +53,7 @@ public class PhaseStep extends Spell {
 
 		Entity toTeleport = teleportMount ? caster.getRidingEntity() : caster;
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
+		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK){
 
 			BlockPos pos = rayTrace.getBlockPos();
 

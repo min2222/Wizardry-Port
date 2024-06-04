@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -62,7 +62,7 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult rayTrace){
+	protected void onImpact(HitResult rayTrace){
 
 		if(!world.isRemote){
 			boolean terrainDamage = EntityUtils.canDamageBlocks(this.getThrower(), world);

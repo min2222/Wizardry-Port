@@ -4,7 +4,7 @@ import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.SpellType;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.util.SpellProperties;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.Style;
 import net.minecraftforge.common.util.EnumHelper;
 
 /**

@@ -13,6 +13,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -20,8 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class Grapple extends Spell {
 	/** The speed at which the vine reels in the caster or target, in blocks per tick. */
 	public static final String REEL_SPEED = "reel_speed";
 
-	public static final IVariable<RayTraceResult> TARGET_KEY = new IVariable.Variable<RayTraceResult>(Persistence.NEVER)
+	public static final IVariable<HitResult> TARGET_KEY = new IVariable.Variable<HitResult>(Persistence.NEVER)
 																.withTicker(Grapple::update);
 
 	/** The distance from the target position at which the spell will stop reeling in entities. */
@@ -79,7 +79,7 @@ public class Grapple extends Spell {
 
 		float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
-		RayTraceResult hit = data.getVariable(TARGET_KEY);
+		HitResult hit = data.getVariable(TARGET_KEY);
 
 		// Initial targeting
 		if(hit == null){
@@ -87,7 +87,7 @@ public class Grapple extends Spell {
 			data.setVariable(TARGET_KEY, hit);
 			caster.swingArm(hand);
 			// This condition prevents the sound playing every tick after a missed shot has finished extending
-			if(hit.typeOfHit != RayTraceResult.Type.MISS
+			if(hit.typeOfHit != HitResult.Type.MISS
 					|| ticksInUse * extensionSpeed < getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)){
 				this.playSound(world, caster, ticksInUse, -1, modifiers, "shoot");
 			}
@@ -215,9 +215,9 @@ public class Grapple extends Spell {
 		// because the entity will have moved!
 		Vec3 targetVec = GeometryUtils.getCentre(target);
 
-		RayTraceResult hit = findTarget(world, caster, origin, targetVec.subtract(origin).normalize(), modifiers);
+		HitResult hit = findTarget(world, caster, origin, targetVec.subtract(origin).normalize(), modifiers);
 
-		if(hit.typeOfHit != RayTraceResult.Type.ENTITY || hit.entityHit != target) return false; // Something was in the way
+		if(hit.typeOfHit != HitResult.Type.ENTITY || hit.entityHit != target) return false; // Something was in the way
 
 		double distance = origin.distanceTo(targetVec);
 
@@ -276,7 +276,7 @@ public class Grapple extends Spell {
 
 		Vec3 origin = new Vec3(x, y, z);
 
-		RayTraceResult result = findTarget(world, null, origin, new Vec3(direction.getDirectionVec()), modifiers);
+		HitResult result = findTarget(world, null, origin, new Vec3(direction.getDirectionVec()), modifiers);
 
 		if(result.entityHit instanceof LivingEntity){
 
@@ -349,7 +349,7 @@ public class Grapple extends Spell {
 			if(caster instanceof Player){
 				WizardData data = WizardData.get((Player)caster);
 				if(data != null){
-					RayTraceResult hit = data.getVariable(TARGET_KEY);
+					HitResult hit = data.getVariable(TARGET_KEY);
 					if(hit != null) target = hit.hitVec;
 				}
 			}else if(caster instanceof EntityLiving){
@@ -365,7 +365,7 @@ public class Grapple extends Spell {
 
 			origin = new Vec3(x, y, z);
 			direction = new Vec3(facing.getDirectionVec());
-			RayTraceResult result = findTarget(world, null, origin, direction, modifiers);
+			HitResult result = findTarget(world, null, origin, direction, modifiers);
 			target = result.hitVec;
 
 			this.playSound(world, origin, duration, duration, modifiers, "release");
@@ -390,28 +390,28 @@ public class Grapple extends Spell {
 		}
 	}
 
-	private RayTraceResult findTarget(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, SpellModifiers modifiers){
+	private HitResult findTarget(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
 		Vec3 endpoint = origin.add(direction.scale(range));
 
-		RayTraceResult result = RayTracer.rayTrace(world, origin, endpoint, 0, false,
+		HitResult result = RayTracer.rayTrace(world, origin, endpoint, 0, false,
 				true, false, Entity.class, RayTracer.ignoreEntityFilter(caster));
 
 		// Non-solid blocks (or if the result is null) count as misses
-		if(result == null || result.typeOfHit == RayTraceResult.Type.BLOCK
+		if(result == null || result.typeOfHit == HitResult.Type.BLOCK
 				&& !world.getBlockState(result.getBlockPos()).getMaterial().isSolid()){
-			return new RayTraceResult(RayTraceResult.Type.MISS, endpoint, Direction.DOWN, new BlockPos(endpoint));
+			return new HitResult(HitResult.Type.MISS, endpoint, Direction.DOWN, new BlockPos(endpoint));
 		// Immovable entities count as misses too, but the endpoint is the hit vector instead
 		}else if(result.entityHit != null && !result.entityHit.canBePushed()){
-			return new RayTraceResult(RayTraceResult.Type.MISS, result.hitVec, Direction.DOWN, new BlockPos(endpoint));
+			return new HitResult(HitResult.Type.MISS, result.hitVec, Direction.DOWN, new BlockPos(endpoint));
 		}
 		// If the ray trace missed, result.hitVec will be the endpoint anyway - neat!
 		return result;
 	}
 
-	private static RayTraceResult update(Player player, RayTraceResult grapplingTarget){
+	private static HitResult update(Player player, HitResult grapplingTarget){
 
 		if(grapplingTarget != null && (!EntityUtils.isCasting(player, Spells.grapple)
 				|| (grapplingTarget.entityHit != null && !grapplingTarget.entityHit.isEntityAlive()))){

@@ -10,7 +10,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class Light extends Spell {
@@ -30,9 +30,9 @@ public class Light extends Spell {
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, false);
+		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
+		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK){
 
 			BlockPos pos = rayTrace.getBlockPos().offset(rayTrace.sideHit);
 

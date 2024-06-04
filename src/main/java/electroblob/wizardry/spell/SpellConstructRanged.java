@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -88,9 +88,9 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
-		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
+		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
+		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isRemote){
@@ -138,9 +138,9 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 				double y = target.posY;
 				double z = target.posZ;
 
-				RayTraceResult hit = world.rayTraceBlocks(origin, new Vec3(x, y, z), hitLiquids, ignoreUncollidables, false);
+				HitResult hit = world.rayTraceBlocks(origin, new Vec3(x, y, z), hitLiquids, ignoreUncollidables, false);
 
-				if(hit != null && hit.typeOfHit == RayTraceResult.Type.BLOCK && !hit.getBlockPos().equals(new BlockPos(x, y, z))){
+				if(hit != null && hit.typeOfHit == HitResult.Type.BLOCK && !hit.getBlockPos().equals(new BlockPos(x, y, z))){
 					return false; // Something was in the way
 				}
 
@@ -172,9 +172,9 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		Vec3 origin = new Vec3(x, y, z);
 		Vec3 endpoint = origin.add(new Vec3(direction.getDirectionVec()).scale(range));
-		RayTraceResult rayTrace = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, false);
+		HitResult rayTrace = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
+		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isRemote){

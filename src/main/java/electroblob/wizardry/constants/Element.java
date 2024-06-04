@@ -1,12 +1,12 @@
 package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 
@@ -14,14 +14,14 @@ public enum Element implements IStringSerializable {
 
 	/** The 'default' element, with {@link electroblob.wizardry.registry.Spells#magic_missile magic missile} being its
 	 * only spell. */
-	MAGIC(new Style().setColor(TextFormatting.GRAY), "magic"),
-	FIRE(new Style().setColor(TextFormatting.DARK_RED), "fire"),
-	ICE(new Style().setColor(TextFormatting.AQUA), "ice"),
-	LIGHTNING(new Style().setColor(TextFormatting.DARK_AQUA), "lightning"),
-	NECROMANCY(new Style().setColor(TextFormatting.DARK_PURPLE), "necromancy"),
-	EARTH(new Style().setColor(TextFormatting.DARK_GREEN), "earth"),
-	SORCERY(new Style().setColor(TextFormatting.GREEN), "sorcery"),
-	HEALING(new Style().setColor(TextFormatting.YELLOW), "healing");
+	MAGIC(new Style().setColor(ChatFormatting.GRAY), "magic"),
+	FIRE(new Style().setColor(ChatFormatting.DARK_RED), "fire"),
+	ICE(new Style().setColor(ChatFormatting.AQUA), "ice"),
+	LIGHTNING(new Style().setColor(ChatFormatting.DARK_AQUA), "lightning"),
+	NECROMANCY(new Style().setColor(ChatFormatting.DARK_PURPLE), "necromancy"),
+	EARTH(new Style().setColor(ChatFormatting.DARK_GREEN), "earth"),
+	SORCERY(new Style().setColor(ChatFormatting.GREEN), "sorcery"),
+	HEALING(new Style().setColor(ChatFormatting.YELLOW), "healing");
 
 	/** Display colour for this element */
 	private final Style colour;

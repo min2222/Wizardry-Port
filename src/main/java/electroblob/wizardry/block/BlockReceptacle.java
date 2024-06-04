@@ -7,21 +7,21 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.tileentity.TileEntityReceptacle;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -92,7 +92,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle && ((TileEntityReceptacle)tileEntity).getElement() != null){
 			return super.getLightValue(state, world, pos); // Return super to use float value from constructor
@@ -106,7 +106,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
 		super.getDrops(drops, world, pos, state, fortune);
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 			Element element = ((TileEntityReceptacle)tileEntity).getElement();
@@ -187,7 +187,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack tool){
+	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
 		world.setBlockToAir(pos);
 	}
@@ -195,7 +195,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -211,7 +211,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 					((TileEntityReceptacle)tileEntity).setElement(Element.values()[stack.getMetadata()]);
 					if(!player.capabilities.isCreativeMode) stack.shrink(1);
 					world.playSound(pos.getX(), pos.getY(), pos.getZ(), WizardrySounds.BLOCK_RECEPTACLE_IGNITE,
-							SoundCategory.BLOCKS, 0.7f, 0.7f, false);
+							SoundSource.BLOCKS, 0.7f, 0.7f, false);
 					return true;
 				}
 
@@ -237,7 +237,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random rand){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 
@@ -284,7 +284,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(Level world, int meta){
+	public BlockEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityReceptacle();
 	}
 
@@ -296,7 +296,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 			Element element = ((TileEntityReceptacle)tileEntity).getElement();

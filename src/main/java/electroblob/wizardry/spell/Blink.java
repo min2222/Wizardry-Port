@@ -15,7 +15,7 @@ import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class Blink extends Spell {
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids,false);
+		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids,false);
 
 		// It's worth noting that on the client side, the cast() method only gets called if the server side
 		// cast method succeeded, so you need not check any conditions for spawning particles.
@@ -52,7 +52,7 @@ public class Blink extends Spell {
 			Wizardry.proxy.playBlinkEffect(caster);
 		}
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
+		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK){
 
 			BlockPos pos = rayTrace.getBlockPos().offset(rayTrace.sideHit);
 			Entity toTeleport = teleportMount ? caster.getRidingEntity() : caster;

@@ -3,6 +3,7 @@ package electroblob.wizardry;
 import java.io.File;
 import java.util.Calendar;
 
+import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Logger;
 
 import electroblob.wizardry.block.BlockBookshelf;
@@ -35,7 +36,6 @@ import electroblob.wizardry.worldgen.WorldGenObelisk;
 import electroblob.wizardry.worldgen.WorldGenShrine;
 import electroblob.wizardry.worldgen.WorldGenUndergroundLibraryRuins;
 import electroblob.wizardry.worldgen.WorldGenWizardTower;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -141,7 +141,7 @@ public class Wizardry {
 		proxy.registerKeyBindings();
 
 		// Commented out for 4.2.3 to get rid of the sound bug, reinstate once a fix is found.
-		WizardrySounds.SPELLS = SoundCategory.PLAYERS;//CustomSoundCategory.add(Wizardry.MODID + "_spells");
+		WizardrySounds.SPELLS = SoundSource.PLAYERS;//CustomSoundCategory.add(Wizardry.MODID + "_spells");
 
 		WizardryBaublesIntegration.init();
 		WizardryAntiqueAtlasIntegration.init();

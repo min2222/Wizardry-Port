@@ -26,10 +26,11 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.network.play.server.SPacketChangeGameState;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.math.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
@@ -228,7 +229,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	/** Called when the projectile hits a block. Override to add sound effects and such like. 
 	 * @param hit A vector representing the exact coordinates of the hit; use this to centre particle effects, for
 	 * example. */
-	protected void onBlockHit(RayTraceResult hit){}
+	protected void onBlockHit(HitResult hit){}
 
 	@Override
 	public void onUpdate(){
@@ -288,7 +289,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			
 			Vec3 vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
 			Vec3 vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
-			RayTraceResult raytraceresult = this.world.rayTraceBlocks(vec3d1, vec3d, false, true, false);
+			HitResult raytraceresult = this.world.rayTraceBlocks(vec3d1, vec3d, false, true, false);
 			vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
 			vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
@@ -314,7 +315,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 					f1 = 0.3F;
 					AABB axisalignedbb1 = entity1.getEntityBoundingBox().grow((double)f1, (double)f1,
 							(double)f1);
-					RayTraceResult RayTraceResult1 = axisalignedbb1.calculateIntercept(vec3d1, vec3d);
+					HitResult RayTraceResult1 = axisalignedbb1.calculateIntercept(vec3d1, vec3d);
 
 					if(RayTraceResult1 != null){
 						double d1 = vec3d1.distanceTo(RayTraceResult1.hitVec);
@@ -328,7 +329,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			}
 
 			if(entity != null){
-				raytraceresult = new RayTraceResult(entity);
+				raytraceresult = new HitResult(entity);
 			}
 
 			// Players that are considered invulnerable to the caster allow the projectile to pass straight through
@@ -432,7 +433,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 				Vec3 velocity = new Vec3(motionX, motionY, motionZ);
 
-				RayTraceResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
+				HitResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
 						this.getPositionVector().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
 						true, false, LivingEntity.class, RayTracer.ignoreEntityFilter(null));
 
@@ -615,7 +616,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	}
 	
 	@Override
-	public SoundCategory getSoundCategory(){
+	public SoundSource getSoundCategory(){
 		return WizardrySounds.SPELLS;
 	}
 

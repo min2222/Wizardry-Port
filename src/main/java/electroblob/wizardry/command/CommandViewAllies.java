@@ -3,6 +3,7 @@ package electroblob.wizardry.command;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -12,7 +13,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 import java.util.Set;
@@ -77,7 +77,7 @@ public class CommandViewAllies extends CommandBase {
 				if(server.sendCommandFeedback()){
 					TextComponentTranslation TextComponentTranslation2 = new TextComponentTranslation(
 							"commands." + Wizardry.MODID + ":allies.permission");
-					TextComponentTranslation2.getStyle().setColor(TextFormatting.RED);
+					TextComponentTranslation2.getStyle().setColor(ChatFormatting.RED);
 					player.sendMessage(TextComponentTranslation2);
 				}
 				return;

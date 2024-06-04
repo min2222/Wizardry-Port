@@ -8,7 +8,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntityDart extends EntityMagicArrow {
@@ -33,7 +33,7 @@ public class EntityDart extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(RayTraceResult hit){
+	public void onBlockHit(HitResult hit){
 		this.playSound(WizardrySounds.ENTITY_DART_HIT_BLOCK, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 	}
 

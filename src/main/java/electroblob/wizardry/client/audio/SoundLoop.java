@@ -2,9 +2,9 @@ package electroblob.wizardry.client.audio;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -44,7 +44,7 @@ public abstract class SoundLoop implements ITickable {
 	private boolean looping = false;
 	private boolean needsRemoving = false;
 
-	public SoundLoop(SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, ISoundFactory factory){
+	public SoundLoop(SoundEvent start, SoundEvent loop, SoundEvent end, SoundSource category, float volume, ISoundFactory factory){
 		// The reason I've gone to the effort of having a factory for these is that we need SoundLoop to have control
 		// over which sounds are repeated and which aren't whilst keeping them private.
 		this.dummyStart = factory.create(start, category, 0.00001f, false); // Inaudible but not actually 0
@@ -107,6 +107,6 @@ public abstract class SoundLoop implements ITickable {
 
 	@FunctionalInterface
 	public interface ISoundFactory {
-		ISound create(SoundEvent sound, SoundCategory category, float volume, boolean repeat);
+		ISound create(SoundEvent sound, SoundSource category, float volume, boolean repeat);
 	}
 }

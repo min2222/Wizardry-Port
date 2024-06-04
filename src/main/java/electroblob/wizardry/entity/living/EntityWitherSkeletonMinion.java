@@ -26,7 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -176,7 +176,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
+		return this.world.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

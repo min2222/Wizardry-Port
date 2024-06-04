@@ -12,10 +12,10 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.Explosion;
@@ -65,7 +65,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items){
+	public void getSubBlocks(CreativeModeTab tab, NonNullList<ItemStack> items){
 		// Ignore the NATURAL state here, it's unobtainable
 		if(this.getCreativeTab() == tab){
 			for(Element element : Arrays.copyOfRange(Element.values(), 1, Element.values().length)){
@@ -96,7 +96,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(Level world, int meta){
+	public BlockEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityShrineCore();
 	}
 

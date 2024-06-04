@@ -12,12 +12,12 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.core.BlockPos;
@@ -117,7 +117,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(Level world, int meta){
+	public BlockEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityLectern();
 	}
 
@@ -125,7 +125,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity == null || player.isSneaking()){
 			return false;

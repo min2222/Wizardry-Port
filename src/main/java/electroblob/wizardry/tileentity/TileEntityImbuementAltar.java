@@ -17,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.loot.LootContext;
@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class TileEntityImbuementAltar extends TileEntity implements ITickable {
+public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 	private static final int IMBUEMENT_DURATION = 140;
 
@@ -83,7 +83,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 			if(imbuementTimer == 1){ // Has to be done here because of syncing
 				world.playSound(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
-						WizardrySounds.BLOCK_IMBUEMENT_ALTAR_IMBUE, SoundCategory.BLOCKS, 1, 1, false);
+						WizardrySounds.BLOCK_IMBUEMENT_ALTAR_IMBUE, SoundSource.BLOCKS, 1, 1, false);
 			}
 
 			ItemStack result = getResult();
@@ -161,7 +161,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			TileEntity tileEntity = world.getTileEntity(pos.offset(side));
+			BlockEntity tileEntity = world.getTileEntity(pos.offset(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				elements[side.getHorizontalIndex()] = ((TileEntityReceptacle)tileEntity).getElement();
@@ -178,7 +178,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			TileEntity tileEntity = world.getTileEntity(pos.offset(side));
+			BlockEntity tileEntity = world.getTileEntity(pos.offset(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				((TileEntityReceptacle)tileEntity).setElement(null);

@@ -2,7 +2,7 @@ package electroblob.wizardry.integration.jei;
 
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,13 +7,13 @@ import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -71,12 +71,12 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 
 	@Override
-	public EnumActionResult applyPlayerInteraction(Player player, Vec3 vec, InteractionHand hand){
+	public InteractionResult applyPlayerInteraction(Player player, Vec3 vec, InteractionHand hand){
 
 		// Permanent constructs can now be dispelled by sneak-right-clicking
 		if(lifetime == -1 && getCaster() == player && player.isSneaking() && player.getHeldItem(hand).getItem() instanceof ISpellCastingItem){
 			this.despawn();
-			return EnumActionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
 
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -181,7 +181,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 	
 	@Override
-	public SoundCategory getSoundCategory(){
+	public SoundSource getSoundCategory(){
 		return WizardrySounds.SPELLS;
 	}
 

@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -263,7 +263,7 @@ public abstract class SpellRay extends Spell {
 		Vec3 endpoint = origin.add(direction.scale(range));
 			
 		// Change the filter depending on whether living entities are ignored or not
-		RayTraceResult rayTrace = RayTracer.rayTrace(world, origin, endpoint, aimAssist, hitLiquids,
+		HitResult rayTrace = RayTracer.rayTrace(world, origin, endpoint, aimAssist, hitLiquids,
 				ignoreUncollidables, false, Entity.class, ignoreLivingEntities ? EntityUtils::isLiving
 				: RayTracer.ignoreEntityFilter(caster));
 		
@@ -271,14 +271,14 @@ public abstract class SpellRay extends Spell {
 
 		if(rayTrace != null){
 			// Doesn't matter which way round these are, they're mutually exclusive
-			if(rayTrace.typeOfHit == RayTraceResult.Type.ENTITY){
+			if(rayTrace.typeOfHit == HitResult.Type.ENTITY){
 				// Do whatever the spell does when it hits an entity
 				// FIXME: Some spells (e.g. lightning web) seem to not render when aimed at item frames
 				flag = onEntityHit(world, rayTrace.entityHit, rayTrace.hitVec, caster, origin, ticksInUse, modifiers);
 				// If the spell succeeded, clip the particles to the correct distance so they don't go through the entity
 				if(flag) range = origin.distanceTo(rayTrace.hitVec);
 				
-			}else if(rayTrace.typeOfHit == RayTraceResult.Type.BLOCK){
+			}else if(rayTrace.typeOfHit == HitResult.Type.BLOCK){
 				// Do whatever the spell does when it hits an block
 				flag = onBlockHit(world, rayTrace.getBlockPos(), rayTrace.sideHit, rayTrace.hitVec, caster, origin, ticksInUse, modifiers);
 				// Clip the particles to the correct distance so they don't go through the block

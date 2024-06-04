@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -46,7 +46,7 @@ public class RenderTargetPointers {
 				&& data != null && data.selectedMinion != null){
 
 			// -> Moved this in here so it isn't called every tick
-			RayTraceResult rayTrace = RayTracer.standardEntityRayTrace(mc.world, mc.player, 16, false);
+			HitResult rayTrace = RayTracer.standardEntityRayTrace(mc.world, mc.player, 16, false);
 
 			if(rayTrace != null && rayTrace.entityHit == event.getEntity()){
 

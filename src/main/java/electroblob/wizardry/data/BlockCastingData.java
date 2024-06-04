@@ -11,7 +11,7 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
  * @since Wizardry 4.2
  * @author Electroblob
  */
-public abstract class BlockCastingData<T extends TileEntity> implements INBTSerializable<CompoundTag> {
+public abstract class BlockCastingData<T extends BlockEntity> implements INBTSerializable<CompoundTag> {
 
 	/** The tile entity this BlockCastingData instance belongs to. */
 	protected final T tileEntity;

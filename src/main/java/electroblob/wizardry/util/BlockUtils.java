@@ -18,7 +18,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
@@ -568,9 +568,9 @@ public final class BlockUtils {
 					if(lineOfSight){
 						// Since we're only using finding collidable surfaces, it doesn't make much sense to include
 						// non-collidable blocks here!
-						RayTraceResult rayTrace = world.rayTraceBlocks(centre, GeometryUtils.getCentre(location),
+						HitResult rayTrace = world.rayTraceBlocks(centre, GeometryUtils.getCentre(location),
 								false, true, false);
-						if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK) continue;
+						if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK) continue;
 					}
 
 					possibleLocations.add(location);

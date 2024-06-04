@@ -19,7 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.phys.AABB;
@@ -30,7 +30,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TileEntityArcaneWorkbench extends TileEntity implements IInventory, ITickable {
+public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory, ITickable {
 
 	/** The inventory of the arcane workbench. */
 	private NonNullList<ItemStack> inventory;

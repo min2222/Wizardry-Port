@@ -20,7 +20,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.item.Item;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -88,9 +88,9 @@ public final class WizardryClientEventHandler {
 			if(world == null) return;
 
 			// Somehow this was throwing a CME, I have no idea why so I'm just going to cheat and copy the list
-			List<TileEntity> tileEntities = new ArrayList<>(world.loadedTileEntityList);
+			List<BlockEntity> tileEntities = new ArrayList<>(world.loadedTileEntityList);
 
-			for(TileEntity tileentity : tileEntities){
+			for(BlockEntity tileentity : tileEntities){
 				if(tileentity instanceof TileEntityDispenser){
 					if(DispenserCastingData.get((TileEntityDispenser)tileentity) != null){
 						DispenserCastingData.get((TileEntityDispenser)tileentity).update();

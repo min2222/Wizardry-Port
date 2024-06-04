@@ -18,7 +18,9 @@ import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
 import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.*;
 import electroblob.wizardry.util.*;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -33,8 +35,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
@@ -148,7 +148,7 @@ public class ItemArtefact extends Item {
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
 		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
-		if(!enabled) tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":generic.disabled", new Style().setColor(TextFormatting.RED)));
+		if(!enabled) tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":generic.disabled", new Style().setColor(ChatFormatting.RED)));
 	}
 
 	@Nullable

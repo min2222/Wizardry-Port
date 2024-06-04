@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntityEmber extends EntityMagicProjectile {
@@ -37,13 +37,13 @@ public class EntityEmber extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult result){
+	protected void onImpact(HitResult result){
 
 //		if(result.entityHit != null){
 //			result.entityHit.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
 //		}
 
-		if(result.typeOfHit == RayTraceResult.Type.BLOCK){
+		if(result.typeOfHit == HitResult.Type.BLOCK){
 			this.inGround = true;
 			this.collided = true;
 			if(result.sideHit.getAxis() == Direction.Axis.X) motionX = 0;

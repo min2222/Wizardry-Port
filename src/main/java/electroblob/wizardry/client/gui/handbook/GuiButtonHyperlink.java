@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.Mth;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 
 import java.util.ArrayList;
@@ -221,7 +221,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 		External(int id, int x, int y, FontRenderer font, String text, String url, int indent, String suffix, int linesLeft, boolean rightPage, boolean spaceless){
 			super(id, x, y, font, text, indent, suffix, linesLeft, rightPage, spaceless);
 			this.link = new TextComponentString(text);
-			link.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)).setColor(TextFormatting.DARK_BLUE);
+			link.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)).setColor(ChatFormatting.DARK_BLUE);
 		}
 
 	}

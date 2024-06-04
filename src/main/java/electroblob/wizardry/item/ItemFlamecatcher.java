@@ -7,6 +7,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Flamecatcher;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +16,6 @@ import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemBow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -133,7 +133,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 		ItemStack stack = player.getHeldItem(hand);
 
 		int shotsLeft = stack.getTagCompound().getInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY);
-		if(shotsLeft == 0) return InteractionResultHolder.newResult(EnumActionResult.PASS, stack);
+		if(shotsLeft == 0) return InteractionResultHolder.newResult(InteractionResult.PASS, stack);
 
 		InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
 				true);
@@ -142,7 +142,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 
 		player.setActiveHand(hand);
 
-		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 
 	}
 

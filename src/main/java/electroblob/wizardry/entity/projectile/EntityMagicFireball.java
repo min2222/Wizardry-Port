@@ -17,7 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -66,7 +66,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(RayTraceResult rayTrace){
+	protected void onImpact(HitResult rayTrace){
 
 		if(!world.isRemote){
 

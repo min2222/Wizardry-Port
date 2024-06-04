@@ -1,19 +1,19 @@
 package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.Random;
 
 public enum Tier {
 
-	NOVICE(700, 3, 12, new Style().setColor(TextFormatting.WHITE), "novice"),
-	APPRENTICE(1000, 5, 5, new Style().setColor(TextFormatting.AQUA), "apprentice"),
-	ADVANCED(1500, 7, 2, new Style().setColor(TextFormatting.DARK_BLUE), "advanced"),
-	MASTER(2500, 9, 1, new Style().setColor(TextFormatting.DARK_PURPLE), "master");
+	NOVICE(700, 3, 12, new Style().setColor(ChatFormatting.WHITE), "novice"),
+	APPRENTICE(1000, 5, 5, new Style().setColor(ChatFormatting.AQUA), "apprentice"),
+	ADVANCED(1500, 7, 2, new Style().setColor(ChatFormatting.DARK_BLUE), "advanced"),
+	MASTER(2500, 9, 1, new Style().setColor(ChatFormatting.DARK_PURPLE), "master");
 
 	/** Maximum mana a wand of this tier can store. */
 	public final int maxCharge;

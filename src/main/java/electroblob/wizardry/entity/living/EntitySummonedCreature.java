@@ -4,6 +4,7 @@ import electroblob.wizardry.Wizardry;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -11,7 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.level.Level;
 
 import java.util.UUID;
@@ -119,7 +119,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
+		return this.world.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

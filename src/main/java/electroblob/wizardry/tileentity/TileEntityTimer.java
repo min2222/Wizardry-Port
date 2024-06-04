@@ -4,10 +4,10 @@ import electroblob.wizardry.block.BlockVanishingCobweb;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
 
-public class TileEntityTimer extends TileEntity implements ITickable {
+public class TileEntityTimer extends BlockEntity implements ITickable {
 
 	public int timer = 0;
 	public int maxTimer;

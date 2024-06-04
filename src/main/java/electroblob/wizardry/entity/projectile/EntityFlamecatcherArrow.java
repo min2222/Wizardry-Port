@@ -6,7 +6,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -35,7 +35,7 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	}
 	
 	@Override
-	public void onBlockHit(RayTraceResult hit){
+	public void onBlockHit(HitResult hit){
 		if(this.world.isRemote){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
 			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));

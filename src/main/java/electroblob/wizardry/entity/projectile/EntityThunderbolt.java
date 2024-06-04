@@ -9,7 +9,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
 
 public class EntityThunderbolt extends EntityMagicProjectile {
@@ -25,7 +25,7 @@ public class EntityThunderbolt extends EntityMagicProjectile {
 	@Override public boolean canRenderOnFire(){ return false; }
 	
 	@Override
-	protected void onImpact(RayTraceResult par1RayTraceResult){
+	protected void onImpact(HitResult par1RayTraceResult){
 		
 		Entity entityHit = par1RayTraceResult.entityHit;
 

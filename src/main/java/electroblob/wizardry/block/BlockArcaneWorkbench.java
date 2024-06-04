@@ -6,13 +6,13 @@ import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
@@ -33,7 +33,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityArcaneWorkbench();
 	}
 
@@ -66,7 +66,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
 									Direction side, float hitX, float hitY, float hitZ){
 
-		TileEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = world.getTileEntity(pos);
 
 		if(tileEntity == null || player.isSneaking()){
 			return false;
@@ -79,7 +79,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 		
-        TileEntity tileentity = world.getTileEntity(pos);
+        BlockEntity tileentity = world.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityArcaneWorkbench){
             InventoryHelper.dropInventoryItems(world, pos, (TileEntityArcaneWorkbench)tileentity);

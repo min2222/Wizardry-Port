@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -135,7 +135,7 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 	@SubscribeEvent
 	public static void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event){
 		// Hide the block outline for magic light blocks unless the player can dispel them
-		if(event.getTarget().typeOfHit == RayTraceResult.Type.BLOCK
+		if(event.getTarget().typeOfHit == HitResult.Type.BLOCK
 				&& event.getPlayer().world.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
 
 			if((!(event.getPlayer().getHeldItemMainhand().getItem() instanceof ISpellCastingItem)

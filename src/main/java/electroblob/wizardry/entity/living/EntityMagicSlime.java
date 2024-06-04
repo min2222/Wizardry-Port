@@ -3,6 +3,7 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +15,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -109,7 +109,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		super.onUpdate();
 		// Undoes the despawning on peaceful behaviour. I don't think there's anything in super.onUpdate that sets
 		// isDead other than that, but it's better to do a quick sanity check just to be sure.
-		if(this.isDead && world.getDifficulty() == EnumDifficulty.PEACEFUL && this.getHealth() > 0) this.isDead = false;
+		if(this.isDead && world.getDifficulty() == Difficulty.PEACEFUL && this.getHealth() > 0) this.isDead = false;
 		// Bursts instantly rather than doing the falling over animation.
 		if(this.getHealth() <= 0) this.setDead();
 

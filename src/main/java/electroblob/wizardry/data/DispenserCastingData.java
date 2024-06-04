@@ -11,7 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -150,7 +150,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 
 	@SubscribeEvent
 	// The type parameter here has to be SoundLoopSpellDispenser, not TileEntityDispenser, or the event won't get fired.
-	public static void onCapabilityLoad(AttachCapabilitiesEvent<TileEntity> event){
+	public static void onCapabilityLoad(AttachCapabilitiesEvent<BlockEntity> event){
 
 		if(event.getObject() instanceof TileEntityDispenser)
 			event.addCapability(new ResourceLocation(Wizardry.MODID, "casting_data"),
@@ -167,9 +167,9 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 			// this is correct (the loaded tile entity list will of course be different in each case.
 
 			// Somehow this was throwing a CME, I have no idea why so I'm just going to cheat and copy the list
-			List<TileEntity> tileEntities = new ArrayList<>(event.world.loadedTileEntityList);
+			List<BlockEntity> tileEntities = new ArrayList<>(event.world.loadedTileEntityList);
 
-			for(TileEntity tileentity : tileEntities){
+			for(BlockEntity tileentity : tileEntities){
 				if(tileentity instanceof TileEntityDispenser){
 					if(DispenserCastingData.get((TileEntityDispenser)tileentity) != null){
 						DispenserCastingData.get((TileEntityDispenser)tileentity).update();

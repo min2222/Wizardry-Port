@@ -5,11 +5,11 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Shield;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 
@@ -74,7 +74,7 @@ public class EntityShield extends Entity {
 	}
 	
 	@Override
-	public SoundCategory getSoundCategory(){
+	public SoundSource getSoundCategory(){
 		return WizardrySounds.SPELLS;
 	}
 

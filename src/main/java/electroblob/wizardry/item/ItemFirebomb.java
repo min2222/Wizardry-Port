@@ -4,11 +4,11 @@ import electroblob.wizardry.entity.projectile.EntityFirebomb;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.level.Level;
 
 public class ItemFirebomb extends Item {
@@ -37,7 +37,7 @@ public class ItemFirebomb extends Item {
 			world.spawnEntity(firebomb);
 		}
 
-		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}
 	
 }

@@ -4,7 +4,7 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -90,7 +90,7 @@ public interface ISpellCaster {
 	 * Returns the aiming error for the given difficulty, used in projectile spells. Defaults to the values used by
 	 * skeletons, which are: Easy - 10, Normal - 6, Hard - 2, Peaceful - 10 (rarely used).
 	 */
-	default int getAimingError(EnumDifficulty difficulty) {
+	default int getAimingError(Difficulty difficulty) {
 		return EntityUtils.getDefaultAimingError(difficulty);
 	}
 }

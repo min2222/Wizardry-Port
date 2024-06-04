@@ -21,8 +21,8 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -129,7 +129,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					if(isConcrete && d0 > 1.0D){
 
-						RayTraceResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevPosX, this.prevPosY, this.prevPosZ), new Vec3(this.posX, this.posY, this.posZ), true);
+						HitResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevPosX, this.prevPosY, this.prevPosZ), new Vec3(this.posX, this.posY, this.posZ), true);
 
 						if(raytraceresult != null && this.world.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
@@ -174,7 +174,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 									if(this.tileEntityData != null && block.hasTileEntity(getBlock())){
 
-										TileEntity tileentity = this.world.getTileEntity(blockpos1);
+										BlockEntity tileentity = this.world.getTileEntity(blockpos1);
 
 										if(tileentity != null){
 

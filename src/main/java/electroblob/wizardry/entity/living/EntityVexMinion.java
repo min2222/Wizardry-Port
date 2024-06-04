@@ -5,6 +5,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -135,7 +135,7 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != EnumDifficulty.PEACEFUL;
+		return this.world.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

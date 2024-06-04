@@ -17,8 +17,10 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils.Operations;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.ChatFormatting;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
+import net.minecraft.network.chat.Style;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -29,13 +31,11 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
-import net.minecraft.inventory.Slot;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -176,24 +176,24 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 		if(element != null){
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.element_cost_reduction",
-					new Style().setColor(TextFormatting.DARK_GRAY),
+					new Style().setColor(ChatFormatting.DARK_GRAY),
 					(int)(armourClass.elementalCostReduction * 100), element.getDisplayName()));
 		}
 
 		if(armourClass == ArmourClass.SAGE){
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.enchantability",
-					new Style().setColor(TextFormatting.BLUE)));
+					new Style().setColor(ChatFormatting.BLUE)));
 		}
 
 		if(armourClass.cooldownReduction > 0){
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.cooldown_reduction",
-					new Style().setColor(TextFormatting.DARK_GRAY), (int)(armourClass.cooldownReduction * 100)));
+					new Style().setColor(ChatFormatting.DARK_GRAY), (int)(armourClass.cooldownReduction * 100)));
 		}
 
 		if(armourClass != ArmourClass.WIZARD){
 
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.full_set",
-					new Style().setColor(TextFormatting.AQUA)));
+					new Style().setColor(ChatFormatting.AQUA)));
 
 			Object args = new Object[0];
 
@@ -201,7 +201,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(armourClass == ArmourClass.WARLOCK) args = (int)(WARLOCK_SPEED_BOOST * 100);
 
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":" + armourClass.name
-					+ "_armour.full_set_bonus", new Style().setColor(TextFormatting.AQUA), args));
+					+ "_armour.full_set_bonus", new Style().setColor(ChatFormatting.AQUA), args));
 
 		}
 
