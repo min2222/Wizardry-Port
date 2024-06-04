@@ -3,7 +3,7 @@ package electroblob.wizardry.util;
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;

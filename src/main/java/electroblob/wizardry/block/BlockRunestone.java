@@ -3,8 +3,8 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,16 +23,16 @@ public class BlockRunestone extends Block {
     public static final PropertyEnum<Element> ELEMENT = PropertyEnum.create("element", Element.class,
 			Arrays.copyOfRange(Element.values(), 1, Element.values().length)); // Everything except MAGIC
 
-	private static final EnumMap<Element, MapColor> map_colours = new EnumMap<>(Element.class);
+	private static final EnumMap<Element, MaterialColor> map_colours = new EnumMap<>(Element.class);
 
 	static {
-		map_colours.put(Element.FIRE, MapColor.RED_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.ICE, MapColor.LIGHT_BLUE_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.LIGHTNING, MapColor.CYAN_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.NECROMANCY, MapColor.PURPLE_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.EARTH, MapColor.BROWN_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.SORCERY, MapColor.GRAY);
-		map_colours.put(Element.HEALING, MapColor.YELLOW_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.FIRE, MaterialColor.RED_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.ICE, MaterialColor.LIGHT_BLUE_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.LIGHTNING, MaterialColor.CYAN_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.NECROMANCY, MaterialColor.PURPLE_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.EARTH, MaterialColor.BROWN_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.SORCERY, MaterialColor.GRAY);
+		map_colours.put(Element.HEALING, MaterialColor.YELLOW_STAINED_HARDENED_CLAY);
 	}
 	
 	public BlockRunestone(Material material){
@@ -49,7 +49,7 @@ public class BlockRunestone extends Block {
     }
 
 	@Override
-	public MapColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
+	public MaterialColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
 		return map_colours.get(state.getProperties().get(ELEMENT));
 	}
 	

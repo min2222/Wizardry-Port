@@ -6,7 +6,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityMagicLight;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

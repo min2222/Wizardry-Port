@@ -5,8 +5,8 @@ import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.tileentity.TileEntityShrineCore;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -34,16 +34,16 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	// A 'natural' pedestal is one that was generated as part of a structure, is unbreakable and has a tileentity
 	public static final PropertyBool NATURAL = PropertyBool.create("natural");
 
-	private static final EnumMap<Element, MapColor> map_colours = new EnumMap<>(Element.class);
+	private static final EnumMap<Element, MaterialColor> map_colours = new EnumMap<>(Element.class);
 
 	static {
-		map_colours.put(Element.FIRE, MapColor.RED_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.ICE, MapColor.LIGHT_BLUE_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.LIGHTNING, MapColor.CYAN_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.NECROMANCY, MapColor.PURPLE_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.EARTH, MapColor.BROWN_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.SORCERY, MapColor.GRAY);
-		map_colours.put(Element.HEALING, MapColor.YELLOW_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.FIRE, MaterialColor.RED_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.ICE, MaterialColor.LIGHT_BLUE_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.LIGHTNING, MaterialColor.CYAN_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.NECROMANCY, MaterialColor.PURPLE_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.EARTH, MaterialColor.BROWN_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.SORCERY, MaterialColor.GRAY);
+		map_colours.put(Element.HEALING, MaterialColor.YELLOW_STAINED_HARDENED_CLAY);
 	}
 
 	public BlockPedestal(Material material){
@@ -60,7 +60,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public MapColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
+	public MaterialColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
 		return map_colours.get(state.getProperties().get(ELEMENT));
 	}
 

@@ -3,8 +3,8 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,17 +20,17 @@ public class BlockCrystal extends Block {
 
     public static final PropertyEnum<Element> ELEMENT = PropertyEnum.create("element", Element.class);
 
-    private static final EnumMap<Element, MapColor> map_colours = new EnumMap<>(Element.class);
+    private static final EnumMap<Element, MaterialColor> map_colours = new EnumMap<>(Element.class);
 
     static {
-    	map_colours.put(Element.MAGIC, MapColor.PINK);
-		map_colours.put(Element.FIRE, MapColor.ORANGE_STAINED_HARDENED_CLAY);
-		map_colours.put(Element.ICE, MapColor.LIGHT_BLUE);
-		map_colours.put(Element.LIGHTNING, MapColor.CYAN);
-		map_colours.put(Element.NECROMANCY, MapColor.PURPLE);
-		map_colours.put(Element.EARTH, MapColor.GREEN);
-		map_colours.put(Element.SORCERY, MapColor.LIME);
-		map_colours.put(Element.HEALING, MapColor.YELLOW);
+    	map_colours.put(Element.MAGIC, MaterialColor.PINK);
+		map_colours.put(Element.FIRE, MaterialColor.ORANGE_STAINED_HARDENED_CLAY);
+		map_colours.put(Element.ICE, MaterialColor.LIGHT_BLUE);
+		map_colours.put(Element.LIGHTNING, MaterialColor.CYAN);
+		map_colours.put(Element.NECROMANCY, MaterialColor.PURPLE);
+		map_colours.put(Element.EARTH, MaterialColor.GREEN);
+		map_colours.put(Element.SORCERY, MaterialColor.LIME);
+		map_colours.put(Element.HEALING, MaterialColor.YELLOW);
 	}
 	
 	public BlockCrystal(Material material){
@@ -46,7 +46,7 @@ public class BlockCrystal extends Block {
     }
 
 	@Override
-	public MapColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
+	public MaterialColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
 		return map_colours.get(state.getProperties().get(ELEMENT));
 	}
 

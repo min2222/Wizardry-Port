@@ -12,7 +12,7 @@ import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.Location;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
