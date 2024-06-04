@@ -2,7 +2,7 @@ package electroblob.wizardry.entity.construct;
 
 import electroblob.wizardry.entity.ICustomHitbox;
 import electroblob.wizardry.registry.WizardrySounds;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,8 +10,8 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHitbox {
 
@@ -19,7 +19,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 	private int delay = 0;
 
-	public EntityIceBarrier(World world){
+	public EntityIceBarrier(Level world){
 		super(world);
 		this.setSize(1.8f, 1.05f);
 	}
@@ -76,7 +76,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 		super.onUpdate();
 
-		Vec3d look = this.getLookVec();
+		Vec3 look = this.getLookVec();
 
 		if(!world.isRemote){
 
@@ -133,14 +133,14 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public Vec3d calculateIntercept(Vec3d origin, Vec3d endpoint, float fuzziness){
+	public Vec3 calculateIntercept(Vec3 origin, Vec3 endpoint, float fuzziness){
 		// Calculate the point at which the line intersects the barrier plane
-		Vec3d vec = endpoint.subtract(origin);
+		Vec3 vec = endpoint.subtract(origin);
 
 		double perpendicularDist = getPerpendicularDistance(origin);
 		double perpendicularDist2 = getPerpendicularDistance(endpoint);
 
-		Vec3d intercept = origin.add(vec.scale(perpendicularDist / (perpendicularDist + perpendicularDist2)));
+		Vec3 intercept = origin.add(vec.scale(perpendicularDist / (perpendicularDist + perpendicularDist2)));
 
 		// This seems to be all over the palce, but the calculation MUST be right because it works for entity collisions!
 //		world.spawnParticle(EnumParticleTypes.END_ROD, intercept.x, intercept.y, intercept.z, 0, 0, 0);
@@ -150,17 +150,17 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public boolean contains(Vec3d point){
+	public boolean contains(Vec3 point){
 		return this.getEntityBoundingBox().contains(point) && getPerpendicularDistance(point) < THICKNESS/2;
 	}
 
-	private double getPerpendicularDistance(Vec3d point){
+	private double getPerpendicularDistance(Vec3 point){
 		return Math.abs(getSignedPerpendicularDistance(point));
 	}
 
-	private double getSignedPerpendicularDistance(Vec3d point){
-		Vec3d look = this.getLookVec();
-		Vec3d delta = new Vec3d(point.x - this.posX, 0, point.z - this.posZ);
+	private double getSignedPerpendicularDistance(Vec3 point){
+		Vec3 look = this.getLookVec();
+		Vec3 delta = new Vec3(point.x - this.posX, 0, point.z - this.posZ);
 		return delta.dotProduct(look);
 	}
 

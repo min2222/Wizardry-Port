@@ -10,18 +10,18 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.command.*;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -79,8 +79,8 @@ public class CommandCastSpell extends CommandBase {
 			int i = 0;
 
 			EntityPlayerMP caster = null;
-			Vec3d origin = null;
-			EnumFacing direction = null;
+			Vec3 origin = null;
+			Direction direction = null;
 
 			try{
 				caster = getCommandSenderAsPlayer(sender);
@@ -99,14 +99,14 @@ public class CommandCastSpell extends CommandBase {
 
 			if(i + 3 < arguments.length){
 
-				Vec3d vec3d = sender.getPositionVector();
+				Vec3 vec3d = sender.getPositionVector();
 				CoordinateArg x = parseCoordinate(vec3d.x, arguments[i++], true);
 				CoordinateArg y = parseCoordinate(vec3d.y, arguments[i++], 0, 256, false);
 				CoordinateArg z = parseCoordinate(vec3d.z, arguments[i++], true);
 
-				origin = new Vec3d(x.getResult(), y.getResult(), z.getResult());
+				origin = new Vec3(x.getResult(), y.getResult(), z.getResult());
 
-				direction = EnumFacing.byName(arguments[i++]);
+				direction = Direction.byName(arguments[i++]);
 				if(direction == null) throw new NumberInvalidException("commands." + Wizardry.MODID + ":cast.invalid_direction", arguments[i - 1]);
 
 			}else if(i < arguments.length){
@@ -180,7 +180,7 @@ public class CommandCastSpell extends CommandBase {
 
 			if(origin != null){ // Positional
 
-				World world = sender.getEntityWorld();
+				Level world = sender.getEntityWorld();
 
 				// If anything stops the spell working at this point, nothing else happens.
 				if(MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Pre(Source.COMMAND, spell, world,

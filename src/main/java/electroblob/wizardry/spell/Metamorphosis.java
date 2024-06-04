@@ -10,20 +10,20 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class Metamorphosis extends SpellRay {
 
-	public static final BiMap<Class<? extends EntityLivingBase>, Class<? extends EntityLivingBase>> TRANSFORMATIONS = HashBiMap.create();
+	public static final BiMap<Class<? extends LivingEntity>, Class<? extends LivingEntity>> TRANSFORMATIONS = HashBiMap.create();
 
 	static {
 		addTransformation(EntityPig.class, EntityPigZombie.class);
@@ -40,9 +40,9 @@ public class Metamorphosis extends SpellRay {
 	/** Adds circular mappings between the given entity classes to the transformations map. In other words, given an
 	 * array of entity classes [A, B, C, D], adds mappings A -> B, B -> C, C -> D and D -> A. */
 	@SafeVarargs
-	public static void addTransformation(Class<? extends EntityLivingBase>... entities){
-		Class<? extends EntityLivingBase> previousEntity = entities[entities.length - 1];
-		for(Class<? extends EntityLivingBase> entity : entities){
+	public static void addTransformation(Class<? extends LivingEntity>... entities){
+		Class<? extends LivingEntity> previousEntity = entities[entities.length - 1];
+		for(Class<? extends LivingEntity> entity : entities){
 			TRANSFORMATIONS.put(previousEntity, entity);
 			previousEntity = entity;
 		}
@@ -56,7 +56,7 @@ public class Metamorphosis extends SpellRay {
 	@Override public boolean canBeCastBy(EntityLiving npc, boolean override) { return false; }
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		if(EntityUtils.isLiving(target)){
 
@@ -66,15 +66,15 @@ public class Metamorphosis extends SpellRay {
 
 			// Sneaking allows the entities to be cycled through in the other direction.
 			// Dispensers always cycle through entities in the normal direction.
-			Class<? extends EntityLivingBase> newEntityClass = caster != null && caster.isSneaking() ?
+			Class<? extends LivingEntity> newEntityClass = caster != null && caster.isSneaking() ?
 					TRANSFORMATIONS.inverse().get(target.getClass()) : TRANSFORMATIONS.get(target.getClass());
 
 			if(newEntityClass == null) return false;
 
-			EntityLivingBase newEntity = null;
+			LivingEntity newEntity = null;
 
 			try {
-				newEntity = newEntityClass.getConstructor(World.class).newInstance(world);
+				newEntity = newEntityClass.getConstructor(Level.class).newInstance(world);
 			} catch (Exception e){
 				Wizardry.logger.error("Error while attempting to transform entity " + target.getClass() + " to entity "
 						+ newEntityClass);
@@ -85,7 +85,7 @@ public class Metamorphosis extends SpellRay {
 
 			if(!world.isRemote){
 				// Transfers attributes from the old entity to the new one.
-				newEntity.setHealth(((EntityLivingBase)target).getHealth());
+				newEntity.setHealth(((LivingEntity)target).getHealth());
 				NBTTagCompound tag = new NBTTagCompound();
 				target.writeToNBT(tag);
 				// Remove the UUID because keeping it the same causes the entity to disappear
@@ -104,7 +104,7 @@ public class Metamorphosis extends SpellRay {
 				ParticleBuilder.create(Type.BUFF).pos(xPos, yPos, zPos).clr(0xd363cb).spawn(world);
 			}
 
-			this.playSound(world, (EntityLivingBase)target, ticksInUse, -1, modifiers);
+			this.playSound(world, (LivingEntity)target, ticksInUse, -1, modifiers);
 			return true;
 		}
 		
@@ -112,12 +112,12 @@ public class Metamorphosis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 

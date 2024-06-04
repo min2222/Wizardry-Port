@@ -8,10 +8,10 @@ import electroblob.wizardry.item.ItemWizardHandbook;
 import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.tileentity.TileEntityLectern;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class WizardryGuiHandler implements IGuiHandler {
@@ -27,7 +27,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 	public static final int LECTERN = nextGuiId++;
 
 	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z){
+	public Object getServerGuiElement(int id, Player player, Level world, int x, int y, int z){
 
 		if(id == ARCANE_WORKBENCH){
 
@@ -53,7 +53,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 	}
 
 	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z){
+	public Object getClientGuiElement(int id, Player player, Level world, int x, int y, int z){
 
 		if(id == ARCANE_WORKBENCH){
 

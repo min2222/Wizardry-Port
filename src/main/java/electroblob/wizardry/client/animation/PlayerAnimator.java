@@ -5,7 +5,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.JavaUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRenderer;
@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * @since Wizardry 4.3
  * @see electroblob.wizardry.item.SpellActions SpellActions
  */
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class PlayerAnimator {
 
 	// TODO: Attempt to extend this to all bipeds
@@ -53,7 +53,7 @@ public class PlayerAnimator {
 	private static final List<Animation> animations = new ArrayList<>();
 
 	/** Stores all registered layer renderers for lazy-loading of armour models later. */
-	private static final Map<RenderPlayer, List<LayerRenderer<? extends EntityLivingBase>>> playerLayers = new HashMap<>();
+	private static final Map<RenderPlayer, List<LayerRenderer<? extends LivingEntity>>> playerLayers = new HashMap<>();
 	/** Stores the main model for each renderer plus all models for registered layer renderers. */
 	private static final Map<RenderPlayer, List<ModelBiped>> playerLayerModels = new HashMap<>();
 	/** Reflected into {@link RenderLivingBase}{@code #layerRenderers}. */
@@ -104,7 +104,7 @@ public class PlayerAnimator {
 
 		try {
 
-			List<LayerRenderer<? extends EntityLivingBase>> layers = (List<LayerRenderer<? extends EntityLivingBase>>)layerRenderers.get(renderer);
+			List<LayerRenderer<? extends LivingEntity>> layers = (List<LayerRenderer<? extends LivingEntity>>)layerRenderers.get(renderer);
 
 			// Save armour layers for lazy-loading later (ignore other layers so iteration is faster)
 			playerLayers.put(renderer, layers.stream().filter(l -> l instanceof LayerBipedArmor).collect(Collectors.toList()));
@@ -133,7 +133,7 @@ public class PlayerAnimator {
 		playerLayerModels.put(renderer, models);
 	}
 
-	private static void updateModels(EntityPlayer player, Render<?> renderer, float partialTicks, boolean firstPerson){
+	private static void updateModels(Player player, Render<?> renderer, float partialTicks, boolean firstPerson){
 
 		// Lazy-load models from custom renderers (some mods assign their custom renderers in postInit, so they might
 		// not be picked up from PlayerAnimator#init)
@@ -146,14 +146,14 @@ public class PlayerAnimator {
 		// If no models were registered for the given renderer, don't do anything
 		if(models != null){
 
-			List<LayerRenderer<? extends EntityLivingBase>> layers = playerLayers.get(renderer);
+			List<LayerRenderer<? extends LivingEntity>> layers = playerLayers.get(renderer);
 
 			// If no layers were registered for the given renderer there's no point trying to lazy-load anything!
 			if(layers != null){
 
 				// Biped armour is special because of Forge's armour item render hook
 				// This needs to be lazy-loaded because we need access to an actual item
-				for(LayerRenderer<? extends EntityLivingBase> layer : layers){
+				for(LayerRenderer<? extends LivingEntity> layer : layers){
 					if(layer instanceof LayerBipedArmor){
 						for(EntityEquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 
@@ -207,7 +207,7 @@ public class PlayerAnimator {
 
 		if(!areAnimationsEnabled()) return;
 
-		AbstractClientPlayer player = Minecraft.getMinecraft().player;
+		LocalPlayer player = Minecraft.getMinecraft().player;
 
 		EnumAction action = event.getItemStack().getItemUseAction();
 

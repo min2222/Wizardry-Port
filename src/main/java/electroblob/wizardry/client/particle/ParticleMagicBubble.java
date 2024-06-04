@@ -1,11 +1,11 @@
 package electroblob.wizardry.client.particle;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 //@SideOnly(Side.CLIENT)
 public class ParticleMagicBubble extends ParticleWizardry {
 
-	public ParticleMagicBubble(World world, double x, double y, double z){
+	public ParticleMagicBubble(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		this.setRBGColorF(1, 1, 1);
 		this.setParticleTextureIndex(32);

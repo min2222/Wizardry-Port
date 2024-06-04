@@ -7,16 +7,16 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,7 +41,7 @@ public class Paralysis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
 		
@@ -55,7 +55,7 @@ public class Paralysis extends SpellRay {
 	
 			// This is a lot neater than it was, thanks to the damage type system.
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-				if(!world.isRemote && caster instanceof EntityPlayer) ((EntityPlayer)caster).sendStatusMessage(
+				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						new TextComponentTranslation("spell.resist",
 						target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
@@ -63,8 +63,8 @@ public class Paralysis extends SpellRay {
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			}
 
-			float durationMultiplier = target instanceof EntityPlayer ? modifiers.get(PLAYER_EFFECT_DURATION_MULTIPLIER) : 1.0f;
-			((EntityLivingBase)target).addPotionEffect(new PotionEffect(WizardryPotions.paralysis,
+			float durationMultiplier = target instanceof Player ? modifiers.get(PLAYER_EFFECT_DURATION_MULTIPLIER) : 1.0f;
+			((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.paralysis,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * durationMultiplier * modifiers.get(WizardryItems.duration_upgrade)), 0));
 		}
 		
@@ -72,12 +72,12 @@ public class Paralysis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(world.isRemote){
 			
 			if(world.getBlockState(pos).getMaterial().isSolid()){
-				Vec3d vec = hit.add(new Vec3d(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
+				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).clr(0.4f, 0.8f, 1).spawn(world);
 			}
 		}
@@ -86,9 +86,9 @@ public class Paralysis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		// This is first because we want the endpoint to be unaffected by the offset
-		Vec3d endpoint = origin.add(direction.scale(getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)));
+		Vec3 endpoint = origin.add(direction.scale(getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)));
 
 		if(world.isRemote){
 			ParticleBuilder.create(Type.LIGHTNING).time(4).pos(origin).target(endpoint).scale(0.5f).spawn(world);

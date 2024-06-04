@@ -19,13 +19,13 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
 import net.minecraft.inventory.Slot;
@@ -33,17 +33,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -171,8 +171,8 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
 
 		if(element != null){
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.element_cost_reduction",
@@ -208,7 +208,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack){
+	public void onArmorTick(Level world, Player player, ItemStack itemStack){
 		if(armorType == EntityEquipmentSlot.HEAD && player.ticksExisted % 20 == 0
 				&& isWearingFullSet(player, element, ArmourClass.BATTLEMAGE) && doAllArmourPiecesHaveMana(player)){
 			player.addPotionEffect(new PotionEffect(WizardryPotions.ward, 219, 0, true, false));
@@ -228,7 +228,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	 * @param spell The spell being cast.
 	 * @param modifiers The modifiers specific to armour to apply to the global ones after all four slots are processed.
 	 */
-	protected void applySpellModifiers(EntityLivingBase caster, Spell spell, SpellModifiers modifiers){
+	protected void applySpellModifiers(LivingEntity caster, Spell spell, SpellModifiers modifiers){
 
 		if(spell.getElement() == this.element){
 			modifiers.set(SpellModifiers.COST, modifiers.get(SpellModifiers.COST) - armourClass.elementalCostReduction, false);
@@ -251,9 +251,9 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack,
-			EntityEquipmentSlot armourSlot, net.minecraft.client.model.ModelBiped original){
+	@OnlyIn(Dist.CLIENT)
+	public net.minecraft.client.model.ModelBiped getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
+                                                               EntityEquipmentSlot armourSlot, net.minecraft.client.model.ModelBiped original){
 
 		// Legs use modelBiped
 		if(armourSlot == EntityEquipmentSlot.LEGS && !entityLiving.isInvisible()) return null;
@@ -299,7 +299,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	public ItemStack applyUpgrade(@Nullable EntityPlayer player, ItemStack stack, ItemStack upgrade){
+	public ItemStack applyUpgrade(@Nullable Player player, ItemStack stack, ItemStack upgrade){
 
 		// Apply class upgrades
 		if(this.armourClass == ArmourClass.WIZARD){
@@ -319,7 +319,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	public boolean onApplyButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
+	public boolean onApplyButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		
 		boolean changed = false;
 
@@ -394,12 +394,12 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 	/**
 	 * Counts the number of armour pieces the given entity is wearing that match the given element.
-	 * @deprecated in favour of {@link ItemWizardArmour#applySpellModifiers(EntityLivingBase, Spell, SpellModifiers)}
-	 * and {@link ItemWizardArmour#isWearingFullSet(EntityLivingBase, Element, ArmourClass)}. Retained for API stability
+	 * @deprecated in favour of {@link ItemWizardArmour#applySpellModifiers(LivingEntity, Spell, SpellModifiers)}
+	 * and {@link ItemWizardArmour#isWearingFullSet(LivingEntity, Element, ArmourClass)}. Retained for API stability
 	 * between minor versions, will be removed in future.
 	 */
 	@Deprecated
-	public static int getMatchingArmourCount(EntityLivingBase entity, Element element){
+	public static int getMatchingArmourCount(LivingEntity entity, Element element){
 		return (int)Arrays.stream(InventoryUtils.ARMOUR_SLOTS)
 				.map(s -> entity.getItemStackFromSlot(s).getItem())
 				.filter(i -> i instanceof ItemWizardArmour && ((ItemWizardArmour)i).element == element)
@@ -438,7 +438,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	 * @param armourClass The class to check, or null to accept any class as long as they are all the same.
 	 * @return True if the entity is wearing a full set of the given element and class, false otherwise.
 	 */
-	public static boolean isWearingFullSet(EntityLivingBase entity, @Nullable Element element, @Nullable ArmourClass armourClass){
+	public static boolean isWearingFullSet(LivingEntity entity, @Nullable Element element, @Nullable ArmourClass armourClass){
 		ItemStack helmet = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 		if(!(helmet.getItem() instanceof ItemWizardArmour)) return false;
 		Element e = element == null ? ((ItemWizardArmour)helmet.getItem()).element : element;
@@ -454,7 +454,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	 * @param entity The entity to query.
 	 * @return True if all armour pieces which implement {@link IManaStoringItem} has mana, false otherwise.
 	 */
-	public static boolean doAllArmourPiecesHaveMana(EntityLivingBase entity){
+	public static boolean doAllArmourPiecesHaveMana(LivingEntity entity){
 		return Arrays.stream(InventoryUtils.ARMOUR_SLOTS).noneMatch(s -> entity.getItemStackFromSlot(s).getItem() instanceof IManaStoringItem
 						&& ((IManaStoringItem) entity.getItemStackFromSlot(s).getItem()).isManaEmpty(entity.getItemStackFromSlot(s)));
 	}
@@ -463,7 +463,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// Undo the mob detection penalty for wearing armour when invisible
 		// Only bother doing this for players because the penalty only applies to them
-		if(event.getTarget() instanceof EntityPlayer && event.getEntityLiving() instanceof EntityLiving
+		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof EntityLiving
 				&& event.getEntityLiving().isInvisible()){
 
 			int armourPieces = (int)Streams.stream(event.getTarget().getArmorInventoryList())
@@ -476,7 +476,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			IAttributeInstance attribute = event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE);
 			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
 			if(event.getTarget().isSneaking()) followRange *= 0.8;
-			float f = (float)armourPieces / ((EntityPlayer)event.getTarget()).inventory.armorInventory.size();
+			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();
 			if(f < 0.1F) f = 0.1F;
 			followRange *= 0.7F * f;
 			// Don't need to worry about the isSuitableTarget check since it must already have been checked to get this far

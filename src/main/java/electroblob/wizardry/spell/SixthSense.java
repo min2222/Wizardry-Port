@@ -6,11 +6,11 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,7 +33,7 @@ public class SixthSense extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		caster.addPotionEffect(new PotionEffect(WizardryPotions.sixth_sense,
 				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
@@ -51,9 +51,9 @@ public class SixthSense extends Spell {
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
 		if(event.getEntity().world.isRemote && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
-				&& event.getEntity() instanceof EntityPlayer){
-			Wizardry.proxy.loadShader((EntityPlayer)event.getEntity(), SHADER);
-			Wizardry.proxy.playBlinkEffect((EntityPlayer)event.getEntity());
+				&& event.getEntity() instanceof Player){
+			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
+			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());
 		}
 	}
 

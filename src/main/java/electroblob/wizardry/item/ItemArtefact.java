@@ -18,12 +18,12 @@ import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
 import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.*;
 import electroblob.wizardry.util.*;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
@@ -32,11 +32,12 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -51,8 +52,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -69,8 +69,8 @@ import java.util.stream.Collectors;
  * or events with appropriate checks. This allows wizardry to run with Baubles as an optional dependency.
  * <p></p>
  * <b>Do not reference any Baubles classes from subclasses of this</b>, or the dependency will no longer be optional!
- * Use {@link ItemArtefact#isArtefactActive(EntityPlayer, Item)} to test if a particular artefact is active. Use
- * {@link ItemArtefact#getActiveArtefacts(EntityPlayer, Type...)} to get a list of active artefacts.
+ * Use {@link ItemArtefact#isArtefactActive(Player, Item)} to test if a particular artefact is active. Use
+ * {@link ItemArtefact#getActiveArtefacts(Player, Type...)} to get a list of active artefacts.
  * <p></p>
  * @author Electroblob
  * @since Wizardry 4.2
@@ -145,8 +145,8 @@ public class ItemArtefact extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
 		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
 		if(!enabled) tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":generic.disabled", new Style().setColor(TextFormatting.RED)));
 	}
@@ -168,7 +168,7 @@ public class ItemArtefact extends Item {
 	 * of the first n of its type on the player's hands/hotbar, where n is the number of bauble slots of that type.
 	 * <p></p>
 	 * N.B. This method is inefficient if you are defining multiple artefact behaviours in the same place. In this use
-	 * case, it is preferable to use {@link ItemArtefact#getActiveArtefacts(EntityPlayer, Type...)}.
+	 * case, it is preferable to use {@link ItemArtefact#getActiveArtefacts(Player, Type...)}.
 	 *
 	 * @param player   The player whose inventory is to be checked.
 	 * @param artefact The artefact to check for.
@@ -177,7 +177,7 @@ public class ItemArtefact extends Item {
 	 * @throws IllegalArgumentException If the given item is not an artefact.
 	 */
 	// It's cleaner to cast to ItemArtefact here than wherever it is used - items can't be stored as ItemWhatever objects
-	public static boolean isArtefactActive(EntityPlayer player, Item artefact){
+	public static boolean isArtefactActive(Player player, Item artefact){
 
 		if(!(artefact instanceof ItemArtefact)) throw new IllegalArgumentException("Not an artefact!");
 
@@ -216,7 +216,7 @@ public class ItemArtefact extends Item {
 	 * @return True if the player has the artefact and it is active, false if not. Always returns false if the given
 	 * item is not an instance of {@code ItemArtefact}.
 	 */
-	public static List<ItemArtefact> getActiveArtefacts(EntityPlayer player, Type... types){
+	public static List<ItemArtefact> getActiveArtefacts(Player player, Type... types){
 
 		if(types.length == 0) types = Type.values();
 
@@ -251,7 +251,7 @@ public class ItemArtefact extends Item {
 	 *               The stack passed to this consumer will be the wand in question.
 	 * @return True if the action was executed, false otherwise.
 	 */
-	public static boolean findMatchingWandAndExecute(EntityPlayer player, Spell spell, Consumer<? super ItemStack> action){
+	public static boolean findMatchingWandAndExecute(Player player, Spell spell, Consumer<? super ItemStack> action){
 
 		List<ItemStack> hotbar = InventoryUtils.getPrioritisedHotbarAndOffhand(player);
 
@@ -270,7 +270,7 @@ public class ItemArtefact extends Item {
 	 * @param spell The spell to search for and cast
 	 * @return True if the spell was cast, false otherwise.
 	 */
-	public static boolean findMatchingWandAndCast(EntityPlayer player, Spell spell){
+	public static boolean findMatchingWandAndCast(Player player, Spell spell){
 
 		return findMatchingWandAndExecute(player, spell, wand -> {
 
@@ -289,8 +289,8 @@ public class ItemArtefact extends Item {
 
 		if(event.phase == TickEvent.Phase.START){
 
-			EntityPlayer player = event.player;
-			World world = player.world;
+			Player player = event.player;
+			Level world = player.world;
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -362,14 +362,14 @@ public class ItemArtefact extends Item {
 
 						List<Entity> projectiles = EntityUtils.getEntitiesWithinRadius(5, player.posX, player.posY, player.posZ, world, Entity.class);
 						projectiles.removeIf(e -> !(e instanceof IProjectile));
-						Vec3d look = player.getLookVec();
-						Vec3d playerPos = player.getPositionVector().add(0, player.height/2, 0);
+						Vec3 look = player.getLookVec();
+						Vec3 playerPos = player.getPositionVector().add(0, player.height/2, 0);
 
 						for(Entity projectile : projectiles){
-							Vec3d vec = playerPos.subtract(projectile.getPositionVector()).normalize();
+							Vec3 vec = playerPos.subtract(projectile.getPositionVector()).normalize();
 							double angle = Math.acos(vec.scale(-1).dotProduct(look));
 							if(angle > Math.PI * 0.4f) continue; // (Roughly) the angle the shield will protect
-							Vec3d velocity = new Vec3d(projectile.motionX, projectile.motionY, projectile.motionZ).normalize();
+							Vec3 velocity = new Vec3(projectile.motionX, projectile.motionY, projectile.motionZ).normalize();
 							double angle1 = Math.acos(vec.dotProduct(velocity));
 							if(angle1 < Math.PI * 0.2f){
 								SpellModifiers modifiers = new SpellModifiers();
@@ -412,9 +412,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onSpellCastPreEvent(SpellCastEvent.Pre event){
 
-		if(event.getCaster() instanceof EntityPlayer){
+		if(event.getCaster() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getCaster();
+			Player player = (Player)event.getCaster();
 			SpellModifiers modifiers = event.getModifiers();
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
@@ -525,9 +525,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onSpellCastPostEvent(SpellCastEvent.Post event){
 
-		if(event.getCaster() instanceof EntityPlayer){
+		if(event.getCaster() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getCaster();
+			Player player = (Player)event.getCaster();
 
 			if(isArtefactActive(player, WizardryItems.ring_paladin)){
 
@@ -535,9 +535,9 @@ public class ItemArtefact extends Item {
 					// Spell properties allow all three of the above spells to be dealt with the same way - neat!
 					float healthGained = event.getSpell().getProperty(Spell.HEALTH).floatValue() * event.getModifiers().get(SpellModifiers.POTENCY);
 
-					List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(4, player.posX, player.posY, player.posZ, event.getWorld());
+					List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(4, player.posX, player.posY, player.posZ, event.getWorld());
 
-					for(EntityLivingBase entity : nearby){
+					for(LivingEntity entity : nearby){
 						if(AllyDesignationSystem.isAllied(player, entity) && entity.getHealth() > 0 && entity.getHealth() < entity.getMaxHealth()){
 							entity.heal(healthGained * 0.2f); // 1/5 of the amount healed by the spell itself
 							if(event.getWorld().isRemote) ParticleBuilder.spawnHealParticles(event.getWorld(), entity);
@@ -551,7 +551,7 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
 
-		EntityLivingBase entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntityLiving();
 
 		// No point doing this every tick, every 2.5 seconds should be enough
 		if(entity.ticksExisted % 50 == 0 && entity.isPotionActive(WizardryPotions.mind_control)){
@@ -562,15 +562,15 @@ public class ItemArtefact extends Item {
 
 				Entity caster = EntityUtils.getEntityByUUID(entity.world, entityNBT.getUniqueId(MindControl.NBT_KEY));
 
-				if(caster instanceof EntityPlayer){
+				if(caster instanceof Player){
 
-					if(isArtefactActive((EntityPlayer)caster, WizardryItems.ring_mind_control)){
+					if(isArtefactActive((Player)caster, WizardryItems.ring_mind_control)){
 
 						EntityUtils.getEntitiesWithinRadius(3, entity.posX, entity.posY, entity.posZ, entity.world, EntityLiving.class).stream()
 								.filter(e -> e.world.rand.nextInt(10) == 0)
 								.filter(MindControl::canControl)
 								.filter(e -> AllyDesignationSystem.isValidTarget(caster, e))
-								.forEach(target -> MindControl.startControlling(target, (EntityPlayer)caster,
+								.forEach(target -> MindControl.startControlling(target, (Player)caster,
 										// Control the new target for only the remaining duration, otherwise it could go on forever!
 										entity.getActivePotionEffect(WizardryPotions.mind_control).getDuration()));
 					}
@@ -582,9 +582,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		if(event.getEntity() instanceof EntityPlayer){
+		if(event.getEntity() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getEntity();
+			Player player = (Player)event.getEntity();
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -619,7 +619,7 @@ public class ItemArtefact extends Item {
 						List<EntityFireRing> fireRings = player.world.getEntitiesWithinAABB(EntityFireRing.class, player.getEntityBoundingBox());
 
 						for(EntityFireRing fireRing : fireRings){
-							if(fireRing.getCaster() instanceof EntityPlayer && (fireRing.getCaster() == player
+							if(fireRing.getCaster() instanceof Player && (fireRing.getCaster() == player
 									|| AllyDesignationSystem.isOwnerAlly(player, fireRing))){
 								event.setAmount(event.getAmount() * 0.25f);
 							}
@@ -629,9 +629,9 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_potential){
 
 					if(player.world.rand.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
-						&& event.getSource().getTrueSource() instanceof EntityLivingBase){
+						&& event.getSource().getTrueSource() instanceof LivingEntity){
 
-						EntityLivingBase target = (EntityLivingBase)event.getSource().getTrueSource();
+						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
 
 						if(player.world.isRemote){
 
@@ -667,9 +667,9 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_banishing){
 
 					if(player.world.rand.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
-							&& event.getSource().getTrueSource() instanceof EntityLivingBase){
+							&& event.getSource().getTrueSource() instanceof LivingEntity){
 
-						EntityLivingBase target = (EntityLivingBase)event.getSource().getTrueSource();
+						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
 						((Banish)Spells.banish).teleport(target, target.world, 8 + target.world.rand.nextDouble() * 8);
 					}
 
@@ -683,11 +683,11 @@ public class ItemArtefact extends Item {
 			}
 		}
 
-		if(event.getSource().getTrueSource() instanceof EntityPlayer){
+		if(event.getSource().getTrueSource() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getTrueSource();
 			ItemStack mainhandItem = player.getHeldItemMainhand();
-			World world = player.world;
+			Level world = player.world;
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -844,9 +844,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onLivingDeathEvent(LivingDeathEvent event){
 
-		if(event.getSource().getTrueSource() instanceof EntityPlayer){
+		if(event.getSource().getTrueSource() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getTrueSource();
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -913,9 +913,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onPotionApplicableEvent(PotionEvent.PotionApplicableEvent event){
 
-		if(event.getEntity() instanceof EntityPlayer){
+		if(event.getEntity() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getEntity();
+			Player player = (Player)event.getEntity();
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 

@@ -10,15 +10,15 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class EntityIceCharge extends EntityBomb {
 
 	public static final String ICE_SHARDS = "ice_shards";
 
-	public EntityIceCharge(World world){
+	public EntityIceCharge(Level world){
 		super(world);
 	}
 
@@ -48,15 +48,15 @@ public class EntityIceCharge extends EntityBomb {
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FROST).setProjectile(),
 					damage);
 
-			if(entityHit instanceof EntityLivingBase && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-				((EntityLivingBase)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
+				((LivingEntity)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
 
 		// Particle effect
 		if(world.isRemote){
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 			for(int i = 0; i < 30 * blastMultiplier; i++){
 
 				ParticleBuilder.create(Type.ICE, rand, this.posX, this.posY, this.posZ, 2 * blastMultiplier, false)
@@ -75,11 +75,11 @@ public class EntityIceCharge extends EntityBomb {
 
 			double radius = Spells.ice_charge.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
 					this.posZ, this.world);
 
 			// Slows targets
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()){
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
 						target.addPotionEffect(new PotionEffect(WizardryPotions.frost,
@@ -94,7 +94,7 @@ public class EntityIceCharge extends EntityBomb {
 
 					BlockPos pos = new BlockPos(this.posX + i, this.posY, this.posZ + j);
 
-					Integer y = BlockUtils.getNearestSurface(world, pos, EnumFacing.UP, 7, true,
+					Integer y = BlockUtils.getNearestSurface(world, pos, Direction.UP, 7, true,
 							BlockUtils.SurfaceCriteria.SOLID_LIQUID_TO_AIR);
 
 					if(y != null){

@@ -8,7 +8,7 @@ import electroblob.wizardry.item.ItemManaFlask;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -60,7 +60,7 @@ public class RecipeRechargeWithFlask extends ShapelessOreRecipe {
 	}
 
 	@Override
-	public boolean matches(InventoryCrafting inv, World world){
+	public boolean matches(InventoryCrafting inv, Level world){
 		ItemStack stack = findItemToCharge(inv);
 		if(!stack.isEmpty() && chargeable.isManaFull(stack)) return false;
 		return super.matches(inv, world);

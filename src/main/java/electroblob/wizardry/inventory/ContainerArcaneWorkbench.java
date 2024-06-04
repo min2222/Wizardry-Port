@@ -12,7 +12,8 @@ import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.WandHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -20,7 +21,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -129,13 +129,13 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player){
+	public boolean canInteractWith(Player player){
 		return this.tileentity.isUsableByPlayer(player);
 	}
 	
 	/**
 	 * Shows the given slot in the container GUI at the given position. Intended to do the opposite of
-	 * {@link ContainerArcaneWorkbench#hideSlot(int, EntityPlayer)}.
+	 * {@link ContainerArcaneWorkbench#hideSlot(int, Player)}.
 	 * @param index The index of the slot to show.
 	 * @param x The x position to put the slot in.
 	 * @param y The y position to put the slot in.
@@ -156,7 +156,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	 */
 	// We're not using slot.isEnabled() because it would mean making another slot class, and we'd still need to handle
 	// what happens to the contents when the slot is hidden
-	private void hideSlot(int index, EntityPlayer player){
+	private void hideSlot(int index, Player player){
 		
 		Slot slot = this.getSlot(index);
 		
@@ -178,7 +178,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 	/** Called from the central wand/armour slot when its item is changed or removed. */
 	// In case I forget again and think it should have @Override: I wrote this!
-	public void onSlotChanged(int slotNumber, ItemStack stack, EntityPlayer player){
+	public void onSlotChanged(int slotNumber, ItemStack stack, Player player){
 
 		if(slotNumber == CENTRE_SLOT){
 
@@ -233,7 +233,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	//		  bottles into a brewing stand). I have at least made it so only one gets used now, so it has no impact on
 	//		  the game.
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int clickedSlotId){
+	public ItemStack transferStackInSlot(Player player, int clickedSlotId){
 
 		ItemStack remainder = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(clickedSlotId);
@@ -334,7 +334,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, Player player){
 
 		// -999 is used for slots in the player inventory
 		if(slotId > 0 && getSlot(slotId) instanceof SlotBookList){
@@ -432,7 +432,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	 */
 	// As of 2.1, for the sake of events and neatness of code, this was moved here from TileEntityArcaneWorkbench.
 	// As of 4.2, the spell binding/charging/upgrading code was delegated (via IWorkbenchItem) to the items themselves.
-	public void onApplyButtonPressed(EntityPlayer player){
+	public void onApplyButtonPressed(Player player){
 
 		if(MinecraftForge.EVENT_BUS.post(new SpellBindEvent(player, this))) return;
 		
@@ -458,7 +458,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	 */
 	// As of 2.1, for the sake of events and neatness of code, this was moved here from TileEntityArcaneWorkbench.
 	// As of 4.2, the spell binding/charging/upgrading code was delegated (via IWorkbenchItem) to the items themselves.
-	public void onClearButtonPressed(EntityPlayer player){
+	public void onClearButtonPressed(Player player){
 
 		Slot centre = this.getSlot(CENTRE_SLOT);
 

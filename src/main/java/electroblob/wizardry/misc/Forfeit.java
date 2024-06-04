@@ -22,20 +22,19 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties.Context;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -81,7 +80,7 @@ public abstract class Forfeit {
 		this.sound = WizardrySounds.createSound("forfeit." + name.getPath());
 	}
 
-	public abstract void apply(World world, EntityPlayer player);
+	public abstract void apply(Level world, Player player);
 
 	/**
 	 * Returns an {@link ITextComponent} for the message displayed when this forfeit is activated.
@@ -134,10 +133,10 @@ public abstract class Forfeit {
 
 	/** Static helper method that creates a {@code Forfeit} with the given name and an effect specified by the given
 	 * consumer. This allows code to use a neater lambda expression rather than an anonymous class. */
-	public static Forfeit create(ResourceLocation name, BiConsumer<World, EntityPlayer> effect){
+	public static Forfeit create(ResourceLocation name, BiConsumer<Level, Player> effect){
 		return new Forfeit(name){
 			@Override
-			public void apply(World world, EntityPlayer player){
+			public void apply(Level world, Player player){
 				effect.accept(world, player);
 			}
 		};
@@ -145,7 +144,7 @@ public abstract class Forfeit {
 
 	/** Internal wrapper for {@link Forfeit#create(ResourceLocation, BiConsumer)} so I don't have to put wizardry's
 	 * mod ID in every time. */
-	private static Forfeit create(String name, BiConsumer<World, EntityPlayer> effect){
+	private static Forfeit create(String name, BiConsumer<Level, Player> effect){
 		return create(new ResourceLocation(Wizardry.MODID, name), effect);
 	}
 
@@ -154,10 +153,10 @@ public abstract class Forfeit {
 
 		if(!Wizardry.settings.discoveryMode) return;
 
-		if(event.getCaster() instanceof EntityPlayer && !((EntityPlayer)event.getCaster()).isCreative()
+		if(event.getCaster() instanceof Player && !((Player)event.getCaster()).isCreative()
 				&& (event.getSource() == SpellCastEvent.Source.WAND || event.getSource() == SpellCastEvent.Source.SCROLL)){
 
-			EntityPlayer player = (EntityPlayer)event.getCaster();
+			Player player = (Player)event.getCaster();
 			WizardData data = WizardData.get(player);
 
 			float chance = (float)Wizardry.settings.forfeitChance;
@@ -212,7 +211,7 @@ public abstract class Forfeit {
 		add(Tier.APPRENTICE, Element.FIRE, create("fireball", (w, p) -> {
 			if(!w.isRemote){
 				EntityMagicFireball fireball = new EntityMagicFireball(w);
-				Vec3d vec = p.getPositionEyes(1).add(p.getLookVec().scale(6));
+				Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(6));
 				fireball.setPosition(vec.x, vec.y, vec.z);
 				fireball.shoot(p.posX, p.posY + p.getEyeHeight(), p.posZ, 1.5f, 1);
 				w.spawnEntity(fireball);
@@ -268,7 +267,7 @@ public abstract class Forfeit {
 					double x = p.posX + 2 - w.rand.nextFloat() * 4;
 					double z = p.posZ + 2 - w.rand.nextFloat() * 4;
 					Integer y = BlockUtils.getNearestSurface(w, new BlockPos(x, p.posY, z), EnumFacing.UP, 2, true,
-							BlockUtils.SurfaceCriteria.basedOn(World::isBlockFullCube));
+							BlockUtils.SurfaceCriteria.basedOn(Level::isBlockFullCube));
 					if(y == null) break;
 					iceSpike.setFacing(EnumFacing.UP);
 					iceSpike.setPosition(x, y, z);
@@ -473,7 +472,7 @@ public abstract class Forfeit {
 
 		add(Tier.MASTER, Element.SORCERY, create("black_hole", (w, p) -> {
 			EntityBlackHole blackHole = new EntityBlackHole(w);
-			Vec3d vec = p.getPositionEyes(1).add(p.getLookVec().scale(4));
+			Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(4));
 			blackHole.setPosition(vec.x, vec.y, vec.z);
 			w.spawnEntity(blackHole);
 		}));

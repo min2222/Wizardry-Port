@@ -2,8 +2,8 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.construct.EntityStormcloud;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nullable;
 
@@ -16,7 +16,7 @@ public class Stormcloud extends SpellConstructRanged<EntityStormcloud> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityStormcloud construct, EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityStormcloud construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		construct.posY += 5;
 	}
 }

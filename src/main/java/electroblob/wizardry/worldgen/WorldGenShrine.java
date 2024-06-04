@@ -8,10 +8,10 @@ import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegra
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.tileentity.TileEntityShrineCore;
+import net.minecraft.core.BlockPos;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -36,7 +36,7 @@ public class WorldGenShrine extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public boolean canGenerate(Random random, World world, int chunkX, int chunkZ){
+	public boolean canGenerate(Random random, Level world, int chunkX, int chunkZ){
 		return ArrayUtils.contains(Wizardry.settings.shrineDimensions, world.provider.getDimension())
 				&& Wizardry.settings.shrineRarity > 0 && random.nextInt(Wizardry.settings.shrineRarity) == 0;
 	}
@@ -47,7 +47,7 @@ public class WorldGenShrine extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
+	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
 		final Element element = Element.values()[1 + random.nextInt(Element.values().length-1)];
 

@@ -7,18 +7,18 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -31,7 +31,7 @@ public class ItemIdentificationScroll extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -42,13 +42,13 @@ public class ItemIdentificationScroll extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
 		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -73,7 +73,7 @@ public class ItemIdentificationScroll extends Item {
 							if(!world.isRemote) player.sendMessage(new TextComponentTranslation("spell.discover",
 									spell.getNameForTranslationFormatted()));
 
-							return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+							return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 						}
 					}
 				}
@@ -83,7 +83,7 @@ public class ItemIdentificationScroll extends Item {
 					new TextComponentTranslation("item." + Wizardry.MODID + ":identification_scroll.nothing_to_identify"));
 		}
 
-		return new ActionResult<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
 	}
 
 }

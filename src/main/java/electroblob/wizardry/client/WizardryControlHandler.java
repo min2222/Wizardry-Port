@@ -9,18 +9,18 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
 
 /** Event handler class responsible for handling wizardry's controls. */
 //@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class WizardryControlHandler {
 
 	static boolean NkeyPressed = false;
@@ -36,7 +36,7 @@ public class WizardryControlHandler {
 
 		if(Wizardry.proxy instanceof ClientProxy){
 
-			EntityPlayer player = Minecraft.getMinecraft().player;
+			Player player = Minecraft.getMinecraft().player;
 
 			if(player != null){
 
@@ -82,7 +82,7 @@ public class WizardryControlHandler {
 	@SubscribeEvent
 	public static void onMouseEvent(MouseEvent event){
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 		ItemStack wand = getWandInUse(player);
 		if(wand == null) return;
 
@@ -101,7 +101,7 @@ public class WizardryControlHandler {
 		}
 	}
 
-	private static ItemStack getWandInUse(EntityPlayer player){
+	private static ItemStack getWandInUse(Player player){
 
 		ItemStack wand = player.getHeldItemMainhand();
 

@@ -13,17 +13,17 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	private int hitsRemaining;
 	private boolean soundStarted = false;
 
-	public EntityBoulder(World world){
+	public EntityBoulder(Level world){
 		super(world);
 		setSize(2.375f, 2.375f);
 		this.noClip = false;
@@ -62,12 +62,12 @@ public class EntityBoulder extends EntityScaledConstruct {
 		this.move(MoverType.SELF, velX, motionY, velZ);
 
 		// Entity damage
-		List<EntityLivingBase> collided = world.getEntitiesWithinAABB(EntityLivingBase.class, this.getEntityBoundingBox());
+		List<LivingEntity> collided = world.getEntitiesWithinAABB(LivingEntity.class, this.getEntityBoundingBox());
 
 		float damage = Spells.boulder.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 		float knockback = Spells.boulder.getProperty(Boulder.KNOCKBACK_STRENGTH).floatValue();
 
-		for(EntityLivingBase entity : collided){
+		for(LivingEntity entity : collided){
 
 			if(!isValidTarget(entity)) break;
 
@@ -104,7 +104,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 			IBlockState block = world.getBlockState(new BlockPos(this).down());
 
 			if(block.getBlock() != Blocks.AIR){
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
 						0, 0.2, 0, Block.getStateId(block));
 			}
 		}
@@ -144,7 +144,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	private void shakeNearbyPlayers(){
-		EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, EntityPlayer.class)
+		EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, Player.class)
 				.forEach(p -> Wizardry.proxy.shakeScreen(p, 8));
 	}
 
@@ -157,7 +157,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				double x = posX + (rand.nextDouble() - 0.5) * width;
 				double y = posY + rand.nextDouble() * height;
 				double z = posZ + (rand.nextDouble() - 0.5) * width;
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, x, y, z, (x - posX) * 0.1,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - posX) * 0.1,
 						(y - posY + height / 2) * 0.1, (z - posZ) * 0.1, Block.getStateId(Blocks.DIRT.getDefaultState()));
 			}
 
@@ -198,7 +198,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				IBlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
 
 				if(block.getBlock() != Blocks.AIR){
-					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
+					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
 							particleX - this.posX, 0, particleZ - this.posZ, Block.getStateId(block));
 				}
 			}

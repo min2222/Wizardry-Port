@@ -1,7 +1,7 @@
 package electroblob.wizardry.data;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiFunction;
 
@@ -27,7 +27,7 @@ public interface IVariable<T> {
 	/** Convenience method that allows this variable to define tick behaviour. This is particularly useful for
 	 * trivial operations such as decrementing a value, for which a dedicated event handling method would be
 	 * unnecessarily verbose. */
-	T update(EntityPlayer player, T value);
+	T update(Player player, T value);
 
 	/**
 	 * Returns whether this variable persists when data is copied.
@@ -58,7 +58,7 @@ public interface IVariable<T> {
 	/** If you're storing a lot of data, you can optionally implement this method to define a condition which, if
 	 * satisfied, will result in the data being removed from storage, reducing unnecessary syncing and saving. This
 	 * is particularly relevant if the value is synced as it reduces packet size. */
-	default boolean canPurge(EntityPlayer player, T value){
+	default boolean canPurge(Player player, T value){
 		return false;
 	}
 
@@ -72,7 +72,7 @@ public interface IVariable<T> {
 
 		private final Persistence persistence;
 
-		private BiFunction<EntityPlayer, T, T> ticker;
+		private BiFunction<Player, T, T> ticker;
 
 		public Variable(Persistence persistence){
 			this.persistence = persistence;
@@ -88,13 +88,13 @@ public interface IVariable<T> {
 		 *               {@code BiFunction} returns the new value for this variable.
 		 * @return This {@code Variable} object, allowing this method to be chained onto object creation.
 		 */
-		public Variable<T> withTicker(BiFunction<EntityPlayer, T, T> ticker){
+		public Variable<T> withTicker(BiFunction<Player, T, T> ticker){
 			this.ticker = ticker;
 			return this;
 		}
 
 		@Override
-		public T update(EntityPlayer player, T value){
+		public T update(Player player, T value){
 			return ticker.apply(player, value);
 		}
 

@@ -1,7 +1,7 @@
 package electroblob.wizardry.inventory;
 
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -53,12 +53,12 @@ public class VirtualSlot extends Slot {
 	}
 
 	@Override
-	public boolean canTakeStack(EntityPlayer playerIn){
+	public boolean canTakeStack(Player playerIn){
 		return isValid() && super.canTakeStack(playerIn);
 	}
 
 	@Override
-	public ItemStack onTake(EntityPlayer player, ItemStack stack){
+	public ItemStack onTake(Player player, ItemStack stack){
 		return isValid() ? super.onTake(player, stack) : ItemStack.EMPTY;
 	}
 

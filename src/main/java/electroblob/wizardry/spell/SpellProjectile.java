@@ -7,16 +7,16 @@ import electroblob.wizardry.entity.projectile.EntityMagicProjectile;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -49,13 +49,13 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	// the actual sound to play is required, but it makes sense for its volume and pitch to default to 1 if unspecified.
 	
 	/** A factory that creates projectile entities. */
-	protected final Function<World, T> projectileFactory;
+	protected final Function<Level, T> projectileFactory;
 	
-	public SpellProjectile(String name, Function<World, T> projectileFactory) {
+	public SpellProjectile(String name, Function<Level, T> projectileFactory) {
 		this(Wizardry.MODID, name, projectileFactory);
 	}
 
-	public SpellProjectile(String modID, String name, Function<World, T> projectileFactory){
+	public SpellProjectile(String modID, String name, Function<Level, T> projectileFactory){
 		super(modID, name, EnumAction.NONE, false);
 		this.projectileFactory = projectileFactory;
 		addProperties(RANGE);
@@ -96,7 +96,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	//return MathHelper.sqrt(MathHelper.sqrt(g*g * (launchHeight*launchHeight + range*range)) - g*launchHeight);
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			// Creates a projectile from the supplied factory
@@ -119,7 +119,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		
 		if(target != null){
 
@@ -149,7 +149,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world,  double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			// Creates a projectile from the supplied factory
@@ -178,7 +178,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	 * @param caster The caster of this spell, or null if it was cast by a dispenser.
 	 * @param modifiers The modifiers this spell was cast with.
 	 */
-	protected void addProjectileExtras(T projectile, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addProjectileExtras(T projectile, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		// Subclasses can put spell-specific stuff here
 	}
 	

@@ -23,6 +23,7 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -32,7 +33,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.entity.projectile.EntitySnowball;
@@ -46,12 +47,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -93,8 +94,8 @@ public class Possession extends SpellRay {
 	public static final IVariable<EntityLiving> POSSESSEE_KEY = new Variable<>(Persistence.DIMENSION_CHANGE);
 	public static final IVariable<Integer> SHOOT_COOLDOWN_KEY = new Variable<Integer>(Persistence.DIMENSION_CHANGE).withTicker((p, n) -> Math.max(n-1, 0));
 
-	private static final Multimap<Class<? extends EntityLiving>, BiConsumer<?, EntityPlayer>> abilities = HashMultimap.create();
-	private static final Map<Class<? extends EntityLiving>, Function<World, ? extends IProjectile>> projectiles = new HashMap<>();
+	private static final Multimap<Class<? extends EntityLiving>, BiConsumer<?, Player>> abilities = HashMultimap.create();
+	private static final Map<Class<? extends EntityLiving>, Function<Level, ? extends IProjectile>> projectiles = new HashMap<>();
 	private static final Set<Class<? extends EntityLiving>> blacklist = new HashSet<>();
 
 	private static final Map<IAttribute, UUID> INHERITED_ATTRIBUTES;
@@ -140,10 +141,10 @@ public class Possession extends SpellRay {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		Vec3d look = caster.getLookVec();
-		Vec3d origin = new Vec3d(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		Vec3 look = caster.getLookVec();
+		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
 
 		if(!shootSpell(world, origin, look, caster, ticksInUse, modifiers)) return false;
 
@@ -153,13 +154,13 @@ public class Possession extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse,
-								  SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse,
+                                  SpellModifiers modifiers){
 
-		if(target instanceof EntityLiving && !blacklist.contains(target.getClass()) && caster instanceof EntityPlayer
-				&& !isPossessing((EntityPlayer)caster)){
+		if(target instanceof EntityLiving && !blacklist.contains(target.getClass()) && caster instanceof Player
+				&& !isPossessing((Player)caster)){
 
-			EntityPlayer player = (EntityPlayer)caster;
+			Player player = (Player)caster;
 
 			if(!player.isCreative() && player.getHealth() <= getProperty(CRITICAL_HEALTH).floatValue()){
 				player.sendStatusMessage(new TextComponentTranslation(
@@ -179,13 +180,13 @@ public class Possession extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse,
-								 SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, EnumFacing side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse,
+                                 SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
@@ -201,7 +202,7 @@ public class Possession extends SpellRay {
 	 * @return True if the possession succeeded, false if for some reason it did not (only happens if the player's
 	 * {@link WizardData} is null).
 	 */
-	public boolean possess(EntityPlayer possessor, EntityLiving target, int duration){
+	public boolean possess(Player possessor, EntityLiving target, int duration){
 
 		if(possessor.isSneaking()) return false;
 
@@ -316,7 +317,7 @@ public class Possession extends SpellRay {
 
 	/** Causes the given player to stop possessing their current possessee, if any, and resets all relevant data for
 	 * both entities. Also takes care of sending packets to update clients. */
-	public void endPossession(EntityPlayer player){
+	public void endPossession(Player player){
 
 		// Reverts the possessed entity back to normal
 
@@ -383,17 +384,17 @@ public class Possession extends SpellRay {
 	/** Returns the {@code EntityLiving} that is currently being possessed by the given player, or null if the player is
 	 * not currently possessing an entity. */
 	@Nullable
-	public static EntityLiving getPossessee(EntityPlayer player){
+	public static EntityLiving getPossessee(Player player){
 		return WizardData.get(player) == null ? null : WizardData.get(player).getVariable(POSSESSEE_KEY);
 	}
 
 	/** Returns true if the given player is currently possessing an entity, false otherwise. Just a shortcut for
 	 * {@code Possession.getPossessee(player) != null}. */
-	public static boolean isPossessing(EntityPlayer player){
+	public static boolean isPossessing(Player player){
 		return getPossessee(player) != null;
 	}
 
-	private static int update(EntityPlayer player, Integer possessionTimer){
+	private static int update(Player player, Integer possessionTimer){
 
 		if(possessionTimer == null) possessionTimer = 0;
 
@@ -423,23 +424,23 @@ public class Possession extends SpellRay {
 	/** Adds the given {@link BiConsumer} to the list of abilities. An <i>ability</i> is an entity-specific action or
 	 * effect that happens when a certain type of entity is possessed. For example, spiders can climb walls, endermen
 	 * can pick up blocks, creepers explode, etc. Other mods may use this method to add their own possession abilities. */
-	public static <T extends EntityLiving> void addAbility(Class<T> entityType, BiConsumer<T, EntityPlayer> ability){
+	public static <T extends EntityLiving> void addAbility(Class<T> entityType, BiConsumer<T, Player> ability){
 		abilities.put(entityType, ability);
 	}
 
 	@SuppressWarnings("unchecked") // Guess what? Type erasure again!
-	private static <T extends EntityLiving> void performAbilities(EntityLiving entity, EntityPlayer player){
+	private static <T extends EntityLiving> void performAbilities(EntityLiving entity, Player player){
 		// Now we have a type parameter T to work with we can ram the entity into the consumer without a compiler error
 		for(Class<? extends EntityLiving> entityType : abilities.keySet()){
 			if(entityType.isAssignableFrom(entity.getClass())){
-				abilities.get(entityType).forEach(a -> ((BiConsumer<T, EntityPlayer>)a).accept((T)entity, player));
+				abilities.get(entityType).forEach(a -> ((BiConsumer<T, Player>)a).accept((T)entity, player));
 			}
 		}
 	}
 
 	/** Adds the given factory to the list of projectiles. When a player right-clicks while possessing an entity of the
 	 * given type, the given projectile factory will be invoked to create a projectile, which is then aimed and spawned. */
-	public static <T extends Entity & IProjectile> void addProjectile(Class<? extends EntityLiving> entityType, Function<World, T> factory){
+	public static <T extends Entity & IProjectile> void addProjectile(Class<? extends EntityLiving> entityType, Function<Level, T> factory){
 		projectiles.put(entityType, factory);
 	}
 
@@ -502,9 +503,9 @@ public class Possession extends SpellRay {
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
-		if(event.getEntity() instanceof EntityPlayer && event.getSource() != DamageSource.OUT_OF_WORLD){
+		if(event.getEntity() instanceof Player && event.getSource() != DamageSource.OUT_OF_WORLD){
 
-			EntityLiving possessee = getPossessee((EntityPlayer)event.getEntity());
+			EntityLiving possessee = getPossessee((Player)event.getEntity());
 
 			if(possessee != null){
 				DamageSafetyChecker.attackEntitySafely(possessee, event.getSource(), event.getAmount(), event.getSource().getDamageType());
@@ -518,7 +519,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingDamageEvent(LivingDamageEvent event){
 
-		for(EntityPlayer player : event.getEntity().world.playerEntities){
+		for(Player player : event.getEntity().world.playerEntities){
 
 			EntityLiving possessee = getPossessee(player);
 
@@ -583,7 +584,7 @@ public class Possession extends SpellRay {
 	}
 
 	/** Called via packets to shoot a projectile if the entity currently possessed by the given player can do so. */
-	public static void shootProjectile(EntityPlayer possessor){
+	public static void shootProjectile(Player possessor){
 
 		if(WizardData.get(possessor) != null){
 
@@ -604,12 +605,12 @@ public class Possession extends SpellRay {
 						((EntityCreeper)possessee).ignite(); // Aaaaaaand.... RUN!
 					}
 
-					Function<World, ? extends IProjectile> factory = projectiles.get(possessee.getClass());
+					Function<Level, ? extends IProjectile> factory = projectiles.get(possessee.getClass());
 
 					if(factory != null){
 
 						IProjectile projectile = factory.apply(possessor.world);
-						Vec3d look = possessor.getLookVec();
+						Vec3 look = possessor.getLookVec();
 						((Entity)projectile).setPosition(possessor.posX + look.x, possessor.posY + possessor.getEyeHeight() + look.y, possessor.posZ + look.z);
 						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.world.getDifficulty()));
 
@@ -628,8 +629,8 @@ public class Possession extends SpellRay {
 
 	@SubscribeEvent
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){ // Not fired for revenge-targeting
-		if(event.getTarget() instanceof EntityPlayer && event.getEntityLiving() instanceof EntityLiving){
-			EntityLiving possessee = getPossessee((EntityPlayer)event.getTarget());
+		if(event.getTarget() instanceof Player && event.getEntityLiving() instanceof EntityLiving){
+			EntityLiving possessee = getPossessee((Player)event.getTarget());
 			EntityLiving attacker = (EntityLiving)event.getEntityLiving();
 			if(possessee != null && !attacker.canAttackClass(possessee.getClass())){
 				((EntityLiving)event.getEntityLiving()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
@@ -641,8 +642,8 @@ public class Possession extends SpellRay {
 
 	@SubscribeEvent
 	public static void onLivingDeathEvent(LivingDeathEvent event){
-		if(event.getEntity() instanceof EntityPlayer && isPossessing((EntityPlayer)event.getEntity())){
-			((Possession)Spells.possession).endPossession((EntityPlayer)event.getEntity()); // Just in case, to make sure the player drops their items
+		if(event.getEntity() instanceof Player && isPossessing((Player)event.getEntity())){
+			((Possession)Spells.possession).endPossession((Player)event.getEntity()); // Just in case, to make sure the player drops their items
 		}
 	}
 

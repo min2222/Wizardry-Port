@@ -13,13 +13,13 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -479,7 +479,7 @@ public final class Settings {
 		setupDifficultyConfig();
 		setupWorldgenConfig();
 		setupTweaksConfig();
-		if(event.getSide() == Side.CLIENT) setupClientConfig(); // Server has no spell HUD skins so this would crash it
+		if(event.getSide() == Dist.CLIENT) setupClientConfig(); // Server has no spell HUD skins so this would crash it
 		setupCommandsConfig();
 		setupCompatibilityConfig();
 

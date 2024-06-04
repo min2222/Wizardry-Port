@@ -11,11 +11,11 @@ import electroblob.wizardry.util.BlockUtils.SurfaceCriteria;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +25,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 	private static final int PERIMETER_PARTICLE_DENSITY = 6;
 
-	public EntityRadiantTotem(World world){
+	public EntityRadiantTotem(Level world){
 		super(world);
 		this.setSize(1, 1); // This entity is different in that its area of effect is kind of 'outside' it
 	}
@@ -63,7 +63,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 				double x = posX + radius * MathHelper.sin(angle);
 				double z = posZ + radius * MathHelper.cos(angle);
 
-				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), EnumFacing.UP, 5, true, SurfaceCriteria.COLLIDABLE);
+				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 
 				if(y != null){
 					ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(0, 0.01, 0).clr(0xffffff).fade(0xffec90).spawn(world);
@@ -71,10 +71,10 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 			}
 		}
 
-		List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
 		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
 
-		List<EntityLivingBase> nearbyAllies = nearby.stream().filter(e -> e == getCaster()
+		List<LivingEntity> nearbyAllies = nearby.stream().filter(e -> e == getCaster()
 				|| AllyDesignationSystem.isAllied(getCaster(), e)).collect(Collectors.toList());
 		nearby.removeAll(nearbyAllies);
 
@@ -83,7 +83,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 		while(!nearbyAllies.isEmpty() && targetsRemaining > 0){
 
-			EntityLivingBase ally = nearbyAllies.remove(0);
+			LivingEntity ally = nearbyAllies.remove(0);
 
 			if(ally.getHealth() < ally.getMaxHealth()){
 				// Slightly slower than healing aura, and it only does 1 at a time (without potency modifiers)
@@ -99,7 +99,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 		while(!nearby.isEmpty() && targetsRemaining > 0){
 
-			EntityLivingBase target = nearby.remove(0);
+			LivingEntity target = nearby.remove(0);
 
 			if(EntityUtils.isLiving(target) && isValidTarget(target)){
 

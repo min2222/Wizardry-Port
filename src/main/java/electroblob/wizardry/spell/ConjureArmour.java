@@ -6,7 +6,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,7 +27,7 @@ public class ConjureArmour extends SpellConjuration {
 	}
 	
 	@Override
-	protected boolean conjureItem(EntityPlayer caster, SpellModifiers modifiers){
+	protected boolean conjureItem(Player caster, SpellModifiers modifiers){
 		
 		ItemStack armour;
 		boolean flag = false;

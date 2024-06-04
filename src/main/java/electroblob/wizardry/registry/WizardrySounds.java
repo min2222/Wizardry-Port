@@ -1,7 +1,7 @@
 package electroblob.wizardry.registry;
 
 import electroblob.wizardry.Wizardry;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;

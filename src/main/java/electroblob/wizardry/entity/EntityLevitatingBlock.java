@@ -12,19 +12,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -44,7 +44,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	}
 
 	/** The entity that created this levitating block */
-	private WeakReference<EntityLivingBase> caster;
+	private WeakReference<LivingEntity> caster;
 
 	/**
 	 * The UUID of the caster. Note that this is only for loading purposes; during normal updates the actual entity
@@ -58,13 +58,13 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 	private int suspendTimer = 5;
 
-	public EntityLevitatingBlock(World world){
+	public EntityLevitatingBlock(Level world){
 		super(world);
 		// EntityFallingBlock never uses this constructor so doesn't bother setting this, but we need to
 		this.setSize(0.98F, 0.98F);
 	}
 
-	public EntityLevitatingBlock(World world, double x, double y, double z, IBlockState state){
+	public EntityLevitatingBlock(Level world, double x, double y, double z, IBlockState state){
 		super(world, x, y, z, state);
 	}
 
@@ -82,8 +82,8 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 		if(this.getCaster() == null && this.casterUUID != null){
 			Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
-			if(entity instanceof EntityLivingBase){
-				this.caster = new WeakReference<>((EntityLivingBase)entity);
+			if(entity instanceof LivingEntity){
+				this.caster = new WeakReference<>((LivingEntity)entity);
 			}
 		}
 
@@ -129,7 +129,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					if(isConcrete && d0 > 1.0D){
 
-						RayTraceResult raytraceresult = this.world.rayTraceBlocks(new Vec3d(this.prevPosX, this.prevPosY, this.prevPosZ), new Vec3d(this.posX, this.posY, this.posZ), true);
+						RayTraceResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevPosX, this.prevPosY, this.prevPosZ), new Vec3(this.posX, this.posY, this.posZ), true);
 
 						if(raytraceresult != null && this.world.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
@@ -164,7 +164,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 								this.setDead(); // Moved inside the above if statement
 
-								if(this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, null)
+								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
 										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down())))
 										&& this.world.setBlockState(blockpos1, getBlock(), 3)){
 
@@ -218,7 +218,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 			for(Entity entity : list){
 
-				if(entity instanceof EntityLivingBase && isValidTarget(entity)){
+				if(entity instanceof LivingEntity && isValidTarget(entity)){
 
 					float damage = Spells.greater_telekinesis.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 					damage *= Math.min(1, velocitySquared/0.4); // Reduce damage at low speeds
@@ -231,7 +231,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 					for(dz = -this.motionZ; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random()) * 0.01D){
 						dx = (Math.random() - Math.random()) * 0.01D;
 					}
-					((EntityLivingBase)entity).knockBack(this, 0.6f, dx, dz);
+					((LivingEntity)entity).knockBack(this, 0.6f, dx, dz);
 				}
 			}
 		}
@@ -243,11 +243,11 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	 * may no longer exist are: entity died or was deleted, mob despawned, player logged out, entity teleported to
 	 * another dimension, or this construct simply had no caster in the first place.
 	 */
-	public EntityLivingBase getCaster(){
+	public LivingEntity getCaster(){
 		return caster == null ? null : caster.get();
 	}
 
-	public void setCaster(EntityLivingBase caster){
+	public void setCaster(LivingEntity caster){
 		if(getCaster() != caster) this.caster = new WeakReference<>(caster);
 	}
 

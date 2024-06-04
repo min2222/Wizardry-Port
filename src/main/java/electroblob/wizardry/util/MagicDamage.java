@@ -1,9 +1,8 @@
 package electroblob.wizardry.util;
 
-import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.*;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
@@ -242,7 +241,7 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 	 * @return A damagesource object of type EntityDamageSourceIndirect
 	 */
 	public static DamageSource causeIndirectMagicDamage(Entity magic, Entity caster, DamageType type,
-			boolean isRetaliatory){
+                                                        boolean isRetaliatory){
 		return new IndirectMagicDamage(getIndirectDamageNameForType(type), magic, caster, type, isRetaliatory);
 	}
 

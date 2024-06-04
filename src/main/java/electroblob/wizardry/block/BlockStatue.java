@@ -7,18 +7,18 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -120,7 +120,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata){
+	public TileEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityStatue(this.isIce);
 	}
 
@@ -130,7 +130,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state){
+	public void breakBlock(Level world, BlockPos pos, IBlockState state){
 
 		if(!world.isRemote){
 
@@ -169,10 +169,10 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@SuppressWarnings("deprecation")
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-			EnumFacing side){
+			Direction side){
 
 		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();
@@ -189,12 +189,12 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	 * @return True if the entity was successfully turned into a statue, false if not (i.e. something was in the way).
 	 */
 	// Making this an instance method means it works equally well for both types of statue
-	public boolean convertToStatue(EntityLiving target, @Nullable EntityLivingBase caster, int duration){
+	public boolean convertToStatue(EntityLiving target, @Nullable LivingEntity caster, int duration){
 		
 		if(target.deathTime > 0) return false;
 
 		BlockPos pos = new BlockPos(target);
-		World world = target.world;
+		Level world = target.world;
 
 		target.hurtTime = 0; // Stops the entity looking red while frozen and the resulting z-fighting
 		target.extinguish();

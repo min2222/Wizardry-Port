@@ -9,17 +9,17 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityFrostSigil extends EntityScaledConstruct {
 
-	public EntityFrostSigil(World world){
+	public EntityFrostSigil(Level world){
 		super(world);
 		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
@@ -36,10 +36,10 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 
 		if(!this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinCylinder(width/2, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, this.posX, this.posY,
 					this.posZ, this.height, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(this.isValidTarget(target)){
 					

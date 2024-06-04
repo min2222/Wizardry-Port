@@ -8,17 +8,17 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityFirebomb extends EntityBomb {
 
-	public EntityFirebomb(World world){
+	public EntityFirebomb(Level world){
 		super(world);
 	}
 
@@ -59,7 +59,7 @@ public class EntityFirebomb extends EntityBomb {
 				.clr(1.0f, 0.2f + rand.nextFloat() * 0.4f, 0.0f).spawn(world);
 			}
 
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 		}
 
 		if(!this.world.isRemote){
@@ -69,10 +69,10 @@ public class EntityFirebomb extends EntityBomb {
 
 			double range = Spells.firebomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
 					this.posZ, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()
 						&& !MagicDamage.isEntityImmune(DamageType.FIRE, target)){
 					// Splash damage does not count as projectile damage

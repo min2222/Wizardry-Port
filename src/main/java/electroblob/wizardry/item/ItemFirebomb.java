@@ -3,13 +3,13 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.entity.projectile.EntityFirebomb;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.registry.WizardryTabs;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class ItemFirebomb extends Item {
 
@@ -19,7 +19,7 @@ public class ItemFirebomb extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -37,7 +37,7 @@ public class ItemFirebomb extends Item {
 			world.spawnEntity(firebomb);
 		}
 
-		return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
 	}
 	
 }

@@ -9,18 +9,18 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class EntityStormcloud extends EntityScaledConstruct {
 
-	public EntityStormcloud(World world){
+	public EntityStormcloud(Level world){
 		super(world);
 		setSize(Spells.stormcloud.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 2);
 	}
@@ -44,16 +44,16 @@ public class EntityStormcloud extends EntityScaledConstruct {
 					.clr(0.3f, 0.3f, 0.3f).shaded(true).spawn(world);
 		}
 
-		boolean stormcloudRingActive = getCaster() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getCaster(), WizardryItems.ring_stormcloud);
+		boolean stormcloudRingActive = getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.ring_stormcloud);
 
-		List<EntityLivingBase> targets = world.getEntitiesWithinAABB(EntityLivingBase.class,
+		List<LivingEntity> targets = world.getEntitiesWithinAABB(LivingEntity.class,
 				this.getEntityBoundingBox().expand(0, -10, 0));
 
 		targets.removeIf(t -> !this.isValidTarget(t));
 
 		float damage = Spells.stormcloud.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier;
 
-		for(EntityLivingBase target : targets){
+		for(LivingEntity target : targets){
 
 			if(target.ticksExisted % 150 == 0){ // Use target's lifetime so they don't all get hit at once, looks better
 
@@ -76,7 +76,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 		if(stormcloudRingActive){
 			EntityUtils.getLivingWithinRadius(width * 3, posX, posY, posZ, world).stream()
 					.filter(this::isValidTarget).min(Comparator.comparingDouble(this::getDistanceSq)).ifPresent(e -> {
-				Vec3d vel = e.getPositionVector().subtract(this.getPositionVector()).normalize().scale(0.2);
+				Vec3 vel = e.getPositionVector().subtract(this.getPositionVector()).normalize().scale(0.2);
 				this.motionX = vel.x;
 				this.motionZ = vel.z;
 			});

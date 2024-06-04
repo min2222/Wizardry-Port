@@ -6,27 +6,27 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
@@ -78,7 +78,7 @@ public final class EntityUtils {
 	// ===============================================================================================================
 
 	/**
-	 * Shorthand for {@link EntityUtils#getEntitiesWithinRadius(double, double, double, double, World, Class)}
+	 * Shorthand for {@link EntityUtils#getEntitiesWithinRadius(double, double, double, double, Level, Class)}
 	 * with EntityLivingBase as the entity type. This is by far the most common use for that method.
 	 *
 	 * @param radius The search radius
@@ -87,8 +87,8 @@ public final class EntityUtils {
 	 * @param z The z coordinate to search around
 	 * @param world The world to search in
 	 */
-	public static List<EntityLivingBase> getLivingWithinRadius(double radius, double x, double y, double z, World world){
-		return getEntitiesWithinRadius(radius, x, y, z, world, EntityLivingBase.class);
+	public static List<LivingEntity> getLivingWithinRadius(double radius, double x, double y, double z, Level world){
+		return getEntitiesWithinRadius(radius, x, y, z, world, LivingEntity.class);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public final class EntityUtils {
 	 * this does not exclude any entities; if any specific entities are to be excluded this must be checked when
 	 * iterating through the list.
 	 *
-	 * @see EntityUtils#getLivingWithinRadius(double, double, double, double, World)
+	 * @see EntityUtils#getLivingWithinRadius(double, double, double, double, Level)
 	 * @param radius The search radius
 	 * @param x The x coordinate to search around
 	 * @param y The y coordinate to search around
@@ -105,7 +105,7 @@ public final class EntityUtils {
 	 * @param world The world to search in
 	 * @param entityType The class of entity to search for; pass in Entity.class for all entities
 	 */
-	public static <T extends Entity> List<T> getEntitiesWithinRadius(double radius, double x, double y, double z, World world, Class<T> entityType){
+	public static <T extends Entity> List<T> getEntitiesWithinRadius(double radius, double x, double y, double z, Level world, Class<T> entityType){
 		AxisAlignedBB aabb = new AxisAlignedBB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
 		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
 		for(int i = 0; i < entityList.size(); i++){
@@ -128,8 +128,8 @@ public final class EntityUtils {
 	 * @param height The height of the cylinder
 	 * @param world The world to search in
 	 */
-	public static List<EntityLivingBase> getLivingWithinCylinder(double radius, double x, double y, double z, double height, World world) {
-		return getEntitiesWithinCylinder(radius, x, y, z, height, world, EntityLivingBase.class);
+	public static List<LivingEntity> getLivingWithinCylinder(double radius, double x, double y, double z, double height, Level world) {
+		return getEntitiesWithinCylinder(radius, x, y, z, height, world, LivingEntity.class);
 	}
 
 	/**
@@ -144,7 +144,7 @@ public final class EntityUtils {
 	 * @param world The world to search in
 	 * @param entityType The class of entity to search for; pass in Entity.class for all entities
 	 */
-	public static <T extends Entity> List<T> getEntitiesWithinCylinder(double radius, double x, double y, double z, double height, World world, Class<T> entityType) {
+	public static <T extends Entity> List<T> getEntitiesWithinCylinder(double radius, double x, double y, double z, double height, Level world, Class<T> entityType) {
 		AxisAlignedBB aabb = new AxisAlignedBB(x - radius, y, z - radius, x + radius, y + height, z + radius);
 		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
 		for(T entity : entityList) {
@@ -158,14 +158,14 @@ public final class EntityUtils {
 
 	/**
 	 * Gets an entity from its UUID. If the UUID is known to belong to an {@code EntityPlayer}, use the more efficient
-	 * {@link World#getPlayerEntityByUUID(UUID)} instead.
+	 * {@link Level#getPlayerEntityByUUID(UUID)} instead.
 	 *
 	 * @param world The world the entity is in
 	 * @param id The entity's UUID
 	 * @return The Entity that has the given UUID, or null if no such entity exists in the specified world.
 	 */
 	@Nullable
-	public static Entity getEntityByUUID(World world, @Nullable UUID id){
+	public static Entity getEntityByUUID(Level world, @Nullable UUID id){
 
 		if(id == null) return null; // It would return null eventually but there's no point even looking
 
@@ -205,33 +205,33 @@ public final class EntityUtils {
 			double gravity = 0.04;
 			if(entity instanceof EntityThrowable) gravity = 0.03;
 			else if(entity instanceof EntityArrow) gravity = 0.05;
-			else if(entity instanceof EntityLivingBase) gravity = 0.08;
+			else if(entity instanceof LivingEntity) gravity = 0.08;
 			entity.motionY += gravity;
 		}
 	}
 
 	/**
 	 * Applies the standard (non-enchanted) amount of knockback to the given target, using the same calculation and
-	 * strength value (0.4) as {@link EntityLivingBase#attackEntityFrom(DamageSource, float)}. Use in conjunction with
+	 * strength value (0.4) as {@link LivingEntity#attackEntityFrom(DamageSource, float)}. Use in conjunction with
 	 * {@link EntityUtils#attackEntityWithoutKnockback(Entity, DamageSource, float)} to change the source of
 	 * knockback for an attack.
 	 *
 	 * @param attacker The entity that caused the knockback; the target will be pushed away from this entity
 	 * @param target The entity to be knocked back
 	 */
-	public static void applyStandardKnockback(Entity attacker, EntityLivingBase target){
+	public static void applyStandardKnockback(Entity attacker, LivingEntity target){
 		applyStandardKnockback(attacker, target, 0.4f);
 	}
 
 	/**
 	 * Applies the standard knockback calculation to the given target, using the same calculation as
-	 * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)}.
+	 * {@link LivingEntity#attackEntityFrom(DamageSource, float)}.
 	 *
 	 * @param attacker The entity that caused the knockback; the target will be pushed away from this entity
 	 * @param target The entity to be knocked back
 	 * @param strength The strength of the knockback
 	 */
-	public static void applyStandardKnockback(Entity attacker, EntityLivingBase target, float strength){
+	public static void applyStandardKnockback(Entity attacker, LivingEntity target, float strength){
 		double dx = attacker.posX - target.posX;
 		double dz;
 		for(dz = attacker.posZ - target.posZ; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random())
@@ -250,9 +250,9 @@ public final class EntityUtils {
 	 * @param accountForPassengers True to take passengers into account when searching for a space, false to ignore them
 	 * @return The resulting position, or null if no space was found.
 	 */
-	public static Vec3d findSpaceForTeleport(Entity entity, Vec3d destination, boolean accountForPassengers){
+	public static Vec3 findSpaceForTeleport(Entity entity, Vec3 destination, boolean accountForPassengers){
 
-		World world = entity.world;
+		Level world = entity.world;
 		AxisAlignedBB box = entity.getEntityBoundingBox();
 
 		if(accountForPassengers){
@@ -314,7 +314,7 @@ public final class EntityUtils {
 			BlockPos nearest = possiblePositions.stream().min(Comparator.comparingDouble(b -> destination.squareDistanceTo(
 					b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5))).get(); // The list can't be empty
 
-			return GeometryUtils.getFaceCentre(nearest, EnumFacing.DOWN);
+			return GeometryUtils.getFaceCentre(nearest, Direction.DOWN);
 		}
 	}
 
@@ -324,7 +324,7 @@ public final class EntityUtils {
 	/**
 	 * Attacks the given entity with the given damage source and amount, but preserving the entity's original velocity
 	 * instead of applying knockback, as would happen with
-	 * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} <i>(More accurately, calls that method as normal
+	 * {@link LivingEntity#attackEntityFrom(DamageSource, float)} <i>(More accurately, calls that method as normal
 	 * and then resets the entity's velocity to what it was before).</i> Handy for when you need to damage an entity
 	 * repeatedly in a short space of time.
 	 *
@@ -357,11 +357,11 @@ public final class EntityUtils {
 		if(source.isProjectile()) return false; // Projectile damage obviously isn't melee damage
 		if(source.isUnblockable()) return false; // Melee damage should always be blockable
 		if(!(source instanceof MinionDamage) && source instanceof IElementalDamage) return false;
-		if(!(source.getTrueSource() instanceof EntityLivingBase)) return false; // Only living things can melee!
+		if(!(source.getTrueSource() instanceof LivingEntity)) return false; // Only living things can melee!
 
-		if(source.getTrueSource() instanceof EntityPlayer && source.getDamageLocation() != null
-				&& source.getDamageLocation().distanceTo(source.getTrueSource().getPositionVector()) > ((EntityLivingBase)source
-				.getTrueSource()).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue()){
+		if(source.getTrueSource() instanceof Player && source.getDamageLocation() != null
+				&& source.getDamageLocation().distanceTo(source.getTrueSource().getPositionVector()) > ((LivingEntity)source
+				.getTrueSource()).getEntityAttribute(Player.REACH_DISTANCE).getAttributeValue()){
 			return false; // Out of melee reach for players
 		}
 
@@ -382,14 +382,14 @@ public final class EntityUtils {
 	// better to make a parent class which is extended by both armour stands and EntityLivingBase and contains only
 	// the code required by both.
 	public static boolean isLiving(Entity entity){
-		return entity instanceof EntityLivingBase && !(entity instanceof EntityArmorStand);
+		return entity instanceof LivingEntity && !(entity instanceof EntityArmorStand);
 	}
 
 	/**
 	 * Checks if the given player is opped on the given server. If the server is a singleplayer or LAN server, this
 	 * means they have cheats enabled.
 	 */
-	public static boolean isPlayerOp(EntityPlayer player, MinecraftServer server){
+	public static boolean isPlayerOp(Player player, MinecraftServer server){
 		return server.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null;
 	}
 
@@ -404,9 +404,9 @@ public final class EntityUtils {
 	 * advisable to use the location-specific methods in {@link BlockUtils}, as they call this method anyway and allow
 	 * for better compatibility with other mods, particularly region protection mods.
 	 */
-	public static boolean canDamageBlocks(@Nullable Entity entity, World world){
+	public static boolean canDamageBlocks(@Nullable Entity entity, Level world){
 		if(entity == null) return Wizardry.settings.dispenserBlockDamage;
-		else if(entity instanceof EntityPlayer) return ((EntityPlayer)entity).isAllowEdit() && Wizardry.settings.playerBlockDamage;
+		else if(entity instanceof Player) return ((Player)entity).isAllowEdit() && Wizardry.settings.playerBlockDamage;
 		return ForgeEventFactory.getMobGriefingEvent(world, entity);
 	}
 
@@ -422,13 +422,13 @@ public final class EntityUtils {
 	// The reason this is a boolean check is that actually returning a spell presents a problem: players can cast two
 	// continuous spells at once, one via commands and one via an item, so which do you choose? Since the main point was
 	// to check for specific spells, it seems more useful to do it this way.
-	public static boolean isCasting(EntityLivingBase caster, Spell spell){
+	public static boolean isCasting(LivingEntity caster, Spell spell){
 
 		if(!spell.isContinuous) return false;
 
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 
-			WizardData data = WizardData.get((EntityPlayer)caster);
+			WizardData data = WizardData.get((Player)caster);
 
 			if(data != null && data.currentlyCasting() == spell) return true;
 
@@ -479,20 +479,20 @@ public final class EntityUtils {
 
 	/**
 	 * Shortcut for
-	 * {@link World#playSound(EntityPlayer, double, double, double, SoundEvent, SoundCategory, float, float)} where the
+	 * {@link Level#playSound(Player, double, double, double, SoundEvent, SoundCategory, float, float)} where the
 	 * player is null but the x, y and z coordinates are those of the passed in player. Use in preference to
-	 * {@link EntityPlayer#playSound(SoundEvent, float, float)} if there are client-server discrepancies.
+	 * {@link Player#playSound(SoundEvent, float, float)} if there are client-server discrepancies.
 	 */
-	public static void playSoundAtPlayer(EntityPlayer player, SoundEvent sound, SoundCategory category, float volume,
-			float pitch){
+	public static void playSoundAtPlayer(Player player, SoundEvent sound, SoundCategory category, float volume,
+                                         float pitch){
 		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, category, volume, pitch);
 	}
 
 	/**
-	 * See {@link EntityUtils#playSoundAtPlayer(EntityPlayer, SoundEvent, SoundCategory, float, float)}. Category
+	 * See {@link EntityUtils#playSoundAtPlayer(Player, SoundEvent, SoundCategory, float, float)}. Category
 	 * defaults to {@link SoundCategory#PLAYERS}.
 	 */
-	public static void playSoundAtPlayer(EntityPlayer player, SoundEvent sound, float volume, float pitch){
+	public static void playSoundAtPlayer(Player player, SoundEvent sound, float volume, float pitch){
 		player.world.playSound(null, player.posX, player.posY, player.posZ, sound, SoundCategory.PLAYERS, volume, pitch);
 	}
 

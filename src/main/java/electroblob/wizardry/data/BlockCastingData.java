@@ -9,9 +9,9 @@ import electroblob.wizardry.spell.None;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -107,7 +107,7 @@ public abstract class BlockCastingData<T extends TileEntity> implements INBTSeri
 				return;
 			}
 
-			EnumFacing direction = getDirection();
+			Direction direction = getDirection();
 
 			if(MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(getSource(), spell, tileEntity.getWorld(),
 					x, y, z, direction, modifiers, castingTick))){
@@ -127,7 +127,7 @@ public abstract class BlockCastingData<T extends TileEntity> implements INBTSeri
 	}
 
 	/** Returns the direction to cast the current spell in. */
-	protected abstract EnumFacing getDirection();
+	protected abstract Direction getDirection();
 
 	/** Returns the source of spells cast from this block. */
 	protected abstract SpellCastEvent.Source getSource();

@@ -13,8 +13,8 @@ import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IPosition;
 import net.minecraft.init.Bootstrap.BehaviorDispenseOptional;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -51,10 +51,10 @@ public class BehaviourSpellDispense extends BehaviorDispenseOptional {
 		
 		successful = false;
 		
-		World world = source.getWorld();
+		Level world = source.getWorld();
 		// This returns a position that is 0.2 blocks away from the middle of the front face of the dispenser
 		IPosition position = BlockDispenser.getDispensePosition(source);
-		EnumFacing direction = source.getBlockState().getValue(BlockDispenser.FACING);
+		Direction direction = source.getBlockState().getValue(BlockDispenser.FACING);
 		
 		Spell spell = Spell.byMetadata(stack.getMetadata());
 

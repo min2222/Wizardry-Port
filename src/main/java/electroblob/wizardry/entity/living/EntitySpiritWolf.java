@@ -9,15 +9,15 @@ import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Does not implement ISummonedCreature because it has different despawning rules and because EntityWolf already has an
@@ -29,7 +29,7 @@ public class EntitySpiritWolf extends EntityWolf {
 
 	private static final int DISPEL_TIME = 10;
 
-	public EntitySpiritWolf(World world){
+	public EntitySpiritWolf(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -44,7 +44,7 @@ public class EntitySpiritWolf extends EntityWolf {
 		this.tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, true));
 		this.tasks.addTask(5, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
 		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(9, new EntityAIWatchClosest(this, Player.class, 8.0F));
 		this.tasks.addTask(9, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
 		this.targetTasks.addTask(2, new EntityAIOwnerHurtTarget(this));
@@ -97,7 +97,7 @@ public class EntitySpiritWolf extends EntityWolf {
 	}
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand){
+	public boolean processInteract(Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -129,7 +129,7 @@ public class EntitySpiritWolf extends EntityWolf {
 	}
 
 	@Override
-	protected int getExperiencePoints(EntityPlayer player){
+	protected int getExperiencePoints(Player player){
 		return 0;
 	}
 

@@ -7,16 +7,16 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityDarknessOrb extends EntityMagicProjectile {
 	
-	public EntityDarknessOrb(World world){
+	public EntityDarknessOrb(Level world){
 		super(world);
 	}
 
@@ -33,8 +33,8 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.WITHER).setProjectile(),
 					damage);
 
-			if(target instanceof EntityLivingBase && !MagicDamage.isEntityImmune(DamageType.WITHER, target))
-				((EntityLivingBase)target).addPotionEffect(new PotionEffect(MobEffects.WITHER,
+			if(target instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.WITHER, target))
+				((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.WITHER,
 						Spells.darkness_orb.getProperty(Spell.EFFECT_DURATION).intValue(),
 						Spells.darkness_orb.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 

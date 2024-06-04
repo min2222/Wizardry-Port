@@ -8,12 +8,12 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Generic superclass for all spells which conjure an item for a certain duration.
@@ -52,7 +52,7 @@ public class SpellConjuration extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(conjureItem(caster, modifiers)){
 			
@@ -66,7 +66,7 @@ public class SpellConjuration extends Spell {
 	}
 	
 	/** Spawns sparkle particles around the caster. Override to add a custom particle effect. Only called client-side. */
-	protected void spawnParticles(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		for(int i=0; i<10; i++){
 			double x = caster.posX + world.rand.nextDouble() * 2 - 1;
@@ -79,7 +79,7 @@ public class SpellConjuration extends Spell {
 	/** Adds this spell's item to the given player's inventory, placing it in the main hand if the main hand is empty.
 	 * Returns true if the item was successfully added to the player's inventory, false if there as no space or if the
 	 * player already had the item. Override to add special conjuring behaviour. */
-	protected boolean conjureItem(EntityPlayer caster, SpellModifiers modifiers){
+	protected boolean conjureItem(Player caster, SpellModifiers modifiers){
 
 		ItemStack stack = new ItemStack(item);
 
@@ -106,6 +106,6 @@ public class SpellConjuration extends Spell {
 	 * @param stack The item stack being conjured
 	 * @param modifiers The modifiers this spell was cast with
 	 */
-	protected void addItemExtras(EntityPlayer caster, ItemStack stack, SpellModifiers modifiers){}
+	protected void addItemExtras(Player caster, ItemStack stack, SpellModifiers modifiers){}
 
 }

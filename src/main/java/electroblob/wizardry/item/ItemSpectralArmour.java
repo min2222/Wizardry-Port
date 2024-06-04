@@ -1,16 +1,16 @@
 package electroblob.wizardry.item;
 
 import electroblob.wizardry.registry.Spells;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
@@ -50,14 +50,14 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 	}
 
 	@Override
-	public void onArmorTick(World world, EntityPlayer player, ItemStack stack){
+	public void onArmorTick(Level world, Player player, ItemStack stack){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) player.inventory.clearMatchingItems(this, -1, 1, null);
 		stack.setItemDamage(damage + 1);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -84,7 +84,7 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
 	// Cannot be dropped
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player){
+	public boolean onDroppedByPlayer(ItemStack item, Player player){
 		return false;
 	}
 
@@ -97,9 +97,9 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public net.minecraft.client.model.ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack,
-			EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default){
+	@OnlyIn(Dist.CLIENT)
+	public net.minecraft.client.model.ModelBiped getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
+                                                               EntityEquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default){
 		net.minecraft.client.renderer.GlStateManager.enableBlend();
 		net.minecraft.client.renderer.GlStateManager.tryBlendFuncSeparate(
 				net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA,

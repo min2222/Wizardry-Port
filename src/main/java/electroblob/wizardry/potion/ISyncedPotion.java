@@ -1,6 +1,6 @@
 package electroblob.wizardry.potion;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
@@ -24,7 +24,7 @@ public interface ISyncedPotion {
 
 	/** Returns true if this potion should sync with nearby clients when added to / removed from an entity and on
 	 * expiry, false if not. The host entity is provided in case syncing is entity-dependent. Defaults to true. */
-	default boolean shouldSync(EntityLivingBase host){
+	default boolean shouldSync(LivingEntity host){
 		return true;
 	}
 
@@ -60,7 +60,7 @@ public interface ISyncedPotion {
 		onPotionEffectEnd(event.getPotionEffect(), event.getEntityLiving());
 	}
 
-	static void onPotionEffectEnd(PotionEffect effect, EntityLivingBase host){
+	static void onPotionEffectEnd(PotionEffect effect, LivingEntity host){
 
 		if(effect != null && effect.getPotion() instanceof ISyncedPotion
 				&& ((ISyncedPotion)effect.getPotion()).shouldSync(host)){

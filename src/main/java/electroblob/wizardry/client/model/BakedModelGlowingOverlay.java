@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.ForgeModContainer;
@@ -90,7 +90,7 @@ public class BakedModelGlowingOverlay implements IBakedModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand){
+	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable Direction side, long rand){
 		if(state == null) return delegate.getQuads(state, side, rand);
 		return transformQuads(delegate.getQuads(state, side, rand), suffix);
 		//return CACHE.getUnchecked(new CacheKey(delegate, suffix, state instanceof IExtendedBlockState ? ((IExtendedBlockState) state).getClean() : state, side));

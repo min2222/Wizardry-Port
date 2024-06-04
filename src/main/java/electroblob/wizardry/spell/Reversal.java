@@ -5,14 +5,14 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ public class Reversal extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, @Nullable EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, @Nullable LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		// Naturally, this spell won't work unless it has a living caster and target
-		if(caster != null && target instanceof EntityLivingBase){
+		if(caster != null && target instanceof LivingEntity){
 
 			List<PotionEffect> negativePotions = new ArrayList<>(caster.getActivePotionEffects());
 			negativePotions.removeIf(p -> !p.getPotion().isBadEffect());
@@ -56,7 +56,7 @@ public class Reversal extends SpellRay {
 
 				// Now reverse them!
 				negativePotions.forEach(p -> caster.removePotionEffect(p.getPotion()));
-				negativePotions.forEach(((EntityLivingBase)target)::addPotionEffect);
+				negativePotions.forEach(((LivingEntity)target)::addPotionEffect);
 
 			}else{
 				ParticleBuilder.create(Type.BUFF).entity(caster).clr(1, 1, 0.3f).spawn(world);
@@ -67,17 +67,17 @@ public class Reversal extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, @Nullable EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, @Nullable LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, @Nullable EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return true;
 	}
 
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.1f, 0, 0.05f).spawn(world);
 	}

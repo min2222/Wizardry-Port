@@ -9,12 +9,12 @@ import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class EntityMeteor extends EntityFallingBlock {
 
@@ -24,13 +24,13 @@ public class EntityMeteor extends EntityFallingBlock {
 	public float blastMultiplier;
 	private boolean damageBlocks;
 
-	public EntityMeteor(World world){
+	public EntityMeteor(Level world){
 		super(world);
 		// Superconstructor doesn't call this.
 		this.setSize(0.98F, 0.98F);
 	}
 
-	public EntityMeteor(World world, double x, double y, double z, float blastMultiplier, boolean damageBlocks){
+	public EntityMeteor(Level world, double x, double y, double z, float blastMultiplier, boolean damageBlocks){
 		super(world, x, y, z, WizardryBlocks.meteor.getDefaultState());
 		this.motionY = -1.0D;
 		this.setFire(200);
@@ -76,7 +76,7 @@ public class EntityMeteor extends EntityFallingBlock {
 				this.setDead();
 
 			}else{
-				EntityUtils.getEntitiesWithinRadius(15, posX, posY, posZ, world, EntityPlayer.class)
+				EntityUtils.getEntitiesWithinRadius(15, posX, posY, posZ, world, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 10));
 			}
 		}
@@ -88,7 +88,7 @@ public class EntityMeteor extends EntityFallingBlock {
 		// Don't need to do anything here, the meteor should have already exploded.
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean canRenderOnFire(){
 		return true;
@@ -100,7 +100,7 @@ public class EntityMeteor extends EntityFallingBlock {
 														// client
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public int getBrightnessForRender(){
 		return 15728880;

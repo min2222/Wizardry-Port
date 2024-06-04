@@ -3,8 +3,8 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class Heal extends SpellBuff {
 
@@ -15,7 +15,7 @@ public class Heal extends SpellBuff {
 	}
 	
 	@Override
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 		
 		if(caster.getHealth() < caster.getMaxHealth() && caster.getHealth() > 0){
 			heal(caster, getProperty(HEALTH).floatValue() * modifiers.get(SpellModifiers.POTENCY));
@@ -31,15 +31,15 @@ public class Heal extends SpellBuff {
 	 * @param entity The entity to heal
 	 * @param health The number of half-hearts to heal
 	 */
-	public static void heal(EntityLivingBase entity, float health){
+	public static void heal(LivingEntity entity, float health){
 
 		float excessHealth = entity.getHealth() + health - entity.getMaxHealth();
 
 		entity.heal(health);
 
 		// If the player is able to heal, they can't possibly have absorption hearts, so no need to check!
-		if(excessHealth > entity.getAbsorptionAmount() && entity instanceof EntityPlayer
-				&& ItemArtefact.isArtefactActive((EntityPlayer)entity, WizardryItems.amulet_absorption)){
+		if(excessHealth > entity.getAbsorptionAmount() && entity instanceof Player
+				&& ItemArtefact.isArtefactActive((Player)entity, WizardryItems.amulet_absorption)){
 			entity.setAbsorptionAmount(excessHealth);
 		}
 

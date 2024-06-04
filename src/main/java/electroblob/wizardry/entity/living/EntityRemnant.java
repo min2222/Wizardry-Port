@@ -5,26 +5,26 @@ import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -40,7 +40,7 @@ public class EntityRemnant extends EntityMob {
 	@Nullable
 	private BlockPos boundOrigin;
 
-	public EntityRemnant(World world){
+	public EntityRemnant(Level world){
 		super(world);
 		this.setSize(0.8f, 0.8f);
 		this.moveHelper = new EntityRemnant.AIMoveControl(this);
@@ -60,10 +60,10 @@ public class EntityRemnant extends EntityMob {
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(4, new EntityRemnant.AIChargeAttack());
 		this.tasks.addTask(8, new EntityRemnant.AIMoveRandom());
-		this.tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 3.0F, 1.0F));
+		this.tasks.addTask(9, new EntityAIWatchClosest(this, Player.class, 3.0F, 1.0F));
 		this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityRemnant.class));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, Player.class, true));
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class EntityRemnant extends EntityMob {
 
 		if(world.isRemote){
 
-			Vec3d centre = this.getPositionVector().add(0, height/2, 0);
+			Vec3 centre = this.getPositionVector().add(0, height/2, 0);
 
 			int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(this.getElement());
 
@@ -224,9 +224,9 @@ public class EntityRemnant extends EntityMob {
 
 		@Override
 		public void startExecuting(){
-			EntityLivingBase entitylivingbase = EntityRemnant.this.getAttackTarget();
+			LivingEntity entitylivingbase = EntityRemnant.this.getAttackTarget();
 			if(entitylivingbase == null) return;
-			Vec3d vec3d = entitylivingbase.getPositionEyes(1.0F);
+			Vec3 vec3d = entitylivingbase.getPositionEyes(1.0F);
 			EntityRemnant.this.moveHelper.setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1.0D);
 			EntityRemnant.this.setAttacking(true);
 //			EntityRemnant.this.playSound(SoundEvents.ENTITY_VEX_CHARGE, 1.0F, 1.0F);
@@ -240,7 +240,7 @@ public class EntityRemnant extends EntityMob {
 		@Override
 		public void updateTask(){
 
-			EntityLivingBase entitylivingbase = EntityRemnant.this.getAttackTarget();
+			LivingEntity entitylivingbase = EntityRemnant.this.getAttackTarget();
 
 			if(entitylivingbase == null) return;
 
@@ -251,7 +251,7 @@ public class EntityRemnant extends EntityMob {
 				double d0 = EntityRemnant.this.getDistanceSq(entitylivingbase);
 
 				if(d0 < 9.0D){
-					Vec3d vec3d = entitylivingbase.getPositionEyes(1.0F);
+					Vec3 vec3d = entitylivingbase.getPositionEyes(1.0F);
 					EntityRemnant.this.moveHelper.setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1.0D);
 				}
 			}

@@ -1,7 +1,7 @@
 package electroblob.wizardry.inventory;
 
 import electroblob.wizardry.item.ItemSpellBook;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
@@ -54,12 +54,12 @@ public class SlotBookList extends SlotItemClassList {
 	}
 
 	@Override
-	public boolean canTakeStack(EntityPlayer player){
+	public boolean canTakeStack(Player player){
 		return false;
 	}
 
 	@Override
-	public ItemStack onTake(EntityPlayer player, ItemStack stack){
+	public ItemStack onTake(Player player, ItemStack stack){
 		return stack;
 	}
 

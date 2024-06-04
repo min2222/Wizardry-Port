@@ -3,7 +3,7 @@ package electroblob.wizardry.integration;
 import com.google.common.collect.ImmutableSet;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

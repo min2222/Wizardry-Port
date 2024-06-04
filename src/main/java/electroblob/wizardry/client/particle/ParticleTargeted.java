@@ -5,10 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -31,7 +31,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 	@Nullable
 	protected Entity target = null;
 	
-	public ParticleTargeted(World world, double x, double y, double z, ResourceLocation... textures){
+	public ParticleTargeted(Level world, double x, double y, double z, ResourceLocation... textures){
 		super(world, x, y, z, textures);
 	}
 	
@@ -73,7 +73,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 
 	@Override
 	public void renderParticle(BufferBuilder buffer, Entity viewer, float partialTicks, float rotationX, float rotationZ, float rotationYZ,
-			float rotationXY, float rotationXZ){
+                               float rotationXY, float rotationXZ){
 
 		// Copied from ParticleWizardry, needs to be here since we're not calling super
 		updateEntityLinking(viewer, partialTicks);
@@ -85,7 +85,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 		// Translates the particle a short distance in front of the entity
 		if(this.entity != null && this.shouldApplyOriginOffset()){
 			if(this.entity != viewer || Minecraft.getMinecraft().gameSettings.thirdPersonView != 0){
-				Vec3d look = entity.getLook(partialTicks).scale(THIRD_PERSON_AXIAL_OFFSET);
+				Vec3 look = entity.getLook(partialTicks).scale(THIRD_PERSON_AXIAL_OFFSET);
 				x += look.x;
 				y += look.y;
 				z += look.z;
@@ -102,7 +102,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 
 		}else if(this.entity != null && this.length > 0){
 
-			Vec3d look = entity.getLook(partialTicks).scale(length);
+			Vec3 look = entity.getLook(partialTicks).scale(length);
 			this.targetX = x + look.x;
 			this.targetY = y + look.y;
 			this.targetZ = z + look.z;

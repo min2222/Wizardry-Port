@@ -2,8 +2,8 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -50,19 +50,19 @@ public class TileEntityPlayerSave extends TileEntity {
 	 * another dimension, or this construct simply had no caster in the first place.
 	 */
 	@Nullable
-	public EntityLivingBase getCaster(){
+	public LivingEntity getCaster(){
 
 		Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
 
-		if(entity != null && !(entity instanceof EntityLivingBase)){ // Should never happen
+		if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 			Wizardry.logger.warn("{} has a non-living owner!", this);
 			entity = null;
 		}
 
-		return (EntityLivingBase)entity;
+		return (LivingEntity)entity;
 	}
 
-	public void setCaster(@Nullable EntityLivingBase caster){
+	public void setCaster(@Nullable LivingEntity caster){
 		this.casterUUID = caster == null ? null : caster.getUniqueID();
 	}
 

@@ -1,7 +1,7 @@
 package electroblob.wizardry.client.audio;
 
 import net.minecraft.client.audio.MovingSound;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 

@@ -8,18 +8,18 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ParticleVine extends ParticleTargeted {
 
 	/** Half the width of the vine. */
@@ -30,7 +30,7 @@ public class ParticleVine extends ParticleTargeted {
 	private static final ResourceLocation STEM_TEXTURE = new ResourceLocation(Wizardry.MODID, "particle/vine");
 	private static final ResourceLocation[] LEAF_TEXTURES = generateTextures("vine_leaf", 5);
 
-	public ParticleVine(World world, double x, double y, double z){
+	public ParticleVine(Level world, double x, double y, double z){
 		super(world, x, y, z, STEM_TEXTURE);
 		//this.setRBGColorF(1, 1, 1);
 		this.setMaxAge(0);

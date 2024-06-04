@@ -6,21 +6,21 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled construct, the size is controlled by time
 
-	public EntityEarthquake(World world){
+	public EntityEarthquake(Level world){
 		super(world);
 		setSize(1, 1); // This one probably should be small
 	}
@@ -60,14 +60,14 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 		}
 
-		List<EntityLivingBase> targets = EntityUtils
+		List<LivingEntity> targets = EntityUtils
 				.getLivingWithinRadius((this.ticksExisted * speed) + 1.5, this.posX, this.posY, this.posZ, world);
 
 		// In this particular instance, the caster is completely unaffected because they will always be in the
 		// centre.
 		targets.remove(this.getCaster());
 
-		for(EntityLivingBase target : targets){
+		for(LivingEntity target : targets){
 
 			// Searches in a 1 wide ring.
 			if(this.getDistance(target) > (this.ticksExisted * speed) + 0.5 && target.posY < this.posY + 1

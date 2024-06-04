@@ -6,16 +6,16 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class Disintegration extends SpellRay {
 
@@ -30,10 +30,10 @@ public class Disintegration extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-			if(!world.isRemote && caster instanceof EntityPlayer) ((EntityPlayer)caster).sendStatusMessage(
+			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 		}else{
 
@@ -42,7 +42,7 @@ public class Disintegration extends SpellRay {
 					MagicDamage.causeDirectMagicDamage(caster, DamageType.FIRE),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-			if(target instanceof EntityLivingBase && ((EntityLivingBase)target).getHealth() <= 0){
+			if(target instanceof LivingEntity && ((LivingEntity)target).getHealth() <= 0){
 				spawnEmbers(world, caster, target, getProperty(EMBER_COUNT).intValue());
 			}
 		}
@@ -50,7 +50,7 @@ public class Disintegration extends SpellRay {
 		return true;
 	}
 
-	public static void spawnEmbers(World world, EntityLivingBase caster, Entity target, int count){
+	public static void spawnEmbers(Level world, LivingEntity caster, Entity target, int count){
 
 		target.extinguish();
 
@@ -78,16 +78,16 @@ public class Disintegration extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(world.isRemote){
 			
 			for(int i = 0; i < 8; i++){
-				world.spawnParticle(EnumParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);
+				world.spawnParticle(ParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);
 			}
 			
 			if(world.getBlockState(pos).getMaterial().isSolid()){
-				Vec3d vec = hit.add(new Vec3d(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
+				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).clr(1, 0.2f, 0).spawn(world);
 			}
 		}
@@ -96,13 +96,13 @@ public class Disintegration extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return true;
 	}
 	
 	@Override
-	protected void spawnParticleRay(World world, Vec3d origin, Vec3d direction, EntityLivingBase caster, double distance){
-		Vec3d endpoint = origin.add(direction.scale(distance));
+	protected void spawnParticleRay(Level world, Vec3 origin, Vec3 direction, LivingEntity caster, double distance){
+		Vec3 endpoint = origin.add(direction.scale(distance));
 		ParticleBuilder.create(Type.BEAM).clr(1, 0.4f, 0).fade(1, 0.1f, 0).time(4).pos(origin).target(endpoint).spawn(world);
 	}
 

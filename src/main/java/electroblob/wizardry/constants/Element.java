@@ -1,8 +1,8 @@
 package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;

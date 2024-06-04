@@ -9,18 +9,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderArcaneLock {
 
 	private static final ResourceLocation[] TEXTURES = new ResourceLocation[8];
@@ -34,9 +34,9 @@ public class RenderArcaneLock {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		World world = Minecraft.getMinecraft().world;
-		Vec3d origin = player.getPositionEyes(event.getPartialTicks());
+		Player player = Minecraft.getMinecraft().player;
+		Level world = Minecraft.getMinecraft().world;
+		Vec3 origin = player.getPositionEyes(event.getPartialTicks());
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 
@@ -74,7 +74,7 @@ public class RenderArcaneLock {
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 				}
 
-				Vec3d[] vertices = GeometryUtils.getVertices(world.getBlockState(tileentity.getPos()).getBoundingBox(world, tileentity.getPos()).grow(0.05).offset(tileentity.getPos()));
+				Vec3[] vertices = GeometryUtils.getVertices(world.getBlockState(tileentity.getPos()).getBoundingBox(world, tileentity.getPos()).grow(0.05).offset(tileentity.getPos()));
 
 				drawFace(buffer, vertices[0], vertices[1], vertices[3], vertices[2], 0, 0, 1, 1); // Bottom
 				drawFace(buffer, vertices[6], vertices[7], vertices[2], vertices[3], 0, 0, 1, 1); // South
@@ -101,7 +101,7 @@ public class RenderArcaneLock {
 
 	}
 
-	private static void drawFace(BufferBuilder buffer, Vec3d topLeft, Vec3d topRight, Vec3d bottomLeft, Vec3d bottomRight, float u1, float v1, float u2, float v2){
+	private static void drawFace(BufferBuilder buffer, Vec3 topLeft, Vec3 topRight, Vec3 bottomLeft, Vec3 bottomRight, float u1, float v1, float u2, float v2){
 		buffer.pos(topLeft.x, topLeft.y, topLeft.z).tex(u1, v1).endVertex();
 		buffer.pos(topRight.x, topRight.y, topRight.z).tex(u2, v1).endVertex();
 		buffer.pos(bottomRight.x, bottomRight.y, bottomRight.z).tex(u2, v2).endVertex();

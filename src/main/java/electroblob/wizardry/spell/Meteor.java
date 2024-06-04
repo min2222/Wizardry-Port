@@ -6,14 +6,14 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class Meteor extends SpellRay {
 
@@ -28,7 +28,7 @@ public class Meteor extends SpellRay {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(ItemArtefact.isArtefactActive(caster, WizardryItems.ring_meteor)){
 
@@ -37,7 +37,7 @@ public class Meteor extends SpellRay {
 				EntityMeteor meteor = new EntityMeteor(world, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ,
 						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
 
-				Vec3d direction = caster.getLookVec().scale(2 * modifiers.get(WizardryItems.range_upgrade));
+				Vec3 direction = caster.getLookVec().scale(2 * modifiers.get(WizardryItems.range_upgrade));
 				meteor.motionX = direction.x;
 				meteor.motionY = direction.y;
 				meteor.motionZ = direction.z;
@@ -56,12 +56,12 @@ public class Meteor extends SpellRay {
 	@Override public boolean requiresPacket(){ return false; }
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(world.canBlockSeeSky(pos.up())){
 
@@ -78,7 +78,7 @@ public class Meteor extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 

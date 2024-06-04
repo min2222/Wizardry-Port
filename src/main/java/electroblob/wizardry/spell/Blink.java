@@ -5,19 +5,19 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class Blink extends Spell {
 
@@ -27,7 +27,7 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		boolean teleportMount = caster.isRiding() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
 		boolean hitLiquids = teleportMount && caster.getRidingEntity() instanceof EntityBoat; // Boats teleport to the surface
@@ -45,7 +45,7 @@ public class Blink extends Spell {
 				double dz = caster.posZ;
 				// For portal particles, velocity is not velocity but the offset where they start, then drift to
 				// the actual position given.
-				world.spawnParticle(EnumParticleTypes.PORTAL, dx, dy, dz, world.rand.nextDouble() - 0.5,
+				world.spawnParticle(ParticleTypes.PORTAL, dx, dy, dz, world.rand.nextDouble() - 0.5,
 						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
 			}
 
@@ -57,7 +57,7 @@ public class Blink extends Spell {
 			BlockPos pos = rayTrace.getBlockPos().offset(rayTrace.sideHit);
 			Entity toTeleport = teleportMount ? caster.getRidingEntity() : caster;
 
-			Vec3d vec = EntityUtils.findSpaceForTeleport(toTeleport, GeometryUtils.getFaceCentre(pos, EnumFacing.DOWN), teleportMount);
+			Vec3 vec = EntityUtils.findSpaceForTeleport(toTeleport, GeometryUtils.getFaceCentre(pos, Direction.DOWN), teleportMount);
 
 			if(vec != null){
 				// Plays before and after so it is heard from both positions
@@ -75,8 +75,8 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target,
-			SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+                        SpellModifiers modifiers){
 
 		float angle = (float)(Math.atan2(target.posZ - caster.posZ, target.posX - caster.posX)
 				+ world.rand.nextDouble() * Math.PI);
@@ -96,7 +96,7 @@ public class Blink extends Spell {
 				double dx1 = caster.posX;
 				double dy1 = caster.posY + caster.height * world.rand.nextFloat();
 				double dz1 = caster.posZ;
-				world.spawnParticle(EnumParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
+				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
 						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
 			}
 		}

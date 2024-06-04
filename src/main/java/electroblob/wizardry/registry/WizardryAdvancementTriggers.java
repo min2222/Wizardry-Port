@@ -3,7 +3,7 @@ package electroblob.wizardry.registry;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.advancement.*;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Class responsible for defining, storing and registering all of wizardry's advancement triggers. As of wizardry 4.2,

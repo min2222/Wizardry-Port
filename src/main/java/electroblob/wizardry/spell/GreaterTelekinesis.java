@@ -10,22 +10,22 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class GreaterTelekinesis extends SpellRay {
 
@@ -54,25 +54,25 @@ public class GreaterTelekinesis extends SpellRay {
 	}
 
 	@Override
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSoundLoop(world, entity, ticksInUse);
 	}
 
 	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSoundLoop(world, x, y, z, ticksInUse, duration);
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		// Can't be cast by dispensers so we know caster isn't null, but just in case...
-		if(caster != null && (target instanceof EntityLivingBase || target instanceof EntityLevitatingBlock || target instanceof EntityTNTPrimed)){
+		if(caster != null && (target instanceof LivingEntity || target instanceof EntityLevitatingBlock || target instanceof EntityTNTPrimed)){
 
-			if(target instanceof EntityPlayer && ((caster instanceof EntityPlayer && !Wizardry.settings.playersMoveEachOther)
-					|| ItemArtefact.isArtefactActive((EntityPlayer)target, WizardryItems.amulet_anchoring))){
+			if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
+					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-				if(!world.isRemote && caster instanceof EntityPlayer) ((EntityPlayer)caster).sendStatusMessage(
+				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 				return false;
 			}
@@ -82,14 +82,14 @@ public class GreaterTelekinesis extends SpellRay {
 				((EntityLevitatingBlock)target).setCaster(caster); // Yep, you can steal other players' blocks in mid-air!
 			}
 			
-			Vec3d targetPos = target.getPositionVector().add(0, target.height/2, 0);
+			Vec3 targetPos = target.getPositionVector().add(0, target.height/2, 0);
 			
 			if(caster.isSneaking()){
 				
-				Vec3d look = caster.getLookVec().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
+				Vec3 look = caster.getLookVec().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
 				target.addVelocity(look.x, look.y, look.z);
 				// No IntelliJ, it's not always false, that's not how polymorphism works
-				if(caster instanceof EntityPlayer) caster.swingArm(caster.getActiveHand() == null ? EnumHand.MAIN_HAND : caster.getActiveHand());
+				if(caster instanceof Player) caster.swingArm(caster.getActiveHand() == null ? EnumHand.MAIN_HAND : caster.getActiveHand());
 				
 			}else{
 			
@@ -98,9 +98,9 @@ public class GreaterTelekinesis extends SpellRay {
 				// The following code extrapolates the entity's current velocity to determine whether it will pass the
 				// target position in the next tick, and adds or subtracts velocity accordingly.
 				
-				Vec3d vec = origin.add(caster.getLookVec().scale(getProperty(HOLD_RANGE).floatValue()));
+				Vec3 vec = origin.add(caster.getLookVec().scale(getProperty(HOLD_RANGE).floatValue()));
 				
-				Vec3d velocity = vec.subtract(targetPos).subtract(target.motionX, target.motionY, target.motionZ)
+				Vec3 velocity = vec.subtract(targetPos).subtract(target.motionX, target.motionY, target.motionZ)
 						.scale(1 - UNDERSHOOT);
 				
 				target.addVelocity(velocity.x, velocity.y, velocity.z);
@@ -131,7 +131,7 @@ public class GreaterTelekinesis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.canDamageBlocks(caster, world) && !BlockUtils.isBlockUnbreakable(world, pos)
 				&& world.getBlockState(pos).getMaterial().isSolid()
@@ -157,7 +157,7 @@ public class GreaterTelekinesis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 

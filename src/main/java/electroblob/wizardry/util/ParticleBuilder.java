@@ -1,14 +1,14 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.Wizardry;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -22,7 +22,7 @@ import java.util.Random;
  * <p></p>
  * {@link ParticleBuilder#instance} retrieves the static instance of the particle builder. Use
  * {@link ParticleBuilder#particle(ResourceLocation)} to start building a particle, or alternatively use the static
- * convenience version {@link ParticleBuilder#create(ResourceLocation)}. Use {@link ParticleBuilder#spawn(World)}
+ * convenience version {@link ParticleBuilder#create(ResourceLocation)}. Use {@link ParticleBuilder#spawn(Level)}
  * to finish building and spawn the particle. Between these two, a variety of parameters can be set using the various
  * setter methods (see individual method descriptions for more details). These, along with {@code ParticleBuilder.particle(...)},
  * return the particle builder instance, allowing them to be chained together to spawn particles using a single line of code.
@@ -207,7 +207,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public ParticleBuilder pos(Vec3d pos){
+	public ParticleBuilder pos(Vec3 pos){
 		return pos(pos.x, pos.y, pos.z);
 	}
 	
@@ -239,7 +239,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public ParticleBuilder vel(Vec3d vel){
+	public ParticleBuilder vel(Vec3 vel){
 		return vel(vel.x, vel.y, vel.z);
 	}
 	
@@ -502,7 +502,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public ParticleBuilder face(EnumFacing direction){
+	public ParticleBuilder face(Direction direction){
 		return face(direction.getHorizontalAngle(), direction.getAxis().isVertical() ? direction.getAxisDirection().getOffset() * 90 : 0);
 	}
 
@@ -536,7 +536,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public ParticleBuilder target(Vec3d pos){
+	public ParticleBuilder target(Vec3 pos){
 		return target(pos.x, pos.y, pos.z);
 	}
 
@@ -569,7 +569,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public ParticleBuilder tvel(Vec3d vel){
+	public ParticleBuilder tvel(Vec3 vel){
 		return tvel(vel.x, vel.y, vel.z);
 	}
 
@@ -607,7 +607,7 @@ public final class ParticleBuilder {
 	 * @param world The world in which to spawn the particle
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
-	public void spawn(World world){
+	public void spawn(Level world){
 		
 		if(!building) throw new IllegalStateException("Not building yet!");
 
@@ -751,7 +751,7 @@ public final class ParticleBuilder {
 	// Methods for spawning specific effects (similar to the FX playing methods with the ids in RenderGlobal)
 	
 	/** Spawns spark and large smoke particles (8 of each) within a 1x1x1 volume centred on the given position. */
-	public static void spawnShockParticles(World world, double x, double y, double z) {
+	public static void spawnShockParticles(Level world, double x, double y, double z) {
 
 		double px, py, pz;
 
@@ -763,13 +763,13 @@ public final class ParticleBuilder {
 			px = x + world.rand.nextDouble() - 0.5;
 			py = y + world.rand.nextDouble() - 0.5;
 			pz = z + world.rand.nextDouble() - 0.5;
-			world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, px, py, pz, 0, 0, 0);
+			world.spawnParticle(ParticleTypes.SMOKE_LARGE, px, py, pz, 0, 0, 0);
 		}
 	}
 
 	/** Spawns golden-yellow sparkle particles around the given entity's head and a golden-yellow buff particle around
 	 * its entire body. */
-	public static void spawnHealParticles(World world, EntityLivingBase entity){
+	public static void spawnHealParticles(Level world, LivingEntity entity){
 
 		for(int i = 0; i < 10; i++){
 			double x = entity.posX + world.rand.nextDouble() * 2 - 1;

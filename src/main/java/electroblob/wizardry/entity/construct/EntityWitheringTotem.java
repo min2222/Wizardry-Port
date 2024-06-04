@@ -11,17 +11,17 @@ import electroblob.wizardry.util.BlockUtils.SurfaceCriteria;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
 import java.util.List;
@@ -32,7 +32,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 	private static final DataParameter<Float> HEALTH_DRAINED = EntityDataManager.createKey(EntityWitheringTotem.class, DataSerializers.FLOAT);
 
-	public EntityWitheringTotem(World world){
+	public EntityWitheringTotem(Level world){
 		super(world);
 		this.setSize(1, 1); // This entity is different in that its area of effect is kind of 'outside' it
 	}
@@ -83,7 +83,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 				double x = posX + radius * MathHelper.sin(angle);
 				double z = posZ + radius * MathHelper.cos(angle);
 
-				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), EnumFacing.UP, 5, true, SurfaceCriteria.COLLIDABLE);
+				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 
 				if(y != null){
 					ParticleBuilder.create(Type.DUST).pos(x, y, z).vel(0, 0.01, 0).clr(0xf575f5).fade(0x382366).spawn(world);
@@ -91,7 +91,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 			}
 		}
 
-		List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
 		nearby.removeIf(e -> !isValidTarget(e));
 		nearby.sort(Comparator.comparingDouble(e -> e.getDistanceSq(this)));
 
@@ -100,7 +100,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		while(!nearby.isEmpty() && targetsRemaining > 0){
 
-			EntityLivingBase target = nearby.remove(0);
+			LivingEntity target = nearby.remove(0);
 
 			if(EntityUtils.isLiving(target)){
 
@@ -118,8 +118,8 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 				if(world.isRemote){
 
-					Vec3d centre = GeometryUtils.getCentre(this);
-					Vec3d pos = GeometryUtils.getCentre(target);
+					Vec3 centre = GeometryUtils.getCentre(this);
+					Vec3 pos = GeometryUtils.getCentre(target);
 
 					ParticleBuilder.create(Type.BEAM).pos(centre).target(target)
 							.clr(0.1f + 0.2f * world.rand.nextFloat(), 0, 0.3f).spawn(world);
@@ -138,12 +138,12 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
-		List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
+		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, posX, posY, posZ, world);
 		nearby.removeIf(e -> !isValidTarget(e));
 
 		float damage = Math.min(getHealthDrained() * 0.2f, Spells.withering_totem.getProperty(WitheringTotem.MAX_EXPLOSION_DAMAGE).floatValue());
 
-		for(EntityLivingBase target : nearby){
+		for(LivingEntity target : nearby){
 
 			if(EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 					getCaster(), DamageType.MAGIC), damage)){

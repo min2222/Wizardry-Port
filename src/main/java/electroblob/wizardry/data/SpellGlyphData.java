@@ -8,7 +8,7 @@ import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.WorldEvent;
@@ -42,7 +42,7 @@ public class SpellGlyphData extends WorldSavedData {
 	}
 
 	/** Generates random names and descriptions for any spells which don't already have them. */
-	public void generateGlyphNames(World world){
+	public void generateGlyphNames(Level world){
 
 		for(Spell spell : Spell.getAllSpells()){
 			if(!randomNames.containsKey(spell)) randomNames.put(spell, generateRandomName(world.rand));
@@ -82,7 +82,7 @@ public class SpellGlyphData extends WorldSavedData {
 	 * Returns the spell glyph data for this world, or creates a new instance if it doesn't exist yet. Also checks for
 	 * any spells that are missing glyph data and adds it accordingly.
 	 */
-	public static SpellGlyphData get(World world){
+	public static SpellGlyphData get(Level world){
 
 		SpellGlyphData instance = (SpellGlyphData)world.loadData(SpellGlyphData.class, NAME);
 
@@ -128,7 +128,7 @@ public class SpellGlyphData extends WorldSavedData {
 	}
 
 	/** Helper method to retrieve the random glyph name for the given spell from the map stored in the given world. */
-	public static String getGlyphName(Spell spell, World world){
+	public static String getGlyphName(Spell spell, Level world){
 		Map<Spell, String> names = SpellGlyphData.get(world).randomNames;
 		return names == null ? "" : names.get(spell);
 	}
@@ -137,7 +137,7 @@ public class SpellGlyphData extends WorldSavedData {
 	 * Helper method to retrieve the random glyph description for the given spell from the map stored in the given
 	 * world.
 	 */
-	public static String getGlyphDescription(Spell spell, World world){
+	public static String getGlyphDescription(Spell spell, Level world){
 		Map<Spell, String> descriptions = SpellGlyphData.get(world).randomDescriptions;
 		return descriptions == null ? "" : descriptions.get(spell);
 	}

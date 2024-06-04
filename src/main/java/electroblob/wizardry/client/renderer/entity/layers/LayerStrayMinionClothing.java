@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelSkeleton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /** Had to copy this entire class just because of one unnecessarily specific type parameter. The type parameter has been
  * changed to {@code EntityStrayMinion} and parameter types updated accordingly. Everything else is identical. */

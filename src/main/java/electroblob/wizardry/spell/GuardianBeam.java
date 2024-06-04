@@ -4,13 +4,13 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class GuardianBeam extends SpellRay {
 
@@ -22,12 +22,12 @@ public class GuardianBeam extends SpellRay {
 	}
 
 	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		if(ticksInUse % 50 == 1) super.playSound(world, x, y, z, ticksInUse, duration, modifiers, sounds);
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		if(EntityUtils.isLiving(target)){
 
@@ -37,7 +37,7 @@ public class GuardianBeam extends SpellRay {
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-				if(!((EntityLivingBase)target).canBreatheUnderwater() && !((EntityLivingBase)target).isPotionActive(MobEffects.WATER_BREATHING)){
+				if(!((LivingEntity)target).canBreatheUnderwater() && !((LivingEntity)target).isPotionActive(MobEffects.WATER_BREATHING)){
 					target.setAir(Math.max(-20, target.getAir() - getProperty(AIR_DEPLETION).intValue()));
 				}
 			}
@@ -54,8 +54,8 @@ public class GuardianBeam extends SpellRay {
 				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target)
 				.clr(r, g, b).spawn(world);
 
-				Vec3d direction = GeometryUtils.getCentre(target).subtract(origin);
-				Vec3d pos = origin.add(direction.scale(world.rand.nextFloat()));
+				Vec3 direction = GeometryUtils.getCentre(target).subtract(origin);
+				Vec3 pos = origin.add(direction.scale(world.rand.nextFloat()));
 				ParticleBuilder.create(Type.MAGIC_BUBBLE, world.rand, pos.x, pos.y, pos.z, 0.15, false).spawn(world);
 			}
 		}
@@ -64,16 +64,16 @@ public class GuardianBeam extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false; // Only works on hit
 	}
 
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 	}
 }

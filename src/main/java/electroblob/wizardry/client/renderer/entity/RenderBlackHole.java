@@ -5,11 +5,10 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.client.renderer.RayHelper;
 import electroblob.wizardry.entity.construct.EntityBlackHole;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 

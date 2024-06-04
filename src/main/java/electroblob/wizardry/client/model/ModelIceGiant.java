@@ -3,8 +3,8 @@ package electroblob.wizardry.client.model;
 import electroblob.wizardry.entity.living.EntityIceGiant;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
 import javax.vecmath.Matrix4f;
@@ -232,7 +232,7 @@ public class ModelIceGiant extends ModelBase {
 	 * Used for easily adding entity-dependent animations. The second and third float params here are the same second
 	 * and third as in the setRotationAngles method.
 	 */
-	public void setLivingAnimations(EntityLivingBase par1EntityLivingBase, float par2, float par3, float par4){
+	public void setLivingAnimations(LivingEntity par1EntityLivingBase, float par2, float par3, float par4){
 		EntityIceGiant entityicegiant = (EntityIceGiant)par1EntityLivingBase;
 		int i = entityicegiant.getAttackTimer();
 

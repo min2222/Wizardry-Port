@@ -6,10 +6,10 @@ import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Loader;
@@ -63,20 +63,20 @@ public final class WizardryBaublesIntegration {
 	 * @param item The item to check for.
 	 * @return True if the given item is equipped in a bauble slot, false otherwise.
 	 */
-	public static boolean isBaubleEquipped(EntityPlayer player, Item item){
+	public static boolean isBaubleEquipped(Player player, Item item){
 		return BaublesApi.isBaubleEquipped(player, item) >= 0;
 	}
 
 	/**
 	 * Returns a list of artefact stacks equipped of the given types. <i>This method does not check whether artefacts
-	 * have been disabled in the config! {@link ItemArtefact#getActiveArtefacts(EntityPlayer, ItemArtefact.Type...)}
+	 * have been disabled in the config! {@link ItemArtefact#getActiveArtefacts(Player, ItemArtefact.Type...)}
 	 * should be used instead of this method in nearly all cases.</i>
 	 * @param player The player whose inventory is to be checked.
 	 * @param types Zero or more artefact types to check for. If omitted, searches for all types.
 	 * @return A list of equipped artefact {@code ItemStacks}.
 	 */
 	// This could return all ItemStacks, but if an artefact type is given this doesn't really make sense.
-	public static List<ItemArtefact> getEquippedArtefacts(EntityPlayer player, ItemArtefact.Type... types){
+	public static List<ItemArtefact> getEquippedArtefacts(Player player, ItemArtefact.Type... types){
 
 		List<ItemArtefact> artefacts = new ArrayList<>();
 
@@ -101,12 +101,12 @@ public final class WizardryBaublesIntegration {
 		}
 
 		@Override
-		public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing){
+		public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Direction facing){
 			return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE;
 		}
 
 		@Override
-		public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing){
+		public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing){
 			// This lambda expression is an implementation of the entire IBauble interface
 			return capability == BaublesCapabilities.CAPABILITY_ITEM_BAUBLE ? (T)(IBauble)itemStack -> type : null;
 		}

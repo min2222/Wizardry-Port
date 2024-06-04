@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.util.NBTExtras;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
@@ -62,7 +62,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 		// When a player gets near, generate the books so they can actually see them (if it was generated naturally)
 		if(lootTable != null && natural){
-			EntityPlayer player = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+			Player player = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 					LOOT_GEN_DISTANCE, false);
 			if(player != null){
 				natural = false; // It's a normal bookshelf now (unlikely to matter but you never know)
@@ -134,7 +134,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public void fillWithLoot(@Nullable EntityPlayer player){
+	public void fillWithLoot(@Nullable Player player){
 		if(world != null && world.getLootTableManager() != null) super.fillWithLoot(player); // IntelliJ is wrong, it can be null
 	}
 
@@ -159,17 +159,17 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer player){
+	public boolean isUsableByPlayer(Player player){
 		return world.getTileEntity(pos) == this && player.getDistanceSqToCenter(pos) < 64;
 	}
 
 	@Override
-	public void openInventory(EntityPlayer player){
+	public void openInventory(Player player){
 
 	}
 
 	@Override
-	public void closeInventory(EntityPlayer player){
+	public void closeInventory(Player player){
 
 	}
 
@@ -285,7 +285,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer player){
+	public Container createContainer(InventoryPlayer playerInventory, Player player){
 		this.fillWithLoot(player);
 		return new ContainerBookshelf(playerInventory, this);
 	}

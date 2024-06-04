@@ -8,9 +8,9 @@ import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class ItemArcaneTome extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -51,9 +51,9 @@ public class ItemArcaneTome extends Item {
 		return EnumRarity.COMMON;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void addInformation(ItemStack stack, World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag showAdvanced){
+	public void addInformation(ItemStack stack, Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag showAdvanced){
 
 		if(stack.getItemDamage() < 1){
 			return; // If something's up with the metadata it will display a 'generic' tome of arcana with no info

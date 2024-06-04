@@ -8,7 +8,7 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,7 +30,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 	/** The entity the AI instance has been applied to. Thanks to type parameters, methods from both EntityLiving and
 	 * ISummonedCreature may be invoked on this field. */
 	private final T attacker;
-	private EntityLivingBase target;
+	private LivingEntity target;
 	/**
 	 * Decremented each tick while greater than 0. When a spell is cast, this is set to that spell's cooldown plus the
 	 * base cooldown.
@@ -78,7 +78,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 	@Override
 	public boolean shouldExecute(){
 
-		EntityLivingBase entitylivingbase = this.attacker.getAttackTarget();
+		LivingEntity entitylivingbase = this.attacker.getAttackTarget();
 
 		if(entitylivingbase == null){
 			return false;

@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleGuardianBeam extends ParticleTargeted {
@@ -17,7 +17,7 @@ public class ParticleGuardianBeam extends ParticleTargeted {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft:textures/entity/guardian_beam.png");
 
-	public ParticleGuardianBeam(World world, double x, double y, double z){
+	public ParticleGuardianBeam(Level world, double x, double y, double z){
 		super(world, x, y, z); // Does't use TextureAtlasSprite
 		this.setRBGColorF(1, 1, 1);
 		this.setMaxAge(3);

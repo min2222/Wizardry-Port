@@ -8,15 +8,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -116,7 +116,7 @@ public abstract class ParticleWizardry extends Particle {
 	 * shown in order for an equal proportion of the particle's lifetime. If this argument is omitted (or a zero-length
 	 * array is given), the particle will use the vanilla system instead (based on the X/Y texture indices).
 	 */
-	public ParticleWizardry(World world, double x, double y, double z, ResourceLocation... textures){
+	public ParticleWizardry(Level world, double x, double y, double z, ResourceLocation... textures){
 		
 		super(world, x, y, z);
 		
@@ -477,8 +477,8 @@ public abstract class ParticleWizardry extends Particle {
 					this.posY, this.posZ, world, Entity.class);
 
 			if(nearbyEntities.stream().anyMatch(e -> e instanceof ICustomHitbox
-					&& ((ICustomHitbox)e).calculateIntercept(new Vec3d(posX, posY, posZ),
-					new Vec3d(prevPosX, prevPosY, prevPosZ), 0) != null)) this.setExpired();
+					&& ((ICustomHitbox)e).calculateIntercept(new Vec3(posX, posY, posZ),
+					new Vec3(prevPosX, prevPosY, prevPosZ), 0) != null)) this.setExpired();
 
 		}
 
@@ -590,9 +590,9 @@ public abstract class ParticleWizardry extends Particle {
 
 	/** Simple particle factory interface which takes a world and a position and returns a particle. Used (via method
 	 * references) in the client proxy to link particle enum types to actual particle classes. */
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@FunctionalInterface
 	public interface IWizardryParticleFactory {
-	    ParticleWizardry createParticle(World world, double x, double y, double z);
+	    ParticleWizardry createParticle(Level world, double x, double y, double z);
 	}
 }

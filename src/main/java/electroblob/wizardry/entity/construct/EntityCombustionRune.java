@@ -3,16 +3,16 @@ package electroblob.wizardry.entity.construct;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityCombustionRune extends EntityScaledConstruct {
 
-	public EntityCombustionRune(World world){
+	public EntityCombustionRune(Level world){
 		super(world);
 		setSize(2, 0.2f);
 	}
@@ -34,9 +34,9 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 
 		if(!this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(width/2, posX, posY, posZ, world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(width/2, posX, posY, posZ, world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(this.isValidTarget(target)){
 
@@ -52,7 +52,7 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 		}else if(this.rand.nextInt(15) == 0){
 			double radius = 0.5 + rand.nextDouble() * 0.3;
 			float angle = rand.nextFloat() * (float)Math.PI * 2;
-			world.spawnParticle(EnumParticleTypes.FLAME, this.posX + radius * MathHelper.cos(angle), this.posY + 0.1,
+			world.spawnParticle(ParticleTypes.FLAME, this.posX + radius * MathHelper.cos(angle), this.posY + 0.1,
 					this.posZ + radius * MathHelper.sin(angle), 0, 0, 0);
 		}
 	}

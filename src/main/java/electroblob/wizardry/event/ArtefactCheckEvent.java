@@ -1,14 +1,14 @@
 package electroblob.wizardry.event;
 
 import electroblob.wizardry.item.ItemArtefact;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * ArtefactCheckEvent is fired when a check happens for an ItemArtefact using {@link electroblob.wizardry.item.ItemArtefact#isArtefactActive(net.minecraft.entity.player.EntityPlayer, net.minecraft.item.Item)}
+ * ArtefactCheckEvent is fired when a check happens for an ItemArtefact using {@link electroblob.wizardry.item.ItemArtefact#isArtefactActive(Player, net.minecraft.item.Item)}
  * <i>Fired on both sides.</i><br>
  * <br>
  * This event is {@link Cancelable}. <br>
@@ -25,9 +25,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class ArtefactCheckEvent extends PlayerEvent {
 
 	ItemArtefact artefact;
-	EntityPlayer player;
+	Player player;
 
-	public ArtefactCheckEvent(EntityPlayer player, ItemArtefact artefact) {
+	public ArtefactCheckEvent(Player player, ItemArtefact artefact) {
 		super(player);
 		this.player = player;
 		this.artefact = artefact;
@@ -38,7 +38,7 @@ public class ArtefactCheckEvent extends PlayerEvent {
 		return artefact;
 	}
 
-	public EntityPlayer getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 

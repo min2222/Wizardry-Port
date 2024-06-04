@@ -4,9 +4,9 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -37,12 +37,12 @@ public abstract class SpellCastEvent extends Event {
 	private final Spell spell;
 	private final SpellModifiers modifiers;
 	private final Source source;
-	private final EntityLivingBase caster;
-	private final World world;
+	private final LivingEntity caster;
+	private final Level world;
 	private final double x, y, z;
-	private final EnumFacing direction;
+	private final Direction direction;
 
-	public SpellCastEvent(Source source, Spell spell, EntityLivingBase caster, SpellModifiers modifiers){
+	public SpellCastEvent(Source source, Spell spell, LivingEntity caster, SpellModifiers modifiers){
 		super();
 		this.spell = spell;
 		this.modifiers = modifiers;
@@ -55,7 +55,7 @@ public abstract class SpellCastEvent extends Event {
 		this.direction = null;
 	}
 	
-	public SpellCastEvent(Source source, Spell spell, World world, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers){
+	public SpellCastEvent(Source source, Spell spell, Level world, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 		super();
 		this.spell = spell;
 		this.modifiers = modifiers;
@@ -85,13 +85,13 @@ public abstract class SpellCastEvent extends Event {
 	
 	/** Returns the entity that cast this spell, or null if it was cast from a dispenser or a command with coordinates. */
 	@Nullable
-	public EntityLivingBase getCaster(){
+	public LivingEntity getCaster(){
 		return caster;
 	}
 	
 	/** Returns the world in which this spell was cast. If the spell was cast by an entity, this is equivalent to
 	 * {@code getCaster().world}. */
-	public World getWorld(){
+	public Level getWorld(){
 		return world;
 	}
 	
@@ -112,7 +112,7 @@ public abstract class SpellCastEvent extends Event {
 	
 	/** Returns the direction in which this spell was cast, or null if the spell was not cast from a position. */
 	@Nullable
-	public EnumFacing getDirection(){
+	public Direction getDirection(){
 		return direction;
 	}
 
@@ -159,11 +159,11 @@ public abstract class SpellCastEvent extends Event {
 	@Cancelable
 	public static class Pre extends SpellCastEvent {
 
-		public Pre(Source source, Spell spell, EntityLivingBase caster, SpellModifiers modifiers){
+		public Pre(Source source, Spell spell, LivingEntity caster, SpellModifiers modifiers){
 			super(source, spell, caster, modifiers);
 		}
 		
-		public Pre(Source source, Spell spell, World world, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers){
+		public Pre(Source source, Spell spell, Level world, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 			super(source, spell, world, x, y, z, direction, modifiers);
 		}
 	}
@@ -187,11 +187,11 @@ public abstract class SpellCastEvent extends Event {
 	 */
 	public static class Post extends SpellCastEvent {
 
-		public Post(Source source, Spell spell, EntityLivingBase caster, SpellModifiers modifiers){
+		public Post(Source source, Spell spell, LivingEntity caster, SpellModifiers modifiers){
 			super(source, spell, caster, modifiers);
 		}
 		
-		public Post(Source source, Spell spell, World world, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers){
+		public Post(Source source, Spell spell, Level world, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 			super(source, spell, world, x, y, z, direction, modifiers);
 		}
 
@@ -217,12 +217,12 @@ public abstract class SpellCastEvent extends Event {
 
 		private final int count;
 
-		public Tick(Source source, Spell spell, EntityLivingBase caster, SpellModifiers modifiers, int count){
+		public Tick(Source source, Spell spell, LivingEntity caster, SpellModifiers modifiers, int count){
 			super(source, spell, caster, modifiers);
 			this.count = count;
 		}
 		
-		public Tick(Source source, Spell spell, World world, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers, int count){
+		public Tick(Source source, Spell spell, Level world, double x, double y, double z, Direction direction, SpellModifiers modifiers, int count){
 			super(source, spell, world, x, y, z, direction, modifiers);
 			this.count = count;
 		}
@@ -252,12 +252,12 @@ public abstract class SpellCastEvent extends Event {
 
 		private final int count;
 
-		public Finish(Source source, Spell spell, EntityLivingBase caster, SpellModifiers modifiers, int count){
+		public Finish(Source source, Spell spell, LivingEntity caster, SpellModifiers modifiers, int count){
 			super(source, spell, caster, modifiers);
 			this.count = count;
 		}
 
-		public Finish(Source source, Spell spell, World world, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers, int count){
+		public Finish(Source source, Spell spell, Level world, double x, double y, double z, Direction direction, SpellModifiers modifiers, int count){
 			super(source, spell, world, x, y, z, direction, modifiers);
 			this.count = count;
 		}

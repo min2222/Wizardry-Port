@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Font renderer that renders parts of strings surrounded by '#' (without quotes) in the SGA instead of normal text.
@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
 public class MixedFontRenderer extends FontRenderer {
 
 	public MixedFontRenderer(GameSettings p_i1035_1_, ResourceLocation p_i1035_2_, TextureManager p_i1035_3_,
-			boolean p_i1035_4_){
+                             boolean p_i1035_4_){
 		super(p_i1035_1_, p_i1035_2_, p_i1035_3_, p_i1035_4_);
 	}
 

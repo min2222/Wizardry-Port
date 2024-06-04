@@ -6,16 +6,16 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.RayTracer;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 /**
@@ -39,7 +39,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	public float damageMultiplier = 1.0f;
 
 	/** Creates a new projectile in the given world. */
-	public EntityMagicProjectile(World world){
+	public EntityMagicProjectile(Level world){
 		super(world);
 	}
 
@@ -47,7 +47,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	
 	/** Sets the shooter of the projectile to the given caster, positions the projectile at the given caster's eyes and
 	 * aims it in the direction they are looking with the given speed. */
-	public void aim(EntityLivingBase caster, float speed){
+	public void aim(LivingEntity caster, float speed){
 		this.setPosition(caster.posX, caster.posY + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET, caster.posZ);
 		// This is the standard set of parameters for this method, used by snowballs and ender pearls amongst others.
 		this.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, speed, 1.0f);
@@ -60,7 +60,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	 * aims it at the given target with the given speed. The trajectory will be altered slightly by a random amount
 	 * determined by the aimingError parameter. For reference, skeletons set this to 10 on easy, 6 on normal and 2 on hard
 	 * difficulty. */
-	public void aim(EntityLivingBase caster, Entity target, float speed, float aimingError){
+	public void aim(LivingEntity caster, Entity target, float speed, float aimingError){
 		
 		this.thrower = caster;
 		// Mojang's 'fix' for the projectile-hitting-thrower bug actually made the problem worse, hence the following line.
@@ -87,7 +87,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 		}
 	}
 
-	public void setCaster(EntityLivingBase caster){
+	public void setCaster(LivingEntity caster){
 		this.thrower = caster;
 		this.ignoreEntity = caster;
 	}
@@ -98,7 +98,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	 * of attraction, otherwise it is 0.
 	 */
 	public float getSeekingStrength(){
-		return getThrower() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getThrower(),
+		return getThrower() instanceof Player && ItemArtefact.isArtefactActive((Player)getThrower(),
 				WizardryItems.ring_seeking) ? 2 : 0;
 	}
 
@@ -114,17 +114,17 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 		// Seeking
 		if(getSeekingStrength() > 0){
 
-			Vec3d velocity = new Vec3d(motionX, motionY, motionZ);
+			Vec3 velocity = new Vec3(motionX, motionY, motionZ);
 
 			RayTraceResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
 					this.getPositionVector().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
-					true, false, EntityLivingBase.class, RayTracer.ignoreEntityFilter(null));
+					true, false, LivingEntity.class, RayTracer.ignoreEntityFilter(null));
 
 			if(hit != null && hit.entityHit != null){
 
 				if(AllyDesignationSystem.isValidTarget(getThrower(), hit.entityHit)){
 
-					Vec3d direction = new Vec3d(hit.entityHit.posX, hit.entityHit.posY + hit.entityHit.height/2,
+					Vec3 direction = new Vec3(hit.entityHit.posX, hit.entityHit.posY + hit.entityHit.height/2,
 							hit.entityHit.posZ).subtract(this.getPositionVector()).normalize().scale(velocity.length());
 
 					motionX = motionX + 2 * (direction.x - motionX) / SEEKING_TIME;
@@ -157,7 +157,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 		int id = data.readInt();
 		if(id == -1) return;
 		Entity entity = this.world.getEntityByID(id);
-		if(entity instanceof EntityLivingBase) this.thrower = (EntityLivingBase)entity;
+		if(entity instanceof LivingEntity) this.thrower = (LivingEntity)entity;
 		this.ignoreEntity = this.thrower;
 	}
 	

@@ -11,16 +11,16 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderShield {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/shield.png");
@@ -31,7 +31,7 @@ public class RenderShield {
 		// Only render in first person
 		if(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0){
 
-			EntityPlayer player = Minecraft.getMinecraft().player;
+			Player player = Minecraft.getMinecraft().player;
 
 			if(WizardData.get(player).getVariable(Shield.SHIELD_KEY) != null && EntityUtils.isCasting(player, Spells.shield)){
 
@@ -98,7 +98,7 @@ public class RenderShield {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		EntityPlayer player = event.getEntityPlayer();
+		Player player = event.getEntityPlayer();
 
 		if(WizardData.get(player).getVariable(Shield.SHIELD_KEY) != null && EntityUtils.isCasting(player, Spells.shield)){
 

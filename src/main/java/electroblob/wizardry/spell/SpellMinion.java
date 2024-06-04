@@ -7,19 +7,19 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -55,15 +55,15 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	public static final String POTENCY_ATTRIBUTE_MODIFIER = "potency";
 	
 	/** A factory that creates summoned creature entities. */
-	protected final Function<World, T> minionFactory;
+	protected final Function<Level, T> minionFactory;
 	/** Whether the minions are spawned in mid-air. Defaults to false. */
 	protected boolean flying = false;
 
-	public SpellMinion(String name, Function<World, T> minionFactory){
+	public SpellMinion(String name, Function<Level, T> minionFactory){
 		this(Wizardry.MODID, name, minionFactory);
 	}
 
-	public SpellMinion(String modID, String name, Function<World, T> minionFactory){
+	public SpellMinion(String modID, String name, Function<Level, T> minionFactory){
 		super(modID, name, SpellActions.SUMMON, false);
 		this.minionFactory = minionFactory;
 		addProperties(MINION_LIFETIME, MINION_COUNT, SUMMON_RADIUS);
@@ -85,7 +85,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!this.spawnMinions(world, caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -93,8 +93,8 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target,
-			SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+                        SpellModifiers modifiers){
 
 		if(!this.spawnMinions(world, caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -102,7 +102,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	}
 	
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
 		BlockPos pos = new BlockPos(x, y, z);
 		
@@ -137,10 +137,10 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	 * @param modifiers The spell modifiers this spell was cast with.
 	 * @return False to cause the spell to fail, true to allow it to continue.
 	 * 
-	 * @see SpellMinion#addMinionExtras(EntityLiving, BlockPos, EntityLivingBase, SpellModifiers, int)
+	 * @see SpellMinion#addMinionExtras(EntityLiving, BlockPos, LivingEntity, SpellModifiers, int)
 	 */
 	// Protected since someone might want to extend this class and change the behaviour of this method.
-	protected boolean spawnMinions(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnMinions(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			for(int i=0; i<getProperty(MINION_COUNT).intValue(); i++){
@@ -198,7 +198,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	 * @param modifiers The spell modifiers this spell was cast with.
 	 * @return The resulting minion entity.
 	 */
-	protected T createMinion(World world, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected T createMinion(Level world, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		return minionFactory.apply(world);
 	}
 	
@@ -213,7 +213,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	 * @param alreadySpawned The number of minions already spawned, before this one. Always less than the property
 	 * {@link SpellMinion#MINION_COUNT}.
 	 */
-	protected void addMinionExtras(T minion, BlockPos pos, @Nullable EntityLivingBase caster, SpellModifiers modifiers, int alreadySpawned){
+	protected void addMinionExtras(T minion, BlockPos pos, @Nullable LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
 		minion.onInitialSpawn(minion.world.getDifficultyForLocation(pos), null);
 	}
 

@@ -12,16 +12,16 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockRedstoneOre;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -60,7 +60,7 @@ public class Divination extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
@@ -76,7 +76,7 @@ public class Divination extends Spell {
 
 		Strength strength = Strength.NOTHING;
 
-		EnumFacing direction = EnumFacing.DOWN; // Doesn't matter what this is
+		Direction direction = Direction.DOWN; // Doesn't matter what this is
 
 		if(!sphere.isEmpty()){
 
@@ -86,7 +86,7 @@ public class Divination extends Spell {
 			// The weights are sorted in ascending order, so this must be the largest
 			BlockPos target = sphere.get(sphere.size() - 1);
 
-			direction = EnumFacing.getFacingFromVector((float)(target.getX() + 0.5 - caster.posX),
+			direction = Direction.getFacingFromVector((float)(target.getX() + 0.5 - caster.posX),
 					(float)(target.getY() + 0.5 - (caster.posY + caster.getEyeHeight())),
 					(float)(target.getZ() + 0.5 - caster.posZ));
 
@@ -118,9 +118,9 @@ public class Divination extends Spell {
 		return true;
 	}
 
-	private static void spawnHintParticles(World world, Entity caster, int count, EnumFacing direction){
+	private static void spawnHintParticles(Level world, Entity caster, int count, Direction direction){
 
-		Vec3d vec = new Vec3d(caster.getPosition().offset(EnumFacing.UP).offset(direction, 2)).add(0.5, 0.5, 0.5);
+		Vec3 vec = new Vec3(caster.getPosition().offset(Direction.UP).offset(direction, 2)).add(0.5, 0.5, 0.5);
 
 		for(int i=0; i<count; i++){
 			ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.rand, vec.x, vec.y, vec.z, 0.7, false)
@@ -129,7 +129,7 @@ public class Divination extends Spell {
 		}
 	}
 
-	protected static float calculateWeight(World world, EntityPlayer caster, BlockPos pos, double range, SpellModifiers modifiers){
+	protected static float calculateWeight(Level world, Player caster, BlockPos pos, double range, SpellModifiers modifiers){
 
 		Block block = world.getBlockState(pos).getBlock();
 		// On a non-sorcery wand, the value of the ore has no effect on its weight

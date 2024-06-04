@@ -5,12 +5,12 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.client.audio.PositionedSound;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /** Abstract base class for sound loops associated with spells; see subclasses below for implementations. */
 public abstract class SoundLoopSpell extends SoundLoop {
@@ -40,9 +40,9 @@ public abstract class SoundLoopSpell extends SoundLoop {
 	/** Implements a sound loop for continuous spells cast by entities. */
 	public static class SoundLoopSpellEntity extends SoundLoopSpell {
 
-		private final EntityLivingBase source;
+		private final LivingEntity source;
 
-		public SoundLoopSpellEntity(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, EntityLivingBase source, float volume, float pitch){
+		public SoundLoopSpellEntity(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, LivingEntity source, float volume, float pitch){
 			super(start, loop, end, volume, (sound, category, v, repeat) -> new MovingSoundEntity<>(source, sound, category, v, pitch, repeat), spell);
 			this.source = source;
 		}
@@ -75,7 +75,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 
 		private final TileEntityDispenser source;
 
-		public SoundLoopSpellDispenser(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, World world,
+		public SoundLoopSpellDispenser(SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell, Level world,
 									   double x, double y, double z, float sndVolume, float sndPitch){
 			super(start, loop, end, spell, x, y, z, sndVolume, sndPitch);
 

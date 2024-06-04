@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Layer used to render the appear/disappear animation for summoned creatures.
@@ -19,8 +19,8 @@ import net.minecraftforge.fml.relauncher.Side;
  * @author Electroblob
  * @since Wizardry 4.3
  */
-@EventBusSubscriber(Side.CLIENT)
-public class LayerSummonAnimation<T extends EntityLivingBase> extends LayerTiledOverlay<T> {
+@EventBusSubscriber(Dist.CLIENT)
+public class LayerSummonAnimation<T extends LivingEntity> extends LayerTiledOverlay<T> {
 
 	private static final int ANIMATION_TICKS = 19;
 	private static final int HIDE_MODEL_TICKS = 9;
@@ -71,16 +71,16 @@ public class LayerSummonAnimation<T extends EntityLivingBase> extends LayerTiled
 	}
 
 	@SubscribeEvent
-	public static void onRenderLivingEvent(RenderLivingEvent.Pre<EntityLivingBase> event){
+	public static void onRenderLivingEvent(RenderLivingEvent.Pre<LivingEntity> event){
 		if(shouldHideMainModel(event.getEntity())) event.getEntity().setInvisible(true);
 	}
 
 	@SubscribeEvent
-	public static void onRenderLivingEvent(RenderLivingEvent.Post<EntityLivingBase> event){
+	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 		if(shouldHideMainModel(event.getEntity())) event.getEntity().setInvisible(false);
 	}
 
-	private static boolean shouldHideMainModel(EntityLivingBase entity){
+	private static boolean shouldHideMainModel(LivingEntity entity){
 		return entity instanceof ISummonedCreature && ((ISummonedCreature)entity).hasAnimation()
 				&& ((ISummonedCreature)entity).getLifetime() > 0 && (entity.ticksExisted < HIDE_MODEL_TICKS
 				|| ((ISummonedCreature)entity).getLifetime() - entity.ticksExisted < HIDE_MODEL_TICKS);

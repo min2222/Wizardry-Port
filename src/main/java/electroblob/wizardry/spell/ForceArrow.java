@@ -2,7 +2,7 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.projectile.EntityForceArrow;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +15,7 @@ public class ForceArrow extends SpellArrow<EntityForceArrow> {
 	}
 
 	@Override
-	protected void addArrowExtras(EntityForceArrow arrow, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addArrowExtras(EntityForceArrow arrow, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		arrow.setMana((int)(this.getCost() * modifiers.get(SpellModifiers.COST)));
 	}
 }

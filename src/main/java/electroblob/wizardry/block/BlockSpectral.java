@@ -9,17 +9,17 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Random;
 
@@ -33,7 +33,7 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 
 	// Replaces getRenderBlockPass
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.TRANSLUCENT;
 	}
@@ -45,7 +45,7 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	@Override public boolean isOpaqueCube(IBlockState state){ return false; }
 
 	@Override
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random random){
+	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random random){
 		
 		for(int i=0; i<2; i++){
 			ParticleBuilder.create(Type.DUST)
@@ -69,7 +69,7 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata){
+	public TileEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityTimer(1200);
 	}
 
@@ -79,10 +79,10 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	}
 
 	@SuppressWarnings("deprecation")
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-			EnumFacing side){
+			Direction side){
 
 		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();

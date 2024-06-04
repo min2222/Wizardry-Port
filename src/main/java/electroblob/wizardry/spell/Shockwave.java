@@ -12,15 +12,15 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -38,16 +38,16 @@ public class Shockwave extends SpellAreaEffect {
 	}
 
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		float radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
 
-		if(target instanceof EntityPlayer){
+		if(target instanceof Player){
 
 			if(!Wizardry.settings.playersMoveEachOther) return false;
 
-			if(ItemArtefact.isArtefactActive((EntityPlayer)target, WizardryItems.amulet_anchoring)){
-				if(!world.isRemote && caster instanceof EntityPlayer) ((EntityPlayer)caster).sendStatusMessage(
+			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)){
+				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						new TextComponentTranslation("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 				return false;
@@ -87,10 +87,10 @@ public class Shockwave extends SpellAreaEffect {
 	}
 
 	@Override
-	protected void spawnParticleEffect(World world, Vec3d origin, double radius, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		// Can't put this in affectEntity(...) because it's only called for non-allies, plus here is client-side already
-		EntityUtils.getEntitiesWithinRadius(radius, origin.x, origin.y, origin.z, world, EntityPlayer.class)
+		EntityUtils.getEntitiesWithinRadius(radius, origin.x, origin.y, origin.z, world, Player.class)
 				.forEach(p -> Wizardry.proxy.shakeScreen(p, 10));
 
 		double particleX, particleZ;
@@ -103,14 +103,14 @@ public class Shockwave extends SpellAreaEffect {
 			IBlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, origin.y,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
 						particleZ, particleX - origin.x, 0, particleZ - origin.z, Block.getStateId(block));
 			}
 		}
 
 		ParticleBuilder.create(Type.SPHERE).pos(origin.add(0, 0.1, 0)).scale((float)radius * 0.8f).clr(0.8f, 0.9f, 1).spawn(world);
 
-		world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
+		world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
 	}
 
 }

@@ -4,8 +4,8 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public class FrostAxe extends SpellConjuration {
 
@@ -15,7 +15,7 @@ public class FrostAxe extends SpellConjuration {
 	}
 
 	@Override
-	protected void spawnParticles(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		for(int i=0; i<10; i++){
 			double x = caster.posX + world.rand.nextDouble() * 2 - 1;

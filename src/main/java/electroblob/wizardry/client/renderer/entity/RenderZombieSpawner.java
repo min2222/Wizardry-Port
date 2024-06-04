@@ -11,16 +11,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import org.lwjgl.opengl.GL11;
 
 public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/zombie_spawner.png");
 
-	private static final Vec3d[] HIDDEN_BOX = GeometryUtils.getVertices(new AxisAlignedBB(-1, 0, -1, 1, 2.5, 1));
+	private static final Vec3[] HIDDEN_BOX = GeometryUtils.getVertices(new AxisAlignedBB(-1, 0, -1, 1, 2.5, 1));
 
 	public RenderZombieSpawner(RenderManager renderManager){
 		super(renderManager);
@@ -50,7 +50,7 @@ public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 
 		this.bindTexture(TEXTURE);
 
-		Vec3d[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector().scale(-1)));
+		Vec3[] vertices = GeometryUtils.getVertices(entity.getEntityBoundingBox().offset(entity.getPositionVector().scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		drawFace(buffer, vertices[0], vertices[1], vertices[3], vertices[2], 0, 0, 1, 1); // Bottom
@@ -98,14 +98,14 @@ public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 		return TEXTURE;
 	}
 
-	private static void drawFace(BufferBuilder buffer, Vec3d topLeft, Vec3d topRight, Vec3d bottomLeft, Vec3d bottomRight, float u1, float v1, float u2, float v2){
+	private static void drawFace(BufferBuilder buffer, Vec3 topLeft, Vec3 topRight, Vec3 bottomLeft, Vec3 bottomRight, float u1, float v1, float u2, float v2){
 		buffer.pos(topLeft.x, topLeft.y, topLeft.z).tex(u1, v1).endVertex();
 		buffer.pos(topRight.x, topRight.y, topRight.z).tex(u2, v1).endVertex();
 		buffer.pos(bottomRight.x, bottomRight.y, bottomRight.z).tex(u2, v2).endVertex();
 		buffer.pos(bottomLeft.x, bottomLeft.y, bottomLeft.z).tex(u1, v2).endVertex();
 	}
 
-	private static void drawFaceColour(BufferBuilder buffer, Vec3d topLeft, Vec3d topRight, Vec3d bottomLeft, Vec3d bottomRight, float r, float g, float b, float a){
+	private static void drawFaceColour(BufferBuilder buffer, Vec3 topLeft, Vec3 topRight, Vec3 bottomLeft, Vec3 bottomRight, float r, float g, float b, float a){
 		buffer.pos(topLeft.x, topLeft.y, topLeft.z).color(r, g, b, a).endVertex();
 		buffer.pos(topRight.x, topRight.y, topRight.z).color(r, g, b, a).endVertex();
 		buffer.pos(bottomRight.x, bottomRight.y, bottomRight.z).color(r, g, b, a).endVertex();

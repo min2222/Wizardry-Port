@@ -12,9 +12,9 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -22,8 +22,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -47,7 +47,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	private float radius;
 
-	public EntityForcefield(World world){
+	public EntityForcefield(Level world){
 		super(world);
 		setRadius(3); // Shouldn't be needed but it's a good failsafe
 		this.ignoreFrustumCheck = true;
@@ -98,7 +98,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		targets.removeIf(t -> t instanceof EntityXPOrb); // Gets annoying since they're attracted to the player
 
 		// Ring of the defender allows players to shoot through their own forcefields
-		if(getCaster() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getCaster(),
+		if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
 				WizardryItems.ring_defender)){
 			targets.removeIf(t -> t instanceof EntityMagicArrow && !this.isValidTarget(((EntityMagicArrow)t).getCaster())
 								|| t instanceof EntityThrowable && !this.isValidTarget(((EntityThrowable)t).getThrower())
@@ -109,7 +109,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 			if(this.isValidTarget(target)){
 
-				Vec3d currentPos = Arrays.stream(GeometryUtils.getVertices(target.getEntityBoundingBox()))
+				Vec3 currentPos = Arrays.stream(GeometryUtils.getVertices(target.getEntityBoundingBox()))
 						.min(Comparator.comparingDouble(v -> v.distanceTo(this.getPositionVector())))
 						.orElse(target.getPositionVector()); // This will never happen, it's just here to make the compiler happy
 
@@ -117,7 +117,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 				// Estimate the target's position next tick
 				// We have to assume the same vertex is closest or the velocity will be wrong
-				Vec3d nextTickPos = currentPos.add(target.motionX, target.motionY, target.motionZ);
+				Vec3 nextTickPos = currentPos.add(target.motionX, target.motionY, target.motionZ);
 				double nextTickDistance = nextTickPos.distanceTo(this.getPositionVector());
 
 				boolean flag;
@@ -134,17 +134,17 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 				if(flag){
 
 					// Ring of interdiction
-					if(getCaster() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getCaster(),
+					if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
 							WizardryItems.ring_interdiction) && EntityUtils.isLiving(target)){
 						target.attackEntityFrom(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 								MagicDamage.DamageType.MAGIC), 1);
 					}
 
-					Vec3d targetRelativePos = currentPos.subtract(this.getPositionVector());
+					Vec3 targetRelativePos = currentPos.subtract(this.getPositionVector());
 
 					double nudgeVelocity = this.contains(target) ? -0.1 : 0.1;
 					if(EntityUtils.isLiving(target)) nudgeVelocity = 0.25;
-					Vec3d extraVelocity = targetRelativePos.normalize().scale(nudgeVelocity);
+					Vec3 extraVelocity = targetRelativePos.normalize().scale(nudgeVelocity);
 
 					// ...make it bounce off!
 					target.motionX = target.motionX * -BOUNCINESS + extraVelocity.x;
@@ -156,7 +156,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 					// How far the target needs to move towards the centre (negative means away from the centre)
 					double distanceTowardsCentre = -(targetRelativePos.length() - radius) - (radius - nextTickDistance);
-					Vec3d targetNewPos = target.getPositionVector().add(targetRelativePos.normalize().scale(distanceTowardsCentre));
+					Vec3 targetNewPos = target.getPositionVector().add(targetRelativePos.normalize().scale(distanceTowardsCentre));
 					target.setPosition(targetNewPos.x, targetNewPos.y, targetNewPos.z);
 
 					world.playSound(target.posX, target.posY, target.posZ, WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
@@ -174,7 +174,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 					}else{
 
-						Vec3d relativeImpactPos = targetRelativePos.normalize().scale(radius);
+						Vec3 relativeImpactPos = targetRelativePos.normalize().scale(radius);
 
 						float yaw = (float)Math.atan2(relativeImpactPos.x, -relativeImpactPos.z);
 						float pitch = (float)Math.asin(relativeImpactPos.y/ radius);
@@ -206,7 +206,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Override
-	public boolean contains(Vec3d vec){
+	public boolean contains(Vec3 vec){
 		return vec.distanceTo(this.getPositionVector()) < radius; // The surface counts as outside
 	}
 
@@ -221,7 +221,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Override
-	public Vec3d calculateIntercept(Vec3d origin, Vec3d endpoint, float fuzziness){
+	public Vec3 calculateIntercept(Vec3 origin, Vec3 endpoint, float fuzziness){
 
 		// We want the intercept between the line and a sphere
 		// First we need to find the point where the line is closest to the centre
@@ -229,9 +229,9 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 		// Find the closest point to the centre
 		// http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
-		Vec3d line = endpoint.subtract(origin);
+		Vec3 line = endpoint.subtract(origin);
 		double t = -origin.subtract(this.getPositionVector()).dotProduct(line) / line.lengthSquared();
-		Vec3d closestPoint = origin.add(line.scale(t));
+		Vec3 closestPoint = origin.add(line.scale(t));
 		// Now calculate the distance from that point to the centre (squared because that's all we need)
 		double dsquared = closestPoint.squareDistanceTo(this.getPositionVector());
 		double rsquared = Math.pow(radius + fuzziness, 2);
@@ -277,8 +277,8 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
-		if(event.getSource().getTrueSource() instanceof EntityPlayer && event.getSource().isProjectile()
-				&& ItemArtefact.isArtefactActive((EntityPlayer)event.getSource().getTrueSource(), WizardryItems.ring_defender)){
+		if(event.getSource().getTrueSource() instanceof Player && event.getSource().isProjectile()
+				&& ItemArtefact.isArtefactActive((Player)event.getSource().getTrueSource(), WizardryItems.ring_defender)){
 				return; // Players wearing a ring of the defender can shoot stuff as normal, so don't cancel the event
 		}
 
@@ -292,7 +292,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Nullable
-	private static EntityForcefield getSurroundingForcefield(World world, Vec3d vec){
+	private static EntityForcefield getSurroundingForcefield(Level world, Vec3 vec){
 
 		double searchRadius = 20;
 
@@ -306,7 +306,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Nullable
-	private static EntityForcefield getSurroundingForcefield(World world, AxisAlignedBB box, Vec3d vec){
+	private static EntityForcefield getSurroundingForcefield(Level world, AxisAlignedBB box, Vec3 vec){
 
 		double searchRadius = 20;
 
@@ -353,7 +353,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		EntityForcefield forcefield = getSurroundingForcefield(event.getWorld(), event.getExplosion().getPosition());
 		// Not a particularly efficient way of doing it but explosions are laggy anyway, and the code is neat :P
 		event.getExplosion().getAffectedBlockPositions().removeIf(p -> getSurroundingForcefield(event.getWorld(),
-				new Vec3d(p).add(0.5, 0.5, 0.5)) != forcefield);
+				new Vec3(p).add(0.5, 0.5, 0.5)) != forcefield);
 
 		event.getExplosion().getPlayerKnockbackMap().keySet().removeIf(p -> getSurroundingForcefield(p) != forcefield);
 	}

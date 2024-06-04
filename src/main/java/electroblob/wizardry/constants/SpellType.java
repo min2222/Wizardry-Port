@@ -1,8 +1,8 @@
 package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public enum SpellType {
 
@@ -36,7 +36,7 @@ public enum SpellType {
 		return unlocalisedName;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public String getDisplayName(){
 		return Wizardry.proxy.translate("spelltype." + unlocalisedName);
 	}

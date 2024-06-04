@@ -8,10 +8,10 @@ import electroblob.wizardry.Wizardry;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ResourceLocation;
 
 /**
  * This class implements a generic custom advancement trigger that can be fired from any point in
@@ -32,7 +32,7 @@ public class CustomAdvancementTrigger implements ICriterionTrigger<CustomAdvance
      * trigger, and via listeners to the player). We later fire this manually when we want the
      * advancement to happen.
      */
-    public static class Instance extends AbstractCriterionInstance {
+    public static class Instance extends AbstractCriterionTriggerInstance {
         public Instance(ResourceLocation triggerId) { 
             super(triggerId);
         }
@@ -70,7 +70,7 @@ public class CustomAdvancementTrigger implements ICriterionTrigger<CustomAdvance
         return new CustomAdvancementTrigger.Instance(id);
     }
 
-    public void triggerFor(EntityPlayer player) {
+    public void triggerFor(Player player) {
         // Fire our dummy criterion manually on all advancements of the player, thereby granting
         // the ones that match it.
         if (player instanceof EntityPlayerMP) {

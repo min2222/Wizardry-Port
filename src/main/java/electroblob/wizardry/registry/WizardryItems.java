@@ -26,7 +26,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -910,7 +910,7 @@ public final class WizardryItems {
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(firebomb, new BehaviorProjectileDispense(){
 
 			@Override
-			protected IProjectile getProjectileEntity(World world, IPosition position, ItemStack stack){
+			protected IProjectile getProjectileEntity(Level world, IPosition position, ItemStack stack){
 				EntityFirebomb entity = new EntityFirebomb(world);
 				entity.setPosition(position.getX(), position.getY(), position.getZ());
 				return entity;
@@ -921,7 +921,7 @@ public final class WizardryItems {
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(poison_bomb, new BehaviorProjectileDispense(){
 
 			@Override
-			protected IProjectile getProjectileEntity(World world, IPosition position, ItemStack stack){
+			protected IProjectile getProjectileEntity(Level world, IPosition position, ItemStack stack){
 				EntityPoisonBomb entity = new EntityPoisonBomb(world);
 				entity.setPosition(position.getX(), position.getY(), position.getZ());
 				return entity;
@@ -932,7 +932,7 @@ public final class WizardryItems {
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(smoke_bomb, new BehaviorProjectileDispense(){
 
 			@Override
-			protected IProjectile getProjectileEntity(World world, IPosition position, ItemStack stack){
+			protected IProjectile getProjectileEntity(Level world, IPosition position, ItemStack stack){
 				EntitySmokeBomb entity = new EntitySmokeBomb(world);
 				entity.setPosition(position.getX(), position.getY(), position.getZ());
 				return entity;
@@ -943,7 +943,7 @@ public final class WizardryItems {
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(spark_bomb, new BehaviorProjectileDispense(){
 
 			@Override
-			protected IProjectile getProjectileEntity(World world, IPosition position, ItemStack stack){
+			protected IProjectile getProjectileEntity(Level world, IPosition position, ItemStack stack){
 				EntitySparkBomb entity = new EntitySparkBomb(world);
 				entity.setPosition(position.getX(), position.getY(), position.getZ());
 				return entity;

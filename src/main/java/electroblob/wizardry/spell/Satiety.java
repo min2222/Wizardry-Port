@@ -2,10 +2,10 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class Satiety extends SpellBuff {
 
@@ -21,12 +21,12 @@ public class Satiety extends SpellBuff {
 	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return false; }
 	
 	@Override
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 		return true; // In this case the best solution is to remove the functionality of this method and override cast.
 	}
 	
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.getFoodStats().needFood()){
 			int foodAmount = (int)(getProperty(HUNGER_POINTS).floatValue() * modifiers.get(SpellModifiers.POTENCY));

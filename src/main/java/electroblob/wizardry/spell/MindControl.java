@@ -11,20 +11,22 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -49,15 +51,15 @@ public class MindControl extends SpellRay {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 	
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
 				
 			if(!canControl(target)){
 				if(!world.isRemote){
-					if(caster instanceof EntityPlayer){
+					if(caster instanceof Player){
 						// Adds a message saying that the player/boss entity/wizard resisted mind control
-						((EntityPlayer)caster).sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
+						((Player)caster).sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 					}
 				}
@@ -100,12 +102,12 @@ public class MindControl extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
@@ -119,7 +121,7 @@ public class MindControl extends SpellRay {
 				.contains(EntityList.getKey(target.getClass()));
 	}
 
-	public static void startControlling(EntityLiving target, EntityLivingBase controller, int duration){
+	public static void startControlling(EntityLiving target, LivingEntity controller, int duration){
 		target.getEntityData().setUniqueId(NBT_KEY, controller.getUniqueID());
 		target.addPotionEffect(new PotionEffect(WizardryPotions.mind_control, duration, 0));
 	}
@@ -134,12 +136,12 @@ public class MindControl extends SpellRay {
 	 * @param world The world to look for targets in
 	 * @return True if a new target was found and set, false if not.
 	 */
-	public static boolean findMindControlTarget(EntityLiving target, EntityLivingBase caster, World world){
+	public static boolean findMindControlTarget(EntityLiving target, LivingEntity caster, Level world){
 
 		// As of 1.1, this now uses the creature's follow range, like normal targeting. It also
 		// no longer lasts until the creature dies; instead it is a potion effect which continues to
 		// set the target until it wears off.
-		List<EntityLivingBase> possibleTargets = EntityUtils.getLivingWithinRadius(
+		List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(
 				target.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue(),
 				target.posX, target.posY, target.posZ, world);
 
@@ -147,9 +149,9 @@ public class MindControl extends SpellRay {
 		possibleTargets.remove(target.getRidingEntity());
 		possibleTargets.removeIf(e -> e instanceof EntityArmorStand);
 
-		EntityLivingBase newAITarget = null;
+		LivingEntity newAITarget = null;
 
-		for(EntityLivingBase possibleTarget : possibleTargets){
+		for(LivingEntity possibleTarget : possibleTargets){
 			if(AllyDesignationSystem.isValidTarget(caster, possibleTarget) && (newAITarget == null
 					|| target.getDistance(possibleTarget) < target.getDistance(newAITarget))){
 				newAITarget = possibleTarget;
@@ -166,7 +168,7 @@ public class MindControl extends SpellRay {
 	}
 	
 	/** Retrieves the given entity's controller and decides whether it needs to search for a target. */
-	private static void processTargeting(World world, EntityLiving entity, EntityLivingBase currentTarget){
+	private static void processTargeting(Level world, EntityLiving entity, LivingEntity currentTarget){
 		
 		if(entity.isPotionActive(WizardryPotions.mind_control) && MindControl.canControl(entity)){
 
@@ -176,12 +178,12 @@ public class MindControl extends SpellRay {
 
 				Entity caster = EntityUtils.getEntityByUUID(world, entityNBT.getUniqueId(MindControl.NBT_KEY));
 
-				if(caster instanceof EntityLivingBase){
+				if(caster instanceof LivingEntity){
 
 					// If the current target is already a valid mind control target, nothing happens.
 					if(AllyDesignationSystem.isValidTarget(caster, currentTarget)) return;
 
-					if(MindControl.findMindControlTarget(entity, (EntityLivingBase)caster, world)){
+					if(MindControl.findMindControlTarget(entity, (LivingEntity)caster, world)){
 						// If it worked, skip setting the target to null.
 						return;
 					}

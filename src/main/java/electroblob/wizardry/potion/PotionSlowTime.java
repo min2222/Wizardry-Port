@@ -9,13 +9,13 @@ import electroblob.wizardry.spell.SlowTime;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -42,16 +42,16 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		return Spells.slow_time.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 	}
 
-	public static void unblockNearbyEntities(EntityLivingBase host){
+	public static void unblockNearbyEntities(LivingEntity host){
 		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.posX, host.posY, host.posZ, host.world, Entity.class);
 		targetsBeyondRange.forEach(e -> e.updateBlocked = false);
 	}
 
 	// Not done in performEffect because it's client-inconsistent; it only fires on the client of the player with the
 	// potion effect, and doesn't fire on the client at all for non-players
-	private static void performEffectConsistent(EntityLivingBase host, int strength){
+	private static void performEffectConsistent(LivingEntity host, int strength){
 
-		boolean stopTime = host instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)host, WizardryItems.charm_stop_time);
+		boolean stopTime = host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.charm_stop_time);
 
 		int interval = strength * 4 + 6;
 
@@ -59,8 +59,8 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		List<Entity> targetsInRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius(), host.posX, host.posY, host.posZ, host.world, Entity.class);
 		targetsInRange.remove(host);
 		// Other entities with the slow time effect are unaffected
-		targetsInRange.removeIf(t -> t instanceof EntityLivingBase && ((EntityLivingBase)t).isPotionActive(WizardryPotions.slow_time));
-		if(!Wizardry.settings.slowTimeAffectsPlayers) targetsInRange.removeIf(t -> t instanceof EntityPlayer);
+		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).isPotionActive(WizardryPotions.slow_time));
+		if(!Wizardry.settings.slowTimeAffectsPlayers) targetsInRange.removeIf(t -> t instanceof Player);
 		targetsInRange.removeIf(t -> t instanceof EntityArrow && t.isEntityInsideOpaqueBlock());
 
 		for(Entity entity : targetsInRange){
@@ -142,7 +142,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	 * 2. If so, scans the area nearby for players or NPCs with the slow time effect<br>
 	 * 3. If none are found, removes the slow time NBT tag and unblocks the entity's updates
 	 */
-	public static void cleanUpEntities(World world){
+	public static void cleanUpEntities(Level world){
 		// Had trouble with accessing loadedTileEntityList from tick events causing random CMEs so I'm making a
 		// copy of this too just in case
 		List<Entity> loadedEntityList = new ArrayList<>(world.loadedEntityList);
@@ -150,7 +150,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		for(Entity entity : loadedEntityList){
 			if(entity.getEntityData().getBoolean(NBT_KEY)){
 				// Currently only players can cast slow time, but you could apply the effect to NPCs with commands
-				List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(getEffectRadius(), entity.posX, entity.posY, entity.posZ, entity.world);
+				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(getEffectRadius(), entity.posX, entity.posY, entity.posZ, entity.world);
 				if(nearby.stream().noneMatch(e -> e.isPotionActive(WizardryPotions.slow_time))){
 					entity.getEntityData().removeTag(NBT_KEY);
 					entity.updateBlocked = false;
@@ -162,7 +162,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingUpdateEvent event){
 
-		EntityLivingBase entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntityLiving();
 
 		if(entity.isPotionActive(WizardryPotions.slow_time)){
 			performEffectConsistent(entity, entity.getActivePotionEffect(WizardryPotions.slow_time).getAmplifier());
@@ -172,9 +172,9 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
 		if(event.getEntity().world.isRemote && event.getPotionEffect().getPotion() == WizardryPotions.slow_time
-				&& event.getEntity() instanceof EntityPlayer){
-			Wizardry.proxy.loadShader((EntityPlayer)event.getEntity(), SlowTime.SHADER);
-			Wizardry.proxy.playBlinkEffect((EntityPlayer)event.getEntity());
+				&& event.getEntity() instanceof Player){
+			Wizardry.proxy.loadShader((Player)event.getEntity(), SlowTime.SHADER);
+			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());
 		}
 	}
 

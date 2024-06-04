@@ -3,15 +3,15 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -61,7 +61,7 @@ public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
+	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);
@@ -74,13 +74,13 @@ public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState){
+	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable Player player, @Nullable IBlockState blockState){
 		// Reuses the standard bonus amplifier calculation from SpellBuff to increase the mining level at advanced and master tier
 		return super.getHarvestLevel(stack, toolClass, player, blockState) + (int)((IConjuredItem.getDamageMultiplier(stack) - 1) / 0.4);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -107,7 +107,7 @@ public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 
 	// Cannot be dropped
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player){
+	public boolean onDroppedByPlayer(ItemStack item, Player player){
 		return false;
 	}
 }

@@ -6,16 +6,16 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class PhaseStep extends Spell {
 
@@ -27,7 +27,7 @@ public class PhaseStep extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		boolean teleportMount = caster.isRiding() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
 		boolean hitLiquids = teleportMount && caster.getRidingEntity() instanceof EntityBoat; // Boats teleport to the surface
@@ -44,7 +44,7 @@ public class PhaseStep extends Spell {
 				double dx1 = caster.posX;
 				double dy1 = caster.posY + 2 * world.rand.nextFloat();
 				double dz1 = caster.posZ;
-				world.spawnParticle(EnumParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
+				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.rand.nextDouble() - 0.5,
 						world.rand.nextDouble() - 0.5, world.rand.nextDouble() - 0.5);
 			}
 
@@ -62,7 +62,7 @@ public class PhaseStep extends Spell {
 			int maxThickness = getProperty(WALL_THICKNESS).intValue()
 					+ (int)((modifiers.get(WizardryItems.range_upgrade) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
 
-			if(rayTrace.sideHit == EnumFacing.UP) maxThickness++; // Allow space for the player's head
+			if(rayTrace.sideHit == Direction.UP) maxThickness++; // Allow space for the player's head
 
 			// i represents how far the player needs to teleport to get through the wall
 			for(int i = 0; i <= maxThickness; i++){
@@ -75,25 +75,25 @@ public class PhaseStep extends Spell {
 						&& !Wizardry.settings.teleportThroughUnbreakableBlocks)
 					break; // Don't return false yet, there are other possible outcomes below now
 
-				Vec3d vec = GeometryUtils.getFaceCentre(pos1, EnumFacing.DOWN);
+				Vec3 vec = GeometryUtils.getFaceCentre(pos1, Direction.DOWN);
 				if(attemptTeleport(world, toTeleport, vec, teleportMount, caster, ticksInUse, modifiers)) return true;
 			}
 
 			// If no suitable position was found on the other side of the wall, works like blink instead
 			pos = pos.offset(rayTrace.sideHit);
 
-			Vec3d vec = GeometryUtils.getFaceCentre(pos, EnumFacing.DOWN);
+			Vec3 vec = GeometryUtils.getFaceCentre(pos, Direction.DOWN);
 			if(attemptTeleport(world, toTeleport, vec, teleportMount, caster, ticksInUse, modifiers)) return true;
 
 		}else{ // The ray trace missed
-			Vec3d vec = caster.getPositionVector().add(caster.getLookVec().scale(range));
+			Vec3 vec = caster.getPositionVector().add(caster.getLookVec().scale(range));
 			if(attemptTeleport(world, toTeleport, vec, teleportMount, caster, ticksInUse, modifiers)) return true;
 		}
 
 		return false;
 	}
 
-	protected boolean attemptTeleport(World world, Entity toTeleport, Vec3d destination, boolean teleportMount, EntityPlayer caster, int ticksInUse, SpellModifiers modifiers){
+	protected boolean attemptTeleport(Level world, Entity toTeleport, Vec3 destination, boolean teleportMount, Player caster, int ticksInUse, SpellModifiers modifiers){
 
 		destination = EntityUtils.findSpaceForTeleport(toTeleport, destination, teleportMount);
 

@@ -3,15 +3,15 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityWitherSkeleton;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -21,13 +21,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
@@ -46,7 +46,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new wither skeleton minion in the given world. */
-	public EntityWitherSkeletonMinion(World world){
+	public EntityWitherSkeletonMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -60,7 +60,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 		super.initEntityAI();
 		this.targetTasks.taskEntries.clear();
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityLivingBase>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
@@ -103,7 +103,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -126,7 +126,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	private void spawnParticleEffect(){
 		if(this.world.isRemote){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
+				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
 						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
@@ -138,12 +138,12 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	}
 
 	@Override
-	public void onSuccessfulAttack(EntityLivingBase target){
+	public void onSuccessfulAttack(LivingEntity target){
 		target.addPotionEffect(new PotionEffect(MobEffects.WITHER, 200));
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -163,7 +163,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -180,7 +180,7 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity and this skeleton does not have a bow.
 		return !EntityFlying.class.isAssignableFrom(entityType) || this.getHeldItemMainhand().getItem() instanceof ItemBow;
 	}

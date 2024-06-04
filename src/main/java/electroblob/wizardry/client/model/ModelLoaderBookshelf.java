@@ -2,7 +2,7 @@ package electroblob.wizardry.client.model;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 

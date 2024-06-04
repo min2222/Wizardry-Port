@@ -11,7 +11,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,9 +23,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -148,17 +148,17 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer player){
+	public boolean isUsableByPlayer(Player player){
 		return world.getTileEntity(pos) == this && player.getDistanceSqToCenter(pos) < 64;
 	}
 
 	@Override
-	public void openInventory(EntityPlayer player){
+	public void openInventory(Player player){
 
 	}
 
 	@Override
-	public void closeInventory(EntityPlayer player){
+	public void closeInventory(Player player){
 
 	}
 
@@ -247,7 +247,7 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 		readFromNBT(pkt.getNbtCompound());
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox(){
 		AxisAlignedBB bb = INFINITE_EXTENT_AABB;

@@ -6,15 +6,15 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +29,7 @@ public class BlockPermafrost extends BlockDryFrostedIce {
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos){
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, Level worldIn, BlockPos pos){
 		return SELECTION_BOUNDING_BOX;
 	}
 
@@ -50,19 +50,19 @@ public class BlockPermafrost extends BlockDryFrostedIce {
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face){
-		return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity){
+	public void onEntityCollision(Level world, BlockPos pos, IBlockState state, Entity entity){
 
 		if(EntityUtils.isLiving(entity) && entity.ticksExisted % 30 == 0){
 			// Can't make it player damage unless we make this block a tile entity, but there will be too many for that
 			entity.attackEntityFrom(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
 			int duration = Spells.permafrost.getProperty(Spell.EFFECT_DURATION).intValue();
 			int amplifier = Spells.permafrost.getProperty(Spell.EFFECT_STRENGTH).intValue();
-			((EntityLivingBase)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost, duration, amplifier));
+			((LivingEntity)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost, duration, amplifier));
 		}
 
 		// EntityLivingBase's slipperiness code doesn't get the block below it properly so slipperiness only works for

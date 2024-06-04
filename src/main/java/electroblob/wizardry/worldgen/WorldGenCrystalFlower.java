@@ -4,9 +4,9 @@ import com.google.common.primitives.Ints;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
@@ -16,7 +16,7 @@ import java.util.Random;
 public class WorldGenCrystalFlower implements IWorldGenerator {
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
+	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
 		if(Ints.contains(Wizardry.settings.flowerDimensions, world.provider.getDimension())){
 			this.generatePlant(WizardryBlocks.crystal_flower.getDefaultState(), world, random, 8 + chunkX * 16, 8 + chunkZ * 16, 2, 20);
@@ -34,7 +34,7 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 	 * @param chancesToSpawn Number of chances to spawn a flower patch
 	 * @param groupSize The number of times to try generating a flower per flower patch spawn
 	 */
-	public void generatePlant(IBlockState state, World world, Random random, int x, int z, int chancesToSpawn, int groupSize){
+	public void generatePlant(IBlockState state, Level world, Random random, int x, int z, int chancesToSpawn, int groupSize){
 
 		for(int i = 0; i < chancesToSpawn; i++){
 
@@ -51,7 +51,7 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 				BlockPos pos = new BlockPos(i1, j1, k1);
 
 				if(world.isBlockLoaded(pos) && world.isAirBlock(pos) && (!world.provider.isNether() || j1 < 127)
-						&& state.getBlock().canPlaceBlockOnSide(world, pos, EnumFacing.UP)){
+						&& state.getBlock().canPlaceBlockOnSide(world, pos, Direction.UP)){
 
 					world.setBlockState(pos, state, 2);
 				}

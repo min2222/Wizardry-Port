@@ -3,16 +3,16 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -54,7 +54,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	/** Creates a new summoned creature in the given world. */
-	public EntitySummonedCreature(World world){
+	public EntitySummonedCreature(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -62,7 +62,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -86,7 +86,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -106,7 +106,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -123,7 +123,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity and this entity only has melee attacks.
 		return !EntityFlying.class.isAssignableFrom(entityType) || this.hasRangedAttack();
 	}

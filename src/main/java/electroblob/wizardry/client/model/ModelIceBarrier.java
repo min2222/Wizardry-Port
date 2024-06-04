@@ -3,7 +3,7 @@ package electroblob.wizardry.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 // Made with Blockbench 3.5.4
 public class ModelIceBarrier extends ModelBase {

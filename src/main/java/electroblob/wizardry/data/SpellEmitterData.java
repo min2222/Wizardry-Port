@@ -10,8 +10,8 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.WorldEvent;
@@ -25,9 +25,9 @@ import java.util.List;
 
 /**
  * Class responsible for storing and keeping track of {@link SpellEmitter}s. Each world has its own instance of
- * {@code SpellEmitterData} which can be retrieved using {@link SpellEmitterData#get(World)}.<br>
+ * {@code SpellEmitterData} which can be retrieved using {@link SpellEmitterData#get(Level)}.<br>
  * <br>
- * To add a new {@code SpellEmitter}, use {@link SpellEmitter#add(Spell, World, double, double, double, EnumFacing, int, SpellModifiers)}.
+ * To add a new {@code SpellEmitter}, use {@link SpellEmitter#add(Spell, Level, double, double, double, Direction, int, SpellModifiers)}.
  *
  * @since Wizardry 4.2
  * @author Electroblob
@@ -51,7 +51,7 @@ public class SpellEmitterData extends WorldSavedData {
 	}
 
 	/** Returns the spell emitter data for this world, or creates a new instance if it doesn't exist yet. */
-	public static SpellEmitterData get(World world){
+	public static SpellEmitterData get(Level world){
 
 		SpellEmitterData instance = (SpellEmitterData)world.getPerWorldStorage().getOrLoadData(SpellEmitterData.class, NAME);
 
@@ -83,7 +83,7 @@ public class SpellEmitterData extends WorldSavedData {
 		emitterTags = nbt.getTagList("emitters", Constants.NBT.TAG_COMPOUND);
 	}
 
-	private void loadEmitters(World world){
+	private void loadEmitters(Level world){
 		emitters.clear();
 		emitters.addAll(NBTExtras.NBTToList(emitterTags, (NBTTagCompound t) -> SpellEmitter.fromNBT(world, t)));
 		emitterTags = null; // Now we know it's loaded
@@ -95,7 +95,7 @@ public class SpellEmitterData extends WorldSavedData {
 		return compound;
 	}
 
-	public static void update(World world){
+	public static void update(Level world){
 		SpellEmitterData data = SpellEmitterData.get(world);
 		if(!data.emitters.isEmpty()){
 			data.emitters.forEach(SpellEmitter::update);

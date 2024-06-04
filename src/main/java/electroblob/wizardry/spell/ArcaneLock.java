@@ -3,17 +3,17 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.*;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -38,19 +38,19 @@ public class ArcaneLock extends SpellRay {
 	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return false; }
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 
 			if(!world.isRemote){
-				if(toggleLock(world, pos, (EntityPlayer)caster)){
+				if(toggleLock(world, pos, (Player)caster)){
 					BlockPos otherHalf = BlockUtils.getConnectedChest(world, pos);
-					if(otherHalf != null) toggleLock(world, otherHalf, (EntityPlayer)caster);
+					if(otherHalf != null) toggleLock(world, otherHalf, (Player)caster);
 					return true;
 				}
 			}
@@ -59,7 +59,7 @@ public class ArcaneLock extends SpellRay {
 		return false;
 	}
 
-	private boolean toggleLock(World world, BlockPos pos, EntityPlayer player){
+	private boolean toggleLock(Level world, BlockPos pos, Player player){
 
 		TileEntity tileentity = world.getTileEntity(pos);
 
@@ -84,7 +84,7 @@ public class ArcaneLock extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
@@ -101,7 +101,7 @@ public class ArcaneLock extends SpellRay {
 			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID
 			if(tileentity != null && tileentity.getTileData().hasUniqueId(ArcaneLock.NBT_KEY)){
 				// Why is getUniqueId marked @Nullable? It literally creates a UUID and returns it!
-				EntityPlayer owner = event.getWorld().getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(ArcaneLock.NBT_KEY));
+				Player owner = event.getWorld().getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(ArcaneLock.NBT_KEY));
 				// Only the player that owns the lock or an ally of that player may open the container
 				// If nobody owns it (i.e. it's part of a shrine, or the owner logged out), player will be null
 				// Unfortunately we can't get the owner's allies if the owner is offline
@@ -132,9 +132,9 @@ public class ArcaneLock extends SpellRay {
 		event.setCanceled(checkForLockedBlockBreak(event.getEntityLiving(), event.getEntity().world, event.getPos()));
 	}
 
-	private static boolean checkForLockedBlockBreak(EntityLivingBase breaker, World world, BlockPos pos){
+	private static boolean checkForLockedBlockBreak(LivingEntity breaker, Level world, BlockPos pos){
 
-		if(!(breaker instanceof EntityPlayer) || !canBypassLocks((EntityPlayer)breaker)){
+		if(!(breaker instanceof Player) || !canBypassLocks((Player)breaker)){
 
 			TileEntity tileentity = world.getTileEntity(pos);
 
@@ -153,7 +153,7 @@ public class ArcaneLock extends SpellRay {
 		return false;
 	}
 
-	private static boolean canBypassLocks(EntityPlayer player){
+	private static boolean canBypassLocks(Player player){
 		if(!player.isCreative()) return false;
 		if(Wizardry.settings.creativeBypassesArcaneLock) return true;
 		MinecraftServer server = player.world.getMinecraftServer();

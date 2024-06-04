@@ -7,16 +7,16 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityThorns;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -34,27 +34,27 @@ public class ForestOfThorns extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		if(!summonThorns(world, null, new BlockPos(x, y, z).offset(direction), modifiers)) return false;
 		this.playSound(world, x, y, z, ticksInUse, duration, modifiers);
 		return true;
 	}
 
-	private boolean summonThorns(World world, @Nullable EntityLivingBase caster, BlockPos origin, SpellModifiers modifiers){
+	private boolean summonThorns(Level world, @Nullable LivingEntity caster, BlockPos origin, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 
@@ -70,7 +70,7 @@ public class ForestOfThorns extends Spell {
 
 					if(distance > radius || distance < radius - 1.5) continue;
 
-					Integer y = BlockUtils.getNearestSurface(world, origin.add(x, 0, z), EnumFacing.UP, (int)radius, true, BlockUtils.SurfaceCriteria.BUILDABLE);
+					Integer y = BlockUtils.getNearestSurface(world, origin.add(x, 0, z), Direction.UP, (int)radius, true, BlockUtils.SurfaceCriteria.BUILDABLE);
 					if(y != null) ring.add(new BlockPos(origin.getX() + x, y, origin.getZ() + z));
 				}
 			}

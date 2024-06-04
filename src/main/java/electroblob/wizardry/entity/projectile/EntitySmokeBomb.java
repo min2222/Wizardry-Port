@@ -6,18 +6,18 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntitySmokeBomb extends EntityBomb {
 
-	public EntitySmokeBomb(World world){
+	public EntitySmokeBomb(Level world){
 		super(world);
 	}
 
@@ -34,7 +34,7 @@ public class EntitySmokeBomb extends EntityBomb {
 			
 			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(world);
 			
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 						
 			for(int i = 0; i < 60 * blastMultiplier; i++){
 
@@ -55,12 +55,12 @@ public class EntitySmokeBomb extends EntityBomb {
 
 			double range = Spells.smoke_bomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
 					this.posZ, this.world);
 
 			int duration = Spells.smoke_bomb.getProperty(Spell.EFFECT_DURATION).intValue();
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != this.getThrower()){
 					target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, 0));
 				}

@@ -7,19 +7,19 @@ import electroblob.wizardry.packet.*;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.config.Property;
 
 import javax.annotation.Nullable;
@@ -69,12 +69,12 @@ public class CommonProxy {
 
 	/** Creates a new particle of the specified type from the appropriate particle factory. <i>Does not actually spawn the
 	 * particle; use {@link electroblob.wizardry.util.ParticleBuilder ParticleBuilder} to spawn particles.</i> */
-	public electroblob.wizardry.client.particle.ParticleWizardry createParticle(ResourceLocation type, World world, double x, double y, double z){
+	public electroblob.wizardry.client.particle.ParticleWizardry createParticle(ResourceLocation type, Level world, double x, double y, double z){
 		return null;
 	}
 
-	public void spawnTornadoParticle(World world, double x, double y, double z, double velX, double velZ, double radius,
-			int maxAge, IBlockState block, BlockPos pos){
+	public void spawnTornadoParticle(Level world, double x, double y, double z, double velX, double velZ, double radius,
+                                     int maxAge, IBlockState block, BlockPos pos){
 	}
 
 	// SECTION Items
@@ -202,7 +202,7 @@ public class CommonProxy {
 	 * Plays the spell charge-up sound at the given entity.
 	 * @param entity The source of the sound
 	 */
-	public void playChargeupSound(EntityLivingBase entity){}
+	public void playChargeupSound(LivingEntity entity){}
 
 	/**
 	 * Plays a continuous spell sound which moves with the given entity.
@@ -216,7 +216,7 @@ public class CommonProxy {
 	 * @param volume Volume relative to 1
 	 * @param pitch Pitch relative to 1
 	 */
-	public void playSpellSoundLoop(EntityLivingBase entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){}
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){}
 
 	/**
 	 * Plays a continuous spell sound which moves with the given entity.
@@ -229,7 +229,7 @@ public class CommonProxy {
 	 * @param pitch Pitch relative to 1
 	 * @throws IllegalArgumentException if the given array contains less than 3 sound events
 	 */
-	public void playSpellSoundLoop(EntityLivingBase entity, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch){
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch){
 		if(sounds.length < 3) throw new IllegalArgumentException("Tried to play a continuous spell sound using an array "
 				+ "of sound events, but the given array contained less than 3 sound events!");
 		playSpellSoundLoop(entity, spell, sounds[0], sounds[1], sounds[2], category, volume, pitch);
@@ -250,7 +250,7 @@ public class CommonProxy {
 	 * @param pitch Pitch relative to 1
 	 * @param duration The duration of the sound, or -1 to link it to a dispenser at the given coordinates
 	 */
-	public void playSpellSoundLoop(World world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){}
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){}
 
 	/**
 	 * Plays a continuous spell sound at the given position.
@@ -267,34 +267,34 @@ public class CommonProxy {
 	 * @param duration The duration of the sound, or -1 to link it to a dispenser at the given coordinates
 	 * @throws IllegalArgumentException if the given array contains less than 3 sound events
 	 */
-	public void playSpellSoundLoop(World world, double x, double y, double z, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch, int duration){
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent[] sounds, SoundCategory category, float volume, float pitch, int duration){
 		if(sounds.length < 3) throw new IllegalArgumentException("Tried to play a continuous spell sound using an array "
 				+ "of sound events, but the given array contained less than 3 sound events!");
 		playSpellSoundLoop(world, x, y, z, spell, sounds[0], sounds[1], sounds[2], category, volume, pitch, duration);
 	}
 
 	/** Starts the first-person blink overlay effect for the specified player. */
-	public void playBlinkEffect(EntityPlayer player){}
+	public void playBlinkEffect(Player player){}
 
 	/**
 	 * Starts the client-side screen shake effect for the specified player.
 	 * @param player The player whose screen is to be shaken
 	 * @param intensity The amplitude of the shaking (around 10 looks about right)
 	 */
-	public void shakeScreen(EntityPlayer player, float intensity){}
+	public void shakeScreen(Player player, float intensity){}
 
 	/**
 	 * Loads the given shader for the given player, if they have shaders enabled.
 	 * @param player The player to load the shader for
 	 * @param shader The location of the shader to load
 	 */
-	public void loadShader(EntityPlayer player, ResourceLocation shader){}
+	public void loadShader(Player player, ResourceLocation shader){}
 	
 	/**
 	 * Gets the client-side world using {@code Minecraft.getMinecraft().world}. <b>Only to be called client side!</b>
 	 * Returns null on the server side.
 	 */
-	public World getTheWorld(){
+	public Level getTheWorld(){
 		return null;
 	}
 
@@ -302,7 +302,7 @@ public class CommonProxy {
 	 * Gets the client-side player using Minecraft.getMinecraft().player. <b>Only to be called client side!</b> Returns
 	 * null on the server side.
 	 */
-	public EntityPlayer getThePlayer(){
+	public Player getThePlayer(){
 		return null;
 	}
 
@@ -321,8 +321,8 @@ public class CommonProxy {
 
 	/** Notifies nearby players of a bookshelf change, causing any lectern or arcane workbench GUI (client-side) or
 	 * container (both sides) to refresh its linked bookshelves (does not send packets). */
-	public void notifyBookshelfChange(World world, BlockPos pos){
-		for(EntityPlayer player : world.playerEntities){
+	public void notifyBookshelfChange(Level world, BlockPos pos){
+		for(Player player : world.playerEntities){
 			if(player.getDistanceSq(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
 				if(player.openContainer instanceof ContainerArcaneWorkbench){
 					((ContainerArcaneWorkbench)player.openContainer).refreshBookshelfSlots();

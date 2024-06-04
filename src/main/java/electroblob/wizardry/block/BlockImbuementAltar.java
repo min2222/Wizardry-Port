@@ -10,18 +10,18 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
 
@@ -61,7 +61,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata){
+	public TileEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityImbuementAltar();
 	}
 
@@ -91,8 +91,8 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face){
-		return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
@@ -101,9 +101,9 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos neighbour){
+	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
 
-		boolean shouldBeActive = Arrays.stream(EnumFacing.HORIZONTALS)
+		boolean shouldBeActive = Arrays.stream(Direction.HORIZONTALS)
 				.allMatch(s -> world.getBlockState(pos.offset(s)).getBlock() == WizardryBlocks.receptacle
 							&& world.getBlockState(pos.offset(s)).getValue(BlockReceptacle.FACING) == s);
 
@@ -130,8 +130,8 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState block, EntityPlayer player, EnumHand hand,
-									EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
+                                    Direction side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -165,7 +165,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState block){
+	public void breakBlock(Level world, BlockPos pos, IBlockState block){
 
         TileEntity tileentity = world.getTileEntity(pos);
 

@@ -7,17 +7,17 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
 			if(!createBarriers(world, caster.getPositionVector(), caster.getLookVec(), caster, modifiers)) return false;
@@ -58,7 +58,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(caster.onGround){
 			if(!createBarriers(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()),
@@ -71,19 +71,19 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		if(!createBarriers(world, new Vec3d(x, y, z), new Vec3d(direction.getDirectionVec()), null, modifiers)) return false;
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
+		if(!createBarriers(world, new Vec3(x, y, z), new Vec3(direction.getDirectionVec()), null, modifiers)) return false;
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
 		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
 		return true;
 	}
 
-	private boolean createBarriers(World world, Vec3d origin, Vec3d direction, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	private boolean createBarriers(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 
 			direction = GeometryUtils.horizontalise(direction);
-			Vec3d centre = origin.add(direction.scale(BARRIER_DISTANCE - BARRIER_ARC_RADIUS)); // Arc centred behind caster
+			Vec3 centre = origin.add(direction.scale(BARRIER_DISTANCE - BARRIER_ARC_RADIUS)); // Arc centred behind caster
 
 			// Don't spawn them yet or the anti-overlap will prevent the rest from spawning
 			List<EntityIceBarrier> barriers = new ArrayList<>();
@@ -108,9 +108,9 @@ public class FrostBarrier extends Spell {
 		return true;
 	}
 
-	private EntityIceBarrier createBarrier(World world, Vec3d centre, Vec3d direction, @Nullable EntityLivingBase caster, SpellModifiers modifiers, int barrierCount, int index){
+	private EntityIceBarrier createBarrier(Level world, Vec3 centre, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers, int barrierCount, int index){
 
-		Vec3d position = centre.add(direction.scale(BARRIER_ARC_RADIUS));
+		Vec3 position = centre.add(direction.scale(BARRIER_ARC_RADIUS));
 		Integer floor = BlockUtils.getNearestFloor(world, new BlockPos(position), 3);
 		if(floor == null) return null;
 		position = GeometryUtils.replaceComponent(position, Axis.Y, floor);

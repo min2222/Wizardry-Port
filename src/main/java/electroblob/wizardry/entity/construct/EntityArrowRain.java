@@ -4,11 +4,11 @@ import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityArrowRain extends EntityScaledConstruct {
 
-	public EntityArrowRain(World world){
+	public EntityArrowRain(Level world){
 		super(world);
 		setSize(Spells.arrow_rain.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}

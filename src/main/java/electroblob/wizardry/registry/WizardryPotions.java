@@ -4,11 +4,11 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.potion.*;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.Potion;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -90,7 +90,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "transience", new PotionMagicEffectParticles(false, 0,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/transience.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){
+			public void spawnCustomParticle(Level world, double x, double y, double z){
 				ParticleBuilder.create(Type.DUST).pos(x, y, z).clr(0.8f, 0.8f, 1.0f).shaded(true).spawn(world);
 			}
 		}.setBeneficial()); // 0xffe89b
@@ -98,12 +98,12 @@ public final class WizardryPotions {
 		registerPotion(registry, "fireskin", new PotionMagicEffectParticles(false, 0,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/fireskin.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){
-				world.spawnParticle(EnumParticleTypes.FLAME, x, y, z, 0, 0, 0);
+			public void spawnCustomParticle(Level world, double x, double y, double z){
+				world.spawnParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
 			}
 
 			@Override
-			public void performEffect(EntityLivingBase entitylivingbase, int strength){
+			public void performEffect(LivingEntity entitylivingbase, int strength){
 				entitylivingbase.extinguish(); // Stops melee mobs that are on fire from setting the player on fire,
 				// without allowing the player to actually stand in fire or swim in lava without taking damage.
 			}
@@ -112,7 +112,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "ice_shroud", new PotionMagicEffectParticles(false, 0,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/ice_shroud.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){
+			public void spawnCustomParticle(Level world, double x, double y, double z){
 				float brightness = 0.5f + (world.rand.nextFloat() / 2);
 				ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).clr(brightness, brightness + 0.1f, 1.0f).gravity(true).spawn(world);
 				ParticleBuilder.create(Type.SNOW).pos(x, y, z).spawn(world);
@@ -122,7 +122,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "static_aura", new PotionMagicEffectParticles(false, 0,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/static_aura.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){
+			public void spawnCustomParticle(Level world, double x, double y, double z){
 				ParticleBuilder.create(Type.SPARK).pos(x, y, z).spawn(world);
 			}
 		}.setBeneficial()); // 0x0070ff
@@ -132,7 +132,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "sixth_sense", new PotionMagicEffect(false, 0xc6ff01,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/sixth_sense.png")){
 			@Override
-			public void performEffect(EntityLivingBase target, int strength){
+			public void performEffect(LivingEntity target, int strength){
 				// Reset the shader (a bit dirty but both the potion expiry hooks are only fired server-side, and
 				// there's no point sending packets unnecessarily if we can just do this instead)
 				if(target.getActivePotionEffect(this).getDuration() <= 1 && target.world.isRemote
@@ -151,7 +151,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "mind_control", new PotionMagicEffectParticles(true, 0x320b44,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/mind_control.png")) {
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){} // We only want the syncing
+			public void spawnCustomParticle(Level world, double x, double y, double z){} // We only want the syncing
 		});
 
 		registerPotion(registry, "font_of_mana", new PotionMagicEffect(false, 0xffe5bb,
@@ -163,7 +163,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "curse_of_soulbinding", new Curse(true, 0x0f000f,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_soulbinding.png")){
 			@Override // We're not removing any attributes, but it's called when we want it to be so...
-			public void removeAttributesModifiersFromEntity(EntityLivingBase entity, net.minecraft.entity.ai.attributes.AbstractAttributeMap attributeMapIn, int amplifier){
+			public void removeAttributesModifiersFromEntity(LivingEntity entity, net.minecraft.entity.ai.attributes.AbstractAttributeMap attributeMapIn, int amplifier){
 				// TODO: Hmmmm...
 			}
 		});
@@ -171,7 +171,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "paralysis", new PotionMagicEffectParticles(true, 0,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/paralysis.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){
+			public void spawnCustomParticle(Level world, double x, double y, double z){
 				ParticleBuilder.create(Type.SPARK).pos(x, y, z).spawn(world);
 			}
 		});
@@ -201,7 +201,7 @@ public final class WizardryPotions {
 		registerPotion(registry, "mirage", new PotionMagicEffectParticles(false, 0, // No particles or we'll see the player's actual position!
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/mirage.png")){
 			@Override
-			public void spawnCustomParticle(World world, double x, double y, double z){} // We only want the syncing
+			public void spawnCustomParticle(Level world, double x, double y, double z){} // We only want the syncing
 		}.setBeneficial());
 
 		registerPotion(registry, "oakflesh", new PotionOakflesh(false, 0).setBeneficial());

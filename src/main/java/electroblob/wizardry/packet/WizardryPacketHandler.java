@@ -1,11 +1,11 @@
 package electroblob.wizardry.packet;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class WizardryPacketHandler {
 
@@ -41,8 +41,8 @@ public class WizardryPacketHandler {
 
 	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
 			Class<? extends IMessageHandler<REQ, REPLY>> packet, Class<REQ> message){
-		net.registerMessage(packet, message, nextPacketId, Side.CLIENT);
-		net.registerMessage(packet, message, nextPacketId, Side.SERVER);
+		net.registerMessage(packet, message, nextPacketId, Dist.CLIENT);
+		net.registerMessage(packet, message, nextPacketId, Dist.SERVER);
 		nextPacketId++;
 	}
 }

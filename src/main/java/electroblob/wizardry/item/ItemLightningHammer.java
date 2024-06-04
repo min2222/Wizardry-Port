@@ -12,20 +12,20 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -111,21 +111,21 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
+	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
 		if(!world.isRemote){
 			EntityHammer hammer = new EntityHammer(world);
-			Vec3d look = player.getLookVec();
-			Vec3d vec = player.getPositionEyes(1).add(look);
+			Vec3 look = player.getLookVec();
+			Vec3 vec = player.getPositionEyes(1).add(look);
 			hammer.setPositionAndRotation(vec.x, vec.y - hammer.height/2, vec.z, player.rotationYawHead - 90, 0);
 			// For some reason the above method insists on clamping the pitch to between -90 and 90
 			hammer.rotationPitch = 180 + player.rotationPitch;
@@ -148,7 +148,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 		// Use this instead of stack.shrink so it works regardless of whether the player is in creative mode or not
 		player.setHeldItem(hand, ItemStack.EMPTY);
 
-		return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 	// Cannot be dropped
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player){
+	public boolean onDroppedByPlayer(ItemStack item, Player player){
 		return false;
 	}
 
@@ -183,10 +183,10 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 		ItemStack stack = event.getEntityPlayer().getHeldItemMainhand();
 
-		if(stack.getItem() instanceof ItemLightningHammer && event.getTarget() instanceof EntityLivingBase){
+		if(stack.getItem() instanceof ItemLightningHammer && event.getTarget() instanceof LivingEntity){
 
-			EntityPlayer wielder = event.getEntityPlayer();
-			EntityLivingBase hit = (EntityLivingBase)event.getTarget();
+			Player wielder = event.getEntityPlayer();
+			LivingEntity hit = (LivingEntity)event.getTarget();
 
 			float attackStrength = wielder.getCooledAttackStrength(0);
 
@@ -201,7 +201,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 			if(attackStrength == 1){ // Only chains when the attack meter is full
 
-				List<EntityLivingBase> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.posX, hit.posY, hit.posZ, hit.world);
+				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.posX, hit.posY, hit.posZ, hit.world);
 
 				nearby.remove(hit);
 				nearby.remove(wielder);
@@ -209,7 +209,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 				int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue() / 2;
 				while(nearby.size() > maxTargets) nearby.remove(nearby.size() - 1);
 
-				for(EntityLivingBase target : nearby){
+				for(LivingEntity target : nearby){
 
 					target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(wielder, DamageType.SHOCK), CHAINING_DAMAGE * ((ItemLightningHammer)stack.getItem()).getDamageMultiplier(stack));
 

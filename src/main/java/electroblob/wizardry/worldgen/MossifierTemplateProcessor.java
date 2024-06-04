@@ -1,9 +1,9 @@
 package electroblob.wizardry.worldgen;
 
 import net.minecraft.block.BlockStoneBrick;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.Template;
 
@@ -33,7 +33,7 @@ public class MossifierTemplateProcessor implements ITemplateProcessor {
 
 	@Nullable
 	@Override
-	public Template.BlockInfo processBlock(World world, BlockPos pos, Template.BlockInfo info){
+	public Template.BlockInfo processBlock(Level world, BlockPos pos, Template.BlockInfo info){
 
 		float chance = mossiness - heightWeight * (pos.getY() - groundLevel);
 

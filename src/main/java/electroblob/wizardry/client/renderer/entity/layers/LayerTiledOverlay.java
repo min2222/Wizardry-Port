@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -26,7 +26,7 @@ import java.util.function.Function;
  * @author Electroblob
  * @since Wizardry 4.3
  */
-public abstract class LayerTiledOverlay<T extends EntityLivingBase> implements LayerRenderer<T> {
+public abstract class LayerTiledOverlay<T extends LivingEntity> implements LayerRenderer<T> {
 
 	private final RenderLivingBase<?> renderer;
 
@@ -220,7 +220,7 @@ public abstract class LayerTiledOverlay<T extends EntityLivingBase> implements L
 	 * @param <T> The type of entity this layer renderer is applicable for
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends EntityLivingBase> void initialiseLayers(Class<T> entityType, Function<RenderLivingBase<T>, LayerRenderer<? extends T>> layerFactory){
+	public static <T extends LivingEntity> void initialiseLayers(Class<T> entityType, Function<RenderLivingBase<T>, LayerRenderer<? extends T>> layerFactory){
 
 		for(Class<? extends Entity> c : Minecraft.getMinecraft().getRenderManager().entityRenderMap.keySet()){
 			if(entityType.isAssignableFrom(c)){
@@ -234,7 +234,7 @@ public abstract class LayerTiledOverlay<T extends EntityLivingBase> implements L
 		}
 
 		// Players have a separate renderer map
-		if(entityType.isAssignableFrom(EntityPlayer.class)){
+		if(entityType.isAssignableFrom(Player.class)){
 			for(RenderPlayer renderer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()){
 				renderer.addLayer(layerFactory.apply((RenderLivingBase<T>)renderer)); // This does need suppress warnings
 			}
@@ -246,8 +246,8 @@ public abstract class LayerTiledOverlay<T extends EntityLivingBase> implements L
 	 * {@link LayerTiledOverlay#initialiseLayers(Class, Function)}.
 	 * @param layerFactory A function that creates a layer for a given renderer, usually a constructor reference
 	 */
-	public static void initialiseLayers(Function<RenderLivingBase<EntityLivingBase>, LayerRenderer<? extends EntityLivingBase>> layerFactory){
-		initialiseLayers(EntityLivingBase.class, layerFactory);
+	public static void initialiseLayers(Function<RenderLivingBase<LivingEntity>, LayerRenderer<? extends LivingEntity>> layerFactory){
+		initialiseLayers(LivingEntity.class, layerFactory);
 	}
 
 }

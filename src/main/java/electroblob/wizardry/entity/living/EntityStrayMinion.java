@@ -7,12 +7,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityStrayMinion extends EntitySkeletonMinion {
 
 	/** Creates a new stray minion in the given world. */
-	public EntityStrayMinion(World world){
+	public EntityStrayMinion(Level world){
 		super(world);
 	}
 

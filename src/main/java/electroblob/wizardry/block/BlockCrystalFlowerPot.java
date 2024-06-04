@@ -7,21 +7,21 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -37,7 +37,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random random){
+	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random random){
 		if(world.isRemote && random.nextBoolean()){
 			ParticleBuilder.create(Type.SPARKLE)
 					.pos(pos.getX() + 0.3 + random.nextDouble() * 0.4, pos.getY() + 0.6 + random.nextDouble() * 0.3, pos.getZ() + 0.3 + random.nextDouble() * 0.4)
@@ -50,7 +50,7 @@ public class BlockCrystalFlowerPot extends Block {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState state){
+	public TileEntity createTileEntity(Level world, IBlockState state){
 		return new TileEntityFlowerPot(Item.getItemFromBlock(WizardryBlocks.crystal_flower), 0);
 	}
 
@@ -60,7 +60,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, EnumHand hand, Direction facing, float hitX, float hitY, float hitZ){
 
 		ItemStack stack = new ItemStack(WizardryBlocks.crystal_flower);
 
@@ -76,7 +76,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, Level world, BlockPos pos, Player player){
 		return new ItemStack(WizardryBlocks.crystal_flower);
 	}
 
@@ -109,15 +109,15 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World world, BlockPos pos){
+	public boolean canPlaceBlockAt(Level world, BlockPos pos){
 		IBlockState downState = world.getBlockState(pos.down());
-		return super.canPlaceBlockAt(world, pos) && (downState.isTopSolid() || downState.getBlockFaceShape(world, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID);
+		return super.canPlaceBlockAt(world, pos) && (downState.isTopSolid() || downState.getBlockFaceShape(world, pos.down(), Direction.UP) == BlockFaceShape.SOLID);
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos neighbour){
+	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
 		IBlockState downState = world.getBlockState(pos.down());
-		if(!downState.isTopSolid() && downState.getBlockFaceShape(world, pos.down(), EnumFacing.UP) != BlockFaceShape.SOLID){
+		if(!downState.isTopSolid() && downState.getBlockFaceShape(world, pos.down(), Direction.UP) != BlockFaceShape.SOLID){
 			this.dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);
 		}
@@ -129,18 +129,18 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, Direction face){
 		return BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest){
+	public boolean removedByPlayer(IBlockState state, Level world, BlockPos pos, Player player, boolean willHarvest){
 		if(willHarvest) return true; // If it will harvest, delay deletion of the block until after getDrops
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 
 	@Override
-	public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool){
+	public void harvestBlock(Level world, Player player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
 		world.setBlockToAir(pos);
 	}

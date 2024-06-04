@@ -4,18 +4,18 @@ import com.google.common.collect.Multimap;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemSpectralSword extends ItemSword implements IConjuredItem {
 
@@ -76,14 +76,14 @@ public class ItemSpectralSword extends ItemSword implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
+	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -110,7 +110,7 @@ public class ItemSpectralSword extends ItemSword implements IConjuredItem {
 
 	// Cannot be dropped
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player){
+	public boolean onDroppedByPlayer(ItemStack item, Player player){
 		return false;
 	}
 

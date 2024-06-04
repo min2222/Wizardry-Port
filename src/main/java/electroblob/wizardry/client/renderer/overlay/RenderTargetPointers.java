@@ -12,24 +12,24 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
-@EventBusSubscriber(Side.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RenderTargetPointers {
 
 	private static final ResourceLocation POINTER_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/pointer.png");
 	private static final ResourceLocation TARGET_POINTER_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/target_pointer.png");
 
 	@SubscribeEvent
-	public static void onRenderLivingEvent(RenderLivingEvent.Post<EntityLivingBase> event){
+	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 
 		Minecraft mc = Minecraft.getMinecraft();
 		WizardData data = WizardData.get(mc.player);

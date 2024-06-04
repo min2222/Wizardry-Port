@@ -4,9 +4,9 @@ import electroblob.wizardry.potion.Curse;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ public class RemoveCurse extends SpellBuff {
 	}
 	
 	@Override
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 
 		if(!caster.getActivePotionEffects().isEmpty()){
 
@@ -39,7 +39,7 @@ public class RemoveCurse extends SpellBuff {
 	}
 
 	@Override
-	protected void spawnParticles(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 
 		super.spawnParticles(world, caster, modifiers);
 

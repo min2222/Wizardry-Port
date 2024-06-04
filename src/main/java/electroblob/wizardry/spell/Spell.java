@@ -14,28 +14,28 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
  * that the constructor for an individual spell has no parameters, but you may prefer to pass in the parameters when the
  * spell is registered, so all the mana costs etc. are in one place like a sort of sandbox.
  * <p></p>
- * - Implement the {@link Spell#cast(World, EntityPlayer, EnumHand, int, SpellModifiers)} method, in which you should
+ * - Implement the {@link Spell#cast(Level, Player, EnumHand, int, SpellModifiers)} method, in which you should
  * execute the code that makes the spell work, and return true or false depending on whether the spell succeeded and
  * therefore whether mana should be used up.
  * <p></p>
@@ -243,7 +243,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * @return An array of sound events played by this spell.
 	 * @see Spell#createSoundWithSuffix(String)
 	 * @see Spell#createContinuousSpellSounds
-	 * @see Spell#playSound(World, double, double, double, int, int, SpellModifiers, String...)
+	 * @see Spell#playSound(Level, double, double, double, int, int, SpellModifiers, String...)
 	 */
 	protected SoundEvent[] createSounds(){
 		return new SoundEvent[]{WizardrySounds.createSound(this.getRegistryName().getNamespace(), "spell." + this.getRegistryName().getPath())};
@@ -308,7 +308,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	/** <b>Internal, do not use.</b> Use {@link Spell#setProperties(SpellProperties)} to set a spell's properties. */
 	public void setPropertiesClient(SpellProperties properties){
 		// Quick sanity check
-		if(FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT) Wizardry.logger.warn("Spell#setPropertiesClient called from the server side!");
+		if(FMLCommonHandler.instance().getEffectiveSide() != Dist.CLIENT) Wizardry.logger.warn("Spell#setPropertiesClient called from the server side!");
 		// This is like the other method but with no logging or global properties so that we can silently ignore syncing
 		// in singleplayer (LAN is like singleplayer because the host receives the packet before opening to LAN anyway)
 		if(!arePropertiesInitialised()) this.properties = properties;
@@ -390,7 +390,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded and mana should be used up, false if not.
 	 */
-	public abstract boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers);
+	public abstract boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers);
 
 	/**
 	 * Casts the spell, but with an EntityLiving as the caster. Each subclass can optionally override this method and
@@ -423,8 +423,8 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded, false if not. Returns false by default.
 	 */
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target,
-			SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+                        SpellModifiers modifiers){
 		return false;
 	}
 
@@ -462,7 +462,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded, false if not. Returns false by default.
 	 */
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		return false;
 	}
 
@@ -488,12 +488,12 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 */
 	// Conveniently, we can't always get a reference to the target for NPC casting once the spell ends (because it
 	// might have died or run off, or the NPC might have lost interest...) - so let's just not bother!
-	public void finishCasting(World world, @Nullable EntityLivingBase caster, double x, double y, double z,
-							  @Nullable EnumFacing direction, int duration, SpellModifiers modifiers){}
+	public void finishCasting(Level world, @Nullable LivingEntity caster, double x, double y, double z,
+                              @Nullable Direction direction, int duration, SpellModifiers modifiers){}
 
 	/**
 	 * Whether the given entity can cast this spell. If you have overridden
-	 * {@link Spell#cast(World, EntityLiving, EnumHand, int, EntityLivingBase, SpellModifiers)}, you should override
+	 * {@link Spell#cast(Level, EntityLiving, EnumHand, int, LivingEntity, SpellModifiers)}, you should override
 	 * this to return true (either always or under certain circumstances), or alternatively assign an NPC selector via
 	 * {@link Spell#npcSelector(BiPredicate)} (recommended for general spell classes).
 	 * @param npc The entity to query.
@@ -509,7 +509,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/**
 	 * Whether the given dispenser can cast this spell. If you have overridden
-	 * {@link Spell#cast(World, double, double, double, EnumFacing, int, int, SpellModifiers)}, you should override this
+	 * {@link Spell#cast(Level, double, double, double, Direction, int, int, SpellModifiers)}, you should override this
 	 * to return true (either always or under certain circumstances).
 	 * @param dispenser The dispenser to query.
 	 */
@@ -812,7 +812,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	// - The pitch variation thing is annoying to keep repeating so it's also centralised here
 
 	/**
-	 * Plays this spell's sound at the given entity in the given world. This calls {@link Spell#playSound(World, double, double, double, int, int, SpellModifiers, String...)}, passing in the given entity's position as the xyz coordinates. Also checks if the given entity
+	 * Plays this spell's sound at the given entity in the given world. This calls {@link Spell#playSound(Level, double, double, double, int, int, SpellModifiers, String...)}, passing in the given entity's position as the xyz coordinates. Also checks if the given entity
 	 * is silent, and if so, does not play the sound.
 	 * <p></p>
 	 * <i>If you are overriding the {@code Spell.playSound} methods, it is recommended that you override the xyz version
@@ -827,7 +827,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * @param sounds A number of strings representing the sounds to be played. If omitted, all of this spell's sounds
  *               will be played at once. String format is as passed to {@link Spell#createSoundWithSuffix(String)}.
 	 */
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		if(!entity.isSilent()){
 			this.playSound(world, entity.posX, entity.posY, entity.posZ, ticksInUse, duration, modifiers, sounds);
 		}
@@ -835,7 +835,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/**
 	 * Plays this spell's sound at the given position in the given world. This is a vector-based wrapper for
-	 * {@link Spell#playSound(World, double, double, double, int, int, SpellModifiers, String...)}.
+	 * {@link Spell#playSound(Level, double, double, double, int, int, SpellModifiers, String...)}.
 	 * <p></p>
 	 * <i>If you are overriding the {@code Spell.playSound} methods, it is recommended that you override the xyz version
 	 * instead of this one, since this method calls that one anyway.</i>
@@ -847,7 +847,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * methods. Not used in the base method, but included for use by subclasses overriding this method.
 	 * @param modifiers The modifiers this spell was cast with, passed in from the {@code cast(...)} methods.
 	 */
-	protected void playSound(World world, Vec3d pos, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, Vec3 pos, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSound(world, pos.x, pos.y, pos.z, ticksInUse, duration, modifiers, sounds);
 	}
 
@@ -869,7 +869,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * methods. Not used in the base method, but included for use by subclasses overriding this method.
 	 * @param modifiers The modifiers this spell was cast with, passed in from the {@code cast(...)} methods.
 	 */
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 
 		List<String> identifiers = Arrays.stream(sounds).map(s -> "spell." + this.getRegistryName().getPath() + "." + s)
 				.collect(Collectors.toList());
@@ -886,14 +886,14 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/** Helper method which plays a standard continuous spell sound loop on the first casting tick, which moves
 	 * with the given entity. */
-	protected final void playSoundLoop(World world, EntityLivingBase entity, int ticksInUse){
+	protected final void playSoundLoop(Level world, LivingEntity entity, int ticksInUse){
 		if(ticksInUse == 0 && world.isRemote) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds,
 				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f));
 	}
 
 	/** Helper method which plays a standard continuous spell sound loop on the first casting tick, at the given
 	 * coordinates. If the given duration is -1, the coordinates must be those of a dispenser. */
-	protected final void playSoundLoop(World world, double x, double y, double z, int ticksInUse, int duration){
+	protected final void playSoundLoop(Level world, double x, double y, double z, int ticksInUse, int duration){
 		if(ticksInUse == 0 && world.isRemote){
 			Wizardry.proxy.playSpellSoundLoop(world, x, y, z, this, this.sounds,
 					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.rand.nextFloat() - 0.5f), duration);

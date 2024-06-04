@@ -3,7 +3,7 @@ package electroblob.wizardry.potion;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber

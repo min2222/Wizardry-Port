@@ -10,20 +10,20 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -71,11 +71,11 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		WizardData data = WizardData.get(caster);
 
-		Vec3d origin = caster.getPositionEyes(1);
+		Vec3 origin = caster.getPositionEyes(1);
 
 		float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
@@ -93,16 +93,16 @@ public class Grapple extends Spell {
 			}
 		}
 
-		Vec3d target = hit.hitVec;
+		Vec3 target = hit.hitVec;
 
-		if(hit.entityHit instanceof EntityLivingBase){
+		if(hit.entityHit instanceof LivingEntity){
 			// If the target is an entity, we need to use the entity's centre rather than the original hit position
 			// because the entity will have moved!
 			target = GeometryUtils.getCentre(hit.entityHit);
 		}
 
 		double distance = origin.distanceTo(target);
-		Vec3d direction = target.subtract(origin).normalize();
+		Vec3 direction = target.subtract(origin).normalize();
 
 		double maxLength = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT;
 
@@ -128,7 +128,7 @@ public class Grapple extends Spell {
 
 		}else{
 			// Retraction
-			Vec3d velocity = direction.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
+			Vec3 velocity = direction.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 			int retractTime = ticksInUse - (int)(distance/extensionSpeed);
 
@@ -137,7 +137,7 @@ public class Grapple extends Spell {
 				case BLOCK:
 					// Payout
 					if(caster.isSneaking() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
-						velocity = new Vec3d(velocity.x, distance < maxLength-1 ? -PAYOUT_SPEED : distance-maxLength+1, velocity.z);
+						velocity = new Vec3(velocity.x, distance < maxLength-1 ? -PAYOUT_SPEED : distance-maxLength+1, velocity.z);
 
 					// Reel the caster towards the block hit
 					double ax = (velocity.x - caster.motionX) * REEL_ACCELERATION;
@@ -162,7 +162,7 @@ public class Grapple extends Spell {
 				case ENTITY:
 					// Payout
 					if(caster.isSneaking() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
-						velocity = new Vec3d(velocity.x, distance < maxLength-1 ? PAYOUT_SPEED : maxLength-1-distance, velocity.z);
+						velocity = new Vec3(velocity.x, distance < maxLength-1 ? PAYOUT_SPEED : maxLength-1-distance, velocity.z);
 
 					// Reel the entity hit towards the caster
 					Entity entity = hit.entityHit;
@@ -205,15 +205,15 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target == null) return false;
 
-		Vec3d origin = caster.getPositionEyes(1);
+		Vec3 origin = caster.getPositionEyes(1);
 
 		// If the target is an entity, we need to use the entity's centre rather than the original hit position
 		// because the entity will have moved!
-		Vec3d targetVec = GeometryUtils.getCentre(target);
+		Vec3 targetVec = GeometryUtils.getCentre(target);
 
 		RayTraceResult hit = findTarget(world, caster, origin, targetVec.subtract(origin).normalize(), modifiers);
 
@@ -225,7 +225,7 @@ public class Grapple extends Spell {
 		if(ticksInUse <= 1 && distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade))
 			return false;
 
-		Vec3d vec = targetVec.subtract(origin).normalize();
+		Vec3 vec = targetVec.subtract(origin).normalize();
 
 		float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
@@ -237,7 +237,7 @@ public class Grapple extends Spell {
 			return false;
 		}
 
-		Vec3d hookPosition;
+		Vec3 hookPosition;
 
 		if(ticksInUse * extensionSpeed < distance){
 			// Extension
@@ -245,7 +245,7 @@ public class Grapple extends Spell {
 
 		}else{
 			// Retraction
-			Vec3d velocity = vec.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
+			Vec3 velocity = vec.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 			// Reel the entity hit towards the caster
 			if(distance > MINIMUM_REEL_DISTANCE){
@@ -272,22 +272,22 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 
-		Vec3d origin = new Vec3d(x, y, z);
+		Vec3 origin = new Vec3(x, y, z);
 
-		RayTraceResult result = findTarget(world, null, origin, new Vec3d(direction.getDirectionVec()), modifiers);
+		RayTraceResult result = findTarget(world, null, origin, new Vec3(direction.getDirectionVec()), modifiers);
 
-		if(result.entityHit instanceof EntityLivingBase){
+		if(result.entityHit instanceof LivingEntity){
 
 			Entity entity = result.entityHit;
 
 			// If the target is an entity, we need to use the entity's centre rather than the original hit position
 			// because the entity will have moved!
-			Vec3d target = GeometryUtils.getCentre(entity);
+			Vec3 target = GeometryUtils.getCentre(entity);
 
 			double distance = origin.distanceTo(target);
-			Vec3d vec = target.subtract(origin).normalize();
+			Vec3 vec = target.subtract(origin).normalize();
 
 			float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
@@ -299,7 +299,7 @@ public class Grapple extends Spell {
 				return false;
 			}
 
-			Vec3d hookPosition;
+			Vec3 hookPosition;
 
 			if(ticksInUse * extensionSpeed < distance){
 				// Extension
@@ -307,7 +307,7 @@ public class Grapple extends Spell {
 
 			}else{
 				// Retraction
-				Vec3d velocity = vec.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
+				Vec3 velocity = vec.scale(getProperty(REEL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 				// Reel the entity hit towards the caster
 				if(distance > MINIMUM_REEL_DISTANCE){
@@ -336,18 +336,18 @@ public class Grapple extends Spell {
 	}
 
 	@Override
-	public void finishCasting(World world, @Nullable EntityLivingBase caster, double x, double y, double z, EnumFacing facing, int duration, SpellModifiers modifiers){
+	public void finishCasting(Level world, @Nullable LivingEntity caster, double x, double y, double z, Direction facing, int duration, SpellModifiers modifiers){
 
-		Vec3d origin = null;
-		Vec3d direction = null;
-		Vec3d target = null;
+		Vec3 origin = null;
+		Vec3 direction = null;
+		Vec3 target = null;
 
 		if(caster != null){
 
 			origin = caster.getPositionEyes(1);
 
-			if(caster instanceof EntityPlayer){
-				WizardData data = WizardData.get((EntityPlayer)caster);
+			if(caster instanceof Player){
+				WizardData data = WizardData.get((Player)caster);
 				if(data != null){
 					RayTraceResult hit = data.getVariable(TARGET_KEY);
 					if(hit != null) target = hit.hitVec;
@@ -363,8 +363,8 @@ public class Grapple extends Spell {
 
 		}else if(!Double.isNaN(x) && !Double.isNaN(y) && !Double.isNaN(z)){
 
-			origin = new Vec3d(x, y, z);
-			direction = new Vec3d(facing.getDirectionVec());
+			origin = new Vec3(x, y, z);
+			direction = new Vec3(facing.getDirectionVec());
 			RayTraceResult result = findTarget(world, null, origin, direction, modifiers);
 			target = result.hitVec;
 
@@ -380,7 +380,7 @@ public class Grapple extends Spell {
 		}
 	}
 
-	private void spawnLeafParticles(World world, Vec3d origin, Vec3d direction, double distance){
+	private void spawnLeafParticles(Level world, Vec3 origin, Vec3 direction, double distance){
 		// Copied from SpellRay
 		for(double d = PARTICLE_SPACING; d <= distance; d += PARTICLE_SPACING){
 			double x = origin.x + d*direction.x;// + PARTICLE_JITTER * (world.rand.nextDouble()*2 - 1);
@@ -390,11 +390,11 @@ public class Grapple extends Spell {
 		}
 	}
 
-	private RayTraceResult findTarget(World world, @Nullable EntityLivingBase caster, Vec3d origin, Vec3d direction, SpellModifiers modifiers){
+	private RayTraceResult findTarget(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		Vec3d endpoint = origin.add(direction.scale(range));
+		Vec3 endpoint = origin.add(direction.scale(range));
 
 		RayTraceResult result = RayTracer.rayTrace(world, origin, endpoint, 0, false,
 				true, false, Entity.class, RayTracer.ignoreEntityFilter(caster));
@@ -402,16 +402,16 @@ public class Grapple extends Spell {
 		// Non-solid blocks (or if the result is null) count as misses
 		if(result == null || result.typeOfHit == RayTraceResult.Type.BLOCK
 				&& !world.getBlockState(result.getBlockPos()).getMaterial().isSolid()){
-			return new RayTraceResult(RayTraceResult.Type.MISS, endpoint, EnumFacing.DOWN, new BlockPos(endpoint));
+			return new RayTraceResult(RayTraceResult.Type.MISS, endpoint, Direction.DOWN, new BlockPos(endpoint));
 		// Immovable entities count as misses too, but the endpoint is the hit vector instead
 		}else if(result.entityHit != null && !result.entityHit.canBePushed()){
-			return new RayTraceResult(RayTraceResult.Type.MISS, result.hitVec, EnumFacing.DOWN, new BlockPos(endpoint));
+			return new RayTraceResult(RayTraceResult.Type.MISS, result.hitVec, Direction.DOWN, new BlockPos(endpoint));
 		}
 		// If the ray trace missed, result.hitVec will be the endpoint anyway - neat!
 		return result;
 	}
 
-	private static RayTraceResult update(EntityPlayer player, RayTraceResult grapplingTarget){
+	private static RayTraceResult update(Player player, RayTraceResult grapplingTarget){
 
 		if(grapplingTarget != null && (!EntityUtils.isCasting(player, Spells.grapple)
 				|| (grapplingTarget.entityHit != null && !grapplingTarget.entityHit.isEntityAlive()))){

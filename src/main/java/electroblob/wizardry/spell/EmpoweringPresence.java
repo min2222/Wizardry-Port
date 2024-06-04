@@ -1,7 +1,6 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.item.SpellActions;
@@ -11,11 +10,11 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -36,9 +35,9 @@ public class EmpoweringPresence extends SpellAreaEffect {
 	}
 
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
-		if(target instanceof EntityPlayer || target instanceof ISpellCaster){ // Only useful for spell casters
+		if(target instanceof Player || target instanceof ISpellCaster){ // Only useful for spell casters
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
@@ -51,7 +50,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 	}
 
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z){
+	protected void spawnParticle(Level world, double x, double y, double z){
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.03, 0).time(50).clr(0.5f, 0.4f, 0.75f).spawn(world);
 	}
 

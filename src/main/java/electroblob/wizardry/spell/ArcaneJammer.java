@@ -12,16 +12,16 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntitySpellcasterIllager;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -52,11 +52,11 @@ public class ArcaneJammer extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
 			if(!world.isRemote){
-				((EntityLivingBase)target).addPotionEffect(new PotionEffect(WizardryPotions.arcane_jammer,
+				((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.arcane_jammer,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + (int)((modifiers.get(SpellModifiers.POTENCY) - 1)
 								/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f)));
@@ -67,17 +67,17 @@ public class ArcaneJammer extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return true;
 	}
 	
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(0.9f, 0.3f, 0.7f)
 		.spawn(world);
 	}
@@ -109,13 +109,13 @@ public class ArcaneJammer extends SpellRay {
 
 			if(event.getWorld().isRemote){
 
-				Vec3d centre = event.getCaster().getPositionEyes(1).add(event.getCaster().getLookVec());
+				Vec3 centre = event.getCaster().getPositionEyes(1).add(event.getCaster().getLookVec());
 
 				for(int i = 0; i < 5; i++){
 					double x = centre.x + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
 					double y = centre.y + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
 					double z = centre.z + 0.5f * (event.getWorld().rand.nextFloat() - 0.5f);
-					event.getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, x, y, z, 0, 0, 0);
+					event.getWorld().spawnParticle(ParticleTypes.SMOKE_LARGE, x, y, z, 0, 0, 0);
 				}
 			}
 		}

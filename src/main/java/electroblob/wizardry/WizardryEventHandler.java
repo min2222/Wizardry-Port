@@ -22,19 +22,19 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.MinecraftForge;
@@ -91,8 +91,8 @@ public final class WizardryEventHandler {
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onPlaySoundAtEntityEvent(PlaySoundAtEntityEvent event){
 		// Muffle (there's no spell class for it so it's here instead)
-		if(event.getEntity() instanceof EntityLivingBase
-				&& ((EntityLivingBase)event.getEntity()).isPotionActive(WizardryPotions.muffle)){
+		if(event.getEntity() instanceof LivingEntity
+				&& ((LivingEntity)event.getEntity()).isPotionActive(WizardryPotions.muffle)){
 			event.setCanceled(true);
 		}
 	}
@@ -146,9 +146,9 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onSpellCastPostEvent(SpellCastEvent.Post event){
 
-		if(event.getCaster() instanceof EntityPlayer){
+		if(event.getCaster() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getCaster();
+			Player player = (Player)event.getCaster();
 
 			// Advancement triggers
 			if(player instanceof EntityPlayerMP){
@@ -199,7 +199,7 @@ public final class WizardryEventHandler {
 			// Muffle
 			if(event.getTarget().isPotionActive(WizardryPotions.muffle)){
 
-				Vec3d vec = event.getTarget().getPositionEyes(1).subtract(event.getEntity().getPositionEyes(1));
+				Vec3 vec = event.getTarget().getPositionEyes(1).subtract(event.getEntity().getPositionEyes(1));
 				// Find the angle between the direction the mob is looking and the direction the player is in
 				// Angle between a and b = acos((a.b) / (|a|*|b|))
 				double angle = Math.acos(vec.dotProduct(event.getEntity().getLookVec()) / vec.length());
@@ -256,12 +256,12 @@ public final class WizardryEventHandler {
 		// Retaliatory effects
 		// These are better off here because the revenge effects are pretty similar, and I'd rather keep the (lengthy)
 		// if statement in one place.
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof EntityLivingBase
+		if(event.getSource() != null && event.getSource().getTrueSource() instanceof LivingEntity
 				&& !event.getSource().isProjectile() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
-			EntityLivingBase attacker = (EntityLivingBase)event.getSource().getTrueSource();
-			World world = event.getEntityLiving().world;
+			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
+			Level world = event.getEntityLiving().world;
 
 			if(attacker.getDistance(event.getEntityLiving()) < 10){
 
@@ -310,9 +310,9 @@ public final class WizardryEventHandler {
 		}
 
 		// Flaming and freezing swords
-		if(event.getSource().getTrueSource() instanceof EntityLivingBase){
+		if(event.getSource().getTrueSource() instanceof LivingEntity){
 
-			EntityLivingBase attacker = (EntityLivingBase)event.getSource().getTrueSource();
+			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
 
 			// Players can only ever attack with their main hand, so this is the right method to use here.
 			if(!attacker.getHeldItemMainhand().isEmpty() && ImbueWeapon.isSword(attacker.getHeldItemMainhand())){
@@ -345,7 +345,7 @@ public final class WizardryEventHandler {
 		// Damage scaling
 		if(event.getSource() != null && event.getSource() instanceof IElementalDamage){
 
-			if(event.getSource().getTrueSource() instanceof EntityPlayer){
+			if(event.getSource().getTrueSource() instanceof Player){
 				event.setAmount((float)(event.getAmount() * Wizardry.settings.playerDamageScale));
 			}else{
 				event.setAmount((float)(event.getAmount() * Wizardry.settings.npcDamageScale));
@@ -386,16 +386,16 @@ public final class WizardryEventHandler {
 	@SubscribeEvent(priority = EventPriority.LOWEST) // No siphoning if the event is cancelled, that could be exploited...
 	public static void onLivingDeathEvent(LivingDeathEvent event){
 
-		if(event.getSource().getTrueSource() instanceof EntityPlayer){
+		if(event.getSource().getTrueSource() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getTrueSource();
 
 			// Compatibility with "Lycanites Mobs" -it uses custom loot drop logic which can't be hooked, given the
 			// number of mobs that spawn as Lycanites when this mod is active it would massively nerf the wizard drops
 			//  if we didn't handle this
 			if(event.getEntity().getClass().getCanonicalName().contains("lycanitesmobs"))
 			{
-				WorldServer world = (WorldServer)event.getEntity().getEntityWorld();
+				ServerLevel world = (ServerLevel)event.getEntity().getEntityWorld();
 				LootTable table =  world.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
 
 				LootContext ctx = new LootContext.Builder(world).withPlayer(player).build();
@@ -450,8 +450,8 @@ public final class WizardryEventHandler {
 			// instead we're storing the y velocity from the previous tick in WizardData and retrieving it here
 			// Of course, if another mod screws things up and sets a player's velocity client-side only then this won't
 			// work ...but it's better than having clients calculate their own fall damage
-			if(event.getEntity() instanceof EntityPlayer){
-				WizardData data = WizardData.get((EntityPlayer)event.getEntity());
+			if(event.getEntity() instanceof Player){
+				WizardData data = WizardData.get((Player)event.getEntity());
 				if(data != null){
 					v = data.prevMotionY;
 				}

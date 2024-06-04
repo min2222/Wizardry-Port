@@ -6,13 +6,13 @@ import electroblob.wizardry.spell.Grapple;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * An animation that is associated with a particular {@link net.minecraft.item.EnumAction}. This animation will display
@@ -31,7 +31,7 @@ public abstract class ActionAnimation extends Animation {
 	}
 
 	@Override
-	public boolean shouldDisplay(EntityPlayer player, boolean firstPerson){
+	public boolean shouldDisplay(Player player, boolean firstPerson){
 		return !firstPerson && player.getItemInUseMaxCount() > 0 && player.getActiveItemStack().getItemUseAction() == action;
 	}
 
@@ -40,7 +40,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.POINT){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				// Something (probably some sort of race condition) causes getActiveItemStack to sometimes be wrong
 				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
 
@@ -60,7 +60,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.POINT_UP){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);
@@ -70,7 +70,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.POINT_DOWN){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				float tick = player.getItemInUseMaxCount() + partialTicks; // It's not the "max" use count at all!
 				float y = Math.min(0.4f + tick * 0.05f, 0.7f);
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
@@ -81,7 +81,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.SUMMON){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				float tick = player.getItemInUseMaxCount() + partialTicks; // It's not the "max" use count at all!
 				float x = -Math.min(0.4f + tick * 0.2f, 2f);
 				((ModelRendererExtended)getArmForSide(model, EnumHandSide.RIGHT)).addRotation(x, 1.2f, 0);
@@ -91,14 +91,14 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.GRAPPLE){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 
 				WizardData data = WizardData.get(player);
 				RayTraceResult hit = data.getVariable(Grapple.TARGET_KEY);
 				if(hit == null || hit.typeOfHit == RayTraceResult.Type.MISS) return;
-				Vec3d target = hit.hitVec;
+				Vec3 target = hit.hitVec;
 
-				if(hit.entityHit instanceof EntityLivingBase){
+				if(hit.entityHit instanceof LivingEntity){
 					// If the target is an entity, we need to use the entity's centre rather than the original hit position
 					// because the entity will have moved!
 					target = GeometryUtils.getCentre(hit.entityHit);
@@ -108,7 +108,7 @@ public abstract class ActionAnimation extends Animation {
 
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);
 
-				Vec3d direction = target.subtract(player.getPositionEyes(partialTicks));
+				Vec3 direction = target.subtract(player.getPositionEyes(partialTicks));
 				float yaw = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
 
 				float pitch = (float)MathHelper.atan2(MathHelper.sqrt(direction.x*direction.x + direction.z*direction.z), direction.y);
@@ -123,7 +123,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.IMBUE){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				float tick = player.getItemInUseMaxCount() + partialTicks; // It's not the "max" use count at all!
 				float z = Math.max(1.5f - tick * 0.1f, 0.8f);
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
@@ -137,7 +137,7 @@ public abstract class ActionAnimation extends Animation {
 
 		PlayerAnimator.registerAnimation(new ActionAnimation(SpellActions.THRUST){
 			@Override
-			public void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson){
+			public void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson){
 				if(player.getActiveItemStack() != player.getHeldItem(player.getActiveHand())) return;
 				EnumHandSide side = InventoryUtils.getSideForHand(player, player.getActiveHand());
 				ModelRendererExtended arm = (ModelRendererExtended)getArmForSide(model, side);

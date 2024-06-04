@@ -7,35 +7,35 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class EntityIceSpike extends EntityMagicConstruct {
 
-	private EnumFacing facing;
+	private Direction facing;
 
-	public EntityIceSpike(World world){
+	public EntityIceSpike(Level world){
 		super(world);
 		this.setSize(0.5f, 1.0f);
 	}
 
-	public void setFacing(EnumFacing facing){
+	public void setFacing(Direction facing){
 		this.facing = facing;
 		this.setRotation(-facing.getHorizontalAngle(), GeometryUtils.getPitch(facing));
 		float yaw = (-facing.getHorizontalAngle()) * (float)Math.PI/180;
 		float pitch = (GeometryUtils.getPitch(facing) - 90) * (float)Math.PI/180;
-		Vec3d min = this.getPositionVector().add(new Vec3d(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
-		Vec3d max = this.getPositionVector().add(new Vec3d(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
+		Vec3 min = this.getPositionVector().add(new Vec3(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
+		Vec3 max = this.getPositionVector().add(new Vec3(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
 		this.setEntityBoundingBox(new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z));
 	}
 
-	public EnumFacing getFacing(){
+	public Direction getFacing(){
 		return facing;
 	}
 
@@ -63,12 +63,12 @@ public class EntityIceSpike extends EntityMagicConstruct {
 
 		if(!this.world.isRemote){
 			for(Object entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox())){
-				if(entity instanceof EntityLivingBase && this.isValidTarget((EntityLivingBase)entity)){
+				if(entity instanceof LivingEntity && this.isValidTarget((LivingEntity)entity)){
 					DamageSource source = this.getCaster() == null ? DamageSource.MAGIC : MagicDamage.causeDirectMagicDamage(this.getCaster(), DamageType.FROST);
 					// Potion effect only gets added if the damage succeeded
 					// We DO want knockback here or the entity gets stuck on the spike, which is a bit of a cheat
-					if(((EntityLivingBase)entity).attackEntityFrom(source, Spells.ice_spikes.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
-						((EntityLivingBase)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+					if(((LivingEntity)entity).attackEntityFrom(source, Spells.ice_spikes.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
+						((LivingEntity)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost,
 								Spells.ice_spikes.getProperty(Spell.EFFECT_DURATION).intValue(),
 								Spells.ice_spikes.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}

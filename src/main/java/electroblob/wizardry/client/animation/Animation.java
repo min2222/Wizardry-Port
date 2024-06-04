@@ -2,7 +2,7 @@ package electroblob.wizardry.client.animation;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.EnumHandSide;
 
 /**
@@ -35,11 +35,11 @@ public abstract class Animation {
 	 *                    view. In first-person, animations are only useful for animating the player's empty hand.
 	 * @return True if the animation should be displayed, false if not.
 	 */
-	public abstract boolean shouldDisplay(EntityPlayer player, boolean firstPerson);
+	public abstract boolean shouldDisplay(Player player, boolean firstPerson);
 
 	/**
 	 * Sets the rotation of the model parts for this animation. This method is called every time the player is rendered
-	 * when {@link Animation#shouldDisplay(EntityPlayer, boolean)} returns true.
+	 * when {@link Animation#shouldDisplay(Player, boolean)} returns true.
 	 * @param player The player being animated
 	 * @param model The model to animate. All of the standard {@link ModelBiped} parts will already be wrapped and may
 	 *              be safely cast to {@code ModelRendererExtended} in order to override the rotations set by the model
@@ -48,7 +48,7 @@ public abstract class Animation {
 	 * @param firstPerson True if the player being animated is the local client player, and they are in first-person
 	 *                    view. In first-person, animations are only useful for animating the player's empty hand.
 	 */
-	public abstract void setRotationAngles(EntityPlayer player, ModelBiped model, float partialTicks, boolean firstPerson);
+	public abstract void setRotationAngles(Player player, ModelBiped model, float partialTicks, boolean firstPerson);
 
 	/**
 	 * Returns whether the boxes that form the second layer of the player's skin (for models that are instances of
@@ -59,7 +59,7 @@ public abstract class Animation {
 	 *                    view. In first-person, animations are only useful for animating the player's empty hand.
 	 * @return True to let {@link PlayerAnimator} auto-rotate the second skin layer, false to rotate them manually.
 	 */
-	public boolean autoRotateSecondLayer(EntityPlayer player, boolean firstPerson){
+	public boolean autoRotateSecondLayer(Player player, boolean firstPerson){
 		return true;
 	}
 

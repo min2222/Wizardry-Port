@@ -13,26 +13,25 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -40,7 +39,8 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.FakePlayer;
@@ -49,8 +49,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -71,7 +71,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	public MerchantRecipeList trades;
     /** The wizard's current customer. */
     @Nullable
-    private EntityPlayer customer;
+    private Player customer;
     
 	private int timeUntilReset;
 
@@ -92,7 +92,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	/** A set of the positions of the blocks that are part of this wizard's tower. */
 	private Set<BlockPos> towerBlocks;
 
-	public EntityWizard(World world){
+	public EntityWizard(Level world){
 		super(world);
 		this.detachHome();
 		// For some reason this can't be in initEntityAI
@@ -119,7 +119,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		this.tasks.addTask(4, new EntityAIRestrictOpenDoor(this));
 		this.tasks.addTask(5, new EntityAIOpenDoor(this, true));
 		this.tasks.addTask(6, new EntityAIMoveTowardsRestriction(this, 0.6D));
-		this.tasks.addTask(7, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+		this.tasks.addTask(7, new EntityAIWatchClosest2(this, Player.class, 3.0F, 1.0F));
 		this.tasks.addTask(7, new EntityAIWatchClosest2(this, EntityWizard.class, 5.0F, 0.02F));
 		this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 8.0F));
@@ -221,12 +221,12 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	}
 
 	@Override
-	public void setCustomer(EntityPlayer player){
+	public void setCustomer(Player player){
 		this.customer = player;
 	}
 
 	@Override
-	public EntityPlayer getCustomer(){
+	public Player getCustomer(){
 		return this.customer;
 	}
 
@@ -245,7 +245,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	}
 
 	@Override
-	public World getWorld(){
+	public Level getWorld(){
 		return this.world;
 	}
 
@@ -255,7 +255,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
     }
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void setRecipes(MerchantRecipeList recipeList){
 		// Apparently nothing goes here, and nothing's here in EntityVillager either...
 	}
@@ -367,7 +367,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	}
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand){
+	public boolean processInteract(Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -502,7 +502,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	// the initialisation is done, i.e. the trades don't actually exist until some player goes to trade with the
 	// villager, at which point the first is added.
 	@Override
-	public MerchantRecipeList getRecipes(EntityPlayer par1EntityPlayer){
+	public MerchantRecipeList getRecipes(Player par1EntityPlayer){
 
 		if(this.trades == null){
 
@@ -878,8 +878,8 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float damage){
 
-		if(source.getTrueSource() instanceof EntityPlayer){
-			WizardryAdvancementTriggers.anger_wizard.triggerFor((EntityPlayer)source.getTrueSource());
+		if(source.getTrueSource() instanceof Player){
+			WizardryAdvancementTriggers.anger_wizard.triggerFor((Player)source.getTrueSource());
 		}
 
 		return super.attackEntityFrom(source, damage);
@@ -928,7 +928,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	    private final EntityWizard wizard;
 
 	    public EntityAILookAtTradePlayer(EntityWizard wizard){
-	        super(wizard, EntityPlayer.class, 8.0F);
+	        super(wizard, Player.class, 8.0F);
 	        this.wizard = wizard;
 	    }
 
@@ -965,7 +965,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	            return false;
 	        }else{
 	        	
-	            EntityPlayer entityplayer = this.wizard.getCustomer();
+	            Player entityplayer = this.wizard.getCustomer();
 
 	            if(entityplayer == null){
 	                return false;
@@ -984,7 +984,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 	    @Override
 	    public void resetTask(){
-	        this.wizard.setCustomer((EntityPlayer)null);
+	        this.wizard.setCustomer((Player)null);
 	    }
 	}
 

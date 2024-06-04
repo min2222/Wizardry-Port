@@ -11,18 +11,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
-@EventBusSubscriber(Side.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RenderDonationPerks {
 
 	private static final ResourceLocation FLARE_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/totem/flare.png");
@@ -42,7 +42,7 @@ public class RenderDonationPerks {
 	@SubscribeEvent
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
-		EntityPlayer player = event.getEntityPlayer();
+		Player player = event.getEntityPlayer();
 		float partialTicks = event.getPartialRenderTick();
 
 		Element element = DonationPerksHandler.getElement(player);
@@ -145,7 +145,7 @@ public class RenderDonationPerks {
 		GlStateManager.popMatrix();
 	}
 
-	private static void drawCube(EntityPlayer player, Tessellator tessellator, float partialTicks){
+	private static void drawCube(Player player, Tessellator tessellator, float partialTicks){
 
 		BufferBuilder buffer = tessellator.getBuffer();
 
@@ -164,7 +164,7 @@ public class RenderDonationPerks {
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(CUBE_TEXTURES[player.ticksExisted % CUBE_TEXTURES.length]);
 
-		Vec3d[] vertices = GeometryUtils.getVertices(new AxisAlignedBB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
+		Vec3[] vertices = GeometryUtils.getVertices(new AxisAlignedBB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
@@ -181,7 +181,7 @@ public class RenderDonationPerks {
 		GlStateManager.popMatrix();
 	}
 
-	private static void drawFace(BufferBuilder buffer, Vec3d topLeft, Vec3d topRight, Vec3d bottomLeft, Vec3d bottomRight, float u1, float v1, float u2, float v2){
+	private static void drawFace(BufferBuilder buffer, Vec3 topLeft, Vec3 topRight, Vec3 bottomLeft, Vec3 bottomRight, float u1, float v1, float u2, float v2){
 		buffer.pos(topLeft.x, topLeft.y, topLeft.z).tex(u1, v1).endVertex();
 		buffer.pos(topRight.x, topRight.y, topRight.z).tex(u2, v1).endVertex();
 		buffer.pos(bottomRight.x, bottomRight.y, bottomRight.z).tex(u2, v2).endVertex();

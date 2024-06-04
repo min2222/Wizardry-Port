@@ -1,7 +1,7 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 
 public class GreaterHeal extends SpellBuff {
 
@@ -12,7 +12,7 @@ public class GreaterHeal extends SpellBuff {
 	}
 	
 	@Override
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 		
 		if(caster.getHealth() < caster.getMaxHealth() && caster.getHealth() > 0){
 			Heal.heal(caster, getProperty(HEALTH).floatValue() * modifiers.get(SpellModifiers.POTENCY));

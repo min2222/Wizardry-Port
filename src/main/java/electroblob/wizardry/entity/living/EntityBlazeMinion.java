@@ -2,20 +2,20 @@ package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -47,7 +47,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	/** Creates a new blaze minion in the given world. */
-	public EntityBlazeMinion(World world){
+	public EntityBlazeMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -61,14 +61,14 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 		super.initEntityAI();
 		this.targetTasks.taskEntries.clear();
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -95,7 +95,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	protected void spawnParticleEffect(){
 		if(this.world.isRemote){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(EnumParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
+				this.world.spawnParticle(ParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
 						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
@@ -112,7 +112,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's 'stop as soon as you find true' method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -132,7 +132,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -149,7 +149,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		return true;
 	}
 

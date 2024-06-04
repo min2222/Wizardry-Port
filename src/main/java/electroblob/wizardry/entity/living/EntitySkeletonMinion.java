@@ -5,15 +5,15 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.monster.AbstractSkeleton;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -21,12 +21,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
@@ -46,7 +45,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new skeleton minion in the given world. */
-	public EntitySkeletonMinion(World world){
+	public EntitySkeletonMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -60,7 +59,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 		super.initEntityAI();
 		this.targetTasks.taskEntries.clear();
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
@@ -106,7 +105,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -119,7 +118,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	@Override
 	public void onSpawn(){
 		this.spawnParticleEffect();
-		if(getCaster() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getCaster(), WizardryItems.charm_undead_helmets)){
+		if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_undead_helmets)){
 			setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 	}
@@ -144,7 +143,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -164,7 +163,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -181,7 +180,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity and this skeleton does not have a bow.
 		return !EntityFlying.class.isAssignableFrom(entityType) || this.getHeldItemMainhand().getItem() instanceof ItemBow;
 	}

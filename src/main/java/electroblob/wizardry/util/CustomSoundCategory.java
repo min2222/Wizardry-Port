@@ -2,11 +2,11 @@ package electroblob.wizardry.util;
 
 import com.google.common.collect.Maps;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 
@@ -65,13 +65,13 @@ public final class CustomSoundCategory {
 			// >> Electroblob: changed from Error to IllegalArgumentException
 			throw new IllegalArgumentException("Clash in Sound Category name pools! Cannot insert " + constantName);
 		SOUND_CATEGORIES.put(referenceName, soundCategory);
-		if (FMLLaunchHandler.side() == Side.CLIENT) setSoundLevels();
+		if (FMLLaunchHandler.side() == Dist.CLIENT) setSoundLevels();
 
 		return soundCategory;
 	}
 
 	/** Game sound level options settings only exist on the client side */
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	private static void setSoundLevels(){
 		// SoundCategory now contains 'name' sound category so build a new map
 		// >> Electroblob: Converted to local variable

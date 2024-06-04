@@ -8,18 +8,18 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityIceball extends EntityMagicProjectile {
 
-	public EntityIceball(World world){
+	public EntityIceball(Level world){
 		super(world);
 		this.setSize(0.5f, 0.5f);
 	}
@@ -39,8 +39,8 @@ public class EntityIceball extends EntityMagicProjectile {
 						MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FROST).setProjectile(),
 						damage);
 
-				if(entityHit instanceof EntityLivingBase && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit)){
-					((EntityLivingBase)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+				if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit)){
+					((LivingEntity)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
 							Spells.iceball.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.iceball.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}
@@ -49,7 +49,7 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				BlockPos pos = rayTrace.getBlockPos();
 
-				if(rayTrace.sideHit == EnumFacing.UP && !world.isRemote && world.isSideSolid(pos, EnumFacing.UP)
+				if(rayTrace.sideHit == Direction.UP && !world.isRemote && world.isSideSolid(pos, Direction.UP)
 						&& BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canPlaceBlock(thrower, world, pos)){
 					world.setBlockState(pos.up(), Blocks.SNOW_LAYER.getDefaultState());
 				}

@@ -2,14 +2,13 @@ package electroblob.wizardry.client.particle;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
@@ -18,7 +17,7 @@ public class ParticleBuff extends ParticleWizardry {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/particle/buff.png");
 	private final boolean mirror;
 	
-	public ParticleBuff(World world, double x, double y, double z){
+	public ParticleBuff(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		this.setVelocity(0, 0.162, 0); // Approximately what it was before
 		this.mirror = random.nextBoolean();

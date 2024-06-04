@@ -8,11 +8,11 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class EntitySparkBomb extends EntityBomb {
 
 	public static final String SECONDARY_MAX_TARGETS = "secondary_max_targets";
 
-	public EntitySparkBomb(World world){
+	public EntitySparkBomb(Level world){
 		super(world);
 	}
 
@@ -55,21 +55,21 @@ public class EntitySparkBomb extends EntityBomb {
 
 		double seekerRange = Spells.spark_bomb.getProperty(Spell.EFFECT_RADIUS).doubleValue() * blastMultiplier;
 
-		List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX, this.posY,
+		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX, this.posY,
 				this.posZ, this.world);
 
 		for(int i = 0; i < Math.min(targets.size(), Spells.spark_bomb.getProperty(SECONDARY_MAX_TARGETS).intValue()); i++){
 
 			boolean flag = targets.get(i) != entityHit && targets.get(i) != this.getThrower()
-					&& !(targets.get(i) instanceof EntityPlayer
-							&& ((EntityPlayer)targets.get(i)).isCreative());
+					&& !(targets.get(i) instanceof Player
+							&& ((Player)targets.get(i)).isCreative());
 
 			// Detects (client side) if target is the thrower, to stop particles being spawned around them.
 			//if(flag && world.isRemote && targets.get(i).getEntityId() == this.playerID) flag = false;
 
 			if(flag){
 
-				EntityLivingBase target = targets.get(i);
+				LivingEntity target = targets.get(i);
 
 				if(!this.world.isRemote){
 

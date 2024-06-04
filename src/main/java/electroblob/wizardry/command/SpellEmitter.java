@@ -7,10 +7,10 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -22,16 +22,16 @@ import net.minecraftforge.common.MinecraftForge;
 public class SpellEmitter implements ITickable {
 
 	protected final Spell spell;
-	protected World world;
+	protected Level world;
 	protected final double x, y, z;
-	protected final EnumFacing direction;
+	protected final Direction direction;
 	protected final int duration;
 	protected final SpellModifiers modifiers;
 
 	protected int castingTick = 0;
 	protected boolean needsRemoving = false;
 
-	protected SpellEmitter(Spell spell, World world, double x, double y, double z, EnumFacing direction, int duration, SpellModifiers modifiers){
+	protected SpellEmitter(Spell spell, Level world, double x, double y, double z, Direction direction, int duration, SpellModifiers modifiers){
 		this.spell = spell;
 		this.world = world;
 		this.duration = duration;
@@ -59,7 +59,7 @@ public class SpellEmitter implements ITickable {
 
 	/** Sets this spell emitter's world. This should only be used on the client side when the world has not yet been
 	 * set, otherwise the world will not be changed and a warning will be printed to the console. */
-	public void setWorld(World world){
+	public void setWorld(Level world){
 		if(world.isRemote && this.world == null){
 			this.world = world;
 		}else{
@@ -109,7 +109,7 @@ public class SpellEmitter implements ITickable {
 		double x = buf.readDouble();
 		double y = buf.readDouble();
 		double z = buf.readDouble();
-		EnumFacing direction = EnumFacing.byIndex(buf.readInt());
+		Direction direction = Direction.byIndex(buf.readInt());
 		int duration = buf.readInt();
 		SpellModifiers modifiers = new SpellModifiers();
 		modifiers.read(buf);
@@ -137,13 +137,13 @@ public class SpellEmitter implements ITickable {
 	}
 
 	/** Creates a new {@code SpellEmitter} from the given {@link NBTTagCompound} and returns it. */
-	public static SpellEmitter fromNBT(World world, NBTTagCompound nbt){
+	public static SpellEmitter fromNBT(Level world, NBTTagCompound nbt){
 
 		Spell spell = Spell.byMetadata(nbt.getInteger("spell"));
 		double x = nbt.getDouble("x");
 		double y = nbt.getDouble("y");
 		double z = nbt.getDouble("z");
-		EnumFacing direction = EnumFacing.byIndex(nbt.getInteger("direction"));
+		Direction direction = Direction.byIndex(nbt.getInteger("direction"));
 		int duration = nbt.getInteger("duration");
 		SpellModifiers modifiers = SpellModifiers.fromNBT(nbt.getCompoundTag("modifiers"));
 		int castingTick = nbt.getInteger("castingTick");
@@ -166,7 +166,7 @@ public class SpellEmitter implements ITickable {
 	 * @param duration The number of ticks to cast the spell for
 	 * @param modifiers The {@link SpellModifiers} for the spell
 	 */
-	public static void add(Spell spell, World world, double x, double y, double z, EnumFacing direction, int duration, SpellModifiers modifiers){
+	public static void add(Spell spell, Level world, double x, double y, double z, Direction direction, int duration, SpellModifiers modifiers){
 		if(spell.isContinuous){
 			if(duration <= 0) Wizardry.logger.warn("Adding a spell emitter with negative or zero duration!");
 			SpellEmitterData.get(world).add(new SpellEmitter(spell, world, x, y, z, direction, duration, modifiers));

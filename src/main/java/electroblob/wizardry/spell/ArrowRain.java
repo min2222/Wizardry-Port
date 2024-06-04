@@ -2,9 +2,9 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.construct.EntityArrowRain;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public class ArrowRain extends SpellConstructRanged<EntityArrowRain> {
 
@@ -15,7 +15,7 @@ public class ArrowRain extends SpellConstructRanged<EntityArrowRain> {
 	}
 	
 	@Override
-	protected boolean spawnConstruct(World world, double x, double y, double z, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		
 		// Moves the entity back towards the caster a bit, so the area of effect is better centred on the position.
 		// 3 is the distance to move the entity back towards the caster.
@@ -34,7 +34,7 @@ public class ArrowRain extends SpellConstructRanged<EntityArrowRain> {
 	}
 	
 	@Override
-	protected void addConstructExtras(EntityArrowRain construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityArrowRain construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		// Makes the arrows shoot in the direction the caster was looking when they cast the spell.
 		if(caster != null){
 			construct.rotationYaw = caster.rotationYawHead;

@@ -11,13 +11,13 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentFrostWalker;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 @Mod.EventBusSubscriber
 public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionParticles {
 
-	private static final Field prevBlockPos = ObfuscationReflectionHelper.findField(EntityLivingBase.class, "field_184620_bC");
+	private static final Field prevBlockPos = ObfuscationReflectionHelper.findField(LivingEntity.class, "field_184620_bC");
 
 	public PotionFrostStep(boolean isBadEffect, int liquidColour){
 		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost_step.png"));
@@ -41,7 +41,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 //	}
 
 	@Override
-	public void spawnCustomParticle(World world, double x, double y, double z){
+	public void spawnCustomParticle(Level world, double x, double y, double z){
 		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.rand.nextInt(5)).spawn(world);
 	}
 
@@ -52,7 +52,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingUpdateEvent event){
 
-		EntityLivingBase host = event.getEntityLiving();
+		LivingEntity host = event.getEntityLiving();
 
 		if(host.isPotionActive(WizardryPotions.frost_step)){
 			// Mimics the behaviour of the frost walker enchantment itself
@@ -70,7 +70,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 						EnchantmentFrostWalker.freezeNearby(host, host.world, currentPos, strength);
 
-						if(host instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)host, WizardryItems.charm_lava_walking)){
+						if(host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.charm_lava_walking)){
 							freezeNearbyLava(host, host.world, currentPos, strength);
 						}
 					}
@@ -82,9 +82,9 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 		}
 	}
 
-	/** Copied from {@link EnchantmentFrostWalker#freezeNearby(EntityLivingBase, World, BlockPos, int)} and modified
+	/** Copied from {@link EnchantmentFrostWalker#freezeNearby(LivingEntity, Level, BlockPos, int)} and modified
 	 * to turn lava to obsidian crust blocks instead. */
-	private static void freezeNearbyLava(EntityLivingBase living, World world, BlockPos pos, int level){
+	private static void freezeNearbyLava(LivingEntity living, Level world, BlockPos pos, int level){
 
 		if(living.onGround){
 
@@ -102,7 +102,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 						IBlockState state2 = world.getBlockState(pos2);
 
-						if(BlockUtils.isLavaSource(state2) && world.mayPlace(WizardryBlocks.obsidian_crust, pos2, false, EnumFacing.DOWN, null)){
+						if(BlockUtils.isLavaSource(state2) && world.mayPlace(WizardryBlocks.obsidian_crust, pos2, false, Direction.DOWN, null)){
 							world.setBlockState(pos2, WizardryBlocks.obsidian_crust.getDefaultState());
 							world.scheduleUpdate(pos2.toImmutable(), WizardryBlocks.obsidian_crust, MathHelper.getInt(living.getRNG(), 60, 120));
 						}

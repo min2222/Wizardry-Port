@@ -10,12 +10,12 @@ import electroblob.wizardry.util.GeometryUtils;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStainedHardenedClay;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -60,7 +60,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public boolean canGenerate(Random random, World world, int chunkX, int chunkZ){
+	public boolean canGenerate(Random random, Level world, int chunkX, int chunkZ){
 		return ArrayUtils.contains(Wizardry.settings.towerDimensions, world.provider.getDimension())
 				&& Wizardry.settings.towerRarity > 0 && random.nextInt(Wizardry.settings.towerRarity) == 0;
 	}
@@ -73,7 +73,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
+	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
 		final EnumDyeColor colour = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
 		final Biome biome = world.getBiome(origin);
@@ -110,7 +110,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 
 		for(Map.Entry<BlockPos, String> entry : dataBlocks.entrySet()){
 
-			Vec3d vec = GeometryUtils.getCentre(entry.getKey());
+			Vec3 vec = GeometryUtils.getCentre(entry.getKey());
 
 			if(entry.getValue().equals(WIZARD_DATA_BLOCK_TAG)){
 

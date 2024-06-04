@@ -11,13 +11,15 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -115,18 +117,18 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * another dimension, or this creature simply had no caster in the first place.
 	 */
 	@Nullable
-	default EntityLivingBase getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
+	default LivingEntity getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
 
 		if(this instanceof Entity){ // Bit of a cheat but it saves having yet another method just to get the world
 
 			Entity entity = EntityUtils.getEntityByUUID(((Entity)this).world, getOwnerId());
 
-			if(entity != null && !(entity instanceof EntityLivingBase)){ // Should never happen
+			if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 				Wizardry.logger.warn("{} has a non-living owner!", this);
 				return null;
 			}
 
-			return (EntityLivingBase)entity;
+			return (LivingEntity)entity;
 
 		}else{
 			Wizardry.logger.warn("{} implements ISummonedCreature but is not an SoundLoopSpellEntity!", this.getClass());
@@ -137,7 +139,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	/**
 	 * Sets the EntityLivingBase that summoned this creature.
 	 */
-	default void setCaster(@Nullable EntityLivingBase caster){
+	default void setCaster(@Nullable LivingEntity caster){
 		setOwnerId(caster == null ? null : caster.getUniqueID());
 	}
 
@@ -167,7 +169,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 		// We're on the client side here, so we can safely use Minecraft.getMinecraft().world via proxies.
 		if(id > -1){
 			Entity entity = Wizardry.proxy.getTheWorld().getEntityByID(id);
-			if(entity instanceof EntityLivingBase) setCaster((EntityLivingBase)entity);
+			if(entity instanceof LivingEntity) setCaster((LivingEntity)entity);
 			else Wizardry.logger.warn("Received a spawn packet for entity {}, but no living entity matched the supplied ID", this);
 		}
 		setLifetime(buffer.readInt());
@@ -186,7 +188,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 
 			// ...and is a player, they can be attacked, since players can't be in the whitelist or the
 			// blacklist...
-			if(target instanceof EntityPlayer){
+			if(target instanceof Player){
 				// ...unless the creature was summoned by a good wizard who the player has not angered.
 				if(getCaster() instanceof EntityWizard){
 					if(getCaster().getRevengeTarget() != target
@@ -222,8 +224,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * possible for implementors to override this in order to do something special when selecting a target.
 	 */
 	default Predicate<Entity> getTargetSelector(){
-		return entity -> !entity.isInvisible() && (getCaster() == null ? entity instanceof EntityPlayer &&
-				!((EntityPlayer)entity).isCreative() : isValidTarget(entity));
+		return entity -> !entity.isInvisible() && (getCaster() == null ? entity instanceof Player &&
+				!((Player)entity).isCreative() : isValidTarget(entity));
 	}
 
 	/**
@@ -258,7 +260,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Usage examples: {@link EntitySilverfishMinion} uses this to summon more silverfish if the target is killed,
 	 * {@link EntitySkeletonMinion} and {@link EntitySpiderMinion} use this to add potion effects to the target.
 	 */
-	default void onSuccessfulAttack(EntityLivingBase target){
+	default void onSuccessfulAttack(LivingEntity target){
 	}
 
 	// Delegates
@@ -287,7 +289,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Implementors should call this from setRevengeTarget, and call super.setRevengeTarget if and only if this method
 	 * returns <b>true</b>.
 	 */
-	default boolean shouldRevengeTarget(EntityLivingBase entity){
+	default boolean shouldRevengeTarget(LivingEntity entity){
 		// Allows the config to prevent minions from revenge-targeting their owners (or anything else, for that matter)
 		return Wizardry.settings.minionRevengeTargeting || isValidTarget(entity);
 	}
@@ -326,7 +328,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Implementors should call this from processInteract, and call super.processInteract if and only if this method
 	 * returns <b>false</b>.
 	 */
-	default boolean interactDelegate(EntityPlayer player, EnumHand hand){
+	default boolean interactDelegate(Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -360,7 +362,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 		// more robust) to use LivingAttackEvent to modify the damage source.
 		if(event.getSource().getTrueSource() instanceof ISummonedCreature){
 
-			EntityLivingBase summoner = ((ISummonedCreature)event.getSource().getTrueSource()).getCaster();
+			LivingEntity summoner = ((ISummonedCreature)event.getSource().getTrueSource()).getCaster();
 
 			if(summoner != null){
 
@@ -401,8 +403,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 					// If the target revenge-targeted the summoner, make it revenge-target the minion instead
 					// (if it didn't revenge-target, do nothing)
 					if(event.getEntityLiving().getRevengeTarget() == summoner
-							&& event.getSource().getTrueSource() instanceof EntityLivingBase){
-						event.getEntityLiving().setRevengeTarget((EntityLivingBase)event.getSource().getTrueSource());
+							&& event.getSource().getTrueSource() instanceof LivingEntity){
+						event.getEntityLiving().setRevengeTarget((LivingEntity)event.getSource().getTrueSource());
 					}
 				}
 

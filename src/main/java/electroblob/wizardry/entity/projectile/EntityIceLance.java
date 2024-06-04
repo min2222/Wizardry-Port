@@ -8,15 +8,15 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityIceLance extends EntityMagicArrow {
 
 	/** Creates a new ice lance in the given world. */
-	public EntityIceLance(World world){
+	public EntityIceLance(Level world){
 		super(world);
 		this.setKnockbackStrength(1);
 	}
@@ -36,7 +36,7 @@ public class EntityIceLance extends EntityMagicArrow {
 	@Override public boolean canRenderOnFire(){ return false; }
 
 	@Override
-	public void onEntityHit(EntityLivingBase entityHit){
+	public void onEntityHit(LivingEntity entityHit){
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))

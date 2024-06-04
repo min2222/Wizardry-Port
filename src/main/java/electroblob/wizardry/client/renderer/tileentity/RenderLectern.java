@@ -6,7 +6,7 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.client.model.ModelBook;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> {

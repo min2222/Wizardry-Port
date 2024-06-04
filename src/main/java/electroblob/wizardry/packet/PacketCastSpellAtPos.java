@@ -4,8 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -33,9 +33,9 @@ public class PacketCastSpellAtPos implements IMessageHandler<PacketCastSpellAtPo
 	public static class Message implements IMessage {
 
 		/** Position for the spell */
-		public Vec3d position;
+		public Vec3 position;
 		/** Direction for the spell */
-		public EnumFacing direction;
+		public Direction direction;
 		/** ID of the spell being cast */
 		public int spellID;
 		/** SpellModifiers for the spell */
@@ -46,11 +46,11 @@ public class PacketCastSpellAtPos implements IMessageHandler<PacketCastSpellAtPo
 		// This constructor is required otherwise you'll get errors (used somewhere in fml through reflection)
 		public Message(){}
 
-		public Message(Vec3d position, EnumFacing direction, Spell spell, SpellModifiers modifiers){
+		public Message(Vec3 position, Direction direction, Spell spell, SpellModifiers modifiers){
 			this(position, direction, spell, modifiers, -1);
 		}
 
-		public Message(Vec3d position, EnumFacing direction, Spell spell, SpellModifiers modifiers, int duration){
+		public Message(Vec3 position, Direction direction, Spell spell, SpellModifiers modifiers, int duration){
 			this.spellID = spell.networkID();
 			this.modifiers = modifiers;
 			this.position = position;
@@ -62,8 +62,8 @@ public class PacketCastSpellAtPos implements IMessageHandler<PacketCastSpellAtPo
 		public void fromBytes(ByteBuf buf){
 
 			// The order is important
-			position = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
-			direction = EnumFacing.byIndex(buf.readInt());
+			position = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
+			direction = Direction.byIndex(buf.readInt());
 			this.spellID = buf.readInt();
 			this.modifiers = new SpellModifiers();
 			this.modifiers.read(buf);

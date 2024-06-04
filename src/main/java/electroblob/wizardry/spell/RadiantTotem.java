@@ -2,8 +2,8 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.construct.EntityRadiantTotem;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +18,7 @@ public class RadiantTotem extends SpellConstructRanged<EntityRadiantTotem> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityRadiantTotem construct, EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityRadiantTotem construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		construct.posY += 1.2;
 	}
 }

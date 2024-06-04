@@ -5,17 +5,17 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class EntityFlamecatcherArrow extends EntityMagicArrow {
 
 	public static final float SPEED = 3;
 
 	/** Creates a new magic missile in the given world. */
-	public EntityFlamecatcherArrow(World world){
+	public EntityFlamecatcherArrow(Level world){
 		super(world);
 	}
 
@@ -28,7 +28,7 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	@Override public boolean doDeceleration(){ return false; }
 
 	@Override
-	public void onEntityHit(EntityLivingBase entityHit){
+	public void onEntityHit(LivingEntity entityHit){
 		entityHit.setFire(Spells.flamecatcher.getProperty(Spell.BURN_DURATION).intValue());
 		this.playSound(WizardrySounds.ENTITY_FLAMECATCHER_ARROW_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 		if(this.world.isRemote) ParticleBuilder.create(Type.FLASH).pos(posX, posY, posZ).clr(0xff6d00).spawn(world);
@@ -38,7 +38,7 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	public void onBlockHit(RayTraceResult hit){
 		if(this.world.isRemote){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3d vec = hit.hitVec.add(new Vec3d(hit.sideHit.getDirectionVec()).scale(0.15));
+			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0xff6d00).fade(0.85f, 0.5f, 0.8f).spawn(world);
 		}
 	}

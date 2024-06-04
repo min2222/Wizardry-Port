@@ -6,14 +6,14 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -23,7 +23,7 @@ import org.apache.commons.lang3.ArrayUtils;
 @Mod.EventBusSubscriber
 public class EntityLightningWraith extends EntityBlazeMinion {
 
-	public EntityLightningWraith(World world){
+	public EntityLightningWraith(Level world){
 		super(world);
 		this.isImmuneToFire = false;
 	}
@@ -35,7 +35,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 		this.tasks.addTask(4, new AILightningAttack(this));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(8, new EntityAIWatchClosest(this, Player.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 	}
 
@@ -116,7 +116,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 
 		@Override
 		public boolean shouldExecute(){
-			EntityLivingBase entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
 			return entitylivingbase != null && entitylivingbase.isEntityAlive();
 		}
 
@@ -134,7 +134,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 		@Override
 		public void updateTask(){
 			--this.attackTime;
-			EntityLivingBase entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
 			if(entitylivingbase == null) return; // Dynamic stealth breaks things, let's un-break them
 			double d0 = this.blaze.getDistanceSq(entitylivingbase);
 

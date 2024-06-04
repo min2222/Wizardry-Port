@@ -25,7 +25,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.List;
  * @since Wizardry 2.1
  */
 //@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public final class WizardryModels {
 
 	private WizardryModels(){} // No instances!

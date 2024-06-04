@@ -5,14 +5,14 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 import java.util.HashSet;
@@ -54,12 +54,12 @@ public class ContainerBookshelf extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player){
+	public boolean canInteractWith(Player player){
 		return this.tileentity.isUsableByPlayer(player);
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int clickedSlotId){
+	public ItemStack transferStackInSlot(Player player, int clickedSlotId){
 
 		ItemStack remainder = ItemStack.EMPTY;
 		Slot slot = this.inventorySlots.get(clickedSlotId);
@@ -161,7 +161,7 @@ public class ContainerBookshelf extends Container {
 		}
 
 		@Override
-		public ItemStack onTake(EntityPlayer player, ItemStack stack){
+		public ItemStack onTake(Player player, ItemStack stack){
 			ItemStack result = super.onTake(player, stack);
 			ContainerBookshelf.this.onSlotChanged();
 			return result;

@@ -1,8 +1,8 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.living.EntityShadowWraith;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class SummonShadowWraith extends SpellMinion<EntityShadowWraith> {
 
@@ -11,7 +11,7 @@ public class SummonShadowWraith extends SpellMinion<EntityShadowWraith> {
 		this.soundValues(1, 1.1f, 0.1f);
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
 	public String getDescription(){
 		return "\u00A7k" + super.getDescription();

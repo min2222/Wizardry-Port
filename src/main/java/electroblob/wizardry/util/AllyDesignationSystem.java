@@ -5,8 +5,10 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.MindControl;
 import net.minecraft.entity.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -147,7 +149,7 @@ public final class AllyDesignationSystem {
 		}
 
 		// Tests whether the target is a creature that was mind controlled by the attacker
-		if(target instanceof EntityLiving && ((EntityLivingBase)target).isPotionActive(WizardryPotions.mind_control)){
+		if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 
 			NBTTagCompound entityNBT = target.getEntityData();
 
@@ -160,11 +162,11 @@ public final class AllyDesignationSystem {
 		}
 
 		// Ally section
-		if(attacker instanceof EntityPlayer && WizardData.get((EntityPlayer)attacker) != null){
+		if(attacker instanceof Player && WizardData.get((Player)attacker) != null){
 
-			if(target instanceof EntityPlayer){
+			if(target instanceof Player){
 				// Tests whether the target is an ally of the attacker
-				if(WizardData.get((EntityPlayer)attacker).isPlayerAlly((EntityPlayer)target)){
+				if(WizardData.get((Player)attacker).isPlayerAlly((Player)target)){
 					return false;
 				}
 
@@ -177,9 +179,9 @@ public final class AllyDesignationSystem {
 
 			}else if(target instanceof IEntityOwnable){
 				// Tests whether the target is a creature that was summoned/tamed by an ally of the attacker
-				if(isOwnerAlly((EntityPlayer)attacker, (IEntityOwnable)target)) return false;
+				if(isOwnerAlly((Player)attacker, (IEntityOwnable)target)) return false;
 
-			}else if(target instanceof EntityLiving && ((EntityLivingBase)target).isPotionActive(WizardryPotions.mind_control)){
+			}else if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 				// Tests whether the target is a creature that was mind controlled by an ally of the attacker
 				NBTTagCompound entityNBT = target.getEntityData();
 
@@ -187,7 +189,7 @@ public final class AllyDesignationSystem {
 
 					Entity controller = EntityUtils.getEntityByUUID(target.world, entityNBT.getUniqueId(MindControl.NBT_KEY));
 
-					if(controller instanceof EntityPlayer && WizardData.get((EntityPlayer)attacker).isPlayerAlly((EntityPlayer)controller)){
+					if(controller instanceof Player && WizardData.get((Player)attacker).isPlayerAlly((Player)controller)){
 						return false;
 					}
 				}
@@ -197,35 +199,35 @@ public final class AllyDesignationSystem {
 		return true;
 	}
 
-	/** Umbrella method that covers both {@link AllyDesignationSystem#isPlayerAlly(EntityPlayer, EntityPlayer)} and
-	 * {@link AllyDesignationSystem#isOwnerAlly(EntityPlayer, IEntityOwnable)}, returning true if the second entity is
+	/** Umbrella method that covers both {@link AllyDesignationSystem#isPlayerAlly(Player, Player)} and
+	 * {@link AllyDesignationSystem#isOwnerAlly(Player, IEntityOwnable)}, returning true if the second entity is
 	 * either owned by the first entity, an ally of the first entity, or owned by an ally of the first entity. This is
 	 * generally used to determine targets for healing or other group buffs. */
-	public static boolean isAllied(EntityLivingBase allyOf, EntityLivingBase possibleAlly){
+	public static boolean isAllied(LivingEntity allyOf, LivingEntity possibleAlly){
 
 		// Owned entities inherit their owner's allies
 		if(allyOf instanceof IEntityOwnable){
 			Entity owner = ((IEntityOwnable)allyOf).getOwner();
-			if(owner instanceof EntityLivingBase && (owner == possibleAlly || isAllied((EntityLivingBase)owner, possibleAlly))) return true;
+			if(owner instanceof LivingEntity && (owner == possibleAlly || isAllied((LivingEntity)owner, possibleAlly))) return true;
 		}
 
-		if(allyOf instanceof EntityPlayer && possibleAlly instanceof EntityPlayer
-				&& isPlayerAlly((EntityPlayer)allyOf, (EntityPlayer)possibleAlly)){
+		if(allyOf instanceof Player && possibleAlly instanceof Player
+				&& isPlayerAlly((Player)allyOf, (Player)possibleAlly)){
 			return true;
 		}
 
 		if(possibleAlly instanceof IEntityOwnable){
 			IEntityOwnable pet = (IEntityOwnable)possibleAlly;
 			if(pet.getOwner() == allyOf) return true;
-			if(allyOf instanceof EntityPlayer && isOwnerAlly((EntityPlayer)allyOf, pet)) return true;
+			if(allyOf instanceof Player && isOwnerAlly((Player)allyOf, pet)) return true;
 		}
 
 		return false;
 	}
 
 	/** Helper method for testing if the second player is an ally of the first player. Makes the code neater.
-	 * @see AllyDesignationSystem#isOwnerAlly(EntityPlayer, IEntityOwnable) */
-	public static boolean isPlayerAlly(EntityPlayer allyOf, EntityPlayer possibleAlly){
+	 * @see AllyDesignationSystem#isOwnerAlly(Player, IEntityOwnable) */
+	public static boolean isPlayerAlly(Player allyOf, Player possibleAlly){
 		WizardData data = WizardData.get(allyOf);
 		return data != null && data.isPlayerAlly(possibleAlly);
 	}
@@ -233,28 +235,28 @@ public final class AllyDesignationSystem {
 	/** Helper method for testing if the given {@link net.minecraft.entity.IEntityOwnable}'s owner is an ally of the
 	 * given player. This works even when the owner is not logged in, though it may not correctly respect teams when
 	 * that is the case. */
-	public static boolean isOwnerAlly(EntityPlayer allyOf, IEntityOwnable ownable){
+	public static boolean isOwnerAlly(Player allyOf, IEntityOwnable ownable){
 		WizardData data = WizardData.get(allyOf);
 		if(data == null) return false;
 		Entity owner = ownable.getOwner();
-		return owner instanceof EntityPlayer ? data.isPlayerAlly((EntityPlayer)owner) : data.isPlayerAlly(ownable.getOwnerId());
+		return owner instanceof Player ? data.isPlayerAlly((Player)owner) : data.isPlayerAlly(ownable.getOwnerId());
 	}
 
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof EntityPlayer
+		if(event.getSource() != null && event.getSource().getTrueSource() instanceof Player
 				&& event.getSource() instanceof IElementalDamage){
 
-			if(event.getEntity() instanceof EntityPlayer){
+			if(event.getEntity() instanceof Player){
 				// Prevents any magic damage to allied players if friendly fire is disabled for players
-				if(Wizardry.settings.friendlyFire.blockPlayers && isPlayerAlly((EntityPlayer)event.getSource().getTrueSource(), (EntityPlayer)event.getEntity())){
+				if(Wizardry.settings.friendlyFire.blockPlayers && isPlayerAlly((Player)event.getSource().getTrueSource(), (Player)event.getEntity())){
 					event.setCanceled(true);
 				}
 			}else{
 				// Prevents any magic damage to entities owned by allied players if friendly fire is disabled for owned creatures
 				// Since we're dealing with players separately we might as well just use isAllied
-				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((EntityPlayer)event.getSource().getTrueSource(), event.getEntityLiving())){
+				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((Player)event.getSource().getTrueSource(), event.getEntityLiving())){
 					event.setCanceled(true);
 				}
 			}

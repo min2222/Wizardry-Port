@@ -13,9 +13,10 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -25,7 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -177,10 +177,10 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 
 	private void containNearbyTargets(){
 
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, containmentField,
-				e -> e instanceof EntityPlayer || e instanceof EntityWizard || e instanceof EntityEvilWizard);
+		List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, containmentField,
+				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
-		for(EntityLivingBase entity : entities){
+		for(LivingEntity entity : entities){
 			entity.addPotionEffect(new PotionEffect(WizardryPotions.containment, 219));
 			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NBTUtil.createPosTag(this.pos));
 		}

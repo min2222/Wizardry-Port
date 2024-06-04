@@ -1,7 +1,7 @@
 package electroblob.wizardry.event;
 
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -25,7 +25,7 @@ public class DiscoverSpellEvent extends PlayerEvent {
 	private final Spell spell;
 	private final Source source;
 
-	public DiscoverSpellEvent(EntityPlayer player, Spell spell, Source source){
+	public DiscoverSpellEvent(Player player, Spell spell, Source source){
 		super(player);
 		this.spell = spell;
 		this.source = source;

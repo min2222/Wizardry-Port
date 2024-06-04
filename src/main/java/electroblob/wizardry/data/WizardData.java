@@ -16,17 +16,16 @@ import electroblob.wizardry.spell.None;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -78,7 +77,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	private static final int IMBUEMENT_UPDATE_INTERVAL = 20;
 
 	/** The player this WizardData instance belongs to. */
-	private final EntityPlayer player;
+	private final Player player;
 
 	/** An instance of {@link Random} which is <i>guaranteed</i> to produce the same number sequence client and server
 	 * side <i>provided that it is always called from common code.</i> This can be useful in reducing the number of
@@ -139,7 +138,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		this(null); // Nullary constructor for the registration method factory parameter
 	}
 
-	public WizardData(EntityPlayer player){
+	public WizardData(Player player){
 		this.player = player;
 		this.synchronisedRandom = new Random();
 		this.imbuementDurations = new HashMap<>();
@@ -168,18 +167,18 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 			// (If an API forces most users to write redundant code for no reason, it's not user friendly, is it?)
 			// ... well, that's my rant for today!
 			@Override
-			public NBTBase writeNBT(Capability<WizardData> capability, WizardData instance, EnumFacing side){
+			public NBTBase writeNBT(Capability<WizardData> capability, WizardData instance, Direction side){
 				return null;
 			}
 
 			@Override
-			public void readNBT(Capability<WizardData> capability, WizardData instance, EnumFacing side, NBTBase nbt){}
+			public void readNBT(Capability<WizardData> capability, WizardData instance, Direction side, NBTBase nbt){}
 
 		}, WizardData::new);
 	}
 
 	/** Returns the WizardData instance for the specified player. */
-	public static WizardData get(EntityPlayer player){
+	public static WizardData get(Player player){
 		return player.getCapability(WIZARD_DATA_CAPABILITY, null);
 	}
 
@@ -401,7 +400,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	 * Adds the given player to the list of allies belonging to the associated player, or removes the player if they are
 	 * already in the list of allies. Returns true if the player was added, false if they were removed.
 	 */
-	public boolean toggleAlly(EntityPlayer player){
+	public boolean toggleAlly(Player player){
 		if(this.isPlayerAlly(player)){
 			this.allies.remove(player.getUniqueID());
 			// The remove method uses .equals() rather than == so this will work fine.
@@ -415,7 +414,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/** Returns whether the given player is in this player's list of allies, or is on the same team as this player. */
-	public boolean isPlayerAlly(EntityPlayer player){
+	public boolean isPlayerAlly(Player player){
 		return this.allies.contains(player.getUniqueID()) || this.player.isOnSameTeam(player);
 	}
 
@@ -624,9 +623,9 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	// The type parameter here has to be Entity, not EntityPlayer, or the event won't get fired.
 	public static void onCapabilityLoad(AttachCapabilitiesEvent<Entity> event){
 
-		if(event.getObject() instanceof EntityPlayer)
+		if(event.getObject() instanceof Player)
 			event.addCapability(new ResourceLocation(Wizardry.MODID, "WizardData"),
-					new WizardData.Provider((EntityPlayer)event.getObject()));
+					new WizardData.Provider((Player)event.getObject()));
 	}
 
 	@SubscribeEvent
@@ -644,7 +643,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event){
 		if(!event.getEntity().world.isRemote && event.getEntity() instanceof EntityPlayerMP){
 			// Synchronises wizard data after loading.
-			WizardData data = WizardData.get((EntityPlayer)event.getEntity());
+			WizardData data = WizardData.get((Player)event.getEntity());
 			if(data != null) data.sync();
 		}
 	}
@@ -652,9 +651,9 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingUpdateEvent event){
 
-		if(event.getEntityLiving() instanceof EntityPlayer){
+		if(event.getEntityLiving() instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)event.getEntityLiving();
+			Player player = (Player)event.getEntityLiving();
 
 			if(WizardData.get(player) != null){
 				WizardData.get(player).update();
@@ -673,17 +672,17 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 		private final WizardData data;
 
-		public Provider(EntityPlayer player){
+		public Provider(Player player){
 			data = new WizardData(player);
 		}
 
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+		public boolean hasCapability(Capability<?> capability, Direction facing){
 			return capability == WIZARD_DATA_CAPABILITY;
 		}
 
 		@Override
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+		public <T> T getCapability(Capability<T> capability, Direction facing){
 
 			if(capability == WIZARD_DATA_CAPABILITY){
 				return WIZARD_DATA_CAPABILITY.cast(data);

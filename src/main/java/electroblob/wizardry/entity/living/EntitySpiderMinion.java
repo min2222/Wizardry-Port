@@ -5,25 +5,25 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -40,7 +40,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new spider minion in the given world. */
-	public EntitySpiderMinion(World world){
+	public EntitySpiderMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -57,7 +57,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 		// EntityAINearestAttackableTarget which takes daylight into account. Since I want spider minions to attack
 		// regardless of daylight, I can just use EntityAINearestAttackableTarget.
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityLivingBase>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
@@ -82,7 +82,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -119,7 +119,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	}
 
 	@Override
-	public void onSuccessfulAttack(EntityLivingBase target){
+	public void onSuccessfulAttack(LivingEntity target){
 
 		int seconds = 0;
 
@@ -135,7 +135,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -155,7 +155,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -172,7 +172,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity.
 		return !EntityFlying.class.isAssignableFrom(entityType);
 	}

@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleLightning extends ParticleTargeted {
@@ -25,7 +25,7 @@ public class ParticleLightning extends ParticleTargeted {
 	/** Number of ticks to wait before the arc changes shape again. */
 	private static final int UPDATE_PERIOD = 1;
 
-	public ParticleLightning(World world, double x, double y, double z){
+	public ParticleLightning(Level world, double x, double y, double z){
 		super(world, x, y, z); // Does not have a texture!
 		seed = this.rand.nextLong();
 		this.setRBGColorF(0.2f, 0.6f, 1); // Default blue colour

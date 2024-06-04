@@ -2,7 +2,7 @@ package electroblob.wizardry.client.gui.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.client.config.*;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.StringEntry;
 import net.minecraftforge.fml.common.registry.EntityEntry;

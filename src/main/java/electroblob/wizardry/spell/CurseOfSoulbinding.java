@@ -9,19 +9,19 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -52,15 +52,15 @@ public class CurseOfSoulbinding extends SpellRay {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return false; }
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		if(EntityUtils.isLiving(target) && caster instanceof EntityPlayer){
-			WizardData data = WizardData.get((EntityPlayer)caster);
+		if(EntityUtils.isLiving(target) && caster instanceof Player){
+			WizardData data = WizardData.get((Player)caster);
 			if(data != null){
 				// Return false if soulbinding failed (e.g. if the target is already soulbound)
 				if(getSoulboundCreatures(data).add(target.getUniqueID())){
 					// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-					((EntityLivingBase)target).addPotionEffect(new PotionEffect(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
+					((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
 				}else{
 					return false;
 				}
@@ -71,17 +71,17 @@ public class CurseOfSoulbinding extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return true;
 	}
 
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.4f, 0, 0).spawn(world);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);
 		ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).time(12 + world.rand.nextInt(8)).clr(1, 0.8f, 1).spawn(world);
@@ -90,11 +90,11 @@ public class CurseOfSoulbinding extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		if(!event.getEntity().world.isRemote && event.getEntityLiving() instanceof EntityPlayer
+		if(!event.getEntity().world.isRemote && event.getEntityLiving() instanceof Player
 				&& !event.getSource().isUnblockable() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
-			EntityPlayer player = (EntityPlayer)event.getEntityLiving();
+			Player player = (Player)event.getEntityLiving();
 			WizardData data = WizardData.get(player);
 
 			if(data != null){
@@ -103,9 +103,9 @@ public class CurseOfSoulbinding extends SpellRay {
 
 					Entity entity = EntityUtils.getEntityByUUID(player.world, iterator.next());
 
-					if (entity == null || (entity instanceof EntityLivingBase && !((EntityLivingBase) entity).isPotionActive(WizardryPotions.curse_of_soulbinding))) {
+					if (entity == null || (entity instanceof LivingEntity && !((LivingEntity) entity).isPotionActive(WizardryPotions.curse_of_soulbinding))) {
 						iterator.remove();
-					} else if (entity instanceof EntityLivingBase) {
+					} else if (entity instanceof LivingEntity) {
 						// Retaliatory effect
 						if(DamageSafetyChecker.attackEntitySafely(entity, MagicDamage.causeDirectMagicDamage(player,
 								MagicDamage.DamageType.MAGIC, true), event.getAmount(), event.getSource().getDamageType(),

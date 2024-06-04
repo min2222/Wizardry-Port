@@ -3,20 +3,20 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConjuration;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -82,15 +82,15 @@ public interface IConjuredItem {
 		final int frames = getAnimationFrames();
 
 		item.addPropertyOverride(new ResourceLocation("conjure"), new IItemPropertyGetter(){
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity){
+			@OnlyIn(Dist.CLIENT)
+			public float apply(ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity){
 				return stack.getItemDamage() < frames ? (float)stack.getItemDamage() / frames
 						: (float)(stack.getMaxDamage() - stack.getItemDamage()) / frames;
 			}
 		});
 		item.addPropertyOverride(new ResourceLocation("conjuring"), new IItemPropertyGetter(){
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity){
+			@OnlyIn(Dist.CLIENT)
+			public float apply(ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity){
 				return stack.getItemDamage() < frames
 						|| stack.getItemDamage() > stack.getMaxDamage() - frames ? 1.0F : 0.0F;
 			}

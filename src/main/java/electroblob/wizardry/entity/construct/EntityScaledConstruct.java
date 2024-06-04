@@ -2,7 +2,7 @@ package electroblob.wizardry.entity.construct;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Extension of {@link EntityMagicConstruct} that implements saving and loading of size (blast) multipliers. What
@@ -18,7 +18,7 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 	/** The size multiplier for this construct, usually determined by the blast modifier the spell was cast with. */
 	protected float sizeMultiplier = 1;
 
-	public EntityScaledConstruct(World world){
+	public EntityScaledConstruct(Level world){
 		super(world);
 	}
 

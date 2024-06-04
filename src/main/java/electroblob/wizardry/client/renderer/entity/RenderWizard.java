@@ -6,7 +6,7 @@ import electroblob.wizardry.entity.living.EntityWizard;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)
 public class RenderWizard extends RenderBiped<EntityWizard> {

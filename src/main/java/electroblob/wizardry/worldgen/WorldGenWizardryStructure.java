@@ -5,16 +5,16 @@ import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.util.NBTExtras;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.structure.MapGenStructureData;
@@ -48,7 +48,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	/** A random instance used solely for the purpose of emulating the world generation to predict locations. */
 	private final Random random;
 
-	private World world;
+	private Level world;
 
 	private MapGenStructureData structureData;
 
@@ -85,8 +85,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 	/** Pre-check for whether the structure can generate. Usually this is just used for randomisation so that
 	 * calculations are only performed for chunks that will generate a structure; most placement-specific stuff
-	 * can just be done using a check inside {@link WorldGenWizardryStructure#spawnStructure(Random, World, BlockPos, Template, PlacementSettings, ResourceLocation)} */
-	public abstract boolean canGenerate(Random random, World world, int chunkX, int chunkZ);
+	 * can just be done using a check inside {@link WorldGenWizardryStructure#spawnStructure(Random, Level, BlockPos, Template, PlacementSettings, ResourceLocation)} */
+	public abstract boolean canGenerate(Random random, Level world, int chunkX, int chunkZ);
 
 	/**
 	 * Picks a random position within the given chunk at which to generate the given template, returning null if that
@@ -112,7 +112,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	// It may seem more logical for this class to generate a position and then have subclasses only check if it is
 	// valid, but different types of structure pick positions differently so that has to be left to subclasses
 	@Nullable
-	protected abstract BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, World world,
+	protected abstract BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, Level world,
 												int chunkX, int chunkZ, String structureFile);
 
 	/**
@@ -126,7 +126,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	 * @param settings The placement settings for the structure
 	 * @param structureFile The location of the chosen structure file, for logging purposes
 	 */
-	public abstract void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile);
+	public abstract void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile);
 
 	/**
 	 * Called after the structure is generated to perform any post-generation extras (optional). For example,
@@ -135,10 +135,10 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	 * @param world The world in which the structure was generated
 	 * @param settings The placement settings that the structure was generated with (including its bounding box)
 	 */
-	protected void postGenerate(Random random, World world, PlacementSettings settings){}
+	protected void postGenerate(Random random, Level world, PlacementSettings settings){}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
+	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
 		if(!world.getWorldInfo().isMapFeaturesEnabled()) return;
 
@@ -218,7 +218,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	}
 
 	/** Copied from MapGenStructure. Unlike most NBT loading, this is lazy - it only gets read from NBT when requested. */
-	protected void initializeStructureData(World world){
+	protected void initializeStructureData(Level world){
 
 		// If the world that was last generated is not this world, load the data for the new world
 		// This is a bit of a dirty hack, it would be better if we had separate instances per-world but... effort...
@@ -268,7 +268,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	/** Returns true if the given position is within a structure of this type in the given world, false
 	 * otherwise. This will not work on chunks that are yet to be generated; attempting to do so will print a
 	 * warning to the console. */
-	public boolean isInsideStructure(World world, double x, double y, double z){
+	public boolean isInsideStructure(Level world, double x, double y, double z){
 
 		initializeStructureData(world); // Load the data from the save file if it isn't already loaded
 
@@ -296,7 +296,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 	/** Copied from MapGenMineshaft. The general idea (it seems) is to emulate the world generator's randomisation
 	 * without actually placing any blocks. Presumably mineshafts don't need sub-chunk randomisation?  */
-	public BlockPos getNearestStructurePos(World world, BlockPos pos, boolean findUnexplored){
+	public BlockPos getNearestStructurePos(Level world, BlockPos pos, boolean findUnexplored){
 
 		// TODO: We have a problem here, in that the 'pragmatic' placement algorithm (good as it is) requires
 		// the chunk to have already been generated, so we can't be sure if a structure actually exists until

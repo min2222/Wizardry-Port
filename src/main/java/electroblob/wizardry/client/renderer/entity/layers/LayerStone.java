@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Layer used to render the stone texture on a petrified creature.
@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
  */
 // N.B. The rule here is don't restrict the type any more than necessary, so even though we *know* petrified creatures
 // are always instances of EntityLiving, we don't need any methods/fields specific to EntityLiving so use ELB instead.
-public class LayerStone extends LayerTiledOverlay<EntityLivingBase> {
+public class LayerStone extends LayerTiledOverlay<LivingEntity> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/blocks/stone.png");
 
@@ -26,19 +26,19 @@ public class LayerStone extends LayerTiledOverlay<EntityLivingBase> {
 	}
 
 	@Override
-	public boolean shouldRender(EntityLivingBase entity, float partialTicks){
+	public boolean shouldRender(LivingEntity entity, float partialTicks){
 		return entity.getEntityData().getBoolean(BlockStatue.PETRIFIED_NBT_KEY);
 	}
 
 	@Override
-	public ResourceLocation getTexture(EntityLivingBase entity, float partialTicks){
+	public ResourceLocation getTexture(LivingEntity entity, float partialTicks){
 		ResourceLocation breakingTexture = ClientProxy.renderStatue.getBlockBreakingTexture();
 		return breakingTexture == null ? TEXTURE : breakingTexture;
 	}
 
 	@Override
-	public void doRenderLayer(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks,
-			float ageInTicks, float netHeadYaw, float headPitch, float scale){
+	public void doRenderLayer(LivingEntity entity, float limbSwing, float limbSwingAmount, float partialTicks,
+                              float ageInTicks, float netHeadYaw, float headPitch, float scale){
 
 		// N.B. It's one or the other because this effectively gets called twice via RenderStatue
 		if(ClientProxy.renderStatue.getBlockBreakingTexture() != null){

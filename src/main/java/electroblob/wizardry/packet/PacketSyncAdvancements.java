@@ -2,7 +2,7 @@ package electroblob.wizardry.packet;
 
 import electroblob.wizardry.Wizardry;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;

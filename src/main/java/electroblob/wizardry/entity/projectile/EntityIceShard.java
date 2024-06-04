@@ -8,16 +8,16 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class EntityIceShard extends EntityMagicArrow {
 
 	/** Creates a new ice shard in the given world. */
-	public EntityIceShard(World world){
+	public EntityIceShard(Level world){
 		super(world);
 	}
 
@@ -34,7 +34,7 @@ public class EntityIceShard extends EntityMagicArrow {
 	@Override public boolean canRenderOnFire(){ return false; }
 
 	@Override
-	public void onEntityHit(EntityLivingBase entityHit){
+	public void onEntityHit(LivingEntity entityHit){
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
@@ -51,7 +51,7 @@ public class EntityIceShard extends EntityMagicArrow {
 		// Adds a particle effect when the ice shard hits a block.
 		if(this.world.isRemote){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3d vec = hit.hitVec.add(new Vec3d(hit.sideHit.getDirectionVec()).scale(0.15));
+			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0.75f, 1, 1).spawn(world);
 			
 			for(int j = 0; j < 10; j++){

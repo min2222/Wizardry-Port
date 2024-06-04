@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
 
 /**
  * Layer used to render the mind control overlay on creatures with the mind control effect.
@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
  * @author Electroblob
  * @since Wizardry 4.3
  */
-public class LayerMindControl extends LayerTiledOverlay<EntityLivingBase> {
+public class LayerMindControl extends LayerTiledOverlay<LivingEntity> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/mind_control_overlay.png");
 
@@ -26,18 +26,18 @@ public class LayerMindControl extends LayerTiledOverlay<EntityLivingBase> {
 	}
 
 	@Override
-	public boolean shouldRender(EntityLivingBase entity, float partialTicks){
+	public boolean shouldRender(LivingEntity entity, float partialTicks){
 		return !entity.isInvisible() && (entity.isPotionActive(WizardryPotions.mind_control) || entity.getEntityData().getBoolean(Possession.NBT_KEY));
 	}
 
 	@Override
-	public ResourceLocation getTexture(EntityLivingBase entity, float partialTicks){
+	public ResourceLocation getTexture(LivingEntity entity, float partialTicks){
 		return TEXTURE;
 	}
 
 	@Override
-	public void doRenderLayer(EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks,
-			float ageInTicks, float netHeadYaw, float headPitch, float scale){
+	public void doRenderLayer(LivingEntity entity, float limbSwing, float limbSwingAmount, float partialTicks,
+                              float ageInTicks, float netHeadYaw, float headPitch, float scale){
 
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
@@ -53,7 +53,7 @@ public class LayerMindControl extends LayerTiledOverlay<EntityLivingBase> {
 	}
 
 	@Override
-	protected void applyTextureSpaceTransformations(EntityLivingBase entity, float partialTicks){
+	protected void applyTextureSpaceTransformations(LivingEntity entity, float partialTicks){
 		float f = entity.ticksExisted + partialTicks;
 		GlStateManager.translate(f * 0.003f, f * 0.003f, 0);
 	}

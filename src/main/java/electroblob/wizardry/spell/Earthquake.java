@@ -9,11 +9,11 @@
  import electroblob.wizardry.util.SpellModifiers;
  import net.minecraft.block.Block;
  import net.minecraft.block.state.IBlockState;
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.EnumParticleTypes;
- import net.minecraft.world.World;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.particles.ParticleTypes;
+ import net.minecraft.world.entity.LivingEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.level.Level;
 
  public class Earthquake extends SpellConstruct<EntityEarthquake> {
 
@@ -31,7 +31,7 @@
 	@Override public boolean requiresPacket(){ return true; }
 	
 	@Override
-	protected void addConstructExtras(EntityEarthquake construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityEarthquake construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		// Calculates the lifetime based on the base radius and spread speed
 		// Also overwrites the -1 lifetime set due to permanent being true
 		construct.lifetime = (int)(getProperty(EFFECT_RADIUS).floatValue()/getProperty(SPREAD_SPEED).floatValue()
@@ -39,11 +39,11 @@
 	}
 	
 	@Override
-	protected boolean spawnConstruct(World world, double x, double y, double z, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		
 		if(world.isRemote){
 
-			world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, x, y + 0.1, z, 0, 0, 0);
+			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, x, y + 0.1, z, 0, 0, 0);
 
 			double particleX, particleZ;
 
@@ -53,11 +53,11 @@
 				particleZ = z - 1.0d + 2 * world.rand.nextDouble();
 
 				IBlockState block = BlockUtils.getBlockEntityIsStandingOn(caster);
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, y,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, y,
 						particleZ, particleX - x, 0, particleZ - z, Block.getStateId(block));
 			}
 
-			EntityUtils.getEntitiesWithinRadius(15, x, y, z, world, EntityPlayer.class)
+			EntityUtils.getEntitiesWithinRadius(15, x, y, z, world, Player.class)
 					.forEach(p -> Wizardry.proxy.shakeScreen(p, 12));
 
 		}

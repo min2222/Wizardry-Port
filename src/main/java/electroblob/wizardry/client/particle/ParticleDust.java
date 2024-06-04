@@ -1,11 +1,11 @@
 package electroblob.wizardry.client.particle;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 //@SideOnly(Side.CLIENT)
 public class ParticleDust extends ParticleWizardry {
 
-	public ParticleDust(World world, double x, double y, double z){
+	public ParticleDust(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		
 		this.setParticleTextureIndex(0);

@@ -13,16 +13,16 @@ import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.Location;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class Transportation extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		WizardData data = WizardData.get(caster);
 		// Fixes the sound not playing in first person.
@@ -119,29 +119,29 @@ public class Transportation extends Spell {
 
 	/** Returns the location from the given list that the give player is aiming at, or null if they are not aiming
 	 * at any of them. */
-	public static Location getLocationAimedAt(EntityPlayer player, List<Location> locations, float partialTicks){
+	public static Location getLocationAimedAt(Player player, List<Location> locations, float partialTicks){
 		return locations.stream()
 				.filter(l -> isLocationAimedAt(player, l.pos, partialTicks))
 				.min(Comparator.comparingDouble(l -> getLookDeviationAngle(player, l.pos, partialTicks)))
 				.orElse(null);
 	}
 
-	public static boolean isLocationAimedAt(EntityPlayer player, BlockPos pos, float partialTicks){
+	public static boolean isLocationAimedAt(Player player, BlockPos pos, float partialTicks){
 
-		Vec3d origin = player.getPositionEyes(partialTicks);
-		Vec3d centre = GeometryUtils.getCentre(pos);
-		Vec3d direction = centre.subtract(origin);
+		Vec3 origin = player.getPositionEyes(partialTicks);
+		Vec3 centre = GeometryUtils.getCentre(pos);
+		Vec3 direction = centre.subtract(origin);
 		double distance = direction.length();
 
 		return getLookDeviationAngle(player, pos, partialTicks) < getIconSize(distance);
 	}
 
-	public static double getLookDeviationAngle(EntityPlayer player, BlockPos pos, float partialTicks){
+	public static double getLookDeviationAngle(Player player, BlockPos pos, float partialTicks){
 
-		Vec3d origin = player.getPositionEyes(partialTicks);
-		Vec3d look = player.getLook(partialTicks);
-		Vec3d centre = GeometryUtils.getCentre(pos);
-		Vec3d direction = centre.subtract(origin);
+		Vec3 origin = player.getPositionEyes(partialTicks);
+		Vec3 look = player.getLook(partialTicks);
+		Vec3 centre = GeometryUtils.getCentre(pos);
+		Vec3 direction = centre.subtract(origin);
 		double distance = direction.length();
 
 		return Math.acos(direction.dotProduct(look) / distance); // Angle between a and b = acos((a.b) / (|a|*|b|))
@@ -151,7 +151,7 @@ public class Transportation extends Spell {
 		return 0.05 + 2/(distance + 5);
 	}
 
-	private boolean attemptTravelTo(EntityPlayer player, World world, BlockPos destination, SpellModifiers modifiers){
+	private boolean attemptTravelTo(Player player, Level world, BlockPos destination, SpellModifiers modifiers){
 
 		WizardData data = WizardData.get(player);
 
@@ -166,7 +166,7 @@ public class Transportation extends Spell {
 		}
 	}
 
-	private static int update(EntityPlayer player, Integer countdown){
+	private static int update(Player player, Integer countdown){
 
 		if(countdown == null) return 0;
 

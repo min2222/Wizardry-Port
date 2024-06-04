@@ -7,11 +7,11 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class WizardryContainerTrigger implements ICriterionTrigger<WizardryConta
 		}
 	}
 
-	public static class Instance extends AbstractCriterionInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
 
 		private final ItemPredicate item;
 

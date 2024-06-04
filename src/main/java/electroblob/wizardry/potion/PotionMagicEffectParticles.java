@@ -1,6 +1,6 @@
 package electroblob.wizardry.potion;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Same as {@link PotionMagicEffect}, but also implements {@link ICustomPotionParticles} to allow anonymous classes to

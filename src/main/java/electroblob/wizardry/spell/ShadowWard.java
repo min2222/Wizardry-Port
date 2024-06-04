@@ -7,15 +7,15 @@ import electroblob.wizardry.util.IElementalDamage;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -37,23 +37,23 @@ public class ShadowWard extends Spell {
 	}
 
 	@Override
-	protected void playSound(World world, EntityLivingBase entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSoundLoop(world, entity, ticksInUse);
 	}
 
 	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSoundLoop(world, x, y, z, ticksInUse, duration);
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(world.isRemote){
 			double dx = -1 + 2 * world.rand.nextFloat();
 			double dy = -1 + world.rand.nextFloat();
 			double dz = -1 + 2 * world.rand.nextFloat();
-			world.spawnParticle(EnumParticleTypes.PORTAL, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, dx, dy, dz);
+			world.spawnParticle(ParticleTypes.PORTAL, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, dx, dy, dz);
 		}
 
 		if(ticksInUse % 50 == 0){
@@ -66,7 +66,7 @@ public class ShadowWard extends Spell {
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof EntityLivingBase){
+		if(event.getSource() != null && event.getSource().getTrueSource() instanceof LivingEntity){
 
 			if(EntityUtils.isCasting(event.getEntityLiving(), Spells.shadow_ward) && !event.getSource().isUnblockable()
 					&& !(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).isRetaliatory())){

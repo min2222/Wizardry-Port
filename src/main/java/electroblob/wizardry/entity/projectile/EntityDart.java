@@ -5,16 +5,16 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityDart extends EntityMagicArrow {
 	
 	/** Creates a new dart in the given world. */
-	public EntityDart(World world){
+	public EntityDart(Level world){
 		super(world);
 	}
 
@@ -25,7 +25,7 @@ public class EntityDart extends EntityMagicArrow {
 	@Override public boolean doDeceleration(){ return true; }
 
 	@Override
-	public void onEntityHit(EntityLivingBase entityHit){
+	public void onEntityHit(LivingEntity entityHit){
 		// Adds a weakness effect to the target.
 		entityHit.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
 				Spells.dart.getProperty(Spell.EFFECT_STRENGTH).intValue(), false, false));

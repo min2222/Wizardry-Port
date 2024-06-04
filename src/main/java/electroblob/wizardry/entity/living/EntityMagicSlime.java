@@ -1,21 +1,21 @@
 package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.registry.WizardrySounds;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -33,7 +33,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	@Override public UUID getOwnerId(){ return casterUUID; }
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
-	public EntityMagicSlime(World world){
+	public EntityMagicSlime(Level world){
 		super(world);
 		// TESTME: Should this be true or false? Has something to do with health.
 		this.setSlimeSize(2, false); // Needs to be called before setting the experience value to 0
@@ -48,7 +48,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	 * @param target The slime's victim. The slime will automatically start riding this entity.
 	 * @param lifetime The number of ticks before the slime bursts.
 	 */
-	public EntityMagicSlime(World world, EntityLivingBase caster, EntityLivingBase target, int lifetime){
+	public EntityMagicSlime(Level world, LivingEntity caster, LivingEntity target, int lifetime){
 		super(world);
 		this.setPosition(target.posX, target.posY, target.posZ);
 		this.startRiding(target);
@@ -61,7 +61,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	// EntitySlime overrides
 
 	@Override protected void initEntityAI(){} // Has no AI!
-	@Override protected void dealDamage(EntityLivingBase entity){} // Handles damage itself
+	@Override protected void dealDamage(LivingEntity entity){} // Handles damage itself
 
 	@Override
 	public void setDead(){
@@ -75,7 +75,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 			double x = this.posX - 0.5 + rand.nextDouble();
 			double y = this.posY - 0.5 + rand.nextDouble();
 			double z = this.posZ - 0.5 + rand.nextDouble();
-			this.world.spawnParticle(EnumParticleTypes.SLIME, x, y, z, (x - this.posX) * 2, (y - this.posY) * 2,
+			this.world.spawnParticle(ParticleTypes.SLIME, x, y, z, (x - this.posX) * 2, (y - this.posY) * 2,
 					(z - this.posZ) * 2);
 		}
 		this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_SPLAT, 2.5f, 0.6f);
@@ -99,7 +99,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -116,12 +116,12 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		this.updateDelegate();
 
 		// Damages and slows the slime's victim or makes the slime explode if the victim is dead.
-		if(this.getRidingEntity() != null && this.getRidingEntity() instanceof EntityLivingBase
-				&& ((EntityLivingBase)this.getRidingEntity()).getHealth() > 0){
+		if(this.getRidingEntity() != null && this.getRidingEntity() instanceof LivingEntity
+				&& ((LivingEntity)this.getRidingEntity()).getHealth() > 0){
 			if(this.ticksExisted % 16 == 1){
 				this.getRidingEntity().attackEntityFrom(DamageSource.MAGIC, 1);
 				if(this.getRidingEntity() != null){ // Some mobs force-dismount when attacked (normally when dying)
-					((EntityLivingBase)this.getRidingEntity())
+					((LivingEntity)this.getRidingEntity())
 							.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20, 2));
 				}
 				this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_ATTACK, 1.0f, 1.0f);
@@ -151,7 +151,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -171,7 +171,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }

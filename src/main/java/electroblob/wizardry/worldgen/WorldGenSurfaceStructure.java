@@ -6,14 +6,14 @@ import electroblob.wizardry.util.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLog;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -26,7 +26,7 @@ import java.util.Random;
 /**
  * Base class for all wizardry's above-ground structures, which handles various shared functions such as calculating
  * the median ground level and removing floating trees. This class implements
- * {@link WorldGenWizardryStructure#attemptPosition(Template, PlacementSettings, Random, World, int, int, String)}
+ * {@link WorldGenWizardryStructure#attemptPosition(Template, PlacementSettings, Random, Level, int, int, String)}
  * but leaves the rest of the abstract methods to be implemented by subclasses.
  *
  * @author Electroblob
@@ -42,7 +42,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 	// when determining floor level, so that forests don't impede structure spawning.
 	@Override
 	@Nullable
-	protected BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, World world,
+	protected BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, Level world,
 									   int chunkX, int chunkZ, String structureFile){
 
 		BlockPos size = template.transformedSize(settings.getRotation());
@@ -57,7 +57,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 		// Check if we're at the top of the world, and if so just randomise the y pos (accounts for 'cavern' dimensions)
 		if(centre.getY() >= world.getActualHeight()) centre = new BlockPos(centre.getX(), random.nextInt(world.getActualHeight()), centre.getZ());
 
-		Integer startingHeight = BlockUtils.getNearestSurface(world, centre, EnumFacing.UP, 32, true,
+		Integer startingHeight = BlockUtils.getNearestSurface(world, centre, Direction.UP, 32, true,
 				BlockUtils.SurfaceCriteria.COLLIDABLE_IGNORING_TREES);
 
 		if(startingHeight == null) return null;
@@ -77,7 +77,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 			// exactly what is needed here since it is used for placing villages and stuff, and doesn't include leaves
 			// or other foliage.
 			BlockPos pos = origin.add(i / size.getZ(), 0, i % size.getZ());
-			Integer floor = BlockUtils.getNearestSurface(world, pos.up(startingHeight), EnumFacing.UP, 32, true,
+			Integer floor = BlockUtils.getNearestSurface(world, pos.up(startingHeight), Direction.UP, 32, true,
 					BlockUtils.SurfaceCriteria.COLLIDABLE_IGNORING_TREES);
 			floorHeights[i] = floor == null ? 0 : floor; // Very unlikely that floor is null
 			// ^ That method gets the top solid block. Most non-solid blocks are ok to have around the structure,
@@ -103,12 +103,12 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 	}
 
 	@Override
-	protected void postGenerate(Random random, World world, PlacementSettings settings){
+	protected void postGenerate(Random random, Level world, PlacementSettings settings){
 		if(!Wizardry.settings.fastWorldgen) removeFloatingTrees(world, settings.getBoundingBox(), random);
 	}
 
 	/** Finds and removes any floating bits of tree in and above the given structure bounding box. */
-	protected static void removeFloatingTrees(World world, StructureBoundingBox boundingBox, Random random){
+	protected static void removeFloatingTrees(Level world, StructureBoundingBox boundingBox, Random random){
 
 		boolean changed = true;
 		int y = boundingBox.minY;

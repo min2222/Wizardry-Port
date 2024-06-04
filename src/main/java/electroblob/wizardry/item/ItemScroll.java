@@ -10,24 +10,24 @@ import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean showSpellHUD(EntityPlayer player, ItemStack stack){
+	public boolean showSpellHUD(Player player, ItemStack stack){
 		return false;
 	}
 
@@ -69,7 +69,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -92,8 +92,8 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack itemstack, World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack itemstack, Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
 
 		if(world != null){
 
@@ -123,7 +123,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -138,25 +138,25 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 					player.setActiveHand(hand);
 					// Store the modifiers for use each tick (there aren't any by default but there could be, as above)
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
-					return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 				}
 			}else{
 				if(cast(stack, spell, player, hand, 0, modifiers)){
-					return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 				}
 			}
 		}
 
-		return new ActionResult<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
 	}
 	
 	// For continuous spells. The count argument actually decrements by 1 each tick.
 	@Override
-	public void onUsingTick(ItemStack stack, EntityLivingBase user, int count){
+	public void onUsingTick(ItemStack stack, LivingEntity user, int count){
 
-		if(user instanceof EntityPlayer){
+		if(user instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)user;
+			Player player = (Player)user;
 
 			Spell spell = Spell.byMetadata(stack.getItemDamage());
 			// By default, scrolls have no modifiers - but with the event system, they could be added.
@@ -176,7 +176,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean canCast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
 		// Even neater!
 		if(castingTick == 0){
 			return !MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Pre(Source.SCROLL, spell, caster, modifiers));
@@ -186,9 +186,9 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean cast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
 
-		World world = caster.world;
+		Level world = caster.world;
 
 		if(world.isRemote && !spell.isContinuous && spell.requiresPacket()) return false;
 
@@ -219,23 +219,23 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 	
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase user, int timeLeft){
+	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
 		// Casting has stopped before the full time has elapsed
 		finishCasting(stack, user, timeLeft);
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase user){
+	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity user){
 		// Full casting time has elapsed
 		finishCasting(stack, user, 0);
 		return stack;
 	}
 
-	private void finishCasting(ItemStack stack, EntityLivingBase user, int timeLeft){
+	private void finishCasting(ItemStack stack, LivingEntity user, int timeLeft){
 
 		if(Spell.byMetadata(stack.getItemDamage()).isContinuous){
 			// Consume scrolls in survival mode
-			if(!(user instanceof EntityPlayer) || !((EntityPlayer)user).isCreative()) stack.shrink(1);
+			if(!(user instanceof Player) || !((Player)user).isCreative()) stack.shrink(1);
 
 			Spell spell = Spell.byMetadata(stack.getItemDamage());
 			SpellModifiers modifiers = new SpellModifiers();
@@ -244,14 +244,14 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Finish(Source.SCROLL, spell, user, modifiers, castingTick));
 			spell.finishCasting(user.world, user, Double.NaN, Double.NaN, Double.NaN, null, castingTick, modifiers);
 
-			if(user instanceof EntityPlayer && !((EntityPlayer)user).isCreative()){
-				((EntityPlayer)user).getCooldownTracker().setCooldown(this, spell.getCooldown());
+			if(user instanceof Player && !((Player)user).isCreative()){
+				((Player)user).getCooldownTracker().setCooldown(this, spell.getCooldown());
 			}
 		}
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
 		return Wizardry.proxy.getFontRenderer(stack);
 	}
@@ -267,7 +267,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean onApplyButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
+	public boolean onApplyButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		return false;
 	}
 

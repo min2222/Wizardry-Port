@@ -4,9 +4,9 @@ import electroblob.wizardry.entity.construct.EntityBoulder;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 public class Boulder extends SpellConstruct<EntityBoulder> {
 
@@ -19,10 +19,10 @@ public class Boulder extends SpellConstruct<EntityBoulder> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityBoulder construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityBoulder construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		float speed = getProperty(SPEED).floatValue();
 		// Unlike tornado, boulder always has the same speed
-		Vec3d direction = caster == null ? new Vec3d(side.getDirectionVec()) : GeometryUtils.horizontalise(caster.getLookVec());
+		Vec3 direction = caster == null ? new Vec3(side.getDirectionVec()) : GeometryUtils.horizontalise(caster.getLookVec());
 		construct.setHorizontalVelocity(direction.x * speed, direction.z * speed);
 		construct.rotationYaw = caster == null ? side.getHorizontalAngle() : caster.rotationYaw;
 		double yOffset = caster == null ? 0 : 1.6;

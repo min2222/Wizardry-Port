@@ -8,16 +8,16 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityForceOrb extends EntityBomb {
 	
-	public EntityForceOrb(World world){
+	public EntityForceOrb(Level world){
 		super(world);
 	}
 
@@ -41,7 +41,7 @@ public class EntityForceOrb extends EntityBomb {
 				ParticleBuilder.create(Type.SPARKLE, rand, posX, posY, posZ, 0.25, true).time(6)
 				.clr(brightness, 1.0f, brightness + 0.2f).spawn(world);
 			}
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 		}
 
 		if(!this.world.isRemote){
@@ -53,10 +53,10 @@ public class EntityForceOrb extends EntityBomb {
 
 			double blastRadius = Spells.force_orb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(blastRadius, this.posX,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(blastRadius, this.posX,
 					this.posY, this.posZ, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != this.getThrower()){
 
 					double velY = target.motionY;

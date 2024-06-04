@@ -6,24 +6,24 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.entity.passive.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Does not implement ISummonedCreature because it has different despawning rules and because EntityHorse already has an
@@ -40,7 +40,7 @@ public class EntitySpiritHorse extends EntityHorse {
 
 	private static final int DISPEL_TIME = 10;
 
-	public EntitySpiritHorse(World par1World){
+	public EntitySpiritHorse(Level par1World){
 		super(par1World);
 	}
 
@@ -59,7 +59,7 @@ public class EntitySpiritHorse extends EntityHorse {
 	}
 
 	@Override
-	protected int getExperiencePoints(EntityPlayer player){
+	protected int getExperiencePoints(Player player){
 		return 0;
 	}
 
@@ -89,11 +89,11 @@ public class EntitySpiritHorse extends EntityHorse {
 	}
 
 	@Override
-	public void openGUI(EntityPlayer p_110199_1_){
+	public void openGUI(Player p_110199_1_){
 	}
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand){
+	public boolean processInteract(Player player, EnumHand hand){
 
 		ItemStack itemstack = player.getHeldItem(hand);
 
@@ -125,13 +125,13 @@ public class EntitySpiritHorse extends EntityHorse {
 	}
 
 	// I wrote this one!
-	private EntityLivingBase getOwner(){
+	private LivingEntity getOwner(){
 
 		// I think the DataManager stores any objects, so it now stores the UUID instead of its string representation.
 		Entity owner = EntityUtils.getEntityByUUID(world, this.getOwnerUniqueId());
 
-		if(owner instanceof EntityLivingBase){
-			return (EntityLivingBase)owner;
+		if(owner instanceof LivingEntity){
+			return (LivingEntity)owner;
 		}else{
 			return null;
 		}

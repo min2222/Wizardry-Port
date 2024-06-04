@@ -3,8 +3,8 @@ package electroblob.wizardry.client.renderer.entity;
 import electroblob.wizardry.client.renderer.entity.layers.LayerStrayMinionClothing;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
-import net.minecraft.entity.monster.AbstractSkeleton;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.monster.AbstractSkeleton;
 
 /** This class also had to be copied for the same reason as {@link LayerStrayMinionClothing}. */
 public class RenderStrayMinion extends RenderSkeleton {

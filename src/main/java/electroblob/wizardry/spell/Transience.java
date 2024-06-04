@@ -5,14 +5,14 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -36,7 +36,7 @@ public class Transience extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(world.isRemote){
 			Wizardry.proxy.loadShader(caster, SHADER);
@@ -69,8 +69,8 @@ public class Transience extends Spell {
 				event.setCanceled(true);
 			}
 			// Prevents transient entities from causing any damage
-			if(event.getSource().getTrueSource() instanceof EntityLivingBase
-					&& ((EntityLivingBase)event.getSource().getTrueSource()).isPotionActive(WizardryPotions.transience)){
+			if(event.getSource().getTrueSource() instanceof LivingEntity
+					&& ((LivingEntity)event.getSource().getTrueSource()).isPotionActive(WizardryPotions.transience)){
 				event.setCanceled(true);
 			}
 		}
@@ -87,9 +87,9 @@ public class Transience extends Spell {
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
 		if(event.getEntity().world.isRemote && event.getPotionEffect().getPotion() == WizardryPotions.transience
-				&& event.getEntity() instanceof EntityPlayer){
-			Wizardry.proxy.loadShader((EntityPlayer)event.getEntity(), SHADER);
-			Wizardry.proxy.playBlinkEffect((EntityPlayer)event.getEntity());
+				&& event.getEntity() instanceof Player){
+			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
+			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());
 		}
 	}
 

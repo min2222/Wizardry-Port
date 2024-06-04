@@ -1,9 +1,9 @@
 package electroblob.wizardry.client.particle;
 
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Copied from ParticleFirework.Overlay; for some reason that class has no public constructors, plus I want to change the
@@ -13,7 +13,7 @@ import net.minecraft.world.World;
  */
 public class ParticleFlash extends ParticleWizardry {
 
-	public ParticleFlash(World world, double x, double y, double z){
+	public ParticleFlash(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		this.setRBGColorF(1, 1, 1);
 		this.particleScale = 0.6f; // 7.1f is the value used in fireworks

@@ -1,7 +1,7 @@
 package electroblob.wizardry.item;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
@@ -44,14 +44,14 @@ public interface IManaStoringItem {
 	 * @param stack The itemstack to query.
 	 * @return True if the mana should be shown, false if not. Returns true by default.
 	 */
-	default boolean showManaInWorkbench(EntityPlayer player, ItemStack stack){
+	default boolean showManaInWorkbench(Player player, ItemStack stack){
 		return true;
 	}
 
 	/** Convenience method that decreases the amount of mana contained in the given item stack by the given value. This
 	 * method automatically limits the mana to a minimum of 0 and performs the relevant checks for creative mode, etc. */
-	default void consumeMana(ItemStack stack, int mana, @Nullable EntityLivingBase wielder){
-		if(wielder instanceof EntityPlayer && ((EntityPlayer)wielder).isCreative()) return; // Mana isn't consumed in creative
+	default void consumeMana(ItemStack stack, int mana, @Nullable LivingEntity wielder){
+		if(wielder instanceof Player && ((Player)wielder).isCreative()) return; // Mana isn't consumed in creative
 		setMana(stack, Math.max(getMana(stack) - mana, 0));
 	}
 

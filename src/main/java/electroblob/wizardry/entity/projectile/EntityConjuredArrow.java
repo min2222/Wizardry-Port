@@ -1,21 +1,21 @@
 package electroblob.wizardry.entity.projectile;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityConjuredArrow extends EntityArrow {
 
-	public EntityConjuredArrow(World worldIn) {
+	public EntityConjuredArrow(Level worldIn) {
 		super(worldIn);
 	}
 
-	public EntityConjuredArrow(World worldIn, double x, double y, double z) {
+	public EntityConjuredArrow(Level worldIn, double x, double y, double z) {
 		super(worldIn, x, y, z);
 	}
 
-	public EntityConjuredArrow(World worldIn, EntityLivingBase shooter) {
+	public EntityConjuredArrow(Level worldIn, LivingEntity shooter) {
 		super(worldIn, shooter);
 	}
 

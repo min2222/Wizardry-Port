@@ -4,7 +4,7 @@ import electroblob.wizardry.entity.living.EntityBlazeMinion;
 import net.minecraft.client.model.ModelBlaze;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)
 public class RenderWraithMinion extends RenderLiving<EntityBlazeMinion> {

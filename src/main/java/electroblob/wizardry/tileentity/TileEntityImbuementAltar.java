@@ -9,20 +9,20 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,7 +40,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 	private ItemStack stack;
 	private int imbuementTimer;
 	private Element displayElement;
-	private EntityPlayer lastUser;
+	private Player lastUser;
 	/** For loading purposes only. This does not get updated once loaded! */
 	private UUID lastUserUUID;
 
@@ -53,7 +53,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 		checkRecipe();
 	}
 
-	public void setLastUser(EntityPlayer player){
+	public void setLastUser(Player player){
 		this.lastUser = player;
 	}
 
@@ -107,14 +107,14 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 					Element[] elements = getReceptacleElements();
 
-					Vec3d centre = GeometryUtils.getCentre(this.pos.up());
+					Vec3 centre = GeometryUtils.getCentre(this.pos.up());
 
 					for(int i = 0; i < elements.length; i++){
 
 						if(elements[i] == null) continue;
 
-						Vec3d offset = new Vec3d(EnumFacing.byHorizontalIndex(i).getDirectionVec());
-						Vec3d vec = GeometryUtils.getCentre(this.pos).add(0, 0.3, 0).add(offset.scale(0.7));
+						Vec3 offset = new Vec3(Direction.byHorizontalIndex(i).getDirectionVec());
+						Vec3 vec = GeometryUtils.getCentre(this.pos).add(0, 0.3, 0).add(offset.scale(0.7));
 
 						int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(elements[i]);
 
@@ -138,7 +138,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 	private ItemStack getResult(){
 
-		boolean actuallyCrafting = imbuementTimer >= IMBUEMENT_DURATION - 1 && world instanceof WorldServer;
+		boolean actuallyCrafting = imbuementTimer >= IMBUEMENT_DURATION - 1 && world instanceof ServerLevel;
 		Element[] elements = getReceptacleElements();
 
 		ItemStack result = getImbuementResult(stack, elements, actuallyCrafting, world, lastUser);
@@ -159,7 +159,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 
 		Element[] elements = new Element[4];
 
-		for(EnumFacing side : EnumFacing.HORIZONTALS){
+		for(Direction side : Direction.HORIZONTALS){
 
 			TileEntity tileEntity = world.getTileEntity(pos.offset(side));
 
@@ -176,7 +176,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 	/** Empties the 4 adjacent receptacles. */
 	private void consumeReceptacleContents(){
 
-		for(EnumFacing side : EnumFacing.HORIZONTALS){
+		for(Direction side : Direction.HORIZONTALS){
 
 			TileEntity tileEntity = world.getTileEntity(pos.offset(side));
 
@@ -233,7 +233,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 	 *                 is being queried for other reasons, e.g. JEI)
 	 * @return The resulting item stack, or an empty stack if the given combination is not a valid imbuement
 	 */
-	public static ItemStack getImbuementResult(ItemStack input, Element[] receptacleElements, boolean fullLootGen, World world, EntityPlayer lastUser){
+	public static ItemStack getImbuementResult(ItemStack input, Element[] receptacleElements, boolean fullLootGen, Level world, Player lastUser){
 
 		ItemStack eventResult = ItemStack.EMPTY;
 
@@ -278,7 +278,7 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 					Element element = receptacleElements[world.rand.nextInt(receptacleElements.length)];
 					LootTable table = world.getLootTableManager().getLootTableFromLocation(
 							WizardryLoot.RUINED_SPELL_BOOK_LOOT_TABLES[element.ordinal() - 1]);
-					LootContext context = new LootContext.Builder((WorldServer)world).withPlayer(lastUser)
+					LootContext context = new LootContext.Builder((ServerLevel)world).withPlayer(lastUser)
 							.withLuck(lastUser == null ? 0 : lastUser.getLuck()).build();
 
 					List<ItemStack> stacks = table.generateLootForPools(world.rand, context);

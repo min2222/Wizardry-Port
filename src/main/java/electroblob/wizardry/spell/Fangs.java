@@ -6,16 +6,16 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityEvokerFangs;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -40,30 +40,30 @@ public class Fangs extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		if(!spawnFangs(world, caster.getPositionVector(), GeometryUtils.horizontalise(caster.getLookVec()), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!spawnFangs(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()).normalize(), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		if(!spawnFangs(world, new Vec3d(x, y, z), new Vec3d(direction.getDirectionVec()), null, modifiers)) return false;
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
+		if(!spawnFangs(world, new Vec3(x, y, z), new Vec3(direction.getDirectionVec()), null, modifiers)) return false;
 		this.playSound(world, x, y, z, ticksInUse, -1, modifiers);
 		return true;
 	}
 
-	protected boolean spawnFangs(World world, Vec3d origin, Vec3d direction, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnFangs(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		boolean defensiveCircle = caster instanceof EntityPlayer && caster.isSneaking()
-				&& ItemArtefact.isArtefactActive((EntityPlayer)caster, WizardryItems.ring_evoker);
+		boolean defensiveCircle = caster instanceof Player && caster.isSneaking()
+				&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.ring_evoker);
 
 		if(!defensiveCircle && direction.lengthSquared() == 0) return false; // Prevent casting directly down/up
 
@@ -100,7 +100,7 @@ public class Fangs extends Spell {
 				float yaw = (float)MathHelper.atan2(direction.z, direction.x); // Yes, this is the right way round!
 
 				for(int i = 0; i < count; i++){
-					Vec3d vec = origin.add(direction.scale((i + 1) * FANG_SPACING));
+					Vec3 vec = origin.add(direction.scale((i + 1) * FANG_SPACING));
 					flag |= spawnFangsAt(world, caster, modifiers, yaw, i, vec);
 				}
 			}
@@ -109,7 +109,7 @@ public class Fangs extends Spell {
 		return flag;
 	}
 
-	private boolean spawnFangsAt(World world, @Nullable EntityLivingBase caster, SpellModifiers modifiers, float yaw, int delay, Vec3d vec){
+	private boolean spawnFangsAt(Level world, @Nullable LivingEntity caster, SpellModifiers modifiers, float yaw, int delay, Vec3 vec){
 
 		// Not exactly the same as evokers but it's how constructs work so it kinda fits
 		Integer y = BlockUtils.getNearestFloor(world, new BlockPos(vec), 5);

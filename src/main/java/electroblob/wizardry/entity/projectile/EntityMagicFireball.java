@@ -8,18 +8,18 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.projectile.EntitySmallFireball;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -43,7 +43,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	 * or mobs that shoot fireballs would have severely reduced range! */
 	protected int lifetime = 16;
 
-	public EntityMagicFireball(World world){
+	public EntityMagicFireball(Level world){
 		super(world);
 		this.setSize(0.5f, 0.5f);
 	}
@@ -155,7 +155,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 			if(source.getTrueSource() != null){
 
-				Vec3d vec3d = source.getTrueSource().getLookVec();
+				Vec3 vec3d = source.getTrueSource().getLookVec();
 
 				if(vec3d != null){
 
@@ -169,8 +169,8 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				}
 
-				if(source.getTrueSource() instanceof EntityLivingBase){
-					this.setCaster((EntityLivingBase)source.getTrueSource());
+				if(source.getTrueSource() instanceof LivingEntity){
+					this.setCaster((LivingEntity)source.getTrueSource());
 				}
 
 				return true;

@@ -6,11 +6,11 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.NBTExtras;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,7 +35,7 @@ public class PotionContainment extends PotionMagicEffect {
 	}
 
 	@Override
-	public void performEffect(EntityLivingBase target, int strength){
+	public void performEffect(LivingEntity target, int strength){
 		float maxDistance = getContainmentDistance(strength);
 
 		// Initialise the containment position to the entity's position if it wasn't set already
@@ -43,7 +43,7 @@ public class PotionContainment extends PotionMagicEffect {
 			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NBTUtil.createPosTag(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
 		}
 
-		Vec3d origin = GeometryUtils.getCentre(NBTUtil.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
+		Vec3 origin = GeometryUtils.getCentre(NBTUtil.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
 
 		double x = target.posX, y = target.posY, z = target.posZ;
 

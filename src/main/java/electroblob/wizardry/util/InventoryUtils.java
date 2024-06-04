@@ -1,8 +1,8 @@
 package electroblob.wizardry.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
 import net.minecraft.item.Item;
@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public final class InventoryUtils {
 	 *
 	 * @since Wizardry 1.2
 	 */
-	public static List<ItemStack> getHotbar(EntityPlayer player){
+	public static List<ItemStack> getHotbar(Player player){
 		NonNullList<ItemStack> hotbar = NonNullList.create();
 		hotbar.addAll(player.inventory.mainInventory.subList(0, 9));
 		return hotbar;
@@ -62,7 +62,7 @@ public final class InventoryUtils {
 	 *
 	 * @since Wizardry 1.2
 	 */
-	public static List<ItemStack> getPrioritisedHotbarAndOffhand(EntityPlayer player){
+	public static List<ItemStack> getPrioritisedHotbarAndOffhand(Player player){
 		List<ItemStack> hotbar = getHotbar(player);
 		// Adds the offhand item to the beginning of the list so it is processed before the hotbar
 		hotbar.add(0, player.getHeldItemOffhand());
@@ -73,12 +73,12 @@ public final class InventoryUtils {
 	}
 
 	/** Returns which {@link EnumHandSide} the given {@link EnumHand} is on for the given entity. */
-	public static EnumHandSide getSideForHand(EntityLivingBase entity, EnumHand hand){
+	public static EnumHandSide getSideForHand(LivingEntity entity, EnumHand hand){
 		return hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
 	}
 
 	/** Returns which {@link EnumHand} is on the given {@link EnumHandSide} for the given entity. */
-	public static EnumHand getHandForSide(EntityLivingBase entity, EnumHandSide side){
+	public static EnumHand getHandForSide(LivingEntity entity, EnumHandSide side){
 		return side == entity.getPrimaryHand() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
 	}
 
@@ -91,7 +91,7 @@ public final class InventoryUtils {
 	 * Tests whether the specified player has any of the specified item in their entire inventory, including armour
 	 * slots and offhand.
 	 */
-	public static boolean doesPlayerHaveItem(EntityPlayer player, Item item){
+	public static boolean doesPlayerHaveItem(Player player, Item item){
 
 		for(ItemStack stack : player.inventory.mainInventory){
 			if(stack.getItem() == item){
@@ -146,7 +146,7 @@ public final class InventoryUtils {
 
 	/**
 	 * A version of {@link Entity#replaceItemInInventory(int, ItemStack)} that takes a slot index specific to the main,
-	 * armour and offhand inventories, as passed to {@link Item#onUpdate(ItemStack, World, Entity, int, boolean)},
+	 * armour and offhand inventories, as passed to {@link Item#onUpdate(ItemStack, Level, Entity, int, boolean)},
 	 * rather than the proper slot index used everywhere else (just <i>why</i>, Mojang?).
 	 * @param entity The entity to replace the item for
 	 * @param slot The slot index to replace
@@ -156,9 +156,9 @@ public final class InventoryUtils {
 	 */
 	public static boolean replaceItemInInventory(Entity entity, int slot, ItemStack original, ItemStack replacement){
 		// Check slots that aren't in the main inventory first by comparing with the existing item
-		if(entity instanceof EntityLivingBase){
+		if(entity instanceof LivingEntity){
 			for(EntityEquipmentSlot eslot : EntityEquipmentSlot.values()){
-				if(((EntityLivingBase)entity).getItemStackFromSlot(eslot) == original){
+				if(((LivingEntity)entity).getItemStackFromSlot(eslot) == original){
 					entity.setItemStackToSlot(eslot, replacement);
 					return true;
 				}

@@ -8,19 +8,19 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityPoisonBomb extends EntityBomb {
 
-	public EntityPoisonBomb(World world){
+	public EntityPoisonBomb(Level world){
 		super(world);
 	}
 
@@ -42,8 +42,8 @@ public class EntityPoisonBomb extends EntityBomb {
 					MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.POISON).setProjectile(),
 					damage);
 
-			if(entityHit instanceof EntityLivingBase && !MagicDamage.isEntityImmune(DamageType.POISON, entityHit))
-				((EntityLivingBase)entityHit).addPotionEffect(new PotionEffect(MobEffects.POISON,
+			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.POISON, entityHit))
+				((LivingEntity)entityHit).addPotionEffect(new PotionEffect(MobEffects.POISON,
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
@@ -64,7 +64,7 @@ public class EntityPoisonBomb extends EntityBomb {
 			}
 			// Spawning this after the other particles fixes the rendering colour bug. It's a bit of a cheat, but it
 			// works pretty well.
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 		}
 
 		if(!this.world.isRemote){
@@ -74,10 +74,10 @@ public class EntityPoisonBomb extends EntityBomb {
 
 			double range = Spells.poison_bomb.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.posX, this.posY,
 					this.posZ, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()
 						&& !MagicDamage.isEntityImmune(DamageType.POISON, target)){
 					target.attackEntityFrom(

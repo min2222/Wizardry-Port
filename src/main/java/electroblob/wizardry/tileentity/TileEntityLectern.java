@@ -2,7 +2,7 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -34,7 +34,7 @@ public class TileEntityLectern extends TileEntity implements ITickable {
 
 		this.bookSpreadPrev = this.bookSpread;
 
-		EntityPlayer entityplayer = this.world.getClosestPlayer(this.pos.getX() + 0.5, this.pos.getY() + 0.5,
+		Player entityplayer = this.world.getClosestPlayer(this.pos.getX() + 0.5, this.pos.getY() + 0.5,
 				this.pos.getZ() + 0.5, BOOK_OPEN_DISTANCE, false);
 
 		if(entityplayer != null){

@@ -16,7 +16,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,12 +29,13 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -78,7 +80,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	// Field implementations
 	private List<Spell> spells = new ArrayList<Spell>(4);
 
-	public EntityEvilWizard(World world){
+	public EntityEvilWizard(Level world){
 
 		super(world);
 		this.setSize(0.6F, 1.8F);
@@ -106,7 +108,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		this.tasks.addTask(4, new EntityAIRestrictOpenDoor(this));
 		this.tasks.addTask(5, new EntityAIOpenDoor(this, true));
 		this.tasks.addTask(6, new EntityAIMoveTowardsRestriction(this, 0.6D));
-		this.tasks.addTask(7, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
+		this.tasks.addTask(7, new EntityAIWatchClosest2(this, Player.class, 3.0F, 1.0F));
 		this.tasks.addTask(7, new EntityAIWander(this, 0.6D));
 
 		this.targetSelector = entity -> {
@@ -116,7 +118,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 					&& AllyDesignationSystem.isValidTarget(EntityEvilWizard.this, entity)){
 
 				// ... and is a player, a summoned creature, another (non-evil) wizard ...
-				if(entity instanceof EntityPlayer
+				if(entity instanceof Player
 						|| (entity instanceof ISummonedCreature || entity instanceof EntityWizard
 				// ... or in the whitelist ...
 								|| Arrays.asList(Wizardry.settings.summonedCreatureTargetsWhitelist)
@@ -133,7 +135,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		};
 
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.targetSelector));
 	}
 
@@ -203,7 +205,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	}
 
 	@Override
-	public void setRevengeTarget(@Nullable EntityLivingBase target){
+	public void setRevengeTarget(@Nullable LivingEntity target){
 		if(target == null || !groupUUIDs.contains(target.getUniqueID())) super.setRevengeTarget(target);
 	}
 
@@ -255,7 +257,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 

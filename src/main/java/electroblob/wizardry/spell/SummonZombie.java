@@ -5,9 +5,9 @@ import electroblob.wizardry.entity.living.EntityZombieMinion;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class SummonZombie extends SpellMinion<EntityZombieMinion> {
 
@@ -17,8 +17,8 @@ public class SummonZombie extends SpellMinion<EntityZombieMinion> {
 	}
 
 	@Override
-	protected EntityZombieMinion createMinion(World world, EntityLivingBase caster, SpellModifiers modifiers){
-		if(caster instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)caster, WizardryItems.charm_minion_variants)){
+	protected EntityZombieMinion createMinion(Level world, LivingEntity caster, SpellModifiers modifiers){
+		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants)){
 			return new EntityHuskMinion(world);
 		}else{
 			return super.createMinion(world, caster, modifiers);

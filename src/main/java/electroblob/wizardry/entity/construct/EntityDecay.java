@@ -7,10 +7,10 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class EntityDecay extends EntityMagicConstruct {
 
 	public int textureIndex;
 
-	public EntityDecay(World world){
+	public EntityDecay(Level world){
 		super(world);
 		textureIndex = this.rand.nextInt(10);
 		this.height = 0.2f;
@@ -35,9 +35,9 @@ public class EntityDecay extends EntityMagicConstruct {
 					0.6F + rand.nextFloat() * 0.15F);
 
 		if(!this.world.isRemote){
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinCylinder(this.width/2f, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2f, this.posX, this.posY,
 					this.posZ, this.height, this.world);
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 				if(target != this.getCaster()){
 					// If this check wasn't here the potion would be reapplied every tick and hence the entity would be
 					// damaged each tick.

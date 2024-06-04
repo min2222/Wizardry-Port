@@ -5,13 +5,13 @@ import electroblob.wizardry.entity.living.EntityStrayMinion;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
 
@@ -21,8 +21,8 @@ public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
 	}
 
 	@Override
-	protected EntitySkeletonMinion createMinion(World world, EntityLivingBase caster, SpellModifiers modifiers){
-		if(caster instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)caster, WizardryItems.charm_minion_variants)){
+	protected EntitySkeletonMinion createMinion(Level world, LivingEntity caster, SpellModifiers modifiers){
+		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants)){
 			return new EntityStrayMinion(world);
 		}else{
 			return super.createMinion(world, caster, modifiers);
@@ -30,7 +30,7 @@ public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
 	}
 
 	@Override
-	protected void addMinionExtras(EntitySkeletonMinion minion, BlockPos pos, EntityLivingBase caster, SpellModifiers modifiers, int alreadySpawned){
+	protected void addMinionExtras(EntitySkeletonMinion minion, BlockPos pos, LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
 		
 		if(alreadySpawned % 2 == 0){
 			// Archers

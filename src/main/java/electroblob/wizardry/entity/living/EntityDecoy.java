@@ -2,30 +2,30 @@ package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityDecoy extends EntitySummonedCreature {
 
 	// TODO: These guys need sounds!
 
 	/** Creates a new decoy in the given world. */
-	public EntityDecoy(World world){
+	public EntityDecoy(Level world){
 		super(world);
 	}
 	
 	@Override
-	public void setCaster(EntityLivingBase caster){
+	public void setCaster(LivingEntity caster){
 		super.setCaster(caster);
-		this.setAlwaysRenderNameTag(caster instanceof EntityPlayer);
+		this.setAlwaysRenderNameTag(caster instanceof Player);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 		// Decoys just wander around aimlessly, watching anything living.
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(1, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityLivingBase.class, 6.0F));
+		this.tasks.addTask(2, new EntityAIWatchClosest(this, LivingEntity.class, 6.0F));
 		this.tasks.addTask(3, new EntityAILookIdle(this));
 	}
 
@@ -86,7 +86,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 
 	@Override
 	public ITextComponent getDisplayName(){
-		if(getCaster() instanceof EntityPlayer){
+		if(getCaster() instanceof Player){
 			return this.getCaster().getDisplayName();
 		}else{
 			return super.getDisplayName();
@@ -95,7 +95,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 
 	@Override
 	public boolean hasCustomName(){
-		return getCaster() instanceof EntityPlayer;
+		return getCaster() instanceof Player;
 	}
 
 	@Override

@@ -14,15 +14,15 @@ import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,39 +69,39 @@ public class BlockTransportationStone extends Block {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side){
-		return side == EnumFacing.DOWN;
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, Direction side){
+		return side == Direction.DOWN;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
 
 		super.neighborChanged(state, world, pos, block, fromPos);
 
-		if(!world.isSideSolid(pos.down(), EnumFacing.UP, false)){
+		if(!world.isSideSolid(pos.down(), Direction.UP, false)){
 			this.dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
 			world.setBlockToAir(pos);
 		}
 	}
 
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random random){
+	public void updateTick(Level world, BlockPos pos, IBlockState state, Random random){
 
-		if(!world.isSideSolid(pos.down(), EnumFacing.UP)){
+		if(!world.isSideSolid(pos.down(), Direction.UP)){
 			this.dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
 			world.setBlockToAir(pos);
 		}
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World world, BlockPos pos){
-		return super.canPlaceBlockAt(world, pos) && world.isSideSolid(pos.down(), EnumFacing.UP);
+	public boolean canPlaceBlockAt(Level world, BlockPos pos){
+		return super.canPlaceBlockAt(world, pos) && world.isSideSolid(pos.down(), Direction.UP);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, EnumHand hand,
+                                    Direction side, float hitX, float hitY, float hitZ){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -175,7 +175,7 @@ public class BlockTransportationStone extends Block {
 	}
 
 	/** Returns whether the specified location is surrounded by a complete circle of 8 transportation stones. */
-	public static boolean testForCircle(World world, BlockPos pos){
+	public static boolean testForCircle(Level world, BlockPos pos){
 
 		if(world.getBlockState(pos).getMaterial().blocksMovement() || world.getBlockState(pos.up()).getMaterial()
 				.blocksMovement()) return false;
@@ -192,7 +192,7 @@ public class BlockTransportationStone extends Block {
 		return true;
 	}
 
-	private static BlockPos findMostLikelyCircle(World world, BlockPos pos){
+	private static BlockPos findMostLikelyCircle(Level world, BlockPos pos){
 
 		int bestSoFar = 0;
 		BlockPos result = null;
@@ -212,7 +212,7 @@ public class BlockTransportationStone extends Block {
 		return result;
 	}
 
-	private static int getCircleCompleteness(World world, BlockPos pos){
+	private static int getCircleCompleteness(Level world, BlockPos pos){
 
 		int n = 0;
 

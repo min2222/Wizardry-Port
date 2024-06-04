@@ -7,20 +7,20 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.Village;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new ice giant in the given world. */
-	public EntityIceGiant(World world){
+	public EntityIceGiant(Level world){
 		super(world);
 		this.setSize(1.4F, 2.9F);
 		this.experienceValue = 0;
@@ -50,10 +50,10 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 		this.tasks.addTask(2, new EntityAIMoveTowardsTarget(this, 0.9D, 32.0F));
 		// this.tasks.addTask(4, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		// this.tasks.addTask(5, new EntityAIWander(this, 0.6D));
-		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+		this.tasks.addTask(6, new EntityAIWatchClosest(this, Player.class, 6.0F));
 		this.tasks.addTask(7, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
@@ -66,7 +66,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -113,7 +113,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	}
 
 	@Override
-	public void onSuccessfulAttack(EntityLivingBase target){
+	public void onSuccessfulAttack(LivingEntity target){
 
 		target.motionY += 0.2;
 		target.motionX += this.getLookVec().x * 0.2;
@@ -132,7 +132,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -152,7 +152,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -169,7 +169,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity.
 		return !EntityFlying.class.isAssignableFrom(entityType);
 	}

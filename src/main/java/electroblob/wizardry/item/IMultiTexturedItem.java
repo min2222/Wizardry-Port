@@ -2,7 +2,7 @@ package electroblob.wizardry.item;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Interface for items that change their texture depending on their metadata. This is mainly to facilitate use of the

@@ -1,11 +1,11 @@
 package electroblob.wizardry.potion;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * As of Wizardry 4.2, this class is used by all of wizardry's potions. Potions that work solely on events
@@ -21,24 +21,24 @@ public class PotionMagicEffect extends Potion {
 	}
 
 	@Override
-	public void performEffect(EntityLivingBase entitylivingbase, int strength){
+	public void performEffect(LivingEntity entitylivingbase, int strength){
 		// Nothing here because this potion works on events.
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc){
 		drawIcon(x + 6, y + 7, effect, mc);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha){
 		net.minecraft.client.renderer.GlStateManager.color(1, 1, 1, alpha);
 		drawIcon(x + 3, y + 3, effect, mc);
 	}
 	
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	protected void drawIcon(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc){
 		mc.renderEngine.bindTexture(texture);
 		electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 18, 18, 18, 18);

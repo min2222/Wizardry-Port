@@ -6,16 +6,16 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class Telekinesis extends SpellRay {
 
@@ -27,7 +27,7 @@ public class Telekinesis extends SpellRay {
 	@Override public boolean requiresPacket(){ return false; }
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(target instanceof EntityItem){
 
@@ -36,9 +36,9 @@ public class Telekinesis extends SpellRay {
 			target.motionZ = (origin.z - target.posZ) / 6;
 			return true;
 
-		} else if (target instanceof EntityPlayer && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((EntityPlayer) target, WizardryItems.amulet_anchoring))) {
+		} else if (target instanceof Player && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((Player) target, WizardryItems.amulet_anchoring))) {
 
-			EntityPlayer player = (EntityPlayer) target;
+			Player player = (Player) target;
 
 			// IDEA: Disarm the offhand if the mainhand is empty or otherwise harmless?
 
@@ -61,13 +61,13 @@ public class Telekinesis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 			
 			IBlockState blockstate = world.getBlockState(pos);
 	
-			if(blockstate.getBlock().onBlockActivated(world, pos, blockstate, (EntityPlayer)caster, EnumHand.MAIN_HAND,
+			if(blockstate.getBlock().onBlockActivated(world, pos, blockstate, (Player)caster, EnumHand.MAIN_HAND,
 					side, 0, 0, 0)){
 				return true;
 			}
@@ -77,7 +77,7 @@ public class Telekinesis extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 

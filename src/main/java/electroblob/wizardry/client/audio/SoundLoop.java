@@ -8,7 +8,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +22,7 @@ import java.util.Set;
  * @author Electroblob
  */
 // See MusicTicker, this is the same idea of just storing the sounds statically client-side and ticking them
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public abstract class SoundLoop implements ITickable {
 
 	private static final Set<SoundLoop> activeLoops = new HashSet<>();

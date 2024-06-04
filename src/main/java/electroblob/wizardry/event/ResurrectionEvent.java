@@ -1,6 +1,6 @@
 package electroblob.wizardry.event;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -21,16 +21,16 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class ResurrectionEvent extends PlayerEvent {
 
-	private final EntityPlayer caster;
+	private final Player caster;
 
-	public ResurrectionEvent(EntityPlayer player, EntityPlayer caster){
+	public ResurrectionEvent(Player player, Player caster){
 		super(player);
 		this.caster = caster;
 	}
 
 	/** Returns the player that cast the resurrection spell. If the player resurrected themselves, this will be the
 	 * same as {@link ResurrectionEvent#getEntityPlayer()}. */
-	public EntityPlayer getCaster(){
+	public Player getCaster(){
 		return caster;
 	}
 

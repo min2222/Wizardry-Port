@@ -8,19 +8,19 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -60,8 +60,8 @@ public class ItemManaFlask extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable Level worldIn, List<String> tooltip, ITooltipFlag flagIn){
 		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + Wizardry.MODID + ":mana_flask.desc", size.capacity);
 	}
 
@@ -76,7 +76,7 @@ public class ItemManaFlask extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack flask = player.getHeldItem(hand);
 
@@ -91,35 +91,35 @@ public class ItemManaFlask extends Item {
 				player.setActiveHand(hand);
 			}
 
-			return new ActionResult<>(EnumActionResult.SUCCESS, flask);
+			return new InteractionResultHolder<>(EnumActionResult.SUCCESS, flask);
 
 		}else{
-			return new ActionResult<>(EnumActionResult.FAIL, flask);
+			return new InteractionResultHolder<>(EnumActionResult.FAIL, flask);
 		}
 	}
 
 	@Override
-	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count){
+	public void onUsingTick(ItemStack stack, LivingEntity player, int count){
 		if(player.world.isRemote){
 			float f = count/(float)getMaxItemUseDuration(stack);
-			Vec3d pos = player.getPositionEyes(0).subtract(0, 0.2, 0).add(player.getLookVec().scale(0.6));
-			Vec3d delta = new Vec3d(0, 0.2 * f, 0).rotatePitch(count * 0.5f).rotateYaw((float)Math.toRadians(90 - player.rotationYawHead));
+			Vec3 pos = player.getPositionEyes(0).subtract(0, 0.2, 0).add(player.getLookVec().scale(0.6));
+			Vec3 delta = new Vec3(0, 0.2 * f, 0).rotatePitch(count * 0.5f).rotateYaw((float)Math.toRadians(90 - player.rotationYawHead));
 			ParticleBuilder.create(Type.DUST).pos(pos.add(delta)).vel(delta.scale(0.2)).time(12 + player.world.rand.nextInt(6))
 					.clr(1, 1, 0.65f).fade(0.7f, 0, 1).spawn(player.world);
 		}
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity){
+	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity entity){
 
-		if(entity instanceof EntityPlayer){
-			findAndChargeItem(stack, (EntityPlayer)entity);
+		if(entity instanceof Player){
+			findAndChargeItem(stack, (Player)entity);
 		}
 
 		return stack;
 	}
 
-	private void findAndChargeItem(ItemStack stack, EntityPlayer player){
+	private void findAndChargeItem(ItemStack stack, Player player){
 
 		List<ItemStack> stacks = InventoryUtils.getPrioritisedHotbarAndOffhand(player);
 		stacks.addAll(player.inventory.armorInventory); // player#getArmorInventoryList() only returns an Iterable

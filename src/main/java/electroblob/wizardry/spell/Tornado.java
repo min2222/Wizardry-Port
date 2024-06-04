@@ -3,9 +3,9 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.entity.construct.EntityTornado;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class Tornado extends SpellConstruct<EntityTornado> {
 
@@ -18,9 +18,9 @@ public class Tornado extends SpellConstruct<EntityTornado> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityTornado construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityTornado construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		float speed = getProperty(SPEED).floatValue();
-		Vec3d direction = caster == null ? new Vec3d(side.getDirectionVec()) : caster.getLookVec();
+		Vec3 direction = caster == null ? new Vec3(side.getDirectionVec()) : caster.getLookVec();
 		construct.setHorizontalVelocity(direction.x * speed, direction.z * speed);
 	}
 

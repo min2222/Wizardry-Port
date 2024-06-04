@@ -6,15 +6,15 @@ import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -65,7 +65,7 @@ public abstract class SpellAreaEffect extends Spell {
 	/**
 	 * Sets whether this spell should target allies of the caster instead of hostiles. Positional casting always targets
 	 * everything, regardless of this setting.
-	 * @param targetAllies True to call {@link SpellAreaEffect#affectEntity(World, Vec3d, EntityLivingBase, EntityLivingBase, int, int, SpellModifiers)}
+	 * @param targetAllies True to call {@link SpellAreaEffect#affectEntity(Level, Vec3, LivingEntity, LivingEntity, int, int, SpellModifiers)}
 	 *                     on allies of the caster, false to call it on entities considered hostile to the caster (not
 	 *                     necessarily <i>collectively-exhaustive</i>; some entities may belong to neither category).
 	 * @return The spell instance, allowing this method to be chained onto the constructor.
@@ -78,7 +78,7 @@ public abstract class SpellAreaEffect extends Spell {
 	/**
 	 * Sets whether this spell this spell should succeed even if no entities are affected.
 	 * @param alwaysSucceed True if this spell should succeed even if no entities are affected, false if
-	 *                      {@link SpellAreaEffect#affectEntity(World, Vec3d, EntityLivingBase, EntityLivingBase, int, int, SpellModifiers)}
+	 *                      {@link SpellAreaEffect#affectEntity(Level, Vec3, LivingEntity, LivingEntity, int, int, SpellModifiers)}
 	 *                      must return true at least once for the spell to succeed
 	 * @return The spell instance, allowing this method to be chained onto the constructor.
 	 */
@@ -103,7 +103,7 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		boolean result = findAndAffectEntities(world, caster.getPositionVector(),
 				caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -111,24 +111,24 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		boolean result = findAndAffectEntities(world, caster.getPositionVector(), caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return result;
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		boolean result = findAndAffectEntities(world, new Vec3d(x, y, z), null, ticksInUse, modifiers);
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
+		boolean result = findAndAffectEntities(world, new Vec3(x, y, z), null, ticksInUse, modifiers);
 		if(result) this.playSound(world, x, y, z, ticksInUse, -1, modifiers);
 		return result;
 	}
 
 	/** Takes care of the shared stuff for the three casting methods. This is mainly for internal use. */
-	protected boolean findAndAffectEntities(World world, Vec3d origin, @Nullable EntityLivingBase caster, int ticksInUse, SpellModifiers modifiers){
+	protected boolean findAndAffectEntities(Level world, Vec3 origin, @Nullable LivingEntity caster, int ticksInUse, SpellModifiers modifiers){
 
 		double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
-		List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(radius, origin.x, origin.y, origin.z, world);
+		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, origin.x, origin.y, origin.z, world);
 
 		if(targetAllies){
 			targets.removeIf(target -> target != caster && !AllyDesignationSystem.isAllied(caster, target));
@@ -142,7 +142,7 @@ public abstract class SpellAreaEffect extends Spell {
 		boolean result = alwaysSucceed;
 		int i = 0;
 
-		for(EntityLivingBase target : targets){
+		for(LivingEntity target : targets){
 			if(affectEntity(world, origin, caster, target, i++, ticksInUse, modifiers)) result = true;
 		}
 
@@ -162,11 +162,11 @@ public abstract class SpellAreaEffect extends Spell {
 	 * @param modifiers The modifiers the spell was cast with.
 	 * @return True if whatever was done to the entity was successful, false if not.
 	 */
-	protected abstract boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers);
+	protected abstract boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers);
 	
 	/**
 	 * Called to spawn the spell's particle effect. By default, this generates a set of random points within the spell's
-	 * area of effect and calls {@link SpellAreaEffect#spawnParticle(World, double, double, double)} at each to spawn
+	 * area of effect and calls {@link SpellAreaEffect#spawnParticle(Level, double, double, double)} at each to spawn
 	 * the individual particles. Only called client-side. Override to add a custom particle effect.
 	 * @param world The world to spawn the particles in.
 	 * @param origin The position the spell was cast from.
@@ -174,7 +174,7 @@ public abstract class SpellAreaEffect extends Spell {
 	 * @param caster The entity that cast the spell, or null if it was cast from a position.
 	 * @param modifiers The modifiers the spell was cast with.
 	 */
-	protected void spawnParticleEffect(World world, Vec3d origin, double radius, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		
 		int particleCount = (int)Math.round(particleDensity * Math.PI * radius * radius);
 		
@@ -195,6 +195,6 @@ public abstract class SpellAreaEffect extends Spell {
 	 * @param y The y-coordinate to spawn the particle at, already set to a random point within the spell's area of effect.
 	 * @param z The z-coordinate to spawn the particle at, already set to a random point within the spell's area of effect.
 	 */
-	protected void spawnParticle(World world, double x, double y, double z){}
+	protected void spawnParticle(Level world, double x, double y, double z){}
 
 }

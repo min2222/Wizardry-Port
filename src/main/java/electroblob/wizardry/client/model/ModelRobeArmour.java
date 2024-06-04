@@ -2,7 +2,7 @@ package electroblob.wizardry.client.model;
 
 import electroblob.wizardry.block.BlockStatue;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 
 public class ModelRobeArmour extends ModelArmourFixer {
 

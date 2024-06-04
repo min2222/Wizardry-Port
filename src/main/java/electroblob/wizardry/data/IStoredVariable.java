@@ -2,10 +2,9 @@ package electroblob.wizardry.data;
 
 import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.UUID;
@@ -48,7 +47,7 @@ public interface IStoredVariable<T> extends IVariable<T> {
 
 		private boolean synced;
 
-		private BiFunction<EntityPlayer, T, T> ticker;
+		private BiFunction<Player, T, T> ticker;
 
 		/**
 		 * Creates a new {@code StoredVariable} with the given key and serialisation behaviour.
@@ -78,7 +77,7 @@ public interface IStoredVariable<T> extends IVariable<T> {
 		 *               {@code BiFunction} returns the new value for this variable.
 		 * @return This {@code StoredVariable} object, allowing this method to be chained onto object creation.
 		 */
-		public StoredVariable<T, E> withTicker(BiFunction<EntityPlayer, T, T> ticker){
+		public StoredVariable<T, E> withTicker(BiFunction<Player, T, T> ticker){
 			this.ticker = ticker;
 			return this;
 		}
@@ -108,7 +107,7 @@ public interface IStoredVariable<T> extends IVariable<T> {
 		}
 
 		@Override
-		public T update(EntityPlayer player, T value){
+		public T update(Player player, T value){
 			return ticker.apply(player, value);
 		}
 

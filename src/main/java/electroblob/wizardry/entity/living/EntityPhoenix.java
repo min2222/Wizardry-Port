@@ -6,19 +6,19 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	private static final List<Spell> attack = Collections.singletonList(Spells.flame_ray);
 
 	/** Creates a new phoenix in the given world. */
-	public EntityPhoenix(World world){
+	public EntityPhoenix(Level world){
 		super(world);
 		this.isImmuneToFire = true;
 		this.height = 2.0f;
@@ -47,12 +47,12 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	@Override
 	protected void initEntityAI(){
 
-		this.tasks.addTask(0, new EntityAIWatchClosest(this, EntityLivingBase.class, 0));
+		this.tasks.addTask(0, new EntityAIWatchClosest(this, LivingEntity.class, 0));
 		// this.tasks.addTask(2, new EntityAIWander(this, AISpeed));
 		this.tasks.addTask(3, new EntityAILookIdle(this));
 		// this.targetTasks.addTask(0, new EntityAIMoveTowardsTarget(this, 1, 10));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 
 		this.setAIMoveSpeed((float)AISpeed);
@@ -123,7 +123,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public int getBrightnessForRender(){
 		return 15728880;
 	}
@@ -146,7 +146,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 	private void spawnParticleEffect(){
 		if(this.world.isRemote){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(EnumParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
+				this.world.spawnParticle(ParticleTypes.FLAME, this.posX + this.rand.nextFloat() - 0.5f,
 						this.posY + this.rand.nextFloat() * height, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
@@ -183,7 +183,7 @@ public class EntityPhoenix extends EntitySummonedCreature implements ISpellCaste
 		}
 
 		for(int i = 0; i < 2; i++){
-			this.world.spawnParticle(EnumParticleTypes.FLAME,
+			this.world.spawnParticle(ParticleTypes.FLAME,
 					this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
 					this.posY + this.height / 2 + this.rand.nextDouble() * (double)this.height / 2,
 					this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, -0.1D, 0.0D);

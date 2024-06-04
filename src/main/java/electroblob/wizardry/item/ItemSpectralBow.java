@@ -5,9 +5,9 @@ import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -18,10 +18,10 @@ import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemSpectralArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.*;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -33,8 +33,8 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 		setNoRepair();
 		setCreativeTab(null);
 		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter(){
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn){
+			@OnlyIn(Dist.CLIENT)
+			public float apply(ItemStack stack, @Nullable Level worldIn, @Nullable LivingEntity entityIn){
 				if(entityIn == null){
 					return 0.0F;
 				}else{
@@ -46,8 +46,8 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 			}
 		});
 		this.addPropertyOverride(new ResourceLocation("pulling"), new IItemPropertyGetter(){
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn){
+			@OnlyIn(Dist.CLIENT)
+			public float apply(ItemStack stack, @Nullable Level worldIn, @Nullable LivingEntity entityIn){
 				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F
 						: 0.0F;
 			}
@@ -56,7 +56,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	// Why does this still exist? Item models deal with this now, right?
 	public boolean isFull3D(){
 		return true;
@@ -106,7 +106,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean selected){
+	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);
@@ -125,23 +125,23 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
-		ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
+		InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
 				true);
 
 		if(ret != null) return ret;
 
 		player.setActiveHand(hand);
 
-		return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
+		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);
 
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean hasEffect(ItemStack stack){
 		return true;
 	}
@@ -168,7 +168,7 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 
 	// Cannot be dropped
 	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player){
+	public boolean onDroppedByPlayer(ItemStack item, Player player){
 		return false;
 	}
 
@@ -181,16 +181,16 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 //	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entity, int timeLeft){
+	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft){
 		// Decreases the timer by the amount it should have been decreased while the bow was in use.
 		if(!world.isRemote) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
 
-		if(entity instanceof EntityPlayer){
+		if(entity instanceof Player){
 
-			EntityPlayer entityplayer = (EntityPlayer)entity;
+			Player entityplayer = (Player)entity;
 
 			int i = this.getMaxItemUseDuration(stack) - timeLeft;
-			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, world, (EntityPlayer)entity, i, true);
+			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, world, (Player)entity, i, true);
 			if(i < 0) return;
 
 			float f = getArrowVelocity(i);

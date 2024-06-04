@@ -9,16 +9,16 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityBlizzard extends EntityScaledConstruct {
 
-	public EntityBlizzard(World world){
+	public EntityBlizzard(Level world){
 		super(world);
 		// TODO: Set the size properly and do whatever forcefield does to allow block and entity interaction inside it
 		// 		 (Probably need to do this for several others too)
@@ -44,10 +44,10 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 		if(!this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
 					this.posZ, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(this.isValidTarget(target)){
 

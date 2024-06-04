@@ -7,10 +7,10 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 
@@ -71,8 +71,8 @@ public class CommandViewAllies extends CommandBase {
 			player = getPlayer(server, sender, arguments[0]);
 			// Don't want to catch the exception here either, because there can be no other first argument.
 
-			if(player != sender && sender instanceof EntityPlayer
-					&& !EntityUtils.isPlayerOp((EntityPlayer)sender, server)){
+			if(player != sender && sender instanceof Player
+					&& !EntityUtils.isPlayerOp((Player)sender, server)){
 				// Displays a chat message if a non-op tries to view another player's allies.
 				if(server.sendCommandFeedback()){
 					TextComponentTranslation TextComponentTranslation2 = new TextComponentTranslation(

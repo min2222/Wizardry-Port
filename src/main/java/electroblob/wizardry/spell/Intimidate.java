@@ -7,16 +7,16 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -46,7 +46,7 @@ public class Intimidate extends SpellAreaEffect {
 	}
 
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster != null && target instanceof EntityCreature){
 
@@ -64,7 +64,7 @@ public class Intimidate extends SpellAreaEffect {
 	}
 
 	@Override
-	protected void spawnParticleEffect(World world, Vec3d origin, double radius, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		if(caster != null) origin = caster.getPositionEyes(1);
 
@@ -85,12 +85,12 @@ public class Intimidate extends SpellAreaEffect {
 	 * @param distance How far the entity will run from the caster
 	 * @return True if a new path was found and set, false if not.
 	 */
-	public static boolean runAway(EntityCreature target, EntityLivingBase caster, double distance){
+	public static boolean runAway(EntityCreature target, LivingEntity caster, double distance){
 
 		if(target.getDistance(caster) < distance){
 
-			Vec3d Vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(target, (int)distance, (int)(distance/2),
-					new Vec3d(caster.posX, caster.posY, caster.posZ));
+			Vec3 Vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(target, (int)distance, (int)(distance/2),
+					new Vec3(caster.posX, caster.posY, caster.posZ));
 
 			if(Vec3d == null){
 				return false;
@@ -130,10 +130,10 @@ public class Intimidate extends SpellAreaEffect {
 
 				Entity caster = EntityUtils.getEntityByUUID(creature.world, entityNBT.getUniqueId(NBT_KEY));
 
-				if(caster instanceof EntityLivingBase){
+				if(caster instanceof LivingEntity){
 					double distance = BASE_AVOID_DISTANCE + AVOID_DISTANCE_PER_LEVEL
 							* event.getEntityLiving().getActivePotionEffect(WizardryPotions.fear).getAmplifier();
-					runAway(creature, (EntityLivingBase)caster, distance);
+					runAway(creature, (LivingEntity)caster, distance);
 				}
 			}
 		}

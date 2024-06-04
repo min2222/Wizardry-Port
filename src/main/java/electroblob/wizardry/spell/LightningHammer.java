@@ -2,10 +2,10 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.entity.construct.EntityHammer;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public class LightningHammer extends SpellConstructRanged<EntityHammer> {
 
@@ -21,13 +21,13 @@ public class LightningHammer extends SpellConstructRanged<EntityHammer> {
 	}
 
 	@Override
-	protected boolean spawnConstruct(World world, double x, double y, double z, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		if(!world.canBlockSeeSky(new BlockPos(x, y, z))) return false;
 		return super.spawnConstruct(world, x, y + 50, z, side, caster, modifiers);
 	}
 
 	@Override
-	protected void addConstructExtras(EntityHammer construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityHammer construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		construct.motionY = -2;
 	}
 

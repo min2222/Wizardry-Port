@@ -16,19 +16,19 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderTransportationUI {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/transportation_marker.png");
@@ -40,7 +40,7 @@ public class RenderTransportationUI {
 		// Only render in first person
 		if(Minecraft.getMinecraft().gameSettings.thirdPersonView != 0) return;
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 
 		ItemStack stack = player.getHeldItemMainhand();
 		if(!(stack.getItem() instanceof ISpellCastingItem)){
@@ -60,7 +60,7 @@ public class RenderTransportationUI {
 
 			GlStateManager.pushMatrix();
 
-			Vec3d origin = player.getPositionEyes(event.getPartialTicks());
+			Vec3 origin = player.getPositionEyes(event.getPartialTicks());
 			GlStateManager.translate(0, origin.y - Minecraft.getMinecraft().getRenderManager().viewerPosY, 0);
 
 			Tessellator tessellator = Tessellator.getInstance();
@@ -84,7 +84,7 @@ public class RenderTransportationUI {
 
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-				Vec3d position = GeometryUtils.getCentre(location.pos).subtract(origin);
+				Vec3 position = GeometryUtils.getCentre(location.pos).subtract(origin);
 				double distance = position.length();
 				// The icon lines up perfectly if you render it at actual distance, otherwise view bobbing messes things up
 				// However, if that's outside the render distance it won't render at all! To fudge our way around this

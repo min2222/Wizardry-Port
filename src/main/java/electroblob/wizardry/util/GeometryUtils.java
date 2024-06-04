@@ -1,20 +1,20 @@
 package electroblob.wizardry.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Contains useful static methods for performing geometry operations on vectors, bounding boxes, {@code BlockPos}
  * objects, etc. These methods used to be part of {@code WizardryUtilities}.
- * @see Vec3d
+ * @see Vec3
  * @see BlockPos
- * @see EnumFacing
+ * @see Direction
  * @see RelativeFacing
  * @see Location
  * @see RayTracer
@@ -35,41 +35,41 @@ public final class GeometryUtils {
 	// Why is there a distanceSqToCentre method in Vec3i but not a getCentre method?
 
 	/**
-	 * Returns a {@link Vec3d} of the coordinates at the centre of the given block position (i.e. the block coordinates
+	 * Returns a {@link Vec3} of the coordinates at the centre of the given block position (i.e. the block coordinates
 	 * plus 0.5 in x, y, and z).
 	 */
-	public static Vec3d getCentre(BlockPos pos){
-		return new Vec3d(pos).add(0.5, 0.5, 0.5);
+	public static Vec3 getCentre(BlockPos pos){
+		return new Vec3(pos).add(0.5, 0.5, 0.5);
 	}
 
 	/**
-	 * Returns a {@link Vec3d} of the coordinates at the centre of the given bounding box (The one in {@code AxisAlignedBB}
+	 * Returns a {@link Vec3} of the coordinates at the centre of the given bounding box (The one in {@code AxisAlignedBB}
 	 * itself is client-side only).
 	 */
-	public static Vec3d getCentre(AxisAlignedBB box){
-		return new Vec3d(box.minX + (box.maxX - box.minX) * 0.5, box.minY + (box.maxY - box.minY) * 0.5, box.minZ + (box.maxZ - box.minZ) * 0.5);
+	public static Vec3 getCentre(AxisAlignedBB box){
+		return new Vec3(box.minX + (box.maxX - box.minX) * 0.5, box.minY + (box.maxY - box.minY) * 0.5, box.minZ + (box.maxZ - box.minZ) * 0.5);
 	}
 
 	/**
-	 * Returns a {@link Vec3d} of the coordinates at the centre of the given entity's bounding box. This is more
+	 * Returns a {@link Vec3} of the coordinates at the centre of the given entity's bounding box. This is more
 	 * efficient than {@code GeometryUtils.getCentre(entity.getEntityBoundingBox())} as it can use the entity's fields.
 	 */
-	public static Vec3d getCentre(Entity entity){
-		return new Vec3d(entity.posX, entity.posY + entity.height/2, entity.posZ);
+	public static Vec3 getCentre(Entity entity){
+		return new Vec3(entity.posX, entity.posY + entity.height/2, entity.posZ);
 	}
 
 	/**
-	 * Returns a {@link Vec3d} of the coordinates at the centre of the given face of the given block position (i.e. the
+	 * Returns a {@link Vec3} of the coordinates at the centre of the given face of the given block position (i.e. the
 	 * centre of the block plus 0.5 in the given direction).
 	 */
-	public static Vec3d getFaceCentre(BlockPos pos, EnumFacing face){
-		return getCentre(pos).add(new Vec3d(face.getDirectionVec()).scale(0.5));
+	public static Vec3 getFaceCentre(BlockPos pos, Direction face){
+		return getCentre(pos).add(new Vec3(face.getDirectionVec()).scale(0.5));
 	}
 
 	/**
-	 * Returns the component of the given {@link Vec3d} corresponding to the given {@link Axis Axis}.
+	 * Returns the component of the given {@link Vec3} corresponding to the given {@link Axis Axis}.
 	 */
-	public static double component(Vec3d vec, Axis axis){
+	public static double component(Vec3 vec, Axis axis){
 		return new double[]{vec.x, vec.y, vec.z}[axis.ordinal()]; // Damn, that's compact.
 	}
 
@@ -81,13 +81,13 @@ public final class GeometryUtils {
 	}
 
 	/**
-	 * Returns a new {@link Vec3d} with the component corresponding to the given {@link Axis Axis} replaced by the
+	 * Returns a new {@link Vec3} with the component corresponding to the given {@link Axis Axis} replaced by the
 	 * given value.
 	 */
-	public static Vec3d replaceComponent(Vec3d vec, Axis axis, double newValue){
+	public static Vec3 replaceComponent(Vec3 vec, Axis axis, double newValue){
 		double[] components = {vec.x, vec.y, vec.z};
 		components[axis.ordinal()] = newValue;
-		return new Vec3d(components[0], components[1], components[2]);
+		return new Vec3(components[0], components[1], components[2]);
 	}
 
 	/**
@@ -101,9 +101,9 @@ public final class GeometryUtils {
 	}
 
 	/**
-	 * Returns a normalised {@link Vec3d} with the same yaw angle as the given vector, but with a y component of zero.
+	 * Returns a normalised {@link Vec3} with the same yaw angle as the given vector, but with a y component of zero.
 	 */
-	public static Vec3d horizontalise(Vec3d vec){
+	public static Vec3 horizontalise(Vec3 vec){
 		return replaceComponent(vec, Axis.Y, 0).normalize();
 	}
 
@@ -113,16 +113,16 @@ public final class GeometryUtils {
 	 * @return The list of vertices, which will contain 8 elements. Using EnumFacing initials, the order is:
 	 * DNW, DNE, DSE, DSW, UNW, UNE, USE, USW. The returned coordinates are absolute (i.e. measured from the world origin).
 	 */
-	public static Vec3d[] getVertices(AxisAlignedBB box){
-		return new Vec3d[]{
-				new Vec3d(box.minX, box.minY, box.minZ),
-				new Vec3d(box.maxX, box.minY, box.minZ),
-				new Vec3d(box.maxX, box.minY, box.maxZ),
-				new Vec3d(box.minX, box.minY, box.maxZ),
-				new Vec3d(box.minX, box.maxY, box.minZ),
-				new Vec3d(box.maxX, box.maxY, box.minZ),
-				new Vec3d(box.maxX, box.maxY, box.maxZ),
-				new Vec3d(box.minX, box.maxY, box.maxZ)
+	public static Vec3[] getVertices(AxisAlignedBB box){
+		return new Vec3[]{
+				new Vec3(box.minX, box.minY, box.minZ),
+				new Vec3(box.maxX, box.minY, box.minZ),
+				new Vec3(box.maxX, box.minY, box.maxZ),
+				new Vec3(box.minX, box.minY, box.maxZ),
+				new Vec3(box.minX, box.maxY, box.minZ),
+				new Vec3(box.maxX, box.maxY, box.minZ),
+				new Vec3(box.maxX, box.maxY, box.maxZ),
+				new Vec3(box.minX, box.maxY, box.maxZ)
 		};
 	}
 
@@ -132,16 +132,16 @@ public final class GeometryUtils {
 	 * @return The list of vertices, which will contain 8 elements. Using EnumFacing initials, the order is:
 	 * DNW, DNE, DSE, DSW, UNW, UNE, USE, USW. The returned coordinates are absolute (i.e. measured from the world origin).
 	 */
-	public static Vec3d[] getVertices(World world, BlockPos pos){
+	public static Vec3[] getVertices(Level world, BlockPos pos){
 		return getVertices(world.getBlockState(pos).getBoundingBox(world, pos).offset(pos.getX(), pos.getY(), pos.getZ()));
 	}
 
 	/**
-	 * Returns the pitch angle in degrees of the given {@link EnumFacing}. For some reason {@code EnumFacing} has a get
-	 * yaw method ({@link EnumFacing#getHorizontalAngle()}) but not a get pitch method.
+	 * Returns the pitch angle in degrees of the given {@link Direction}. For some reason {@code EnumFacing} has a get
+	 * yaw method ({@link Direction#getHorizontalAngle()}) but not a get pitch method.
 	 */
-	public static float getPitch(EnumFacing facing){
-		return facing == EnumFacing.UP ? 90 : facing == EnumFacing.DOWN ? -90 : 0;
+	public static float getPitch(Direction facing){
+		return facing == Direction.UP ? 90 : facing == Direction.DOWN ? -90 : 0;
 	}
 
 }

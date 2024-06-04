@@ -8,11 +8,11 @@ import com.google.gson.JsonObject;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class SpellCastTrigger implements ICriterionTrigger<SpellCastTrigger.Inst
 		}
 	}
 
-	public static class Instance extends AbstractCriterionInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
 
 		private final SpellPredicate spell;
 		private final ItemPredicate item;

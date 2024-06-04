@@ -5,10 +5,10 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class Decoy extends Spell {
 
@@ -24,7 +24,7 @@ public class Decoy extends Spell {
 	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return true; }
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
 		// Uses the synchronised entity id to ensure it is consistent on client and server, but not always the same.
 		double splitSpeed = caster.getEntityId() % 2 == 0 ? 0.3 : -0.3;
@@ -35,7 +35,7 @@ public class Decoy extends Spell {
 	
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
 		double splitSpeed = world.rand.nextBoolean() ? 0.3 : -0.3;
 		spawnDecoy(world, caster, modifiers, splitSpeed);
@@ -43,7 +43,7 @@ public class Decoy extends Spell {
 		return true;
 	}
 	
-	private void spawnDecoy(World world, EntityLivingBase caster, SpellModifiers modifiers, double splitSpeed){
+	private void spawnDecoy(Level world, LivingEntity caster, SpellModifiers modifiers, double splitSpeed){
 
 		if(!world.isRemote){
 			EntityDecoy decoy = new EntityDecoy(world);
@@ -53,7 +53,7 @@ public class Decoy extends Spell {
 			decoy.addVelocity(-caster.getLookVec().z * splitSpeed, 0, caster.getLookVec().x * splitSpeed);
 			// Ignores the show names setting, since this would allow a player to easily detect a decoy
 			// Instead, a decoy player has its caster's name tag shown permanently and non-player decoys have nothing
-			if(caster instanceof EntityPlayer) decoy.setCustomNameTag(caster.getName());
+			if(caster instanceof Player) decoy.setCustomNameTag(caster.getName());
 			world.spawnEntity(decoy);
 
 			// Tricks any mobs that are targeting the caster into targeting the decoy instead.

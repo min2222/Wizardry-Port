@@ -3,7 +3,7 @@ package electroblob.wizardry.item;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class ItemBlockMultiTextured extends ItemBlock implements IMultiTexturedItem {
 	

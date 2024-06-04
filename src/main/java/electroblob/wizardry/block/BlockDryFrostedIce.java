@@ -4,9 +4,9 @@ import net.minecraft.block.BlockFrostedIce;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -26,12 +26,12 @@ public class BlockDryFrostedIce extends BlockFrostedIce {
 	}
 
 	@Override
-	protected void turnIntoWater(World world, BlockPos pos){
+	protected void turnIntoWater(Level world, BlockPos pos){
 		world.destroyBlock(pos, false);
 	}
 
 	@Override
-	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand){
+	public void updateTick(Level worldIn, BlockPos pos, IBlockState state, Random rand){
 		if(rand.nextInt(3) == 0){
 			this.slightlyMelt(worldIn, pos, state, rand, true);
 		}else{

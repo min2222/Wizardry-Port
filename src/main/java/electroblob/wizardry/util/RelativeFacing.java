@@ -1,10 +1,10 @@
 package electroblob.wizardry.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 
 /**
- * Like {@link EnumFacing}, but relative!
+ * Like {@link Direction}, but relative!
  */
 public enum RelativeFacing {
 
@@ -31,10 +31,10 @@ public enum RelativeFacing {
 		}
 	}
 
-	public static RelativeFacing relativise(EnumFacing absolute, Entity relativeTo){
-		if(absolute == EnumFacing.DOWN) return DOWN;
-		if(absolute == EnumFacing.UP) return UP;
-		EnumFacing look = relativeTo.getAdjustedHorizontalFacing();
+	public static RelativeFacing relativise(Direction absolute, Entity relativeTo){
+		if(absolute == Direction.DOWN) return DOWN;
+		if(absolute == Direction.UP) return UP;
+		Direction look = relativeTo.getAdjustedHorizontalFacing();
 		int relativeIndex = absolute.getHorizontalIndex() - look.getHorizontalIndex();
 		if(relativeIndex < 0) relativeIndex += 4;
 		return HORIZONTALS[relativeIndex];

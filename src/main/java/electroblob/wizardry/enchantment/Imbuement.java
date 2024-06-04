@@ -7,7 +7,7 @@ import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
@@ -119,9 +119,9 @@ public interface Imbuement {
 
 			EntityArrow arrow = (EntityArrow)event.getEntity();
 
-			if(arrow.shootingEntity instanceof EntityLivingBase){
+			if(arrow.shootingEntity instanceof LivingEntity){
 
-				EntityLivingBase archer = (EntityLivingBase)arrow.shootingEntity;
+				LivingEntity archer = (LivingEntity)arrow.shootingEntity;
 
 				ItemStack bow = archer.getHeldItemMainhand();
 

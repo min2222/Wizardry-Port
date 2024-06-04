@@ -5,19 +5,19 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -36,33 +36,33 @@ public class ShulkerBullet extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
-		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, EnumFacing.UP, modifiers)) return false;
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
-		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, EnumFacing.UP, modifiers)) return false;
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int duration, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int duration, int ticksInUse, SpellModifiers modifiers){
 		if(!shoot(world, null, x, y, z, direction, modifiers)) return false;
 		this.playSound(world, x, y, z, ticksInUse, -1, modifiers);
 		return true;
 	}
 
-	private boolean shoot(World world, @Nullable EntityLivingBase caster, double x, double y, double z, EnumFacing direction, SpellModifiers modifiers){
+	private boolean shoot(Level world, @Nullable LivingEntity caster, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 
 			double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-			List<EntityLivingBase> possibleTargets = EntityUtils.getLivingWithinRadius(range, x, y, z, world);
+			List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(range, x, y, z, world);
 
 			possibleTargets.remove(caster);
 			possibleTargets.removeIf(t -> t instanceof EntityArmorStand);

@@ -1,8 +1,8 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -24,7 +24,7 @@ public class MinionDamage extends IndirectMagicDamage {
 	}
 
 	@Override
-	public ITextComponent getDeathMessage(EntityLivingBase victim){
+	public ITextComponent getDeathMessage(LivingEntity victim){
 		ITextComponent itextcomponent = this.damageSourceEntity.getDisplayName();
 		String key = "death.attack." + this.damageType;
 		return new TextComponentTranslation(key, victim.getDisplayName(), itextcomponent);

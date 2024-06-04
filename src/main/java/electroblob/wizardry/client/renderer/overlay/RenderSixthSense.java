@@ -15,19 +15,19 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.lwjgl.opengl.GL11;
 
-@EventBusSubscriber(Side.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RenderSixthSense {
 
 	private static final ResourceLocation SCREEN_OVERLAY_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/sixth_sense_overlay.png");
@@ -56,7 +56,7 @@ public class RenderSixthSense {
 	}
 
 	@SubscribeEvent
-	public static void onRenderLivingEvent(RenderLivingEvent.Post<EntityLivingBase> event){
+	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 
 		Minecraft mc = Minecraft.getMinecraft();
 		RenderManager renderManager = event.getRenderer().getRenderManager();
@@ -93,7 +93,7 @@ public class RenderSixthSense {
 
 			if(ItemArtefact.isArtefactActive(mc.player, WizardryItems.charm_sixth_sense)){
 				if(event.getEntity() instanceof IMob) texture = HOSTILE_MOB_MARKER_TEXTURE;
-				else if(event.getEntity() instanceof EntityPlayer) texture = PLAYER_MARKER_TEXTURE;
+				else if(event.getEntity() instanceof Player) texture = PLAYER_MARKER_TEXTURE;
 			}
 
 			mc.renderEngine.bindTexture(texture);

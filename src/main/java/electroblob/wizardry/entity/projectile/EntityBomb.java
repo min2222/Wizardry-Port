@@ -2,7 +2,7 @@ package electroblob.wizardry.entity.projectile;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 /**
  * Same as {@link EntityMagicProjectile}, but with an additional blast multiplier field which is synced and saved to
@@ -16,7 +16,7 @@ public abstract class EntityBomb extends EntityMagicProjectile {
 	/** The entity blast multiplier. This is now synced and saved centrally from {@link EntityBomb}. */
 	public float blastMultiplier = 1.0f;
 
-	public EntityBomb(World world){
+	public EntityBomb(Level world){
 		super(world);
 	}
 

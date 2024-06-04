@@ -10,10 +10,10 @@ import electroblob.wizardry.event.DiscoverSpellEvent;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class SpellDiscoveryTrigger implements ICriterionTrigger<SpellDiscoveryTr
 		}
 	}
 
-	public static class Instance extends AbstractCriterionInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
 
 		private final SpellPredicate spell;
 		private final DiscoverSpellEvent.Source source;

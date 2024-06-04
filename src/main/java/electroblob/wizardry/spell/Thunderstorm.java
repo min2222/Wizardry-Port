@@ -6,13 +6,13 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -39,17 +39,17 @@ public class Thunderstorm extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		return doCasting(world, caster, modifiers);
 	}
 	
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		return doCasting(world, caster, modifiers);
 	}
 	
 	// This spell is exactly the same for players and NPCs.
-	private boolean doCasting(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	private boolean doCasting(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		if(world.canBlockSeeSky(new BlockPos(caster))){
 
@@ -75,12 +75,12 @@ public class Thunderstorm extends Spell {
 					}
 
 					// Secondary chaining effect
-					List<EntityLivingBase> secondaryTargets = EntityUtils.getLivingWithinRadius(
+					List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(
 							getProperty(SECONDARY_RANGE).doubleValue(), x, y + 1, z, world);
 
 					for(int j = 0; j < Math.min(secondaryTargets.size(), getProperty(SECONDARY_MAX_TARGETS).intValue()); j++){
 
-						EntityLivingBase secondaryTarget = secondaryTargets.get(j);
+						LivingEntity secondaryTarget = secondaryTargets.get(j);
 
 						if(AllyDesignationSystem.isValidTarget(caster, secondaryTarget)){
 
@@ -100,13 +100,13 @@ public class Thunderstorm extends Spell {
 
 							// Tertiary chaining effect
 
-							List<EntityLivingBase> tertiaryTargets = EntityUtils.getLivingWithinRadius(
+							List<LivingEntity> tertiaryTargets = EntityUtils.getLivingWithinRadius(
 									getProperty(TERTIARY_RANGE).doubleValue(), secondaryTarget.posX,
 									secondaryTarget.posY + secondaryTarget.height / 2, secondaryTarget.posZ, world);
 
 							for(int k = 0; k < Math.min(tertiaryTargets.size(), getProperty(TERTIARY_MAX_TARGETS).intValue()); k++){
 
-								EntityLivingBase tertiaryTarget = tertiaryTargets.get(k);
+								LivingEntity tertiaryTarget = tertiaryTargets.get(k);
 
 								if(!secondaryTargets.contains(tertiaryTarget)
 										&& AllyDesignationSystem.isValidTarget(caster, tertiaryTarget)){

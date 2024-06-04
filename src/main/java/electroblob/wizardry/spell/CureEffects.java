@@ -1,7 +1,7 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -16,7 +16,7 @@ public class CureEffects extends SpellBuff {
 	}
 	
 	@Override
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 
 		if(!caster.getActivePotionEffects().isEmpty()){
 

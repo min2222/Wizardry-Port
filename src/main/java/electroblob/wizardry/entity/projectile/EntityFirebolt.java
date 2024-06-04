@@ -6,14 +6,14 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityFirebolt extends EntityMagicProjectile {
 	
-	public EntityFirebolt(World world){
+	public EntityFirebolt(Level world){
 		super(world);
 	}
 
@@ -39,7 +39,7 @@ public class EntityFirebolt extends EntityMagicProjectile {
 		// Particle effect
 		if(world.isRemote){
 			for(int i = 0; i < 8; i++){
-				world.spawnParticle(EnumParticleTypes.LAVA, this.posX + rand.nextFloat() - 0.5,
+				world.spawnParticle(ParticleTypes.LAVA, this.posX + rand.nextFloat() - 0.5,
 						this.posY + this.height / 2 + rand.nextFloat() - 0.5, this.posZ + rand.nextFloat() - 0.5, 0, 0, 0);
 			}
 		}

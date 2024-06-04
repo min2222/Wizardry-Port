@@ -5,8 +5,8 @@ import electroblob.wizardry.packet.PacketDispenserCastSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -38,7 +38,7 @@ public class PacketDispenserCastSpell implements IMessageHandler<Message, IMessa
 		/** Coordinates of the spell origin */
 		public double x, y, z;
 		/** Spell casting direction */
-		public EnumFacing direction;
+		public Direction direction;
 		/** BlockPos of the block that cast this spell. <i>Not necessarily the same as the (x, y, z) coordinates.</i> */
 		public BlockPos pos;
 		/** The number of ticks to cast the spell for, or -1 if the spell should be cast until stopped. */
@@ -50,7 +50,7 @@ public class PacketDispenserCastSpell implements IMessageHandler<Message, IMessa
 		public Message(){
 		}
 
-		public Message(double x, double y, double z, EnumFacing direction, BlockPos pos, Spell spell, int duration, SpellModifiers modifiers){
+		public Message(double x, double y, double z, Direction direction, BlockPos pos, Spell spell, int duration, SpellModifiers modifiers){
 
 			this.x = x;
 			this.y = y;
@@ -70,7 +70,7 @@ public class PacketDispenserCastSpell implements IMessageHandler<Message, IMessa
 			this.x = buf.readDouble();
 			this.y = buf.readDouble();
 			this.z = buf.readDouble();
-			this.direction = EnumFacing.values()[buf.readInt()];
+			this.direction = Direction.values()[buf.readInt()];
 			this.pos = BlockPos.fromLong(buf.readLong());
 			this.spellID = buf.readInt();
 			this.duration = buf.readInt();

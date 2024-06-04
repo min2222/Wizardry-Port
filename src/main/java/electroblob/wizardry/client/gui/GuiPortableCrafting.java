@@ -5,9 +5,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 /** Crafting table GUI that doesn't require a crafting table container object. */
 public class GuiPortableCrafting extends GuiContainer {
@@ -15,7 +15,7 @@ public class GuiPortableCrafting extends GuiContainer {
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation(
 			"textures/gui/container/crafting_table.png");
 
-	public GuiPortableCrafting(InventoryPlayer p_i1084_1_, World p_i1084_2_, BlockPos pos){
+	public GuiPortableCrafting(InventoryPlayer p_i1084_1_, Level p_i1084_2_, BlockPos pos){
 		super(new ContainerWorkbench(p_i1084_1_, p_i1084_2_, pos));
 	}
 

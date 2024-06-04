@@ -4,12 +4,12 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import net.minecraft.entity.EntityFlying;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -19,13 +19,13 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
@@ -44,7 +44,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new zombie minion in the given world. */
-	public EntityZombieMinion(World world){
+	public EntityZombieMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
@@ -61,21 +61,21 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	protected void applyEntityAI(){
 		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
 	@Override public boolean isChild(){ return false; }
 	@Override public void setChild(boolean childZombie){} // Can't be a child
 	@Override protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty){} // They don't have equipment!
-	@Override public void onKillEntity(EntityLivingBase entityLivingIn){} // Turns villagers to zombies in EntityZombie
+	@Override public void onKillEntity(LivingEntity entityLivingIn){} // Turns villagers to zombies in EntityZombie
 	@Override public void setChildSize(boolean isChild){}
 	@Override protected ItemStack getSkullDrop(){ return ItemStack.EMPTY; }
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -88,8 +88,8 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	@Override
 	public void onSpawn(){
 		if(this.dataManager.get(SPAWN_PARTICLES)) this.spawnParticleEffect();
-		if(shouldBurnInDay() && getCaster() instanceof EntityPlayer
-				&& ItemArtefact.isArtefactActive((EntityPlayer)getCaster(), WizardryItems.charm_undead_helmets)){
+		if(shouldBurnInDay() && getCaster() instanceof Player
+				&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_undead_helmets)){
 			setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 	}
@@ -102,7 +102,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	private void spawnParticleEffect(){
 		if(this.world.isRemote){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
+				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.posX + this.rand.nextFloat() - 0.5f,
 						this.posY + this.rand.nextFloat() * 2, this.posZ + this.rand.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
@@ -123,7 +123,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -143,7 +143,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }
@@ -160,7 +160,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends EntityLivingBase> entityType){
+	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
 		// Returns true unless the given entity type is a flying entity.
 		return !EntityFlying.class.isAssignableFrom(entityType);
 	}

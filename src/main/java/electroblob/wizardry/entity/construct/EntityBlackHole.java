@@ -13,19 +13,19 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	public int[] randomiser;
 	public int[] randomiser2;
 
-	public EntityBlackHole(World world){
+	public EntityBlackHole(Level world){
 		super(world);
 		float r = Spells.black_hole.getProperty(Spell.EFFECT_RADIUS).floatValue();
 		setSize(r * 2, r);
@@ -79,7 +79,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 				// (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height - 0.75D, this.posZ +
 				// (this.rand.nextDouble() - 0.5D) * (double)this.width, (this.rand.nextDouble() - 0.5D) * 2.0D,
 				// -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
-				this.world.spawnParticle(EnumParticleTypes.PORTAL, this.posX, this.posY, this.posZ,
+				this.world.spawnParticle(ParticleTypes.PORTAL, this.posX, this.posY, this.posZ,
 						(this.rand.nextDouble() - 0.5D) * 4.0D, (this.rand.nextDouble() - 0.5D) * 4.0D - 1,
 						(this.rand.nextDouble() - 0.5D) * 4.0D);
 			}
@@ -95,8 +95,8 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 			double radius = 2 * height * sizeMultiplier;
 
-			boolean suckInBlocks = getCaster() instanceof EntityPlayer && EntityUtils.canDamageBlocks(getCaster(), world)
-					&& ItemArtefact.isArtefactActive((EntityPlayer)getCaster(), WizardryItems.charm_black_hole);
+			boolean suckInBlocks = getCaster() instanceof Player && EntityUtils.canDamageBlocks(getCaster(), world)
+					&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_black_hole);
 
 			if(suckInBlocks){
 
@@ -130,15 +130,15 @@ public class EntityBlackHole extends EntityScaledConstruct {
 			List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius, this.posX, this.posY,
 					this.posZ, this.world, Entity.class);
 
-			targets.removeIf(t -> !(t instanceof EntityLivingBase || (suckInBlocks && t instanceof EntityFallingBlock)));
+			targets.removeIf(t -> !(t instanceof LivingEntity || (suckInBlocks && t instanceof EntityFallingBlock)));
 
 			for(Entity target : targets){
 
 				if(this.isValidTarget(target)){
 
 					// If the target can't be moved, it isn't sucked in but is still damaged if it gets too close
-					if(!(target instanceof EntityPlayer && ((getCaster() instanceof EntityPlayer && !Wizardry.settings.playersMoveEachOther)
-							|| ItemArtefact.isArtefactActive((EntityPlayer)target, WizardryItems.amulet_anchoring)))){
+					if(!(target instanceof Player && ((getCaster() instanceof Player && !Wizardry.settings.playersMoveEachOther)
+							|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)))){
 
 						EntityUtils.undoGravity(target);
 						if(target instanceof EntityLevitatingBlock) ((EntityLevitatingBlock)target).suspend();
@@ -193,7 +193,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean isInRangeToRenderDist(double distance){
 		return true;
 	}

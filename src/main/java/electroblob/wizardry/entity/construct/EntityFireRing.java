@@ -6,15 +6,15 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityFireRing extends EntityScaledConstruct {
 
-	public EntityFireRing(World world){
+	public EntityFireRing(Level world){
 		super(world);
 		setSize(Spells.ring_of_fire.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
@@ -34,9 +34,9 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 		if(this.ticksExisted % 5 == 0 && !this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY, this.posZ, this.height, this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY, this.posZ, this.height, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(this.isValidTarget(target)){
 

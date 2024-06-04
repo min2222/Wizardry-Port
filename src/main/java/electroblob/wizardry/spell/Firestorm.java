@@ -9,15 +9,15 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -31,31 +31,31 @@ public class Firestorm extends SpellAreaEffect {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		burnNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, modifiers);
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		burnNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, target, modifiers);
 	}
 
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		burnNearbyBlocks(world, new Vec3d(x, y, z), null, modifiers);
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
+		burnNearbyBlocks(world, new Vec3(x, y, z), null, modifiers);
 		return super.cast(world, x, y, z, direction, ticksInUse, duration, modifiers);
 	}
 
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 		target.setFire(getProperty(BURN_DURATION).intValue());
 		return true;
 	}
 
 	@Override
-	protected void spawnParticleEffect(World world, Vec3d origin, double radius, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		for(int i=0; i<100; i++){
 			float r = world.rand.nextFloat();
@@ -80,7 +80,7 @@ public class Firestorm extends SpellAreaEffect {
 		}
 	}
 
-	private void burnNearbyBlocks(World world, Vec3d origin, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	private void burnNearbyBlocks(Level world, Vec3 origin, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		if(!world.isRemote && EntityUtils.canDamageBlocks(caster, world)){
 
@@ -91,13 +91,13 @@ public class Firestorm extends SpellAreaEffect {
 
 					BlockPos pos = new BlockPos(origin).add(i, 0, j);
 
-					Integer y = BlockUtils.getNearestSurface(world, new BlockPos(pos), EnumFacing.UP, (int)radius, true, SurfaceCriteria.NOT_AIR_TO_AIR);
+					Integer y = BlockUtils.getNearestSurface(world, new BlockPos(pos), Direction.UP, (int)radius, true, SurfaceCriteria.NOT_AIR_TO_AIR);
 
 					if(y != null){
 
 						pos = new BlockPos(pos.getX(), y, pos.getZ());
 
-						double dist = origin.distanceTo(new Vec3d(origin.x + i, y, origin.z + j));
+						double dist = origin.distanceTo(new Vec3(origin.x + i, y, origin.z + j));
 
 						// Randomised with weighting so that the nearer the block the more likely it is to be set alight.
 						if(y != -1 && world.rand.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5

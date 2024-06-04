@@ -5,15 +5,15 @@ import electroblob.wizardry.block.BlockRunestone;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.EntityRemnant;
 import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegration;
-import net.minecraft.init.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedSpawnerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -44,7 +44,7 @@ public class WorldGenObelisk extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public boolean canGenerate(Random random, World world, int chunkX, int chunkZ){
+	public boolean canGenerate(Random random, Level world, int chunkX, int chunkZ){
 		return ArrayUtils.contains(Wizardry.settings.obeliskDimensions, world.provider.getDimension())
 				&& Wizardry.settings.obeliskRarity > 0 && random.nextInt(Wizardry.settings.obeliskRarity) == 0;
 	}
@@ -55,7 +55,7 @@ public class WorldGenObelisk extends WorldGenSurfaceStructure {
 	}
 
 	@Override
-	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
+	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
 		final Element element = Element.values()[1 + random.nextInt(Element.values().length-1)];
 

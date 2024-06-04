@@ -7,13 +7,13 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -34,7 +34,7 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	 * spell will be used instead; this is for when the fireball is not from a spell (i.e. a vanilla fireball replacement). */
 	protected float explosionPower = -1;
 
-	public EntityLargeMagicFireball(World world){
+	public EntityLargeMagicFireball(Level world){
 		super(world);
 		this.setSize(1, 1);
 	}

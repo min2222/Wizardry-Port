@@ -1,19 +1,19 @@
 package electroblob.wizardry.client.particle;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 //@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ParticleSparkle extends ParticleWizardry {
 
 	private static final ResourceLocation[] TEXTURES = generateTextures("sparkle", 11);
 
-	public ParticleSparkle(World world, double x, double y, double z){
+	public ParticleSparkle(Level world, double x, double y, double z){
 		
 		super(world, x, y, z, TEXTURES); // This time the textures are all one long animation
 		

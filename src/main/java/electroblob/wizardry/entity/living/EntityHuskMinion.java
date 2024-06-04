@@ -1,19 +1,19 @@
 package electroblob.wizardry.entity.living;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityHuskMinion extends EntityZombieMinion {
 
 	/** Creates a new husk minion in the given world. */
-	public EntityHuskMinion(World world){
+	public EntityHuskMinion(Level world){
 		super(world);
 	}
 
@@ -32,9 +32,9 @@ public class EntityHuskMinion extends EntityZombieMinion {
 
 		boolean flag = super.attackEntityAsMob(target);
 
-		if(flag && this.getHeldItemMainhand().isEmpty() && target instanceof EntityLivingBase){
+		if(flag && this.getHeldItemMainhand().isEmpty() && target instanceof LivingEntity){
 			float f = this.world.getDifficultyForLocation(new BlockPos(this)).getAdditionalDifficulty();
-			((EntityLivingBase)target).addPotionEffect(new PotionEffect(MobEffects.HUNGER, 140 * (int)f));
+			((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.HUNGER, 140 * (int)f));
 		}
 
 		return flag;

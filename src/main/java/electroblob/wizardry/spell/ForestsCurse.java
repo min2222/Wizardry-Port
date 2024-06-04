@@ -8,12 +8,12 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +27,7 @@ public class ForestsCurse extends SpellAreaEffect {
 	}
 	
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 		
 		if(!MagicDamage.isEntityImmune(DamageType.POISON, target) && EntityUtils.isLiving(target)){
 
@@ -47,7 +47,7 @@ public class ForestsCurse extends SpellAreaEffect {
 	}
 	
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z){
+	protected void spawnParticle(Level world, double x, double y, double z){
 		
 		y += 2; // Moves the particles up to the caster's head level
 		

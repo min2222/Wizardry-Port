@@ -9,17 +9,17 @@ import electroblob.wizardry.util.IElementalDamage;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -57,13 +57,13 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 	private static final float LAUNCH_Y_OFFSET = 0.1f;
 
-	protected final BiFunction<World, EntityLivingBase, T> projectileFactory;
+	protected final BiFunction<Level, LivingEntity, T> projectileFactory;
 
-	public SpellThrowable(String name, BiFunction<World, EntityLivingBase, T> projectileFactory){
+	public SpellThrowable(String name, BiFunction<Level, LivingEntity, T> projectileFactory){
 		this(Wizardry.MODID, name, projectileFactory);
 	}
 
-	public SpellThrowable(String modID, String name, BiFunction<World, EntityLivingBase, T> projectileFactory){
+	public SpellThrowable(String modID, String name, BiFunction<Level, LivingEntity, T> projectileFactory){
 		super(modID, name, EnumAction.NONE, false);
 		this.projectileFactory = projectileFactory;
 		addProperties(RANGE);
@@ -83,7 +83,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
@@ -100,7 +100,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 
@@ -123,7 +123,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	// Copied from EntityMagicProjectile (ugh what a mess)
-	private void aim(T throwable, EntityLivingBase caster, Entity target, float speed, float aimingError){
+	private void aim(T throwable, LivingEntity caster, Entity target, float speed, float aimingError){
 
 		throwable.ignoreEntity = caster;
 
@@ -152,7 +152,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	 * Does nothing by default, but can be overridden to call extra methods or set additional fields on the launched
 	 * projectile.
 	 */
-	protected void addProjectileExtras(T projectile, EntityLivingBase caster, SpellModifiers modifiers){}
+	protected void addProjectileExtras(T projectile, LivingEntity caster, SpellModifiers modifiers){}
 
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){

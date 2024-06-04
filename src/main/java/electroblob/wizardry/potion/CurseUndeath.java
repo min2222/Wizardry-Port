@@ -2,12 +2,12 @@ package electroblob.wizardry.potion;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemWizardArmour;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ISpecialArmor;
 
 public class CurseUndeath extends Curse {
@@ -24,7 +24,7 @@ public class CurseUndeath extends Curse {
 	}
 
 	@Override
-	public void performEffect(EntityLivingBase entitylivingbase, int strength){
+	public void performEffect(LivingEntity entitylivingbase, int strength){
 
 		// Adapted from EntityZombie
 		if(entitylivingbase.world.isDaytime() && !entitylivingbase.world.isRemote){

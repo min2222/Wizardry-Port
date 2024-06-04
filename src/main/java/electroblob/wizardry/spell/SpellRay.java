@@ -5,19 +5,19 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -145,7 +145,7 @@ public abstract class SpellRay extends Spell {
 	
 	/**
 	 * Sets the aim assist to use when raytracing.
-	 * @param aimAssist The aim assist to use when raytracing. See {@link RayTracer#rayTrace(World, Vec3d, Vec3d, float, boolean, boolean, boolean, Class, java.util.function.Predicate)} for more details.
+	 * @param aimAssist The aim assist to use when raytracing. See {@link RayTracer#rayTrace(Level, Vec3, Vec3, float, boolean, boolean, boolean, Class, java.util.function.Predicate)} for more details.
 	 * @return The spell instance, allowing this method to be chained onto the constructor.
 	 */
 	public Spell aimAssist(float aimAssist){
@@ -157,10 +157,10 @@ public abstract class SpellRay extends Spell {
 
 	// Finally everything in here is standardised and written in a form that's actually readable - it was long overdue!
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		
-		Vec3d look = caster.getLookVec();
-		Vec3d origin = new Vec3d(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		Vec3 look = caster.getLookVec();
+		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
 		if(!this.isContinuous && world.isRemote && !Wizardry.proxy.isFirstPerson(caster)){
 			origin = origin.add(look.scale(1.2));
 		}
@@ -173,15 +173,15 @@ public abstract class SpellRay extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// IDEA: Add in an aiming error and trigger onMiss accordingly
-		Vec3d origin = new Vec3d(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
-		Vec3d targetPos = null;
+		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
+		Vec3 targetPos = null;
 
 		if(target != null){
 
 			if(!ignoreLivingEntities || !EntityUtils.isLiving(target)){
-				targetPos = new Vec3d(target.posX, target.posY + target.height / 2, target.posZ);
+				targetPos = new Vec3(target.posX, target.posY + target.height / 2, target.posZ);
 
 			}else{
 
@@ -193,7 +193,7 @@ public abstract class SpellRay extends Spell {
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
 				// the block is not air and (optionally) not a liquid.
 				if(!world.isAirBlock(pos) && (!world.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
-					targetPos = new Vec3d(x + 0.5, y + 1, z + 0.5);
+					targetPos = new Vec3(x + 0.5, y + 1, z + 0.5);
 				}
 			}
 		}
@@ -208,10 +208,10 @@ public abstract class SpellRay extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
-		Vec3d vec = new Vec3d(direction.getDirectionVec());
-		Vec3d origin = new Vec3d(x, y, z);
+		Vec3 vec = new Vec3(direction.getDirectionVec());
+		Vec3 origin = new Vec3(x, y, z);
 		
 		if(!shootSpell(world, origin, vec, null, ticksInUse, modifiers)) return false;
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
@@ -235,7 +235,7 @@ public abstract class SpellRay extends Spell {
 	 */
 	// Technically you could alter the range in the SpellModifiers object by overriding the cast method but that
 	// would be a bit of a hack since it's not really what spell modifiers are for.
-	protected double getRange(World world, Vec3d origin, Vec3d direction, @Nullable EntityLivingBase caster, int ticksInUse, SpellModifiers modifiers){
+	protected double getRange(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, int ticksInUse, SpellModifiers modifiers){
 		return getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 	}
 
@@ -252,15 +252,15 @@ public abstract class SpellRay extends Spell {
 	 *        the count parameter in onUsingItemTick and therefore it increases by 1 each tick.
 	 * @return True if the caster should swing their arm when casting this spell, false if not.
 	 */
-	protected boolean casterSwingsArm(World world, EntityLivingBase caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	protected boolean casterSwingsArm(Level world, LivingEntity caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		return !this.isContinuous && this.action == EnumAction.NONE;
 	}
 
 	/** Takes care of the shared stuff for the three casting methods. This is mainly for internal use. */
-	protected boolean shootSpell(World world, Vec3d origin, Vec3d direction, @Nullable EntityLivingBase caster, int ticksInUse, SpellModifiers modifiers){
+	protected boolean shootSpell(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, int ticksInUse, SpellModifiers modifiers){
 		
 		double range = getRange(world, origin, direction, caster, ticksInUse, modifiers);
-		Vec3d endpoint = origin.add(direction.scale(range));
+		Vec3 endpoint = origin.add(direction.scale(range));
 			
 		// Change the filter depending on whether living entities are ignored or not
 		RayTraceResult rayTrace = RayTracer.rayTrace(world, origin, endpoint, aimAssist, hitLiquids,
@@ -317,12 +317,12 @@ public abstract class SpellRay extends Spell {
 	 * @param ticksInUse The number of ticks the spell has already been cast for (used only for continuous spells).
 	 * @param modifiers The modifiers this spell was cast with.
 	 * @return True to continue with spell casting and spawn particles, false to trigger a miss (N.B. you will need to
-	 * return false from {@link SpellRay#onMiss(World, EntityLivingBase, Vec3d, Vec3d, int, SpellModifiers)} if a miss
+	 * return false from {@link SpellRay#onMiss(Level, LivingEntity, Vec3, Vec3, int, SpellModifiers)} if a miss
 	 * should not consume mana). Returning false from this method will make it look as if the spell passed right
 	 * through it, so if a spell spawns particles when it misses this method should return true even for non-living
 	 * entities.
 	 */
-	protected abstract boolean onEntityHit(World world, Entity target, Vec3d hit, @Nullable EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers);
+	protected abstract boolean onEntityHit(Level world, Entity target, Vec3 hit, @Nullable LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers);
 	
 	/**
 	 * Called when the spell hits a block.
@@ -337,10 +337,10 @@ public abstract class SpellRay extends Spell {
 	 * @param ticksInUse The number of ticks the spell has already been cast for (used only for continuous spells).
 	 * @param modifiers The modifiers this spell was cast with.
 	 * @return True to continue with spell casting and spawn particles, false to trigger a miss (N.B. you will need to
-	 * return false from {@link SpellRay#onMiss(World, EntityLivingBase, Vec3d, Vec3d, int, SpellModifiers)} if a miss should not consume
+	 * return false from {@link SpellRay#onMiss(Level, LivingEntity, Vec3, Vec3, int, SpellModifiers)} if a miss should not consume
 	 * mana).
 	 */
-	protected abstract boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, @Nullable EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers);
+	protected abstract boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, @Nullable LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers);
 
 	/**
 	 * Called when the spell does not hit anything or when the spell hits something it has no effect on. Most of the time
@@ -355,12 +355,12 @@ public abstract class SpellRay extends Spell {
 	 * @param modifiers The modifiers this spell was cast with.
 	 * @return True to continue with spell casting and spawn particles, false to cause the spell to fail.
 	 */
-	protected abstract boolean onMiss(World world, @Nullable EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers);
+	protected abstract boolean onMiss(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers);
 	
 	/**
 	 * Highest-level particle spawning method, only called client-side. 'Normal' subclasses should not need to override
 	 * this method; by default it spawns a line of particles, applying jitter and then calling
-	 * {@link SpellRay#spawnParticle(World, double, double, double, double, double, double)} at each point. Override to replace this with
+	 * {@link SpellRay#spawnParticle(Level, double, double, double, double, double, double)} at each point. Override to replace this with
 	 * an entirely custom particle effect - this is done by a few spells in the main mod to spawn beam-type particles.
 	 * @param world The world in which to spawn the particles.
 	 * @param origin A vector representing the start point of the line of particles.
@@ -369,9 +369,9 @@ public abstract class SpellRay extends Spell {
 	 * @param distance The length of the line of particles, already set to the appropriate distance based on the spell's
 	 */
 	// The caster argument is only really useful for spawning targeted particles continuously
-	protected void spawnParticleRay(World world, Vec3d origin, Vec3d direction, @Nullable EntityLivingBase caster, double distance){
+	protected void spawnParticleRay(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, double distance){
 		
-		Vec3d velocity = direction.scale(particleVelocity);
+		Vec3 velocity = direction.scale(particleVelocity);
 		
 		for(double d = particleSpacing; d <= distance; d += particleSpacing){
 			double x = origin.x + d*direction.x + particleJitter * (world.rand.nextDouble()*2 - 1);
@@ -392,6 +392,6 @@ public abstract class SpellRay extends Spell {
 	 * @param vy The y velocity to spawn the particle with. Usually this is only non-zero for continuous spells.
 	 * @param vz The z velocity to spawn the particle with. Usually this is only non-zero for continuous spells.
 	 */
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){}
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){}
 	
 }

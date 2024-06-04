@@ -1,7 +1,7 @@
 package electroblob.wizardry.inventory;
 
 import electroblob.wizardry.item.IWorkbenchItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,7 @@ public class SlotWorkbenchItem extends Slot {
 	}
 
 	@Override
-	public ItemStack onTake(EntityPlayer player, ItemStack stack){
+	public ItemStack onTake(Player player, ItemStack stack){
 		ItemStack result = super.onTake(player, stack);
 		this.container.onSlotChanged(slotNumber, ItemStack.EMPTY, player);
 		return result;

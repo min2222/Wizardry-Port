@@ -7,7 +7,7 @@ import electroblob.wizardry.packet.PacketRequestDonationPerks;
 import electroblob.wizardry.packet.PacketSyncDonationPerks;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.util.Box;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,7 +43,7 @@ public class DonationPerksHandler {
 	.build();
 
 	/** Returns true if the given player's UUID appears in the list of donor UUIDs, false otherwise (thread-safe). */
-	public static boolean isDonor(EntityPlayer player){
+	public static boolean isDonor(Player player){
 		return DONOR_UUID_MAP.containsKey(player.getUniqueID());
 	}
 
@@ -68,7 +68,7 @@ public class DonationPerksHandler {
 
 	/** Returns the given player's donor perk element, or null if they are not a donor (may also be null for donors if
 	 * they have disabled the perk). */
-	public static Element getElement(EntityPlayer player){
+	public static Element getElement(Player player){
 		Box<Element> box = DONOR_UUID_MAP.get(player.getUniqueID());
 		return box == null ? null : box.get();
 	}
@@ -88,7 +88,7 @@ public class DonationPerksHandler {
 	}
 
 	/** Sends the client player's donor perk setting to the server (client-side only) */
-	public static void sendToServer(EntityPlayer player){
+	public static void sendToServer(Player player){
 		Wizardry.logger.info("Sending donation perk settings for {} to server", player.getName());
 		IMessage message = new PacketRequestDonationPerks.Message(Wizardry.settings.donationPerkElement);
 		WizardryPacketHandler.net.sendToServer(message);
@@ -99,9 +99,9 @@ public class DonationPerksHandler {
 		if(event.getEntity() instanceof EntityPlayerMP){
 			// Send donation perks to anyone who logs in
 			syncWith((EntityPlayerMP)event.getEntity());
-		}else if(event.getEntity() instanceof EntityPlayer){
+		}else if(event.getEntity() instanceof Player){
 			// Send donation perks setting to the server if the player is a donor
-			if(isDonor((EntityPlayer)event.getEntity())) sendToServer((EntityPlayer)event.getEntity());
+			if(isDonor((Player)event.getEntity())) sendToServer((Player)event.getEntity());
 		}
 	}
 

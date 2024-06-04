@@ -12,10 +12,10 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
@@ -84,7 +84,7 @@ public class RandomSpell extends LootFunction {
 
 		// This method is badly-named, loot chests pass a player through too, not just mobs
 		// (And WHY does it only return an entity?! The underlying field is always a player so I'm casting it anyway)
-		EntityPlayer player = (EntityPlayer)context.getKillerPlayer();
+		Player player = (Player)context.getKillerPlayer();
 
 		Spell spell = pickRandomSpell(stack, random, spellContext, player);
 
@@ -96,7 +96,7 @@ public class RandomSpell extends LootFunction {
 		return stack;
 	}
 
-	private Spell pickRandomSpell(ItemStack stack, Random random, SpellProperties.Context spellContext, EntityPlayer player){
+	private Spell pickRandomSpell(ItemStack stack, Random random, SpellProperties.Context spellContext, Player player){
 
 		// We're now doing this first because we need to know which spells we have to play with before selecting a tier and element
 		List<Spell> possibleSpells = Spell.getSpells(s -> s.isEnabled(spellContext) && s.applicableForItem(stack.getItem())

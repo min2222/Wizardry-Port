@@ -11,10 +11,10 @@ import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.block.BlockStoneSlab.EnumType;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -49,13 +49,13 @@ public class WorldGenUndergroundLibraryRuins extends WorldGenUndergroundStructur
 	}
 
 	@Override
-	public boolean canGenerate(Random random, World world, int chunkX, int chunkZ){
+	public boolean canGenerate(Random random, Level world, int chunkX, int chunkZ){
 		return ArrayUtils.contains(Wizardry.settings.libraryDimensions, world.provider.getDimension())
 				&& Wizardry.settings.libraryRarity > 0 && random.nextInt(Wizardry.settings.libraryRarity) == 0;
 	}
 
 	@Override
-	public void spawnStructure(Random random, World world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
+	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
 		final Biome biome = world.getBiome(origin);
 		final float stoneBrickChance = random.nextFloat();

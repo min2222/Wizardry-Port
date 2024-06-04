@@ -6,17 +6,17 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,7 +114,7 @@ public class SpellBuff extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Only return on the server side or the client probably won't spawn particles
 		if(!this.applyEffects(caster, modifiers) && !world.isRemote) return false;
 		if(world.isRemote) this.spawnParticles(world, caster, modifiers);
@@ -123,7 +123,7 @@ public class SpellBuff extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Wizards can only cast a buff spell if they don't already have its effects.
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
 		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;
@@ -135,15 +135,15 @@ public class SpellBuff extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		// Gets a 1x1x1 bounding box corresponding to the block in front of the dispenser
 		AxisAlignedBB boundingBox = new AxisAlignedBB(new BlockPos(x, y, z));
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, boundingBox);
+		List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, boundingBox);
 		
 		float distance = -1;
-		EntityLivingBase nearestEntity = null;
+		LivingEntity nearestEntity = null;
 		// Finds the nearest entity within the bounding box
-		for(EntityLivingBase entity : entities){
+		for(LivingEntity entity : entities){
 			float newDistance = (float)entity.getDistance(x, y, z);
 			if(distance == -1 || newDistance < distance){
 				distance = newDistance;
@@ -167,7 +167,7 @@ public class SpellBuff extends Spell {
 	 * hidden and isAmbient is always set to false. Override to do something special, like apply a non-potion buff.
 	 * Returns a boolean to allow subclasses to cause the spell to fail if for some reason the effect cannot be applied
 	 * (for example, {@link Heal} fails if the caster is on full health). */
-	protected boolean applyEffects(EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 		// This will generate 0 for novice and apprentice, and 1 for advanced and master
 		// TODO: Once we've found a way of detecting if amplifiers actually affect the potion type, implement it here.
 		int bonusAmplifier = getBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
@@ -198,7 +198,7 @@ public class SpellBuff extends Spell {
 	}
 	
 	/** Spawns buff particles around the caster. Override to add a custom particle effect. Only called client-side. */
-	protected void spawnParticles(World world, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticles(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
 		for(int i = 0; i < particleCount; i++){
 			double x = caster.posX + world.rand.nextDouble() * 2 - 1;

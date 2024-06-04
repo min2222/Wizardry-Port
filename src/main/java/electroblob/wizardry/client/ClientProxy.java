@@ -1,7 +1,6 @@
 package electroblob.wizardry.client;
 
 import electroblob.wizardry.CommonProxy;
-import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.client.animation.ActionAnimation;
@@ -63,27 +62,27 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
@@ -199,12 +198,12 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public World getTheWorld(){
+	public Level getTheWorld(){
 		return Minecraft.getMinecraft().world;
 	}
 
 	@Override
-	public EntityPlayer getThePlayer(){
+	public Player getThePlayer(){
 		return Minecraft.getMinecraft().player;
 	}
 
@@ -214,17 +213,17 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void playBlinkEffect(EntityPlayer player){
+	public void playBlinkEffect(Player player){
 		if(Minecraft.getMinecraft().player == player) RenderBlinkEffect.playBlinkEffect();
 	}
 
 	@Override
-	public void shakeScreen(EntityPlayer player, float intensity){
+	public void shakeScreen(Player player, float intensity){
 		if(Minecraft.getMinecraft().player == player) ScreenShakeHandler.shakeScreen(intensity);
 	}
 
 	@Override
-	public void loadShader(EntityPlayer player, ResourceLocation shader){
+	public void loadShader(Player player, ResourceLocation shader){
 		if(Minecraft.getMinecraft().player == player && Wizardry.settings.useShaders
 				&& !Minecraft.getMinecraft().entityRenderer.isShaderActive())
 			Minecraft.getMinecraft().entityRenderer.loadShader(shader);
@@ -236,11 +235,11 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void notifyBookshelfChange(World world, BlockPos pos){
+	public void notifyBookshelfChange(Level world, BlockPos pos){
 
 		super.notifyBookshelfChange(world, pos);
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 
 		if(player.getDistanceSq(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
 			if(Minecraft.getMinecraft().currentScreen instanceof GuiLectern){
@@ -258,17 +257,17 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void playChargeupSound(EntityLivingBase entity){
+	public void playChargeupSound(LivingEntity entity){
 		Minecraft.getMinecraft().getSoundHandler().playSound(new MovingSoundSpellCharge(entity, WizardrySounds.ITEM_WAND_CHARGEUP, WizardrySounds.SPELLS, 2.5f, 1.4f, false));
 	}
 
 	@Override
-	public void playSpellSoundLoop(EntityLivingBase entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){
+	public void playSpellSoundLoop(LivingEntity entity, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch){
 		SoundLoop.addLoop(new SoundLoopSpell.SoundLoopSpellEntity(start, loop, end, spell, entity, volume, pitch));
 	}
 
 	@Override
-	public void playSpellSoundLoop(World world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){
+	public void playSpellSoundLoop(Level world, double x, double y, double z, Spell spell, SoundEvent start, SoundEvent loop, SoundEvent end, SoundCategory category, float volume, float pitch, int duration){
 		if(duration == -1){
 			SoundLoop.addLoop(new SoundLoopSpell.SoundLoopSpellDispenser(start, loop, end, spell, world, x, y, z, volume, pitch));
 		}else{
@@ -339,7 +338,7 @@ public class ClientProxy extends CommonProxy {
 
 		Spell spell = Spell.byMetadata(scroll.getItemDamage());
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 
 		boolean discovered = true;
 		// It seems that this method is called when the world is loading, before thePlayer has been initialised.
@@ -358,7 +357,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public double getConjuredBowDurability(ItemStack stack){
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 		if(player.getActiveItemStack() == stack){
 			return (double)(stack.getItemDamage() + (player.getItemInUseMaxCount())) / (double)stack.getMaxDamage();
 		}
@@ -411,7 +410,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public ParticleWizardry createParticle(ResourceLocation type, World world, double x, double y, double z){
+	public ParticleWizardry createParticle(ResourceLocation type, Level world, double x, double y, double z){
 		IWizardryParticleFactory factory = factories.get(type);
 		if(factory == null){
 			Wizardry.logger.warn("Unrecognised particle type {} ! Ensure the particle is properly registered.", type);
@@ -421,8 +420,8 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public void spawnTornadoParticle(World world, double x, double y, double z, double velX, double velZ, double radius, int maxAge,
-			IBlockState block, BlockPos pos){
+	public void spawnTornadoParticle(Level world, double x, double y, double z, double velX, double velZ, double radius, int maxAge,
+                                     IBlockState block, BlockPos pos){
 		Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTornado(world, maxAge, x, z, radius, y, velX, velZ, block).setBlockPos(pos));// , world.rand.nextInt(6)));
 	}
 
@@ -432,19 +431,19 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastSpellPacket(PacketCastSpell.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 		Entity caster = world.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 
-			((EntityPlayer)caster).setActiveHand(message.hand);
+			((Player)caster).setActiveHand(message.hand);
 
-			spell.cast(world, (EntityPlayer)caster, message.hand, 0, message.modifiers);
+			spell.cast(world, (Player)caster, message.hand, 0, message.modifiers);
 
 			Source source = Source.OTHER;
 
-			Item item = ((EntityPlayer)caster).getHeldItem(message.hand).getItem();
+			Item item = ((Player)caster).getHeldItem(message.hand).getItem();
 
 			if(item instanceof ItemWand){
 				source = Source.WAND;
@@ -454,7 +453,7 @@ public class ClientProxy extends CommonProxy {
 
 			// No need to check if the spell succeeded, because the packet is only ever sent when it succeeds.
 			// The handler for this event now deals with discovery.
-			MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(source, spell, (EntityPlayer)caster, message.modifiers));
+			MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(source, spell, (Player)caster, message.modifiers));
 
 		}else{
 			Wizardry.logger.warn("Recieved a PacketCastSpell, but the caster ID was not the ID of a player");
@@ -464,7 +463,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastSpellAtPosPacket(PacketCastSpellAtPos.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 		Spell spell = Spell.byNetworkID(message.spellID);
 
 		spell.cast(world, message.position.x, message.position.y, message.position.z, message.direction, 0, message.duration, message.modifiers);
@@ -479,19 +478,19 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastContinuousSpellPacket(PacketCastContinuousSpell.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 		Entity caster = world.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 
-			WizardData data = WizardData.get((EntityPlayer)caster);
+			WizardData data = WizardData.get((Player)caster);
 
 			if(data != null){
 				if(data.isCasting()){
-					WizardData.get((EntityPlayer)caster).stopCastingContinuousSpell();
+					WizardData.get((Player)caster).stopCastingContinuousSpell();
 				}else{
-					WizardData.get((EntityPlayer)caster).startCastingContinuousSpell(spell, message.modifiers, message.duration);
+					WizardData.get((Player)caster).startCastingContinuousSpell(spell, message.modifiers, message.duration);
 				}
 			}
 		}else{
@@ -502,16 +501,16 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleNPCCastSpellPacket(PacketNPCCastSpell.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 		Entity caster = world.getEntityByID(message.casterID);
 		Entity target = message.targetID == -1 ? null : world.getEntityByID(message.targetID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
 		if(caster instanceof EntityLiving){
 
-			if(target instanceof EntityLivingBase){
+			if(target instanceof LivingEntity){
 
-				spell.cast(world, (EntityLiving)caster, message.hand, 0, (EntityLivingBase)target, message.modifiers);
+				spell.cast(world, (EntityLiving)caster, message.hand, 0, (LivingEntity)target, message.modifiers);
 				// Again, no need to check if the spell succeeded, because the packet is only ever sent when it
 				// succeeds.
 				MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.NPC, spell, (EntityLiving)caster, message.modifiers));
@@ -520,7 +519,7 @@ public class ClientProxy extends CommonProxy {
 					if(spell.isContinuous || spell instanceof None){
 						((ISpellCaster)caster).setContinuousSpell(spell);
 						((ISpellCaster)caster).setSpellCounter(spell instanceof None ? 0 : 1);
-						((EntityLiving)caster).setAttackTarget((EntityLivingBase)target);
+						((EntityLiving)caster).setAttackTarget((LivingEntity)target);
 					}
 				}
 			}
@@ -533,7 +532,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleDispenserCastSpellPacket(PacketDispenserCastSpell.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 
 		if(world.getTileEntity(message.pos) instanceof TileEntityDispenser){ // Should always be true
 
@@ -564,7 +563,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleTransportationPacket(PacketTransportation.Message message){
 
-		World world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getMinecraft().world;
 		BlockPos pos = message.destination;
 
 		Entity entity = world.getEntityByID(message.dismountEntityID);
@@ -589,7 +588,7 @@ public class ClientProxy extends CommonProxy {
 			double x = pos.getX() + 0.5 + radius * MathHelper.cos(angle);
 			double y = pos.getY() + world.rand.nextDouble() * 2;
 			double z = pos.getZ() + 0.5 + radius * MathHelper.sin(angle);
-			world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, x, y, z, 0, 0.02, 0);
+			world.spawnParticle(ParticleTypes.VILLAGER_HAPPY, x, y, z, 0, 0.02, 0);
 		}
 		for(int i = 0; i < 20; i++){
 			double radius = 1;
@@ -597,7 +596,7 @@ public class ClientProxy extends CommonProxy {
 			double x = pos.getX() + 0.5 + radius * MathHelper.cos(angle);
 			double y = pos.getY() + world.rand.nextDouble() * 2;
 			double z = pos.getZ() + 0.5 + radius * MathHelper.sin(angle);
-			world.spawnParticle(EnumParticleTypes.ENCHANTMENT_TABLE, x, y, z, 0, 0.02, 0);
+			world.spawnParticle(ParticleTypes.ENCHANTMENT_TABLE, x, y, z, 0, 0.02, 0);
 		}
 	}
 
@@ -671,8 +670,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleResurrectionPacket(PacketResurrection.Message message){
 		Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.playerID);
-		if(entity instanceof EntityPlayer){
-			((Resurrection)Spells.resurrection).resurrect((EntityPlayer)entity);
+		if(entity instanceof Player){
+			((Resurrection)Spells.resurrection).resurrect((Player)entity);
 			if(entity == Minecraft.getMinecraft().player){
 				Minecraft.getMinecraft().world.spawnEntity(entity);
 				Minecraft.getMinecraft().displayGuiScreen(null);
@@ -686,9 +685,9 @@ public class ClientProxy extends CommonProxy {
 
 		Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.playerID);
 
-		if(entity instanceof EntityPlayer){
+		if(entity instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)entity;
+			Player player = (Player)entity;
 
 			if(message.targetID == -1){
 				((Possession)Spells.possession).endPossession(player);

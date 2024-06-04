@@ -2,12 +2,12 @@ package electroblob.wizardry.misc;
 
 import com.google.common.collect.Sets;
 import electroblob.wizardry.spell.Clairvoyance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.NodeProcessor;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathHeap;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nullable;

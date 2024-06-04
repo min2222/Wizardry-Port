@@ -1,12 +1,12 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.entity.ICustomHitbox;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -25,7 +25,7 @@ public final class RayTracer {
 
 	/**
 	 * Helper method which performs a ray trace for <b>blocks only</b> from an entity's eye position in the direction
-	 * they are looking, over a specified range, using {@link World#rayTraceBlocks(Vec3d, Vec3d, boolean, boolean, boolean)}.
+	 * they are looking, over a specified range, using {@link Level#rayTraceBlocks(Vec3, Vec3, boolean, boolean, boolean)}.
 	 *
 	 * @param world The world in which to perform the ray trace.
 	 * @param entity The entity from which to perform the ray trace. The ray trace will start from this entity's eye
@@ -40,28 +40,28 @@ public final class RayTracer {
 	 * Returns {@code null} only if the origin and endpoint are within the same block.
 	 */
 	@Nullable
-	public static RayTraceResult standardBlockRayTrace(World world, EntityLivingBase entity, double range, boolean hitLiquids,
-													   boolean ignoreUncollidables, boolean returnLastUncollidable){
+	public static RayTraceResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids,
+                                                       boolean ignoreUncollidables, boolean returnLastUncollidable){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
-		Vec3d origin = entity.getPositionEyes(1);
-		Vec3d endpoint = origin.add(entity.getLookVec().scale(range));
+		Vec3 origin = entity.getPositionEyes(1);
+		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
 		return world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, returnLastUncollidable);
 	}
 
 	/**
 	 * Helper method which performs a ray trace for <b>blocks only</b> from an entity's eye position in the direction
 	 * they are looking, over a specified range. This is a shorthand for
-	 * {@link #standardBlockRayTrace(World, EntityLivingBase, double, boolean, boolean, boolean)}; ignoreUncollidables
+	 * {@link #standardBlockRayTrace(Level, LivingEntity, double, boolean, boolean, boolean)}; ignoreUncollidables
 	 * and returnLastUncollidable default to false.
 	 */
 	@Nullable
-	public static RayTraceResult standardBlockRayTrace(World world, EntityLivingBase entity, double range, boolean hitLiquids){
+	public static RayTraceResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids){
 		return standardBlockRayTrace(world, entity, range, hitLiquids, false, false);
 	}
 
 	/**
 	 * Helper method which performs a ray trace for blocks and entities from an entity's eye position in the direction
-	 * they are looking, over a specified range, using {@link RayTracer#rayTrace(World, Vec3d, Vec3d, float, boolean, boolean, boolean, Class, Predicate)}. Aim assist is zero, the entity type is simply {@code Entity} (all entities), and the
+	 * they are looking, over a specified range, using {@link RayTracer#rayTrace(Level, Vec3, Vec3, float, boolean, boolean, boolean, Class, Predicate)}. Aim assist is zero, the entity type is simply {@code Entity} (all entities), and the
 	 * filter removes the given entity and any dying entities and allows all others.
 	 *
 	 * @param world The world in which to perform the ray trace.
@@ -74,15 +74,15 @@ public final class RayTracer {
 	 * nothing. Returns {@code null} only if the origin and endpoint are within the same block and no entity was hit.
 	 */
 	@Nullable
-	public static RayTraceResult standardEntityRayTrace(World world, Entity entity, double range, boolean hitLiquids){
+	public static RayTraceResult standardEntityRayTrace(Level world, Entity entity, double range, boolean hitLiquids){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
-		Vec3d origin = entity.getPositionEyes(1);
-		Vec3d endpoint = origin.add(entity.getLookVec().scale(range));
+		Vec3 origin = entity.getPositionEyes(1);
+		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
 		return rayTrace(world, origin, endpoint, 0, hitLiquids, false, false, Entity.class, ignoreEntityFilter(entity));
 	}
 
 	/**
-	 * Helper method for use with {@link RayTracer#rayTrace(World, Vec3d, Vec3d, float, boolean, boolean, boolean, Class, Predicate)}
+	 * Helper method for use with {@link RayTracer#rayTrace(Level, Vec3, Vec3, float, boolean, boolean, boolean, Class, Predicate)}
 	 * which returns a {@link Predicate} that returns true for the given entity, plus any entities that are in the
 	 * process of dying. This is a commonly used filter in spells.
 	 *
@@ -93,7 +93,7 @@ public final class RayTracer {
 	public static Predicate<Entity> ignoreEntityFilter(Entity entity){
 		// Use deathTime > 0 so we still hit stuff that has *just* died, otherwise SpellRay#onEntityHit doesn't get
 		// called on the client side when the entity is killed
-		return e -> e == entity || (e instanceof EntityLivingBase && ((EntityLivingBase)e).deathTime > 0);
+		return e -> e == entity || (e instanceof LivingEntity && ((LivingEntity)e).deathTime > 0);
 	}
 
 	/**
@@ -103,7 +103,7 @@ public final class RayTracer {
 	 * <p></p>
 	 * <i>N.B. It is possible to ignore entities entirely by passing in a {@code Predicate} that is always false;
 	 * however, in this specific case it is more efficient to use
-	 * {@link World#rayTraceBlocks(Vec3d, Vec3d, boolean, boolean, boolean)} or one of its overloads.</i>
+	 * {@link Level#rayTraceBlocks(Vec3, Vec3, boolean, boolean, boolean)} or one of its overloads.</i>
 	 *
 	 * @param world The world in which to perform the ray trace.
 	 * @param origin A vector representing the coordinates of the start point of the ray trace.
@@ -122,13 +122,13 @@ public final class RayTracer {
 	 * @return A {@link RayTraceResult} representing the object that was hit, which may be an entity, a block or
 	 * nothing. Returns {@code null} only if the origin and endpoint are within the same block and no entity was hit.
 	 *
-	 * @see RayTracer#standardEntityRayTrace(World, Entity, double, boolean)
-	 * @see RayTracer#standardBlockRayTrace(World, EntityLivingBase, double, boolean)
+	 * @see RayTracer#standardEntityRayTrace(Level, Entity, double, boolean)
+	 * @see RayTracer#standardBlockRayTrace(Level, LivingEntity, double, boolean)
 	 */
 	// Interestingly enough, aimAssist can be negative, which means hits have to be in the middle of entities!
 	@Nullable
-	public static RayTraceResult rayTrace(World world, Vec3d origin, Vec3d endpoint, float aimAssist,
-										  boolean hitLiquids, boolean ignoreUncollidables, boolean returnLastUncollidable, Class<? extends Entity> entityType, Predicate<? super Entity> filter){
+	public static RayTraceResult rayTrace(Level world, Vec3 origin, Vec3 endpoint, float aimAssist,
+                                          boolean hitLiquids, boolean ignoreUncollidables, boolean returnLastUncollidable, Class<? extends Entity> entityType, Predicate<? super Entity> filter){
 
 		// 1 is the standard amount of extra search volume, and aim assist needs to increase this further as well as
 		// expanding the entities' bounding boxes.
@@ -153,9 +153,9 @@ public final class RayTracer {
 
 		// Search variables
 		Entity closestHitEntity = null;
-		Vec3d closestHitPosition = endpoint;
+		Vec3 closestHitPosition = endpoint;
 		AxisAlignedBB entityBounds;
-		Vec3d intercept = null;
+		Vec3 intercept = null;
 
 		// Iterates through all the entities
 		for(Entity entity : entities){

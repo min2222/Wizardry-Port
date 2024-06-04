@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleBeam extends ParticleTargeted {
@@ -13,7 +13,7 @@ public class ParticleBeam extends ParticleTargeted {
 	/** Half the width of the outermost layer. */
 	private static final float THICKNESS = 0.1f;
 	
-	public ParticleBeam(World world, double x, double y, double z){
+	public ParticleBeam(Level world, double x, double y, double z){
 		super(world, x, y, z); // Does not have a texture!
 		this.setRBGColorF(1, 1, 1);
 		this.setMaxAge(0);

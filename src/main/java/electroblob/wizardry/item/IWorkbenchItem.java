@@ -1,7 +1,7 @@
 package electroblob.wizardry.item;
 
 import electroblob.wizardry.event.SpellBindEvent;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  * using {@link IWorkbenchItem#getSpellSlotCount(ItemStack)}.
  * <p></p>
  * Items that implement this interface define what happens if they are in the central slot of the arcane workbench and
- * the apply button is pressed, in {@link IWorkbenchItem#onApplyButtonPressed(EntityPlayer, Slot, Slot, Slot, Slot[])}.
+ * the apply button is pressed, in {@link IWorkbenchItem#onApplyButtonPressed(Player, Slot, Slot, Slot, Slot[])}.
  * This is a core part of the arcane workbench refactoring in version 4.2 and allows for custom spell casting items and
  * chargeable armour without requiring that they extend {@link ItemWand} or {@link ItemWizardArmour}.
  * @author Electroblob
@@ -53,7 +53,7 @@ public interface IWorkbenchItem {
 	 * the array will be equal to the value returned by {@link IWorkbenchItem#getSpellSlotCount(ItemStack)}.
 	 * @return True if anything changed, false if not.
 	 */
-	boolean onApplyButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks);
+	boolean onApplyButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks);
 
 	/**
 	 * Called when this item is in the central slot of an arcane workbench and the apply clear is pressed. Items must
@@ -66,7 +66,7 @@ public interface IWorkbenchItem {
 	 * @param spellBooks An array of the <i>active</i> (visible) spell book slots in the arcane workbench. The length of
 	 * the array will be equal to the value returned by {@link IWorkbenchItem#getSpellSlotCount(ItemStack)}.
 	 * */
-	default void onClearButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){};
+	default void onClearButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){};
 
 	/**
 	 * Must be overridden in the item class to make the clear button in the Arcane Workbench clickable.
@@ -86,7 +86,7 @@ public interface IWorkbenchItem {
 	/**
 	 * Applies the given upgrade to this wand. This method is responsible for all checks including tier, progression,
 	 * upgrade stack limits, etc. Subclasses are responsible for calling this (usually from
-	 * {@link IWorkbenchItem#onApplyButtonPressed(EntityPlayer, Slot, Slot, Slot, Slot[])}), but it has been extracted
+	 * {@link IWorkbenchItem#onApplyButtonPressed(Player, Slot, Slot, Slot, Slot[])}), but it has been extracted
 	 * as an interface method here for use by JEI 'recipes'.
 	 * @param player The player doing the upgrading, or null during JEI recipe lookup (mainly used for advancements)
 	 * @param stack The stack being upgraded (it is guaranteed that {@code this == stack.getItem()})
@@ -94,7 +94,7 @@ public interface IWorkbenchItem {
 	 * @return The resulting upgraded wand stack. In many cases, this is simply the input {@code stack}, which has
 	 * had its NBT modified. If the given upgrade cannot be applied, simply return the input {@code stack}.
 	 */
-	default ItemStack applyUpgrade(@Nullable EntityPlayer player, ItemStack stack, ItemStack upgrade){
+	default ItemStack applyUpgrade(@Nullable Player player, ItemStack stack, ItemStack upgrade){
 		return stack;
 	}
 	

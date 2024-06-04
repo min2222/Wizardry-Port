@@ -10,18 +10,18 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.lwjgl.opengl.GL11;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderContainmentField {
 
 	private static final ResourceLocation[] TEXTURES = new ResourceLocation[8];
@@ -38,11 +38,11 @@ public class RenderContainmentField {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 
 		if(player.isPotionActive(WizardryPotions.containment)){
 
-			Vec3d centre = GeometryUtils.getCentre(NBTUtil.getPosFromTag(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
+			Vec3 centre = GeometryUtils.getCentre(NBTUtil.getPosFromTag(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
 			float r = PotionContainment.getContainmentDistance(player.getActivePotionEffect(WizardryPotions.containment).getAmplifier());
 
 			GlStateManager.pushMatrix();
@@ -82,7 +82,7 @@ public class RenderContainmentField {
 			//   account. The order of the vertices below ensures that the seams between the triangles form an X shape
 			//   on each of the faces, meaning that you always see a square shape appear rather than a random polygon.
 
-			Vec3d relative = centre.subtract(player.getPositionEyes(event.getPartialTicks())).add(0, player.getEyeHeight(), 0);
+			Vec3 relative = centre.subtract(player.getPositionEyes(event.getPartialTicks())).add(0, player.getEyeHeight(), 0);
 
 			double x1 = relative.x - r;
 			double y1 = relative.y - r;

@@ -4,8 +4,8 @@ import com.google.common.primitives.Ints;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenMinable;
@@ -16,7 +16,7 @@ import java.util.Random;
 public class WorldGenCrystalOre implements IWorldGenerator {
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
+	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
 		if(Ints.contains(Wizardry.settings.oreDimensions, world.provider.getDimension())){
 			this.addOreSpawn(WizardryBlocks.crystal_ore.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 16, 5, 7, 5, 30);
@@ -39,8 +39,8 @@ public class WorldGenCrystalOre implements IWorldGenerator {
 	 * @param minY An int for the minimum Y-Coordinate height at which this block may spawn
 	 * @param maxY An int for the maximum Y-Coordinate height at which this block may spawn
 	 **/
-	public void addOreSpawn(IBlockState state, World world, Random random, int blockXPos, int blockZPos, int maxX,
-							int maxZ, int maxVeinSize, int chancesToSpawn, int minY, int maxY){
+	public void addOreSpawn(IBlockState state, Level world, Random random, int blockXPos, int blockZPos, int maxX,
+                            int maxZ, int maxVeinSize, int chancesToSpawn, int minY, int maxY){
 		// int maxPossY = minY + (maxY - 1);
 		assert maxY > minY : "The maximum Y must be greater than the Minimum Y";
 		assert maxX > 0 && maxX <= 16 : "addOreSpawn: The Maximum X must be greater than 0 and less than 16";

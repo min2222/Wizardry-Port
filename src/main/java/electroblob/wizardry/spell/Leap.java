@@ -1,11 +1,11 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class Leap extends Spell {
 
@@ -19,7 +19,7 @@ public class Leap extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
 
@@ -32,7 +32,7 @@ public class Leap extends Spell {
 					double x = caster.posX + world.rand.nextFloat() - 0.5F;
 					double y = caster.posY;
 					double z = caster.posZ + world.rand.nextFloat() - 0.5F;
-					world.spawnParticle(EnumParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+					world.spawnParticle(ParticleTypes.CLOUD, x, y, z, 0, 0, 0);
 				}
 			}
 

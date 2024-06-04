@@ -6,13 +6,13 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
 public class EntityLightningArrow extends EntityMagicArrow {
 
 	/** Creates a new lightning arrow in the given world. */
-	public EntityLightningArrow(World world){
+	public EntityLightningArrow(Level world){
 		super(world);
 	}
 
@@ -27,7 +27,7 @@ public class EntityLightningArrow extends EntityMagicArrow {
 	@Override public boolean doDeceleration(){ return false; }
 
 	@Override
-	public void onEntityHit(EntityLivingBase entityHit){
+	public void onEntityHit(LivingEntity entityHit){
 
 		if(world.isRemote){
 			for(int j = 0; j < 8; j++){

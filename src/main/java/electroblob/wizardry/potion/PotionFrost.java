@@ -5,10 +5,10 @@ import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.fml.common.Mod;
@@ -27,7 +27,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 	}
 
 	@Override
-	public void spawnCustomParticle(World world, double x, double y, double z){
+	public void spawnCustomParticle(Level world, double x, double y, double z){
 		ParticleBuilder.create(Type.SNOW).pos(x, y, z).time(15 + world.rand.nextInt(5)).spawn(world);
 	}
 
@@ -52,7 +52,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 	}
 
 	@Override
-	public void performEffect(EntityLivingBase entitylivingbase, int strength) {
+	public void performEffect(LivingEntity entitylivingbase, int strength) {
 		if (entitylivingbase.isBurning()) {
 			if (entitylivingbase.isPotionActive(WizardryPotions.frost)) {
 				entitylivingbase.removePotionEffect(WizardryPotions.frost);

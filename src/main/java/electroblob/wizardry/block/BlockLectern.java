@@ -13,18 +13,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -33,7 +33,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 	public BlockLectern(){
 		super(Material.WOOD);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, Direction.NORTH));
 		this.setCreativeTab(WizardryTabs.WIZARDRY);
 		this.setHardness(2.0F);
 		this.setResistance(5.0F);
@@ -47,8 +47,8 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		EnumFacing enumfacing = EnumFacing.byIndex(meta);
-		if(enumfacing.getAxis() == EnumFacing.Axis.Y) enumfacing = EnumFacing.NORTH;
+		Direction enumfacing = Direction.byIndex(meta);
+		if(enumfacing.getAxis() == Direction.Axis.Y) enumfacing = Direction.NORTH;
 		return this.getDefaultState().withProperty(FACING, enumfacing);
 	}
 
@@ -58,10 +58,10 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand){
+	@OnlyIn(Dist.CLIENT)
+	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random rand){
 
-		EntityPlayer entityplayer = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5,
+		Player entityplayer = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5,
 				pos.getZ() + 0.5, TileEntityLectern.BOOK_OPEN_DISTANCE, false);
 
 		if(entityplayer != null){
@@ -96,12 +96,12 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face){
-		return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+	public IBlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
@@ -117,13 +117,13 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta){
+	public TileEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityLectern();
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState block, EntityPlayer player, EnumHand hand,
-									EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
+									Direction side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 

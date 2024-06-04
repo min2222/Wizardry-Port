@@ -16,19 +16,19 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 	public boolean spin = false;
 
-	public EntityHammer(World world){
+	public EntityHammer(Level world){
 		super(world);
 		this.setSize(1.0f, 1.9F);
 		this.motionX = 0.0D;
@@ -105,13 +105,13 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			double seekerRange = Spells.lightning_hammer.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.posX,
 					this.posY + 1, this.posZ, world);
 
 			int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue();
 			while(targets.size() > maxTargets) targets.remove(targets.size() - 1);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(EntityUtils.isLiving(target) && this.isValidTarget(target)
 						&& target.ticksExisted % Spells.lightning_hammer.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
@@ -142,7 +142,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			if(spin) this.setRotation(this.rotationYaw, this.rotationPitch + 15);
 
-			List<Entity> collided = world.getEntitiesInAABBexcluding(this, this.getCollisionBoundingBox(), e -> e instanceof EntityLivingBase);
+			List<Entity> collided = world.getEntitiesInAABBexcluding(this, this.getCollisionBoundingBox(), e -> e instanceof LivingEntity);
 
 			float damage = Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
@@ -159,7 +159,7 @@ public class EntityHammer extends EntityMagicConstruct {
 		this.playSound(WizardrySounds.ENTITY_HAMMER_EXPLODE, 1.0F, 1.0f);
 
 		if(this.world.isRemote){
-			this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
+			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0, 0, 0);
 		}
 
 		super.despawn();
@@ -177,13 +177,13 @@ public class EntityHammer extends EntityMagicConstruct {
 				IBlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
 
 				if(block != null){
-					world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
+					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
 							particleX - this.posX, 0, particleZ - this.posZ, Block.getStateId(block));
 				}
 			}
 
 			if(this.fallDistance > 10){
-				EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, EntityPlayer.class)
+				EntityUtils.getEntitiesWithinRadius(10, posX, posY, posZ, world, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 6));
 			}
 
@@ -200,7 +200,7 @@ public class EntityHammer extends EntityMagicConstruct {
 	}
 
 	@Override
-	public boolean processInitialInteract(EntityPlayer player, EnumHand hand){
+	public boolean processInitialInteract(Player player, EnumHand hand){
 
 		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
 				&& player.getHeldItemMainhand().isEmpty() && ticksExisted > 10){

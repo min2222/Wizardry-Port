@@ -6,21 +6,21 @@ import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -43,13 +43,13 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
 		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entity){
+	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity entity){
 
 		if(!world.isRemote){
 			entity.curePotionEffects(stack);
@@ -74,7 +74,7 @@ public class ItemPurifyingElixir extends Item {
 			CriteriaTriggers.CONSUME_ITEM.trigger(entityplayermp, stack);
 		}
 
-		if(entity instanceof EntityPlayer && !((EntityPlayer)entity).capabilities.isCreativeMode){
+		if(entity instanceof Player && !((Player)entity).capabilities.isCreativeMode){
 			stack.shrink(1);
 		}
 
@@ -92,8 +92,8 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level worldIn, Player playerIn, EnumHand handIn){
 		playerIn.setActiveHand(handIn);
-		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+		return new InteractionResultHolder<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}
 }

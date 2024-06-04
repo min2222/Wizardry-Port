@@ -8,15 +8,15 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.function.Function;
 
@@ -48,11 +48,11 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	/** Whether to ignore uncollidable blocks when raytracing. Defaults to false. */
 	protected boolean ignoreUncollidables = false;
 
-	public SpellConstructRanged(String name, Function<World, T> constructFactory, boolean permanent){
+	public SpellConstructRanged(String name, Function<Level, T> constructFactory, boolean permanent){
 		this(Wizardry.MODID, name, constructFactory, permanent);
 	}
 
-	public SpellConstructRanged(String modID, String name, Function<World, T> constructFactory, boolean permanent){
+	public SpellConstructRanged(String modID, String name, Function<Level, T> constructFactory, boolean permanent){
 		super(modID, name, SpellActions.POINT, constructFactory, permanent);
 		this.addProperties(RANGE);
 		this.npcSelector((e, o) -> true);
@@ -85,12 +85,12 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 	
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == EnumFacing.UP ||
+		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isRemote){
@@ -106,7 +106,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 			if(!world.isRemote){
 				
-				Vec3d look = caster.getLookVec();
+				Vec3 look = caster.getLookVec();
 				
 				double x = caster.posX + look.x * range;
 				double y = caster.posY + caster.getEyeHeight() + look.y * range;
@@ -124,11 +124,11 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target,
-			SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+                        SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
-		Vec3d origin = caster.getPositionEyes(1);
+		Vec3 origin = caster.getPositionEyes(1);
 
 		if(target != null && caster.getDistance(target) <= range){
 
@@ -138,13 +138,13 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 				double y = target.posY;
 				double z = target.posZ;
 
-				RayTraceResult hit = world.rayTraceBlocks(origin, new Vec3d(x, y, z), hitLiquids, ignoreUncollidables, false);
+				RayTraceResult hit = world.rayTraceBlocks(origin, new Vec3(x, y, z), hitLiquids, ignoreUncollidables, false);
 
 				if(hit != null && hit.typeOfHit == RayTraceResult.Type.BLOCK && !hit.getBlockPos().equals(new BlockPos(x, y, z))){
 					return false; // Something was in the way
 				}
 
-				EnumFacing side = null;
+				Direction side = null;
 				
 				// If the target is not on the ground but the construct must be placed on the floor, searches for the
 				// floor under the caster and returns false if it does not find one within 3 blocks.
@@ -152,7 +152,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 					Integer floor = BlockUtils.getNearestFloor(world, new BlockPos(x, y, z), 3);
 					if(floor == null) return false;
 					y = floor;
-					side = EnumFacing.UP;
+					side = Direction.UP;
 				}
 				
 				if(!spawnConstruct(world, x, y, z, side, caster, modifiers)) return false;
@@ -167,14 +167,14 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	}
 	
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
-		Vec3d origin = new Vec3d(x, y, z);
-		Vec3d endpoint = origin.add(new Vec3d(direction.getDirectionVec()).scale(range));
+		Vec3 origin = new Vec3(x, y, z);
+		Vec3 endpoint = origin.add(new Vec3(direction.getDirectionVec()).scale(range));
 		RayTraceResult rayTrace = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == EnumFacing.UP ||
+		if(rayTrace != null && rayTrace.typeOfHit == RayTraceResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isRemote){

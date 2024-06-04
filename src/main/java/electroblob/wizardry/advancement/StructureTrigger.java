@@ -8,11 +8,11 @@ import com.google.gson.JsonObject;
 import electroblob.wizardry.worldgen.WorldGenWizardryStructure;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionInstance;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldServer;
 
 import java.util.List;
 import java.util.Map;
@@ -75,7 +75,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		}
 	}
 
-	public static class Instance extends AbstractCriterionInstance {
+	public static class Instance extends AbstractCriterionTriggerInstance {
 
 		private final WorldGenWizardryStructure structureType;
 
@@ -84,7 +84,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 			this.structureType = WorldGenWizardryStructure.byName(name);
 		}
 
-		public boolean test(WorldServer world, double x, double y, double z){
+		public boolean test(ServerLevel world, double x, double y, double z){
 			return structureType.isInsideStructure(world, x, y, z);
 		}
 	}
@@ -110,7 +110,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 			this.listeners.remove(listener);
 		}
 
-		public void trigger(WorldServer world, double x, double y, double z){
+		public void trigger(ServerLevel world, double x, double y, double z){
 
 			List<Listener<StructureTrigger.Instance>> list = null;
 

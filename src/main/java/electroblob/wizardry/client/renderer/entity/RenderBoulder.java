@@ -7,7 +7,7 @@ import electroblob.wizardry.entity.construct.EntityBoulder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class RenderBoulder extends Render<EntityBoulder> {
 

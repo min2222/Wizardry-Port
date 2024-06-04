@@ -7,13 +7,13 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.core.Direction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -77,7 +77,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 	}
 
 	@Override
-	protected EnumFacing getDirection(){
+	protected Direction getDirection(){
 		return tileEntity.getWorld().getBlockState(tileEntity.getPos()).getValue(BlockDispenser.FACING);
 	}
 
@@ -136,12 +136,12 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 		CapabilityManager.INSTANCE.register(DispenserCastingData.class, new IStorage<DispenserCastingData>(){
 			
 			@Override
-			public NBTBase writeNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, EnumFacing side){
+			public NBTBase writeNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side){
 				return null;
 			}
 
 			@Override
-			public void readNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, EnumFacing side, NBTBase nbt){}
+			public void readNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side, NBTBase nbt){}
 			
 		}, DispenserCastingData::new);
 	}
@@ -193,12 +193,12 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 		}
 
 		@Override
-		public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+		public boolean hasCapability(Capability<?> capability, Direction facing){
 			return capability == DISPENSER_CASTING_CAPABILITY;
 		}
 
 		@Override
-		public <T> T getCapability(Capability<T> capability, EnumFacing facing){
+		public <T> T getCapability(Capability<T> capability, Direction facing){
 
 			if(capability == DISPENSER_CASTING_CAPABILITY){
 				return DISPENSER_CASTING_CAPABILITY.cast(data);

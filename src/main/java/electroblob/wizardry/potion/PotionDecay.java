@@ -4,11 +4,11 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.entity.construct.EntityDecay;
 import electroblob.wizardry.registry.WizardryPotions;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,7 +35,7 @@ public class PotionDecay extends PotionMagicEffect {
 	}
 
 	@Override
-	public void performEffect(EntityLivingBase host, int strength){
+	public void performEffect(LivingEntity host, int strength){
 		host.attackEntityFrom(DamageSource.WITHER, 1);
 	}
 
@@ -45,7 +45,7 @@ public class PotionDecay extends PotionMagicEffect {
 		// This can't be in performEffect because that method is called at a certain frequency which depends on the
 		// amplifier of the potion effect, and is too slow for this purpose.
 		
-		EntityLivingBase target = event.getEntityLiving();
+		LivingEntity target = event.getEntityLiving();
 
 		// Do the timing check first, it'll cut out 95% of calls to all subsequent conditions
 		if(target.ticksExisted % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.world.isRemote

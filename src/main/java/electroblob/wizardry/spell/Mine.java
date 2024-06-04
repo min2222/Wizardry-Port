@@ -13,16 +13,16 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,15 +44,15 @@ public class Mine extends SpellRay {
 	}
 
 	@Override
-	protected boolean onEntityHit(World world, Entity target, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected boolean onBlockHit(World world, BlockPos pos, EnumFacing side, Vec3d hit, EntityLivingBase caster, Vec3d origin, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		// Needs to be outside because it gets run on the client-side
-		if(caster instanceof EntityPlayer){
+		if(caster instanceof Player){
 			if(caster.getHeldItemMainhand().getItem() instanceof ISpellCastingItem){
 				caster.swingArm(EnumHand.MAIN_HAND);
 			}else if(caster.getHeldItemOffhand().getItem() instanceof ISpellCastingItem){
@@ -98,8 +98,8 @@ public class Mine extends SpellRay {
 
 						if(caster instanceof EntityPlayerMP){ // Everything in here is server-side only so this is fine
 
-							boolean silkTouch = state1.getBlock().canSilkHarvest(world, pos1, state1, (EntityPlayer)caster)
-									&& ItemArtefact.isArtefactActive((EntityPlayer)caster, WizardryItems.charm_silk_touch);
+							boolean silkTouch = state1.getBlock().canSilkHarvest(world, pos1, state1, (Player)caster)
+									&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_silk_touch);
 
 							int xp = BlockUtils.checkBlockBreakXP(caster, world, pos);
 
@@ -133,12 +133,12 @@ public class Mine extends SpellRay {
 	}
 
 	@Override
-	protected boolean onMiss(World world, EntityLivingBase caster, Vec3d origin, Vec3d direction, int ticksInUse, SpellModifiers modifiers){
+	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 
 	@Override
-	protected void spawnParticle(World world, double x, double y, double z, double vx, double vy, double vz){
+	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
 		ParticleBuilder.create(Type.DUST).pos(x, y, z).time(20 + world.rand.nextInt(5)).clr(0.9f, 0.95f, 1)
 				.shaded(false).spawn(world);
 	}

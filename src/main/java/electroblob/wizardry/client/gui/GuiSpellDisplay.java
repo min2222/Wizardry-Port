@@ -22,17 +22,17 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class GuiSpellDisplay {
 
 	private static final ResourceLocation INDEX = new ResourceLocation(Wizardry.MODID, "textures/gui/spell_hud/_index.json");
@@ -128,7 +128,7 @@ public class GuiSpellDisplay {
 
 		if(!Wizardry.settings.showSpellHUD && !Wizardry.settings.showChargeMeter) return; // Optimisation
 
-		EntityPlayer player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getMinecraft().player;
 
 		if(player.isSpectator()) return; // Spectators shouldn't have the spell HUD!
 
@@ -170,7 +170,7 @@ public class GuiSpellDisplay {
 	 * @param height The height of the screen
 	 * @param partialTicks The current partial tick time
 	 */
-	private static void renderChargeMeter(EntityPlayer player, ItemStack wand, int width, int height, float partialTicks){
+	private static void renderChargeMeter(Player player, ItemStack wand, int width, int height, float partialTicks){
 
 		if(!Wizardry.settings.showChargeMeter) return;
 		if(Minecraft.getMinecraft().gameSettings.showDebugInfo) return; // Don't show charge meter in the debug screen
@@ -218,7 +218,7 @@ public class GuiSpellDisplay {
 	 * @param partialTicks The current partial tick time
 	 * @param textLayer True to render the text layer, false to render the background (hotbar layer)
 	 */
-	private static void renderSpellHUD(EntityPlayer player, ItemStack wand, boolean mainHand, int width, int height, float partialTicks, boolean textLayer){
+	private static void renderSpellHUD(Player player, ItemStack wand, boolean mainHand, int width, int height, float partialTicks, boolean textLayer){
 
 		if(!Wizardry.settings.showSpellHUD) return;
 
@@ -305,7 +305,7 @@ public class GuiSpellDisplay {
 	 * @param cooldown The spell's current cooldown.
 	 * @return The spell name, with relevant formatting added, for use with the {@link MixedFontRenderer}.
 	 */
-	private static String getFormattedSpellName(Spell spell, EntityPlayer player, int cooldown){
+	private static String getFormattedSpellName(Spell spell, Player player, int cooldown){
 		
 		boolean discovered = true;
 

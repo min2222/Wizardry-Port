@@ -1,19 +1,19 @@
 package electroblob.wizardry.client.particle;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 //@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ParticleSnow extends ParticleWizardry {
 
 	private static final ResourceLocation[] TEXTURES = generateTextures("snow", 4);
 
-	public ParticleSnow(World world, double x, double y, double z){
+	public ParticleSnow(Level world, double x, double y, double z){
 		
 		super(world, x, y, z, TEXTURES[world.rand.nextInt(TEXTURES.length)]);
 		

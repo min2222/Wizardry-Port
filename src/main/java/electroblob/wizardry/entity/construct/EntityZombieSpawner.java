@@ -13,7 +13,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityZombieSpawner extends EntityMagicConstruct {
 
@@ -23,7 +23,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 
 	private int spawnTimer = 10;
 
-	public EntityZombieSpawner(World world){
+	public EntityZombieSpawner(Level world){
 		super(world);
 		this.setSize(4, 2);
 	}

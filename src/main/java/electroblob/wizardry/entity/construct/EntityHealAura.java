@@ -8,16 +8,16 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class EntityHealAura extends EntityScaledConstruct {
 
-	public EntityHealAura(World world){
+	public EntityHealAura(Level world){
 		super(world);
 		setSize(Spells.healing_aura.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
@@ -33,9 +33,9 @@ public class EntityHealAura extends EntityScaledConstruct {
 
 		if(!this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinCylinder(width/2, posX, posY, posZ, this.height, world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, posX, posY, posZ, this.height, world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
 				if(this.isValidTarget(target)){
 

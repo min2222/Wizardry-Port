@@ -6,13 +6,13 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.AxisDirection;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class SpectralPathway extends Spell {
 	
@@ -30,7 +30,7 @@ public class SpectralPathway extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		// Won't work if caster is airborne or if they are already on a bridge (prevents infinite bridges)
 		if(BlockUtils.getBlockEntityIsStandingOn(caster).getBlock() == Blocks.AIR
@@ -38,7 +38,7 @@ public class SpectralPathway extends Spell {
 			return false;
 		}
 
-		EnumFacing direction = caster.getHorizontalFacing();
+		Direction direction = caster.getHorizontalFacing();
 
 		boolean flag = false;
 
@@ -57,7 +57,7 @@ public class SpectralPathway extends Spell {
 						modifiers.get(WizardryItems.duration_upgrade)) || flag;
 				flag = placePathwayBlockIfPossible(world, origin.offset(direction, startPoint + i)
 						// Moves the BlockPos minus one block perpendicular to direction.
-						.offset(EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, direction.rotateY().getAxis())),
+						.offset(Direction.getFacingFromAxis(AxisDirection.NEGATIVE, direction.rotateY().getAxis())),
 						modifiers.get(WizardryItems.duration_upgrade)) || flag;
 			}
 		}
@@ -67,7 +67,7 @@ public class SpectralPathway extends Spell {
 		return flag;
 	}
 
-	private boolean placePathwayBlockIfPossible(World world, BlockPos pos, float durationMultiplier){
+	private boolean placePathwayBlockIfPossible(Level world, BlockPos pos, float durationMultiplier){
 		if(BlockUtils.canBlockBeReplaced(world, pos, true)){
 			world.setBlockState(pos, WizardryBlocks.spectral_block.getDefaultState());
 			if(world.getTileEntity(pos) instanceof TileEntityTimer){

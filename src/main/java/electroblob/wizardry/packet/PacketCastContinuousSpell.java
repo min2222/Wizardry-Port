@@ -6,7 +6,7 @@ import electroblob.wizardry.packet.PacketCastContinuousSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -44,7 +44,7 @@ public class PacketCastContinuousSpell implements IMessageHandler<Message, IMess
 		// This constructor is required otherwise you'll get errors (used somewhere in fml through reflection)
 		public Message(){}
 
-		public Message(EntityPlayer caster, Spell spell, SpellModifiers modifiers, int duration){
+		public Message(Player caster, Spell spell, SpellModifiers modifiers, int duration){
 			this.casterID = caster.getEntityId();
 			this.spellID = spell.networkID();
 			this.modifiers = modifiers;

@@ -7,16 +7,16 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -30,7 +30,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 	private int jumpTicks;
 
 	/** Creates a new ice wraith in the given world. */
-	public EntityIceWraith(World world){
+	public EntityIceWraith(Level world){
 		super(world);
 		this.isImmuneToFire = false;
 	}
@@ -42,7 +42,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 		this.tasks.addTask(4, new AIIceShardAttack(this));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(8, new EntityAIWatchClosest(this, Player.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 	}
 
@@ -79,7 +79,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 
 		if(this.world.isRemote){
 			for(int i = 0; i < 2; ++i){
-				this.world.spawnParticle(EnumParticleTypes.CLOUD,
+				this.world.spawnParticle(ParticleTypes.CLOUD,
 						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
 						this.posY + this.rand.nextDouble() * (double)this.height,
 						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
@@ -91,7 +91,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 	}
 
 	/**
-	 * Copied from {@link EntityLivingBase#onLivingUpdate()}. The only change is removal of the updateElytra() call
+	 * Copied from {@link LivingEntity#onLivingUpdate()}. The only change is removal of the updateElytra() call
 	 * since that's irrelevant here. In actual fact, neither EntityMob nor EntityLiving has any code in its version of
 	 * this method that is of use. This isn't exactly ideal, but it's the lesser of two evils since the alternative is
 	 * copying the entire EntityBlaze class and its renderer. All to remove one particle effect...
@@ -224,7 +224,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 
 		@Override
 		public boolean shouldExecute(){
-			EntityLivingBase entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
 			return entitylivingbase != null && entitylivingbase.isEntityAlive();
 		}
 
@@ -242,7 +242,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 		@Override
 		public void updateTask(){
 			--this.attackTime;
-			EntityLivingBase entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
 			if(entitylivingbase == null) return; // Dynamic stealth breaks things, let's un-break them
 			double d0 = this.blaze.getDistanceSq(entitylivingbase);
 

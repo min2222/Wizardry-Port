@@ -6,7 +6,7 @@ import electroblob.wizardry.entity.living.EntityIceGiant;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)
 public class RenderIceGiant extends RenderLiving<EntityIceGiant> {

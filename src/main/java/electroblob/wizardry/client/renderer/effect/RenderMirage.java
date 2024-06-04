@@ -7,11 +7,11 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Random;
 
-@EventBusSubscriber(Side.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class RenderMirage {
 
 	private static final int BLINK_PERIOD_1 = 47; // Use two prime numbers to make it look as chaotic as possible

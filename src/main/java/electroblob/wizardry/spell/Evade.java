@@ -1,11 +1,11 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 public class Evade extends Spell {
 
@@ -24,15 +24,15 @@ public class Evade extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!caster.onGround) return false; // Prevents cheesing with cooldown upgrades to effectively fly super-fast
 
-		Vec3d look = caster.getLookVec();
+		Vec3 look = caster.getLookVec();
 		// We want a horizontal only vector
 		look = look.subtract(0, look.y, 0).normalize();
 
-		Vec3d evadeDirection;
+		Vec3 evadeDirection;
 		if(caster.moveStrafing == 0){
 			// If the caster isn't strafing, pick a random direction
 			evadeDirection = look.rotateYaw(world.rand.nextBoolean() ? (float)Math.PI/2f : (float)-Math.PI/2f);

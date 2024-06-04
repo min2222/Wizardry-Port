@@ -8,10 +8,10 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 	public static final String SECONDARY_RANGE = "secondary_range";
 	public static final String SECONDARY_MAX_TARGETS = "secondary_max_targets";
 
-	public EntityLightningSigil(World world){
+	public EntityLightningSigil(Level world){
 		super(world);
 		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
@@ -39,10 +39,10 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 			this.setDead();
 		}
 
-		List<EntityLivingBase> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY,
+		List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.posX, this.posY,
 				this.posZ, this.height, this.world);
 
-		for(EntityLivingBase target : targets){
+		for(LivingEntity target : targets){
 
 			if(this.isValidTarget(target)){
 
@@ -65,13 +65,13 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 					// Secondary chaining effect
 					double seekerRange = Spells.lightning_sigil.getProperty(SECONDARY_RANGE).doubleValue();
 
-					List<EntityLivingBase> secondaryTargets = EntityUtils.getLivingWithinRadius(seekerRange,
+					List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(seekerRange,
 							target.posX, target.posY + target.height / 2, target.posZ, world);
 
 					for(int j = 0; j < Math.min(secondaryTargets.size(),
 							Spells.lightning_sigil.getProperty(SECONDARY_MAX_TARGETS).floatValue()); j++){
 
-						EntityLivingBase secondaryTarget = secondaryTargets.get(j);
+						LivingEntity secondaryTarget = secondaryTargets.get(j);
 
 						if(secondaryTarget != target && this.isValidTarget(secondaryTarget)){
 

@@ -4,19 +4,19 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityVex;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -34,14 +34,14 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new vex minion in the given world. */
-	public EntityVexMinion(World world){
+	public EntityVexMinion(Level world){
 		super(world);
 		this.experienceValue = 0;
 	}
 
 	// ISummonedCreature overrides
 	@Override
-	public void setCaster(@Nullable EntityLivingBase caster){
+	public void setCaster(@Nullable LivingEntity caster){
 		// Integrates the summoned creature caster system with the (subtly different) vex owner system for NPC casters
 		ISummonedCreature.super.setCaster(caster);
 		if(caster instanceof EntityLiving) this.setOwner((EntityLiving)caster);
@@ -53,14 +53,14 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 		super.initEntityAI();
 		this.targetTasks.taskEntries.clear();
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, false, this.getTargetSelector()));
 	}
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(EntityLivingBase entity){
+	public void setRevengeTarget(LivingEntity entity){
 		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
 	}
 
@@ -102,7 +102,7 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand){
+	protected boolean processInteract(Player player, EnumHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
@@ -122,7 +122,7 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(EntityPlayer player){ return 0; }
+	@Override protected int getExperiencePoints(Player player){ return 0; }
 	@Override protected boolean canDropLoot(){ return false; }
 	@Override protected Item getDropItem(){ return null; }
 	@Override protected ResourceLocation getLootTable(){ return null; }

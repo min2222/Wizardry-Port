@@ -17,33 +17,33 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -150,7 +150,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean showSpellHUD(EntityPlayer player, ItemStack stack){
+	public boolean showSpellHUD(Player player, ItemStack stack){
 		return true;
 	}
 
@@ -182,13 +182,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public boolean isFull3D(){
 		return true;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack){
 		return Wizardry.proxy.getFontRenderer(stack);
 	}
@@ -223,13 +223,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onCreated(ItemStack stack, World worldIn, EntityPlayer playerIn){
+	public void onCreated(ItemStack stack, Level worldIn, Player playerIn){
 		setMana(stack, 0); // Wands are empty when first crafted
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isHeldInMainhand){
-		boolean isHeld = isHeldInMainhand || entity instanceof EntityLivingBase && ItemStack.areItemStacksEqual(stack, ((EntityLivingBase) entity).getHeldItemOffhand());
+	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
+		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getHeldItemOffhand());
 
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is false, the cooldowns will be decremented.
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is true and isHeld is true, the cooldowns will also be decremented.
@@ -264,7 +264,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean hitEntity(ItemStack stack, EntityLivingBase target, EntityLivingBase wielder){
+	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
 
 		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 		int mana = this.getMana(stack);
@@ -275,7 +275,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player){
+	public boolean canDestroyBlockInCreative(Level world, BlockPos pos, ItemStack stack, Player player){
 		return WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade) == 0;
 	}
 
@@ -330,11 +330,11 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		return 72000;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void addInformation(ItemStack stack, World world, List<String> text, net.minecraft.client.util.ITooltipFlag advanced){
+	public void addInformation(ItemStack stack, Level world, List<String> text, net.minecraft.client.util.ITooltipFlag advanced){
 
-		EntityPlayer player = net.minecraft.client.Minecraft.getMinecraft().player;
+		Player player = net.minecraft.client.Minecraft.getMinecraft().player;
 		if (player == null) { return; }
 		// +0.5f is necessary due to the error in the way floats are calculated.
 		if(element != null) text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.buff",
@@ -372,12 +372,12 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	 * holding the item (I call this client-inconsistency). This means if you spawn particles here they will not show up
 	 * on other players' screens. Instead, this must be done via packets. */
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
 		// Alternate right-click function; overrides spell casting.
-		if(this.selectMinionTarget(player, world)) return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+		if(this.selectMinionTarget(player, world)) return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 
 		Spell spell = WandHelper.getCurrentSpell(stack);
 		SpellModifiers modifiers = this.calculateModifiers(stack, player, spell);
@@ -393,27 +393,27 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 					// Store the modifiers for use later
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
 					if(chargeup > 0 && world.isRemote) Wizardry.proxy.playChargeupSound(player);
-					return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 				}
 			}else{
 				// All other (instant) spells
 				if(cast(stack, spell, player, hand, 0, modifiers)){
-					return new ActionResult<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
 				}
 			}
 		}
 
-		return new ActionResult<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
 	}
 
 	// For continuous spells and spells with a charge-up time. The count argument actually decrements by 1 each tick.
 	// N.B. The first time this gets called is the tick AFTER onItemRightClick is called, not the same tick
 	@Override
-	public void onUsingTick(ItemStack stack, EntityLivingBase user, int count){
+	public void onUsingTick(ItemStack stack, LivingEntity user, int count){
 
-		if(user instanceof EntityPlayer){
+		if(user instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)user;
+			Player player = (Player)user;
 
 			Spell spell = WandHelper.getCurrentSpell(stack);
 
@@ -422,7 +422,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			if(WizardData.get(player) != null){
 				modifiers = WizardData.get(player).itemCastingModifiers;
 			}else{
-				modifiers = this.calculateModifiers(stack, (EntityPlayer)user, spell); // Fallback to the old way, should never be used
+				modifiers = this.calculateModifiers(stack, (Player)user, spell); // Fallback to the old way, should never be used
 			}
 
 			int useTick = stack.getMaxItemUseDuration() - count;
@@ -454,7 +454,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean canCast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
 
 		// Spells can only be cast if the casting events aren't cancelled...
 		if(castingTick == 0){
@@ -477,9 +477,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean cast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
 
-		World world = caster.world;
+		Level world = caster.world;
 
 		if(world.isRemote && !spell.isContinuous && spell.requiresPacket()) return false;
 
@@ -543,11 +543,11 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase user, int timeLeft){
+	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
 
-		if(user instanceof EntityPlayer){
+		if(user instanceof Player){
 
-			EntityPlayer player = (EntityPlayer)user;
+			Player player = (Player)user;
 
 			Spell spell = WandHelper.getCurrentSpell(stack);
 
@@ -556,7 +556,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			if(WizardData.get(player) != null){
 				modifiers = WizardData.get(player).itemCastingModifiers;
 			}else{
-				modifiers = this.calculateModifiers(stack, (EntityPlayer)user, spell); // Fallback to the old way, should never be used
+				modifiers = this.calculateModifiers(stack, (Player)user, spell); // Fallback to the old way, should never be used
 			}
 
 			int castingTick = stack.getMaxItemUseDuration() - timeLeft; // Might as well include this
@@ -578,10 +578,10 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase entity, EnumHand hand){
+	public boolean itemInteractionForEntity(ItemStack stack, Player player, LivingEntity entity, EnumHand hand){
 
-		if(player.isSneaking() && entity instanceof EntityPlayer && WizardData.get(player) != null){
-			String string = WizardData.get(player).toggleAlly((EntityPlayer)entity) ? "item." + Wizardry.MODID + ":wand.addally"
+		if(player.isSneaking() && entity instanceof Player && WizardData.get(player) != null){
+			String string = WizardData.get(player).toggleAlly((Player)entity) ? "item." + Wizardry.MODID + ":wand.addally"
 					: "item." + Wizardry.MODID + ":wand.removeally";
 			if(!player.world.isRemote) player.sendMessage(new TextComponentTranslation(string, entity.getName()));
 			return true;
@@ -610,7 +610,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	/** Returns a SpellModifiers object with the appropriate modifiers applied for the given ItemStack and Spell. */
 	// This is now public because artefacts use it
-	public SpellModifiers calculateModifiers(ItemStack stack, EntityPlayer player, Spell spell){
+	public SpellModifiers calculateModifiers(ItemStack stack, Player player, Spell spell){
 
 		SpellModifiers modifiers = new SpellModifiers();
 
@@ -657,13 +657,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		return modifiers;
 	}
 
-	private boolean selectMinionTarget(EntityPlayer player, World world){
+	private boolean selectMinionTarget(Player player, Level world){
 
 		RayTraceResult rayTrace = RayTracer.standardEntityRayTrace(world, player, 16, false);
 
 		if(rayTrace != null && EntityUtils.isLiving(rayTrace.entityHit)){
 
-			EntityLivingBase entity = (EntityLivingBase)rayTrace.entityHit;
+			LivingEntity entity = (LivingEntity)rayTrace.entityHit;
 
 			// Sets the selected minion's target to the right-clicked entity
 			if(player.isSneaking() && WizardData.get(player) != null && WizardData.get(player).selectedMinion != null){
@@ -691,7 +691,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public ItemStack applyUpgrade(@Nullable EntityPlayer player, ItemStack wand, ItemStack upgrade){
+	public ItemStack applyUpgrade(@Nullable Player player, ItemStack wand, ItemStack upgrade){
 
 		// Upgrades wand if necessary. Damage is copied, preserving remaining durability,
 		// and also the entire NBT tag compound.
@@ -816,7 +816,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean onApplyButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
+	public boolean onApplyButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		
 		boolean changed = false; // Used for advancements
 
@@ -872,7 +872,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onClearButtonPressed(EntityPlayer player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
+	public void onClearButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		ItemStack stack = centre.getStack();
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey(WandHelper.SPELL_ARRAY_KEY)) {
 			NBTTagCompound nbt = stack.getTagCompound();
@@ -897,7 +897,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@SubscribeEvent
 	public static void onAttackEntityEvent(AttackEntityEvent event){
 
-		EntityPlayer player = event.getEntityPlayer();
+		Player player = event.getEntityPlayer();
 		ItemStack stack = player.getHeldItemMainhand(); // Can't melee with offhand items
 
 		if(stack.getItem() instanceof IManaStoringItem){
@@ -914,11 +914,11 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 				if(player.world.isRemote){
 
-					Vec3d origin = player.getPositionEyes(1);
-					Vec3d hit = origin.add(player.getLookVec().scale(player.getDistance(event.getTarget())));
+					Vec3 origin = player.getPositionEyes(1);
+					Vec3 hit = origin.add(player.getLookVec().scale(player.getDistance(event.getTarget())));
 					// Generate two perpendicular vectors in the plane perpendicular to the look vec
-					Vec3d vec1 = player.getLookVec().rotatePitch(90);
-					Vec3d vec2 = player.getLookVec().crossProduct(vec1);
+					Vec3 vec1 = player.getLookVec().rotatePitch(90);
+					Vec3 vec2 = player.getLookVec().crossProduct(vec1);
 
 					for(int i = 0; i < 15; i++){
 						ParticleBuilder.create(Type.SPARKLE).pos(hit)

@@ -9,13 +9,13 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +29,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 	}
 
 	@Override
-	protected boolean affectEntity(World world, Vec3d origin, @Nullable EntityLivingBase caster, EntityLivingBase target, int targetCount, int ticksInUse, SpellModifiers modifiers){
+	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(!MagicDamage.isEntityImmune(DamageType.WITHER, target)){
 			target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
@@ -43,7 +43,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 	}
 
 	@Override
-	protected void spawnParticleEffect(World world, Vec3d origin, double radius, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		double particleX, particleZ;
 
@@ -65,7 +65,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 			IBlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.spawnParticle(EnumParticleTypes.BLOCK_DUST, particleX, origin.y,
+				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
 						particleZ, particleX - origin.x, 0, particleZ - origin.z, Block.getStateId(block));
 			}
 		}

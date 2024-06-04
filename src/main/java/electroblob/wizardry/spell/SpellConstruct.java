@@ -6,15 +6,15 @@ import electroblob.wizardry.entity.construct.EntityScaledConstruct;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -44,7 +44,7 @@ import java.util.function.Function;
 public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	
 	/** A factory that creates construct entities. */
-	protected final Function<World, T> constructFactory;
+	protected final Function<Level, T> constructFactory;
 	/** Whether the construct lasts indefinitely, i.e. does not disappear after a set time. */
 	protected final boolean permanent;
 	/** Whether the construct must be spawned on the ground. Defaults to false. */
@@ -52,11 +52,11 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	/** Whether constructs spawned by this spell may overlap. Defaults to false. */
 	protected boolean allowOverlap = false;
 
-	public SpellConstruct(String name, EnumAction action, Function<World, T> constructFactory, boolean permanent){
+	public SpellConstruct(String name, EnumAction action, Function<Level, T> constructFactory, boolean permanent){
 		this(Wizardry.MODID, name, action, constructFactory, permanent);
 	}
 
-	public SpellConstruct(String modID, String name, EnumAction action, Function<World, T> constructFactory, boolean permanent){
+	public SpellConstruct(String modID, String name, EnumAction action, Function<Level, T> constructFactory, boolean permanent){
 		super(modID, name, action, false);
 		this.constructFactory = constructFactory;
 		this.permanent = permanent;
@@ -90,10 +90,10 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityPlayer caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(caster.onGround || !requiresFloor){
-			if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? EnumFacing.UP : null,
+			if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? Direction.UP : null,
 					caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
@@ -103,11 +103,11 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 
 	@Override
-	public boolean cast(World world, EntityLiving caster, EnumHand hand, int ticksInUse, EntityLivingBase target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 			if(caster.onGround || !requiresFloor){
-				if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? EnumFacing.UP : null,
+				if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? Direction.UP : null,
 						caster, modifiers)) return false;
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 				return true;
@@ -118,13 +118,13 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 	
 	@Override
-	public boolean cast(World world, double x, double y, double z, EnumFacing direction, int ticksInUse, int duration, SpellModifiers modifiers){
+	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 
 		Integer floor = (int)y;
 
 		if(requiresFloor){
 			floor = BlockUtils.getNearestFloor(world, new BlockPos(x, y, z), 1);
-			direction = EnumFacing.UP;
+			direction = Direction.UP;
 		}
 
 		if(floor != null){
@@ -150,7 +150,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	 * @param modifiers The modifiers with which the spell was cast.
 	 * @return false to cause the spell to fail, true to continue with casting.
 	 */
-	protected boolean spawnConstruct(World world, double x, double y, double z, @Nullable EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnConstruct(Level world, double x, double y, double z, @Nullable Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			// Creates a new construct using the supplied factory
@@ -187,6 +187,6 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	 */
 	// This is the reason this class is generic: it allows subclasses to do whatever they want to their specific entity,
 	// without needing to cast to it.
-	protected void addConstructExtras(T construct, EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){}
+	protected void addConstructExtras(T construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){}
 
 }

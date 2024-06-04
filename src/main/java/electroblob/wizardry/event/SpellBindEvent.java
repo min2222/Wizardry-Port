@@ -1,7 +1,7 @@
 package electroblob.wizardry.event;
 
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class SpellBindEvent extends PlayerContainerEvent {
 
-	public SpellBindEvent(EntityPlayer player, ContainerArcaneWorkbench container){
+	public SpellBindEvent(Player player, ContainerArcaneWorkbench container){
 		super(player, container);
 	}
 

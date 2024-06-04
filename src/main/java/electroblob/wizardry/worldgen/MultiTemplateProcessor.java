@@ -1,7 +1,7 @@
 package electroblob.wizardry.worldgen;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.ITemplateProcessor;
 import net.minecraft.world.gen.structure.template.Template;
 
@@ -27,7 +27,7 @@ public class MultiTemplateProcessor implements ITemplateProcessor {
 
 	@Nullable
 	@Override
-	public Template.BlockInfo processBlock(World world, BlockPos pos, Template.BlockInfo info){
+	public Template.BlockInfo processBlock(Level world, BlockPos pos, Template.BlockInfo info){
 
 		for(ITemplateProcessor processor : processors){
 			info = processor.processBlock(world, pos, info);

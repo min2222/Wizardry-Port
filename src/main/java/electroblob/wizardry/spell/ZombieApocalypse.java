@@ -6,12 +6,12 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -34,10 +34,10 @@ public class ZombieApocalypse extends SpellConstruct<EntityZombieSpawner> {
 	}
 
 	@Override
-	protected boolean spawnConstruct(World world, double x, double y, double z, EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
+	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		Integer ceiling = BlockUtils.getNearestSurface(world, new BlockPos(x, y + MIN_SPAWNER_HEIGHT, z),
-				EnumFacing.UP, SPAWNER_HEIGHT - MIN_SPAWNER_HEIGHT, false, BlockUtils.SurfaceCriteria.COLLIDABLE.flip());
+				Direction.UP, SPAWNER_HEIGHT - MIN_SPAWNER_HEIGHT, false, BlockUtils.SurfaceCriteria.COLLIDABLE.flip());
 
 		if(ceiling == null) y += SPAWNER_HEIGHT;
 		else y = ceiling - 0.5;
@@ -46,12 +46,12 @@ public class ZombieApocalypse extends SpellConstruct<EntityZombieSpawner> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityZombieSpawner construct, EnumFacing side, @Nullable EntityLivingBase caster, SpellModifiers modifiers){
-		construct.spawnHusks = caster instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)caster, WizardryItems.charm_minion_variants);
+	protected void addConstructExtras(EntityZombieSpawner construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
+		construct.spawnHusks = caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants);
 	}
 
 	@Override
-	protected void playSound(World world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
+	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
 		this.playSoundLoop(world, x, y + SPAWNER_HEIGHT, z, 0, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 	}
 }

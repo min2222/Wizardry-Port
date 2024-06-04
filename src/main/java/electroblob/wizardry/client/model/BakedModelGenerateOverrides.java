@@ -6,15 +6,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -48,7 +48,7 @@ import java.util.Map;
 // The nice thing is resource packs don't lose any flexibility this way, they can still redefine the models themselves
 // and specify custom models for the overrides if they want, or they can keep using this system - in fact, they GAIN
 // flexibility because they can also overwrite the base wand.json model and specify global overrides too
-@Mod.EventBusSubscriber(Side.CLIENT)
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class BakedModelGenerateOverrides implements IBakedModel {
 
 	// I tried having this as a prefix that gets removed at runtime, which worked fine but it spammed the log with
@@ -71,7 +71,7 @@ public class BakedModelGenerateOverrides implements IBakedModel {
 	// Delegate everything else
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand){
+	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable Direction side, long rand){
 		return delegate.getQuads(state, side, rand);
 	}
 

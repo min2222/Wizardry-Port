@@ -4,11 +4,11 @@ import electroblob.wizardry.entity.projectile.EntityIceShard;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 public class EntityHailstorm extends EntityScaledConstruct {
 
-	public EntityHailstorm(World world){
+	public EntityHailstorm(Level world){
 		super(world);
 		setSize(Spells.hailstorm.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}

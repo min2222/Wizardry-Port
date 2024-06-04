@@ -12,24 +12,26 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -65,7 +67,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	/** Seems to be some sort of timer for animating an arrow. */
 	public int arrowShake;
 	/** The owner of this arrow. */
-	private WeakReference<EntityLivingBase> caster;
+	private WeakReference<LivingEntity> caster;
 	/**
 	 * The UUID of the caster. Note that this is only for loading purposes; during normal updates the actual entity
 	 * instance is stored (so that getEntityByUUID is not called constantly), so this will not always be synced (this is
@@ -80,7 +82,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	public float damageMultiplier = 1.0f;
 
 	/** Creates a new projectile in the given world. */
-	public EntityMagicArrow(World world){
+	public EntityMagicArrow(Level world){
 		super(world);
 		this.setSize(0.5F, 0.5F);
 	}
@@ -89,7 +91,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	
 	/** Sets the shooter of the projectile to the given caster, positions the projectile at the given caster's eyes and
 	 * aims it in the direction they are looking with the given speed. */
-	public void aim(EntityLivingBase caster, float speed){
+	public void aim(LivingEntity caster, float speed){
 		
 		this.setCaster(caster);
 		
@@ -116,7 +118,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	 * aims it at the given target with the given speed. The trajectory will be altered slightly by a random amount
 	 * determined by the aimingError parameter. For reference, skeletons set this to 10 on easy, 6 on normal and 2 on hard
 	 * difficulty. */
-	public void aim(EntityLivingBase caster, Entity target, float speed, float aimingError){
+	public void aim(LivingEntity caster, Entity target, float speed, float aimingError){
 		
 		this.setCaster(caster);
 
@@ -183,7 +185,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	 * of attraction, otherwise it is 0.
 	 */
 	public float getSeekingStrength(){
-		return getCaster() instanceof EntityPlayer && ItemArtefact.isArtefactActive((EntityPlayer)getCaster(),
+		return getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
 				WizardryItems.ring_seeking) ? 2 : 0;
 	}
 
@@ -199,11 +201,11 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	 * may no longer exist are: entity died or was deleted, mob despawned, player logged out, entity teleported to
 	 * another dimension, or this construct simply had no caster in the first place.
 	 */
-	public EntityLivingBase getCaster(){
+	public LivingEntity getCaster(){
 		return caster == null ? null : caster.get();
 	}
 
-	public void setCaster(EntityLivingBase entity){
+	public void setCaster(LivingEntity entity){
 		caster = new WeakReference<>(entity);
 	}
 	
@@ -219,7 +221,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	protected void tickInAir(){}
 
 	/** Called when the projectile hits an entity. Override to add potion effects and such like. */
-	protected void onEntityHit(EntityLivingBase entityHit){}
+	protected void onEntityHit(LivingEntity entityHit){}
 
 	/** Called when the projectile hits a block. Override to add sound effects and such like. 
 	 * @param hit A vector representing the exact coordinates of the hit; use this to centre particle effects, for
@@ -238,8 +240,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 		if(this.getCaster() == null && this.casterUUID != null){
 			Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
-			if(entity instanceof EntityLivingBase){
-				this.caster = new WeakReference<>((EntityLivingBase)entity);
+			if(entity instanceof LivingEntity){
+				this.caster = new WeakReference<>((LivingEntity)entity);
 			}
 		}
 
@@ -258,7 +260,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			AxisAlignedBB axisalignedbb = iblockstate.getCollisionBoundingBox(this.world, blockpos);
 
 			if(axisalignedbb != Block.NULL_AABB
-					&& axisalignedbb.offset(blockpos).contains(new Vec3d(this.posX, this.posY, this.posZ))){
+					&& axisalignedbb.offset(blockpos).contains(new Vec3(this.posX, this.posY, this.posZ))){
 				this.inGround = true;
 			}
 		}
@@ -282,14 +284,14 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			
 			// Does a ray trace to determine whether the projectile will hit a block in the next tick
 			
-			Vec3d vec3d1 = new Vec3d(this.posX, this.posY, this.posZ);
-			Vec3d vec3d = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+			Vec3 vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
+			Vec3 vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 			RayTraceResult raytraceresult = this.world.rayTraceBlocks(vec3d1, vec3d, false, true, false);
-			vec3d1 = new Vec3d(this.posX, this.posY, this.posZ);
-			vec3d = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
+			vec3d1 = new Vec3(this.posX, this.posY, this.posZ);
+			vec3d = new Vec3(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
 
 			if(raytraceresult != null){
-				vec3d = new Vec3d(raytraceresult.hitVec.x, raytraceresult.hitVec.y,
+				vec3d = new Vec3(raytraceresult.hitVec.x, raytraceresult.hitVec.y,
 						raytraceresult.hitVec.z);
 			}
 			
@@ -330,11 +332,11 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			// Players that are considered invulnerable to the caster allow the projectile to pass straight through
 			// them.
 			if(raytraceresult != null && raytraceresult.entityHit != null
-					&& raytraceresult.entityHit instanceof EntityPlayer){
-				EntityPlayer entityplayer = (EntityPlayer)raytraceresult.entityHit;
+					&& raytraceresult.entityHit instanceof Player){
+				Player entityplayer = (Player)raytraceresult.entityHit;
 
-				if(entityplayer.capabilities.disableDamage || this.getCaster() instanceof EntityPlayer
-						&& !((EntityPlayer)this.getCaster()).canAttackPlayer(entityplayer)){
+				if(entityplayer.capabilities.disableDamage || this.getCaster() instanceof Player
+						&& !((Player)this.getCaster()).canAttackPlayer(entityplayer)){
 					raytraceresult = null;
 				}
 			}
@@ -353,8 +355,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 					if(raytraceresult.entityHit.attackEntityFrom(damagesource,
 							(float)(this.getDamage() * this.damageMultiplier))){
-						if(raytraceresult.entityHit instanceof EntityLivingBase){
-							EntityLivingBase entityHit = (EntityLivingBase)raytraceresult.entityHit;
+						if(raytraceresult.entityHit instanceof LivingEntity){
+							LivingEntity entityHit = (LivingEntity)raytraceresult.entityHit;
 
 							this.onEntityHit(entityHit);
 
@@ -377,7 +379,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 							}
 
 							if(this.getCaster() != null && raytraceresult.entityHit != this.getCaster()
-									&& raytraceresult.entityHit instanceof EntityPlayer
+									&& raytraceresult.entityHit instanceof Player
 									&& this.getCaster() instanceof EntityPlayerMP){
 								((EntityPlayerMP)this.getCaster()).connection
 										.sendPacket(new SPacketChangeGameState(6, 0.0F));
@@ -426,17 +428,17 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			// Seeking
 			if(getSeekingStrength() > 0){
 
-				Vec3d velocity = new Vec3d(motionX, motionY, motionZ);
+				Vec3 velocity = new Vec3(motionX, motionY, motionZ);
 
 				RayTraceResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
 						this.getPositionVector().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
-						true, false, EntityLivingBase.class, RayTracer.ignoreEntityFilter(null));
+						true, false, LivingEntity.class, RayTracer.ignoreEntityFilter(null));
 
 				if(hit != null && hit.entityHit != null){
 
 					if(AllyDesignationSystem.isValidTarget(getCaster(), hit.entityHit)){
 
-						Vec3d direction = new Vec3d(hit.entityHit.posX, hit.entityHit.posY + hit.entityHit.height/2,
+						Vec3 direction = new Vec3(hit.entityHit.posX, hit.entityHit.posY + hit.entityHit.height/2,
 								hit.entityHit.posZ).subtract(this.getPositionVector()).normalize().scale(velocity.length());
 
 						motionX = motionX + 2 * (direction.x - motionX) / SEEKING_TIME;
@@ -478,7 +480,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			if(this.isInWater()){
 				for(int l = 0; l < 4; ++l){
 					float f4 = 0.25F;
-					this.world.spawnParticle(EnumParticleTypes.WATER_BUBBLE, this.posX - this.motionX * (double)f4,
+					this.world.spawnParticle(ParticleTypes.WATER_BUBBLE, this.posX - this.motionX * (double)f4,
 							this.posY - this.motionY * (double)f4, this.posZ - this.motionZ * (double)f4, this.motionX,
 							this.motionY, this.motionZ);
 				}
@@ -529,7 +531,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 	/** Sets the velocity to the args. Args: x, y, z. THIS IS CLIENT SIDE ONLY! DO NOT USE IN COMMON OR SERVER CODE! */
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void setVelocity(double p_70016_1_, double p_70016_3_, double p_70016_5_){
 		this.motionX = p_70016_1_;
 		this.motionY = p_70016_3_;
@@ -590,7 +592,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	@Override
 	public void readSpawnData(ByteBuf buffer){
 		if(buffer.isReadable()) this.caster = new WeakReference<>(
-				(EntityLivingBase)this.world.getEntityByID(buffer.readInt()));
+				(LivingEntity)this.world.getEntityByID(buffer.readInt()));
 	}
 
 	// Miscellaneous overrides
@@ -605,7 +607,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		return false;
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public float getShadowSize(){
 		return 0.0F;
 	}

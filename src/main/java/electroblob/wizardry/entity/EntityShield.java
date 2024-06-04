@@ -4,33 +4,33 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Shield;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.lang.ref.WeakReference;
 
 public class EntityShield extends Entity {
 
-	public WeakReference<EntityPlayer> player;
+	public WeakReference<Player> player;
 
-	public EntityShield(World world){
+	public EntityShield(Level world){
 		super(world);
 		this.noClip = true;
 		this.width = 1.2f;
 		this.height = 1.4f;
 	}
 
-	public EntityShield(World par1World, EntityPlayer player){
+	public EntityShield(Level par1World, Player player){
 		super(par1World);
 		this.width = 1.2f;
 		this.height = 1.4f;
-		this.player = new WeakReference<EntityPlayer>(player);
+		this.player = new WeakReference<Player>(player);
 		this.noClip = true;
 		this.setPositionAndRotation(player.posX + player.getLookVec().x,
 				player.posY + 1 + player.getLookVec().y, player.posZ + player.getLookVec().z,
@@ -42,7 +42,7 @@ public class EntityShield extends Entity {
 	@Override
 	public void onUpdate(){
 		// System.out.println("Shield exists, ID: " + this.getUniqueID().toString());
-		EntityPlayer entityplayer = player != null ? player.get() : null;
+		Player entityplayer = player != null ? player.get() : null;
 		if(entityplayer != null){
 			this.setPositionAndRotation(entityplayer.posX + entityplayer.getLookVec().x * 0.3,
 					entityplayer.posY + 1 + entityplayer.getLookVec().y * 0.3,

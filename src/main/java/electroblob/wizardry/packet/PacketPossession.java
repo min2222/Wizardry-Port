@@ -3,7 +3,7 @@ package electroblob.wizardry.packet;
 import electroblob.wizardry.Wizardry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -35,7 +35,7 @@ public class PacketPossession implements IMessageHandler<PacketPossession.Messag
 		public Message(){
 		}
 
-		public Message(EntityPlayer host, @Nullable EntityLiving target, int duration){
+		public Message(Player host, @Nullable EntityLiving target, int duration){
 			this.playerID = host.getEntityId();
 			this.targetID = target == null ? -1 : target.getEntityId();
 			this.duration = duration;

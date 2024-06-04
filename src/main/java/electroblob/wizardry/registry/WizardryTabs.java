@@ -7,8 +7,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,7 +65,7 @@ public final class WizardryTabs {
 		}
 
 		@Override
-		@SideOnly(Side.CLIENT)
+		@OnlyIn(Dist.CLIENT)
 		public ItemStack createIcon(){
 			return iconItem;
 		}
@@ -75,7 +75,7 @@ public final class WizardryTabs {
 		}
 
 		@Override
-		@SideOnly(Side.CLIENT)
+		@OnlyIn(Dist.CLIENT)
 		public void displayAllRelevantItems(NonNullList<ItemStack> items){
 			super.displayAllRelevantItems(items);
 			items.sort(sorter);
@@ -87,7 +87,7 @@ public final class WizardryTabs {
 		}
 
 		@Override
-		@SideOnly(Side.CLIENT)
+		@OnlyIn(Dist.CLIENT)
 		public String getBackgroundImageName(){
 			return searchable ? "item_search.png" : super.getBackgroundImageName();
 		}

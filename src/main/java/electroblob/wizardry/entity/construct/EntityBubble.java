@@ -7,12 +7,12 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,9 +24,9 @@ public class EntityBubble extends EntityMagicConstruct {
 
 	public boolean isDarkOrb;
 
-	private WeakReference<EntityLivingBase> rider;
+	private WeakReference<LivingEntity> rider;
 
-	public EntityBubble(World world){
+	public EntityBubble(Level world){
 		super(world);
 	}
 
@@ -46,9 +46,9 @@ public class EntityBubble extends EntityMagicConstruct {
 
 		// Synchronises the rider field
 		if((this.rider == null || this.rider.get() == null)
-				&& EntityUtils.getRider(this) instanceof EntityLivingBase
+				&& EntityUtils.getRider(this) instanceof LivingEntity
 				&& !EntityUtils.getRider(this).isDead){
-			this.rider = new WeakReference<>((EntityLivingBase)EntityUtils.getRider(this));
+			this.rider = new WeakReference<>((LivingEntity)EntityUtils.getRider(this));
 		}
 
 		// Prevents dismounting
@@ -58,7 +58,7 @@ public class EntityBubble extends EntityMagicConstruct {
 		}
 
 		// Stops the bubble bursting instantly.
-		if(this.ticksExisted < 1 && !isDarkOrb) ((EntityLivingBase)EntityUtils.getRider(this)).hurtTime = 0;
+		if(this.ticksExisted < 1 && !isDarkOrb) ((LivingEntity)EntityUtils.getRider(this)).hurtTime = 0;
 
 		this.move(MoverType.SELF, 0, 0.03, 0);
 
@@ -76,7 +76,7 @@ public class EntityBubble extends EntityMagicConstruct {
 			}
 
 			for(int i = 0; i < 5; i++){
-				this.world.spawnParticle(EnumParticleTypes.PORTAL,
+				this.world.spawnParticle(ParticleTypes.PORTAL,
 						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
 						this.posY + this.rand.nextDouble() * (double)this.height + 0.5d,
 						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width,
@@ -101,7 +101,7 @@ public class EntityBubble extends EntityMagicConstruct {
 	@Override
 	public void despawn(){
 		if(EntityUtils.getRider(this) != null){
-			((EntityLivingBase)EntityUtils.getRider(this)).dismountEntity(this);
+			((LivingEntity)EntityUtils.getRider(this)).dismountEntity(this);
 		}
 		if(!this.isDarkOrb) this.playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
 		super.despawn();

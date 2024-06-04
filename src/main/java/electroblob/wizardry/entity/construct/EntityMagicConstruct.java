@@ -6,19 +6,19 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityOwnable;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -44,7 +44,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	/** The damage multiplier for this construct, determined by the wand with which it was cast. */
 	public float damageMultiplier = 1.0f;
 
-	public EntityMagicConstruct(World world){
+	public EntityMagicConstruct(Level world){
 		super(world);
 		this.height = 1.0f;
 		this.width = 1.0f;
@@ -54,7 +54,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	// Overrides the original to stop the entity moving when it intersects stuff. The default arrow does this to allow
 	// it to stick in blocks.
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport){
 		this.setPosition(x, y, z);
 		this.setRotation(yaw, pitch);
@@ -71,7 +71,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 
 	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand){
+	public EnumActionResult applyPlayerInteraction(Player player, Vec3 vec, EnumHand hand){
 
 		// Permanent constructs can now be dispelled by sneak-right-clicking
 		if(lifetime == -1 && getCaster() == player && player.isSneaking() && player.getHeldItem(hand).getItem() instanceof ISpellCastingItem){
@@ -130,8 +130,8 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 			setCaster(null);
 		}else{
 			Entity entity = world.getEntityByID(id);
-			if(entity instanceof EntityLivingBase){
-				setCaster((EntityLivingBase)entity);
+			if(entity instanceof LivingEntity){
+				setCaster((LivingEntity)entity);
 			}else{
 				Wizardry.logger.warn("Construct caster with ID in spawn data not found");
 			}
@@ -156,19 +156,19 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	 * another dimension, or this construct simply had no caster in the first place.
 	 */
 	@Nullable
-	public EntityLivingBase getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
+	public LivingEntity getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
 
 		Entity entity = EntityUtils.getEntityByUUID(world, getOwnerId());
 
-		if(entity != null && !(entity instanceof EntityLivingBase)){ // Should never happen
+		if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 			Wizardry.logger.warn("{} has a non-living owner!", this);
 			entity = null;
 		}
 
-		return (EntityLivingBase)entity;
+		return (LivingEntity)entity;
 	}
 	
-	public void setCaster(@Nullable EntityLivingBase caster){
+	public void setCaster(@Nullable LivingEntity caster){
 		this.casterUUID = caster == null ? null : caster.getUniqueID();
 	}
 

@@ -4,8 +4,8 @@ import electroblob.wizardry.entity.construct.EntityForcefield;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
 
 public class Forcefield extends SpellConstruct<EntityForcefield> {
 
@@ -15,7 +15,7 @@ public class Forcefield extends SpellConstruct<EntityForcefield> {
 	}
 
 	@Override
-	protected void addConstructExtras(EntityForcefield construct, EnumFacing side, EntityLivingBase caster, SpellModifiers modifiers){
+	protected void addConstructExtras(EntityForcefield construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		construct.setRadius(getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade));
 	}
 }

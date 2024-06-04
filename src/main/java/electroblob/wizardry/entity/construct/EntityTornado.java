@@ -16,17 +16,17 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 	private double velX, velZ;
 
-	public EntityTornado(World world){
+	public EntityTornado(Level world){
 		super(world);
 		setSize(Spells.tornado.getProperty(Spell.EFFECT_RADIUS).floatValue(), 8);
 		this.isImmuneToFire = false;
@@ -65,7 +65,7 @@ public class EntityTornado extends EntityScaledConstruct {
 		this.move(MoverType.SELF, velX, motionY, velZ);
 
 		BlockPos pos = new BlockPos(this);
-		Integer y = BlockUtils.getNearestSurface(world, pos.up(3), EnumFacing.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
+		Integer y = BlockUtils.getNearestSurface(world, pos.up(3), Direction.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
 
 		if(y != null){
 
@@ -79,13 +79,13 @@ public class EntityTornado extends EntityScaledConstruct {
 
 		if(!this.world.isRemote){
 
-			List<EntityLivingBase> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
+			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.posX, this.posY,
 					this.posZ, this.world);
 
-			for(EntityLivingBase target : targets){
+			for(LivingEntity target : targets){
 
-				if(target instanceof EntityPlayer && ((getCaster() instanceof EntityPlayer && !Wizardry.settings.playersMoveEachOther)
-						|| ItemArtefact.isArtefactActive((EntityPlayer)target, WizardryItems.amulet_anchoring))){
+				if(target instanceof Player && ((getCaster() instanceof Player && !Wizardry.settings.playersMoveEachOther)
+						|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 					continue;
 				}
 
@@ -130,7 +130,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 				BlockPos pos1 = new BlockPos(blockX, this.posY + 3, blockZ);
 
-				Integer blockY = BlockUtils.getNearestSurface(world, pos1, EnumFacing.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
+				Integer blockY = BlockUtils.getNearestSurface(world, pos1, Direction.UP, 5, true, BlockUtils.SurfaceCriteria.NOT_AIR_TO_AIR);
 
 				if(blockY != null){
 

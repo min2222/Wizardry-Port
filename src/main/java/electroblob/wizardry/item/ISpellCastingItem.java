@@ -4,11 +4,11 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * this interface if appropriate.</i>
  * <p></p>
  * This interface is used for the following:<br>
- *     - General-purpose detection of continuous spell casting (see {@link EntityUtils#isCasting(EntityLivingBase, Spell)})<br>
+ *     - General-purpose detection of continuous spell casting (see {@link EntityUtils#isCasting(LivingEntity, Spell)})<br>
  *     - Display of the arcane workbench tooltip (in conjunction with {@link IManaStoringItem})<br>
  *     - Supplying information to the spell HUD<br>
  *     - Spell switching controls (they won't do anything unless the player is holding an {@code ISpellCastingItem})<br>
@@ -104,7 +104,7 @@ public interface ISpellCastingItem {
 	 * @param stack The itemstack to query.
 	 * @return True if the spell HUD should be shown, false if not.
 	 */
-	boolean showSpellHUD(EntityPlayer player, ItemStack stack);
+	boolean showSpellHUD(Player player, ItemStack stack);
 
 	/**
 	 * Returns the current cooldown to display on the spell HUD for the given itemstack.
@@ -131,7 +131,7 @@ public interface ISpellCastingItem {
 	 * @param stack The itemstack to query.
 	 * @return True if the spells should be shown, false if not. Returns true by default.
 	 */
-	default boolean showSpellsInWorkbench(EntityPlayer player, ItemStack stack){
+	default boolean showSpellsInWorkbench(Player player, ItemStack stack){
 		return true;
 	}
 
@@ -153,11 +153,11 @@ public interface ISpellCastingItem {
 	 * @param modifiers The modifiers with which the spell is being cast.
 	 * @return True if the spell can be cast, false if not.
 	 */
-	boolean canCast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
+	boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
 
 	/**
 	 * Casts the given spell using the given item stack. <b>This method does not perform any checks</b>; these are done
-	 * in {@link ISpellCastingItem#canCast(ItemStack, Spell, EntityPlayer, EnumHand, int, SpellModifiers)}. This method
+	 * in {@link ISpellCastingItem#canCast(ItemStack, Spell, Player, EnumHand, int, SpellModifiers)}. This method
 	 * also performs any post-casting logic, such as mana costs and cooldowns. This method does not handle charge-up
 	 * times.
 	 * <p></p>
@@ -172,10 +172,10 @@ public interface ISpellCastingItem {
 	 *                    spells, this will be zero.
 	 * @param modifiers The modifiers with which the spell is being cast.
 	 * @return True if the spell succeeded, false if not. This is only really for the purpose of returning a result from
-	 * {@link net.minecraft.item.Item#onItemRightClick(World, EntityPlayer, EnumHand)} and similar methods; mana costs,
+	 * {@link net.minecraft.item.Item#onItemRightClick(Level, Player, EnumHand)} and similar methods; mana costs,
 	 * cooldowns and whatever else you might want to do post-spellcasting should be done within this method so that
 	 * external sources don't allow spells to be cast for free, for example.
 	 */
-	boolean cast(ItemStack stack, Spell spell, EntityPlayer caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
+	boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
 	
 }

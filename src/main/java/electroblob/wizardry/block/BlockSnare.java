@@ -11,8 +11,10 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
@@ -20,11 +22,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -53,9 +53,9 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void onEntityCollision(World world, BlockPos pos, IBlockState state, Entity entity){
+	public void onEntityCollision(Level world, BlockPos pos, IBlockState state, Entity entity){
 
-		if(entity instanceof EntityLivingBase){
+		if(entity instanceof LivingEntity){
 
 			if(world.getTileEntity(pos) instanceof TileEntityPlayerSave){
 
@@ -68,7 +68,7 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 
 					entity.attackEntityFrom(source, Spells.snare.getProperty(Spell.DAMAGE).floatValue());
 
-					((EntityLivingBase)entity).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS,
+					((LivingEntity)entity).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS,
 							Spells.snare.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.snare.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
@@ -81,9 +81,9 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 	// The similarly named onNeighborChange method does NOT do the same thing.
 	@SuppressWarnings("deprecation")
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
 		super.neighborChanged(state, world, pos, block, fromPos);
-		if(!world.isSideSolid(pos.down(), EnumFacing.UP, false)){
+		if(!world.isSideSolid(pos.down(), Direction.UP, false)){
 			world.setBlockToAir(pos);
 		}
 	}
@@ -114,7 +114,7 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata){
+	public TileEntity createNewTileEntity(Level world, int metadata){
 		return new TileEntityPlayerSave();
 	}
 

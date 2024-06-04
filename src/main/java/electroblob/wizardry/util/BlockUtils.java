@@ -6,21 +6,21 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
@@ -82,7 +82,7 @@ public final class BlockUtils {
 	 * @param pos The position to query
 	 * @return The light level, from 0 (pitch darkness) to 15 (full daylight/at a torch).
 	 */
-	public static int getLightLevel(World world, BlockPos pos){
+	public static int getLightLevel(Level world, BlockPos pos){
 
 		int i = world.getLightFromNeighbors(pos);
 
@@ -105,9 +105,9 @@ public final class BlockUtils {
 	 * @param pos The position of the block.
 	 * @param excludeLiquids True to treat liquids as non-replaceable, false to treat liquids as replaceable.
 	 *
-	 * @see BlockUtils#canBlockBeReplaced(World, BlockPos)
+	 * @see BlockUtils#canBlockBeReplaced(Level, BlockPos)
 	 */
-	public static boolean canBlockBeReplaced(World world, BlockPos pos, boolean excludeLiquids){
+	public static boolean canBlockBeReplaced(Level world, BlockPos pos, boolean excludeLiquids){
 		return (world.isAirBlock(new BlockPos(pos)) || world.getBlockState(pos).getMaterial().isReplaceable())
 				&& (!excludeLiquids || !world.getBlockState(pos).getMaterial().isLiquid());
 	}
@@ -115,13 +115,13 @@ public final class BlockUtils {
 	/**
 	 * Returns whether the block at the given position can be replaced by another one (works as if a block is being
 	 * placed by a player). True for air, liquids, vines, tall grass and snow layers but not for flowers, signs etc.
-	 * This is a shorthand version of {@link BlockUtils#canBlockBeReplaced(World, BlockPos, boolean)};
+	 * This is a shorthand version of {@link BlockUtils#canBlockBeReplaced(Level, BlockPos, boolean)};
 	 * excludeLiquids defaults to false.
 	 *
 	 * @param world The world the block is in.
 	 * @param pos The position of the block.
 	 */
-	public static boolean canBlockBeReplaced(World world, BlockPos pos){
+	public static boolean canBlockBeReplaced(Level world, BlockPos pos){
 		return canBlockBeReplaced(world, pos, false);
 	}
 
@@ -130,7 +130,7 @@ public final class BlockUtils {
 	 * bedrock and end portal frame, for example. This is a shortcut for:<p></p>
 	 * {@code world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f}
 	 */
-	public static boolean isBlockUnbreakable(World world, BlockPos pos){
+	public static boolean isBlockUnbreakable(Level world, BlockPos pos){
 		return !world.isAirBlock(new BlockPos(pos)) && world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
 	}
 
@@ -206,7 +206,7 @@ public final class BlockUtils {
 	/**
 	 * Tests whether the given entity may place the given block at the given location. Does not actually place the block
 	 * (this gives callers more flexibility in how they use it, for example it allows different block placement methods
-	 * in {@link World} to be used depending on the situation). This should only be called server-side.
+	 * in {@link Level} to be used depending on the situation). This should only be called server-side.
 	 * <p></p>
 	 * <i>Be aware that this method triggers a variety of vanilla methods and Forge events, and depending on other
 	 * installed mods these may have side-effects. Use of this method just to query is therefore not advised - if it
@@ -220,7 +220,7 @@ public final class BlockUtils {
 	 * @param pos The position of the block being placed
 	 * @return True if the given entity is allowed to place the block, false otherwise.
 	 */
-	public static boolean canPlaceBlock(@Nullable Entity placer, World world, BlockPos pos){
+	public static boolean canPlaceBlock(@Nullable Entity placer, Level world, BlockPos pos){
 
 		if(world.isRemote){
 			Wizardry.logger.warn("BlockUtils#canPlaceBlock called from the client side! Blocks should be modified server-side only");
@@ -231,14 +231,14 @@ public final class BlockUtils {
 
 		if(world.isOutsideBuildHeight(pos)) return false;
 		// This line *should* trigger bukkit plugin hooks
-		if(placer instanceof EntityPlayer && !world.isBlockModifiable((EntityPlayer)placer, pos)) return false;
+		if(placer instanceof Player && !world.isBlockModifiable((Player)placer, pos)) return false;
 
 		BlockSnapshot snapshot = BlockSnapshot.getBlockSnapshot(world, pos);
 		// Despite there being a separate event for players, BOTH events seem to be fired for players during normal placement
-		if(ForgeEventFactory.onBlockPlace(placer, snapshot, EnumFacing.UP).isCanceled()) return false;
+		if(ForgeEventFactory.onBlockPlace(placer, snapshot, Direction.UP).isCanceled()) return false;
 
-		if(placer instanceof EntityPlayer && ForgeEventFactory.onPlayerBlockPlace(
-				(EntityPlayer)placer, snapshot, EnumFacing.UP, EnumHand.MAIN_HAND).isCanceled()){
+		if(placer instanceof Player && ForgeEventFactory.onPlayerBlockPlace(
+				(Player)placer, snapshot, Direction.UP, EnumHand.MAIN_HAND).isCanceled()){
 			return false;
 		}
 
@@ -248,10 +248,10 @@ public final class BlockUtils {
 	/**
 	 * Tests whether the given entity may break the block at the given location. Does not actually break the block (this
 	 * gives callers more flexibility in how they use it, for example it allows different block break methods in
-	 * {@link World} to be used depending on whether particles, sound, drops, etc. are desired). This should only be
+	 * {@link Level} to be used depending on whether particles, sound, drops, etc. are desired). This should only be
 	 * called server-side.
 	 * <p></p>
-	 * This method is a shorthand for {@link BlockUtils#checkBlockBreakXP(Entity, World, BlockPos)} {@code >= 0}.
+	 * This method is a shorthand for {@link BlockUtils#checkBlockBreakXP(Entity, Level, BlockPos)} {@code >= 0}.
 	 * <p></p>
 	 * <i>Be aware that this method triggers a variety of vanilla methods and Forge events, and depending on other
 	 * installed mods these may have side-effects. Use of this method just to query is therefore not advised - if it
@@ -261,14 +261,14 @@ public final class BlockUtils {
 	 * @param pos The position of the block being broken
 	 * @return True if the given entity is allowed to break the block, false otherwise.
 	 */
-	public static boolean canBreakBlock(@Nullable Entity breaker, World world, BlockPos pos){
+	public static boolean canBreakBlock(@Nullable Entity breaker, Level world, BlockPos pos){
 		return checkBlockBreakXP(breaker, world, pos) >= 0;
 	}
 
 	/**
 	 * Tests whether the given entity may break the block at the given location and returns the xp it should drop. Does
 	 * not actually break the block or drop the xp (this gives callers more flexibility in how they use it, for example
-	 * it allows different block break methods in {@link World} to be used depending on whether particles, sound, drops,
+	 * it allows different block break methods in {@link Level} to be used depending on whether particles, sound, drops,
 	 * etc. are desired). This should only be called server-side.
 	 * <p></p>
 	 * <i>Be aware that this method triggers a variety of vanilla methods and Forge events, and depending on other
@@ -279,7 +279,7 @@ public final class BlockUtils {
 	 * @param pos The position of the block being broken
 	 * @return The xp to be dropped if the given entity is allowed to break the block, -1 if the block cannot be broken.
 	 */
-	public static int checkBlockBreakXP(@Nullable Entity breaker, World world, BlockPos pos){
+	public static int checkBlockBreakXP(@Nullable Entity breaker, Level world, BlockPos pos){
 
 		if(world.isRemote){
 			Wizardry.logger.warn("BlockUtils#checkBlockBreakXP called from the client side! Blocks should be modified server-side only");
@@ -290,11 +290,11 @@ public final class BlockUtils {
 
 		if(world.isOutsideBuildHeight(pos)) return -1;
 
-		EntityPlayer fakeplayer = FakePlayerFactory.getMinecraft((WorldServer)world);
+		Player fakeplayer = FakePlayerFactory.getMinecraft((ServerLevel)world);
 
-		if(breaker instanceof EntityPlayer){
+		if(breaker instanceof Player){
 			// This line *should* trigger bukkit plugin hooks
-			if(!world.isBlockModifiable((EntityPlayer)breaker, pos)) return -1;
+			if(!world.isBlockModifiable((Player)breaker, pos)) return -1;
 		}else if(breaker == null){
 			// Also need this for dispensers
 			if(!world.isBlockModifiable(fakeplayer, pos)) return -1;
@@ -304,9 +304,9 @@ public final class BlockUtils {
 		IBlockState state = world.getBlockState(pos);
 		if(!state.getBlock().canEntityDestroy(state, world, pos, breaker)) return -1;
 		// Although the forge event only needs an EntityLivingBase, it seems it's not supposed to be for players
-		if(breaker instanceof EntityLiving && ForgeEventFactory.onEntityDestroyBlock((EntityLivingBase)breaker, pos, state)) return -1;
+		if(breaker instanceof EntityLiving && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
 		// Need to trigger PlayerEvent.BreakSpeed as some claim mods (e.g. LandManager) use it instead of BlockEvent.BreakEvent
-		if(breaker instanceof EntityPlayer && ForgeEventFactory.getBreakSpeed((EntityPlayer)breaker, state, 1, pos) < 0) return -1;
+		if(breaker instanceof Player && ForgeEventFactory.getBreakSpeed((Player)breaker, state, 1, pos) < 0) return -1;
 
 		if(breaker == null){ // Dispensers need to trigger something, so use a fake player as per BreakEvent's comment
 			if(MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(world, pos, state, fakeplayer))){
@@ -333,7 +333,7 @@ public final class BlockUtils {
 	 * @param pos The position of the block to be tested
 	 * @return True if the given block is a tree block, false if not.
 	 */
-	public static boolean isTreeBlock(World world, BlockPos pos){
+	public static boolean isTreeBlock(Level world, BlockPos pos){
 		Block block = world.getBlockState(pos).getBlock();
 		return block instanceof BlockLog || block instanceof BlockCactus
 				|| block.isLeaves(world.getBlockState(pos), world, pos) || block.isFoliage(world, pos)
@@ -366,12 +366,12 @@ public final class BlockUtils {
 	 * @return The position of the other half of the double chest, or null if the given position is not part of a
 	 * double chest.
 	 */
-	public static BlockPos getConnectedChest(World world, BlockPos pos){
+	public static BlockPos getConnectedChest(Level world, BlockPos pos){
 
 		Block block = world.getBlockState(pos).getBlock();
 
 		if(block instanceof BlockChest){
-			for(EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL){
+			for(Direction enumfacing : Direction.Plane.HORIZONTAL){
 				BlockPos pos1 = pos.offset(enumfacing);
 				if(world.getBlockState(pos1).getBlock() == block){
 					return pos1;
@@ -408,7 +408,7 @@ public final class BlockUtils {
 	 * @param freezeLava True to freeze lava into obsidian or cobblestone, false to leave it unchanged
 	 * @return True if any blocks were changed, false if not.
 	 */
-	public static boolean freeze(World world, BlockPos pos, boolean freezeLava){
+	public static boolean freeze(Level world, BlockPos pos, boolean freezeLava){
 
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
@@ -448,8 +448,8 @@ public final class BlockUtils {
 	 * of the inside or outside block of the surface depending on the direction).
 	 */
 	@Nullable
-	public static Integer getNearestSurface(World world, BlockPos pos, EnumFacing direction, int range,
-											boolean doubleSided, SurfaceCriteria criteria){
+	public static Integer getNearestSurface(Level world, BlockPos pos, Direction direction, int range,
+                                            boolean doubleSided, SurfaceCriteria criteria){
 
 		// This is a neat trick that allows a default 'not found' return value for integers where all possible integer
 		// values could, in theory, be returned. The alternative is to use a double and have NaN as the default, but
@@ -475,13 +475,13 @@ public final class BlockUtils {
 	/**
 	 * Finds the nearest floor level in the given direction from the given position,
 	 * within the range specified. This is a shorthand for
-	 * {@link BlockUtils#getNearestSurface(World, BlockPos, EnumFacing, int, boolean, SurfaceCriteria)};
+	 * {@link BlockUtils#getNearestSurface(Level, BlockPos, Direction, int, boolean, SurfaceCriteria)};
 	 * {@code doubleSided} defaults to true, {@code direction} defaults to {@code EnumFacing.UP}, and
 	 * {@code criteria} defaults to {@link SurfaceCriteria#COLLIDABLE}.
 	 */
 	@Nullable
-	public static Integer getNearestFloor(World world, BlockPos pos, int range){
-		return getNearestSurface(world, pos, EnumFacing.UP, range, true, SurfaceCriteria.COLLIDABLE);
+	public static Integer getNearestFloor(Level world, BlockPos pos, int range){
+		return getNearestSurface(world, pos, Direction.UP, range, true, SurfaceCriteria.COLLIDABLE);
 	}
 
 	/**
@@ -503,7 +503,7 @@ public final class BlockUtils {
 	@Nullable
 	public static BlockPos findNearbyFloorSpace(Entity entity, int horizontalRange, int verticalRange){
 
-		World world = entity.world;
+		Level world = entity.world;
 		BlockPos origin = new BlockPos(entity);
 		return findNearbyFloorSpace(world, origin, horizontalRange, verticalRange);
 	}
@@ -526,7 +526,7 @@ public final class BlockUtils {
 	 *         can (and should) immediately stop trying to cast a summoning spell if this returns null.
 	 */
 	@Nullable
-	public static BlockPos findNearbyFloorSpace(World world, BlockPos origin, int horizontalRange, int verticalRange){
+	public static BlockPos findNearbyFloorSpace(Level world, BlockPos origin, int horizontalRange, int verticalRange){
 		return findNearbyFloorSpace(world, origin, horizontalRange, verticalRange, true);
 	}
 
@@ -549,11 +549,11 @@ public final class BlockUtils {
 	 *         can (and should) immediately stop trying to cast a summoning spell if this returns null.
 	 */
 	@Nullable
-	public static BlockPos findNearbyFloorSpace(World world, BlockPos origin, int horizontalRange, int verticalRange, boolean lineOfSight){
+	public static BlockPos findNearbyFloorSpace(Level world, BlockPos origin, int horizontalRange, int verticalRange, boolean lineOfSight){
 
 		List<BlockPos> possibleLocations = new ArrayList<>();
 
-		final Vec3d centre = GeometryUtils.getCentre(origin);
+		final Vec3 centre = GeometryUtils.getCentre(origin);
 
 		for(int x = -horizontalRange; x <= horizontalRange; x++){
 			for(int z = -horizontalRange; z <= horizontalRange; z++){
@@ -586,7 +586,7 @@ public final class BlockUtils {
 
 	/**
 	 * A {@code SurfaceCriteria} object is used to define a 'surface', a boundary between two blocks which differ in
-	 * some way, for use in {@link BlockUtils#getNearestSurface(World, BlockPos, EnumFacing, int, boolean, SurfaceCriteria)}.
+	 * some way, for use in {@link BlockUtils#getNearestSurface(Level, BlockPos, Direction, int, boolean, SurfaceCriteria)}.
 	 * This provides a more flexible replacement for the old {@code getNearestFloorLevel} methods.<br>
 	 * <br>
 	 * <i>In the context of this class, 'outside' refers to the side of the surface that is in the supplied direction,
@@ -604,7 +604,7 @@ public final class BlockUtils {
 		 * @return True if the side {@code side} of the block at {@code pos} in {@code world} is a valid surface
 		 * according to this set of criteria, false otherwise.
 		 */
-		boolean test(World world, BlockPos pos, EnumFacing side);
+		boolean test(Level world, BlockPos pos, Direction side);
 
 		/** Returns a {@code SurfaceCriteria} with the opposite arrangement to this one. */
 		default SurfaceCriteria flip(){
@@ -613,7 +613,7 @@ public final class BlockUtils {
 
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
-		static SurfaceCriteria basedOn(BiPredicate<World, BlockPos> condition){
+		static SurfaceCriteria basedOn(BiPredicate<Level, BlockPos> condition){
 			return (world, pos, side) -> condition.test(world, pos) && !condition.test(world, pos.offset(side));
 		}
 
@@ -640,7 +640,7 @@ public final class BlockUtils {
 		/** Surface criterion which defines a surface as the boundary between any non-air block and an air block.
 		 * Used for particles, and is also good for placing fire. */
 		// Was getNearestFloorLevelC
-		SurfaceCriteria NOT_AIR_TO_AIR = basedOn(World::isAirBlock).flip();
+		SurfaceCriteria NOT_AIR_TO_AIR = basedOn(Level::isAirBlock).flip();
 
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through, and
 		 * a block that can be moved through or a tree block (log or leaves). Used for structure generation. */

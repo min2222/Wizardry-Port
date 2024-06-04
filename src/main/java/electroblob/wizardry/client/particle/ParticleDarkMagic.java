@@ -1,8 +1,8 @@
 package electroblob.wizardry.client.particle;
 
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 
 //@SideOnly(Side.CLIENT)
 public class ParticleDarkMagic extends ParticleWizardry {
@@ -10,7 +10,7 @@ public class ParticleDarkMagic extends ParticleWizardry {
 	/** Base spell texture index */
 	private int baseSpellTextureIndex = 128;
 
-	public ParticleDarkMagic(World world, double x, double y, double z){
+	public ParticleDarkMagic(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		
 		this.motionY *= 0.20000000298023224D;
@@ -22,7 +22,7 @@ public class ParticleDarkMagic extends ParticleWizardry {
 
 	@Override
 	public void renderParticle(BufferBuilder buffer, Entity entity, float partialTicks, float rotationX, float rotationZ,
-			float rotationYZ, float rotationXY, float rotationXZ){
+                               float rotationYZ, float rotationXY, float rotationXZ){
 		float f6 = ((float)this.particleAge + partialTicks) / (float)this.particleMaxAge * 32.0F;
 
 		if(f6 < 0.0F){

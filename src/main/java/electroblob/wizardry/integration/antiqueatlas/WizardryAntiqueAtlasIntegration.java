@@ -6,8 +6,8 @@ import hunternif.mc.atlas.api.AtlasAPI;
 import hunternif.mc.atlas.marker.GlobalMarkersData;
 import hunternif.mc.atlas.marker.Marker;
 import hunternif.mc.atlas.registry.MarkerType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +44,7 @@ public class WizardryAntiqueAtlasIntegration {
 
 	/** Places a global wizard tower marker in all antique atlases at the given coordinates in the given world if
 	 * {@link electroblob.wizardry.Settings#autoTowerMarkers} is enabled. Server side only! */
-	public static void markTower(World world, int x, int z){
+	public static void markTower(Level world, int x, int z){
 		if(enabled() && Wizardry.settings.autoTowerMarkers){
 			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, TOWER_MARKER.toString(), "integration.antiqueatlas.marker." + TOWER_MARKER.toString().replace(':', '.'), x, z);
 		}
@@ -52,7 +52,7 @@ public class WizardryAntiqueAtlasIntegration {
 
 	/** Places a global obelisk marker in all antique atlases at the given coordinates in the given world if
 	 * {@link electroblob.wizardry.Settings#autoObeliskMarkers} is enabled. Server side only! */
-	public static void markObelisk(World world, int x, int z){
+	public static void markObelisk(Level world, int x, int z){
 		if(enabled() && Wizardry.settings.autoObeliskMarkers){
 			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, OBELISK_MARKER.toString(), "integration.antiqueatlas.marker." + OBELISK_MARKER.toString().replace(':', '.'), x, z);
 		}
@@ -60,7 +60,7 @@ public class WizardryAntiqueAtlasIntegration {
 
 	/** Places a global shrine marker in all antique atlases at the given coordinates in the given world if
 	 * {@link electroblob.wizardry.Settings#autoShrineMarkers} is enabled. Server side only! */
-	public static void markShrine(World world, int x, int z){
+	public static void markShrine(Level world, int x, int z){
 		if(enabled() && Wizardry.settings.autoShrineMarkers){
 			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, SHRINE_MARKER.toString(), "integration.antiqueatlas.marker." + SHRINE_MARKER.toString().replace(':', '.'), x, z);
 		}
@@ -68,7 +68,7 @@ public class WizardryAntiqueAtlasIntegration {
 
 	/** Places a global library ruins marker in all antique atlases at the given coordinates in the given world if
 	 * {@link electroblob.wizardry.Settings#autoLibraryMarkers} is enabled. Server side only! */
-	public static void markLibrary(World world, int x, int z, boolean underground){
+	public static void markLibrary(Level world, int x, int z, boolean underground){
 		if(enabled() && (underground ? Wizardry.settings.autoUndergroundLibraryMarkers : Wizardry.settings.autoLibraryMarkers)){
 			AtlasAPI.getMarkerAPI().putGlobalMarker(world, false, LIBRARY_MARKER.toString(), "integration.antiqueatlas.marker." + LIBRARY_MARKER.toString().replace(':', '.'), x, z);
 		}

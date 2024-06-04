@@ -11,9 +11,9 @@ import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -276,7 +276,7 @@ public final class SpellProperties {
 	// 3. Built-in properties, stored in mods/[mod jar]/assets/spells
 	// There's a method for loading each of these below, because that makes sense to me!
 
-	public static void loadWorldSpecificSpellProperties(World world){
+	public static void loadWorldSpecificSpellProperties(Level world){
 
 		Wizardry.logger.info("Loading custom spell properties for world {}", world.getWorldInfo().getWorldName());
 

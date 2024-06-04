@@ -5,12 +5,12 @@ import net.minecraft.block.BlockObsidian;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -35,7 +35,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 	}
 
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random random){
+	public void updateTick(Level world, BlockPos pos, IBlockState state, Random random){
 		if((random.nextInt(3) == 0 || this.countNeighbors(world, pos) < 4) && world.getLightFromNeighbors(pos) > 11 - state.getValue(AGE) - state.getLightOpacity()){
 			this.slightlyMelt(world, pos, state, random, true);
 		}else{
@@ -44,7 +44,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
 		if(block == this){
 			int i = this.countNeighbors(world, pos);
 
@@ -54,11 +54,11 @@ public class BlockObsidianCrust extends BlockObsidian {
 		}
 	}
 
-	private int countNeighbors(World world, BlockPos pos){
+	private int countNeighbors(Level world, BlockPos pos){
 
 		int i = 0;
 
-		for(EnumFacing enumfacing : EnumFacing.values()){
+		for(Direction enumfacing : Direction.values()){
 			if(world.getBlockState(pos.offset(enumfacing)).getBlock() == this){
 				++i;
 
@@ -71,7 +71,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 		return i;
 	}
 
-	protected void slightlyMelt(World world, BlockPos pos, IBlockState state, Random random, boolean meltNeighbours){
+	protected void slightlyMelt(Level world, BlockPos pos, IBlockState state, Random random, boolean meltNeighbours){
 
 		int i = state.getValue(AGE);
 
@@ -86,7 +86,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 			if(meltNeighbours){
 
-				for(EnumFacing enumfacing : EnumFacing.values()){
+				for(Direction enumfacing : Direction.values()){
 
 					BlockPos blockpos = pos.offset(enumfacing);
 					IBlockState iblockstate = world.getBlockState(blockpos);
@@ -99,7 +99,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 		}
 	}
 
-	protected void melt(World world, BlockPos pos){
+	protected void melt(Level world, BlockPos pos){
 		world.setBlockState(pos, Blocks.LAVA.getDefaultState());
 		world.neighborChanged(pos, Blocks.LAVA, pos);
 	}
@@ -110,7 +110,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 	}
 
 	@Override
-	public ItemStack getItem(World world, BlockPos pos, IBlockState state){
+	public ItemStack getItem(Level world, BlockPos pos, IBlockState state){
 		return ItemStack.EMPTY;
 	}
 }

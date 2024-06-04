@@ -22,16 +22,16 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.core.Direction;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.CPacketCloseWindow;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 
@@ -302,10 +302,10 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 
 							BlockPos pos = (((TileEntity)bookshelf).getPos());
 
-							for(EnumFacing side : EnumFacing.VALUES){
+							for(Direction side : Direction.VALUES){
 								ParticleBuilder.create(ParticleBuilder.Type.BLOCK_HIGHLIGHT).pos(
 												GeometryUtils.getFaceCentre(pos, side)
-												.add(new Vec3d(side.getDirectionVec())
+												.add(new Vec3(side.getDirectionVec())
 												.scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET)))
 										.face(side).clr(0.9f, 0.5f, 0.8f).fade(0.7f, 0, 1).spawn(mc.world);
 							}

@@ -5,16 +5,16 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	private static final List<Spell> attack = Collections.singletonList(Spells.lightning_disc);
 
 	/** Creates a new storm elemental in the given world. */
-	public EntityStormElemental(World world){
+	public EntityStormElemental(Level world){
 		super(world);
 		// For some reason this can't be in initEntityAI
 		this.tasks.addTask(0, this.spellAttackAI);
@@ -41,7 +41,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 		this.tasks.addTask(2, new EntityAIWander(this, AISpeed));
 		this.tasks.addTask(3, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<EntityLivingBase>(this, EntityLivingBase.class,
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 
 		this.setAIMoveSpeed((float)AISpeed);
@@ -82,7 +82,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public int getBrightnessForRender(){
 		return 15728880;
 	}
@@ -113,7 +113,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 
 			for(int i=0; i<2; ++i){
 				
-				world.spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+				world.spawnParticle(ParticleTypes.SMOKE_LARGE,
 						this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width,
 						this.posY + this.rand.nextDouble() * (double)this.height,
 						this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);

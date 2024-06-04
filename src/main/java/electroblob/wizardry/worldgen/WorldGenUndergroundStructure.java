@@ -1,7 +1,7 @@
 package electroblob.wizardry.worldgen;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
@@ -11,7 +11,7 @@ import java.util.Random;
 /**
  * Base class for all wizardry's underground structures, which handles finding a location with a cave entrance (based
  * on {@code WorldGenDungeons}, with some tweaks). This class implements
- * {@link WorldGenWizardryStructure#attemptPosition(Template, PlacementSettings, Random, World, int, int, String)}
+ * {@link WorldGenWizardryStructure#attemptPosition(Template, PlacementSettings, Random, Level, int, int, String)}
  * but leaves the rest of the abstract methods to be implemented by subclasses.
  *
  * @author Electroblob
@@ -23,7 +23,7 @@ public abstract class WorldGenUndergroundStructure extends WorldGenWizardryStruc
 
 	@Nullable
 	@Override
-	protected BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, World world, int chunkX, int chunkZ, String structureFile){
+	protected BlockPos attemptPosition(Template template, PlacementSettings settings, Random random, Level world, int chunkX, int chunkZ, String structureFile){
 
 		BlockPos size = template.transformedSize(settings.getRotation());
 

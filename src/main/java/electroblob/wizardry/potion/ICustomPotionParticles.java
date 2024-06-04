@@ -1,9 +1,9 @@
 package electroblob.wizardry.potion;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.PotionColorCalculationEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * <br>
  * Potions that implement this interface also implement {@link ISyncedPotion} since any custom particles require syncing
  * to disappear correctly when the effect ends; if syncing is not required, override
- * {@link ISyncedPotion#shouldSync(EntityLivingBase)} to return false.
+ * {@link ISyncedPotion#shouldSync(LivingEntity)} to return false.
  * 
  * @author Electroblob
  * @since Wizardry 1.2
@@ -36,7 +36,7 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 	 * @param y The y coordinate of the particle, already set to a random value within the entity's bounding box.
 	 * @param z The z coordinate of the particle, already set to a random value within the entity's bounding box.
 	 */
-	void spawnCustomParticle(World world, double x, double y, double z);
+	void spawnCustomParticle(Level world, double x, double y, double z);
 	
 	/** Returns true if this potion should mix its colour with others, false if not. Defaults to false. */
 	default boolean shouldMixColour(){

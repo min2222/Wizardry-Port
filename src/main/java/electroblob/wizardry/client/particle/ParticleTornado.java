@@ -2,9 +2,9 @@ package electroblob.wizardry.client.particle;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleDigging;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 //@SideOnly(Side.CLIENT)
 public class ParticleTornado extends ParticleDigging {
@@ -16,8 +16,8 @@ public class ParticleTornado extends ParticleDigging {
 	private double velX, velZ;
 	private boolean fullBrightness = false;
 
-	public ParticleTornado(World world, int maxAge, double originX, double originZ, double radius, double yPos,
-			double velX, double velZ, IBlockState block){
+	public ParticleTornado(Level world, int maxAge, double originX, double originZ, double radius, double yPos,
+                           double velX, double velZ, IBlockState block){
 		super(world, 0, 0, 0, 0, 0, 0, block);
 		this.angle = this.rand.nextFloat() * (float)Math.PI * 2;
 		double x = originX - MathHelper.cos(angle) * radius;

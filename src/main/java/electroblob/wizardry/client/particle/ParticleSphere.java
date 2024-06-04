@@ -5,14 +5,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleSphere extends ParticleWizardry {
 
-	public ParticleSphere(World world, double x, double y, double z){
+	public ParticleSphere(Level world, double x, double y, double z){
 		super(world, x, y, z);
 		this.setRBGColorF(1, 1, 1);
 		this.particleMaxAge = 5;

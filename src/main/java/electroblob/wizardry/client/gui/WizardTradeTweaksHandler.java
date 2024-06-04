@@ -10,21 +10,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.inventory.Slot;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
+import net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
-@EventBusSubscriber(Side.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class WizardTradeTweaksHandler {
 
 	private static final ResourceLocation NEW_SPELL_ICON = new ResourceLocation(Wizardry.MODID, "textures/gui/container/new_spell_indicator.png");
@@ -44,7 +44,7 @@ public class WizardTradeTweaksHandler {
 	}
 
 	@SubscribeEvent
-	public static void onActionPerformedPostEvent(ActionPerformedEvent.Post event){
+	public static void onActionPerformedPostEvent(MouseButtonPressed.Post event){
 
 		if(event.getGui() instanceof GuiMerchant){
 
@@ -97,7 +97,7 @@ public class WizardTradeTweaksHandler {
 
 					if(recipe != null && recipe.getItemToSell().getItem() instanceof ItemSpellBook){
 
-						EntityPlayer player = Minecraft.getMinecraft().player;
+						Player player = Minecraft.getMinecraft().player;
 						Spell spell = Spell.byMetadata(recipe.getItemToSell().getMetadata());
 
 						if(Wizardry.settings.discoveryMode && !player.isCreative() && Wizardry.proxy.shouldDisplayDiscovered(spell, recipe.getItemToSell())

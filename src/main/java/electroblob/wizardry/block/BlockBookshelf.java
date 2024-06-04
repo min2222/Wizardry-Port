@@ -15,19 +15,18 @@ import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.event.world.WorldEvent;
@@ -80,7 +79,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
+	public IBlockState getStateForPlacement(Level world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
@@ -97,12 +96,12 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state){
+	public void onBlockAdded(Level worldIn, BlockPos pos, IBlockState state){
 		super.onBlockAdded(worldIn, pos, state);
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState block){
+	public void breakBlock(Level world, BlockPos pos, IBlockState block){
 
 		TileEntity tileentity = world.getTileEntity(pos);
 
@@ -152,13 +151,13 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(World world, int meta){
+	public TileEntity createNewTileEntity(Level world, int meta){
 		return new TileEntityBookshelf();
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState block, EntityPlayer player, EnumHand hand,
-									EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
+                                    EnumFacing side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -176,7 +175,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState state, World world, BlockPos pos){
+	public int getComparatorInputOverride(IBlockState state, Level world, BlockPos pos){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -196,7 +195,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public boolean eventReceived(IBlockState state, World world, BlockPos pos, int id, int param){
+	public boolean eventReceived(IBlockState state, Level world, BlockPos pos, int id, int param){
 		super.eventReceived(state, world, pos, id, param);
 		TileEntity tileentity = world.getTileEntity(pos);
 		return tileentity != null && tileentity.receiveClientEvent(id, param);
@@ -294,7 +293,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	 * @param exclude Any tile entities that should be excluded from the returned list
 	 * @return A list of nearby {@link IInventory} objects that count as valid bookshelves
 	 */
-	public static List<IInventory> findNearbyBookshelves(World world, BlockPos centre, TileEntity... exclude){
+	public static List<IInventory> findNearbyBookshelves(Level world, BlockPos centre, TileEntity... exclude){
 
 		List<IInventory> bookshelves = new ArrayList<>();
 
@@ -336,7 +335,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 		private Listener(){}
 
 		@Override
-		public void notifyBlockUpdate(World world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags){
+		public void notifyBlockUpdate(Level world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags){
 
 			if(oldState == newState) return; // Probably won't happen but just in case
 
@@ -352,14 +351,14 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 		// Dummy implementations
 		@Override public void notifyLightSet(BlockPos pos){}
 		@Override public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2){}
-		@Override public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch){}
+		@Override public void playSoundToAllNearExcept(@Nullable Player player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch){}
 		@Override public void playRecord(SoundEvent soundIn, BlockPos pos){}
 		@Override public void spawnParticle(int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord, double xSpeed, double ySpeed, double zSpeed, int... parameters){}
 		@Override public void spawnParticle(int id, boolean ignoreRange, boolean minimiseParticleLevel, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters){}
 		@Override public void onEntityAdded(Entity entityIn){}
 		@Override public void onEntityRemoved(Entity entityIn){}
 		@Override public void broadcastSound(int soundID, BlockPos pos, int data){}
-		@Override public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data){}
+		@Override public void playEvent(Player player, int type, BlockPos blockPosIn, int data){}
 		@Override public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress){}
 
 	}
