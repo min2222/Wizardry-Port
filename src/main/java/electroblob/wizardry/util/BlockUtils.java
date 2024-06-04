@@ -2,9 +2,8 @@ package electroblob.wizardry.util;
 
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
-import net.minecraft.block.*;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.block.properties.IProperty;
+import net.minecraft.world.level.block.properties.IProperty;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -342,8 +341,8 @@ public final class BlockUtils {
 	}
 
 	/**
-	 * Returns the predominant wood type (see {@link net.minecraft.block.BlockPlanks.EnumType}) for the given biome, or
-	 * the default {@link net.minecraft.block.BlockPlanks.EnumType#OAK} for biomes with no trees. This is accurate for
+	 * Returns the predominant wood type (see {@link net.minecraft.world.level.block.BlockPlanks.EnumType}) for the given biome, or
+	 * the default {@link net.minecraft.world.level.block.BlockPlanks.EnumType#OAK} for biomes with no trees. This is accurate for
 	 * most vanilla biomes
 	 * @param biome The biome to query
 	 * @return The wood type for the given biome

@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.block.BlockBush;
+import net.minecraft.world.level.block.BlockBush;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;

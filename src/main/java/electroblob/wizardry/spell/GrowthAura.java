@@ -5,7 +5,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.IGrowable;
+import net.minecraft.world.level.block.IGrowable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;

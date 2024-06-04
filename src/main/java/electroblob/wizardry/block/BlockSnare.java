@@ -9,7 +9,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.entity.BlockEntity;

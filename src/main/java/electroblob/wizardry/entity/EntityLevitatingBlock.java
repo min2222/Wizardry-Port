@@ -10,7 +10,7 @@ import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.BlockFalling;
+import net.minecraft.world.level.block.BlockFalling;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;

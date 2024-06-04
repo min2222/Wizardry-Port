@@ -35,7 +35,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -640,7 +640,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@SubscribeEvent
-	public static void onEntityJoinWorld(EntityJoinWorldEvent event){
+	public static void onEntityJoinWorld(EntityJoinLevelEvent event){
 		if(!event.getEntity().world.isRemote && event.getEntity() instanceof ServerPlayer){
 			// Synchronises wizard data after loading.
 			WizardData data = WizardData.get((Player)event.getEntity());

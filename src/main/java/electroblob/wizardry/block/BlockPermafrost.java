@@ -4,7 +4,7 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.state.BlockFaceShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

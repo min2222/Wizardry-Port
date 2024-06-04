@@ -18,7 +18,7 @@ import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -112,7 +112,7 @@ public interface Imbuement {
 	}
 
 	@SubscribeEvent
-	public static void onEntityJoinWorld(EntityJoinWorldEvent event){
+	public static void onEntityJoinWorld(EntityJoinLevelEvent event){
 		// Rather long-winded (but necessary) way of getting an arrow just after it has been fired, checking if the bow
 		// that fired it has the imbuement enchantment, and applying extra damage accordingly.
 		if(!event.getEntity().world.isRemote && event.getEntity() instanceof Arrow){

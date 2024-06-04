@@ -9,7 +9,7 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.util.Box;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -95,7 +95,7 @@ public class DonationPerksHandler {
 	}
 
 	@SubscribeEvent
-	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event){
+	public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event){
 		if(event.getEntity() instanceof ServerPlayer){
 			// Send donation perks to anyone who logs in
 			syncWith((ServerPlayer)event.getEntity());

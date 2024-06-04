@@ -1,6 +1,6 @@
 package electroblob.wizardry.block;
 
-import net.minecraft.block.BlockFrostedIce;
+import net.minecraft.world.level.block.BlockFrostedIce;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.util.Mth;

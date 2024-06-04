@@ -8,7 +8,7 @@ import electroblob.wizardry.packet.PacketDispenserCastSpell;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.BlockDispenser;
+import net.minecraft.world.level.block.BlockDispenser;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.dispenser.IPosition;
 import net.minecraft.init.Bootstrap.BehaviorDispenseOptional;

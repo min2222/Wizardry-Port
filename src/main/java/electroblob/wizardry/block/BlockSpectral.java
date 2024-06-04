@@ -5,7 +5,7 @@ import electroblob.wizardry.tileentity.TileEntityTimer;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.entity.BlockEntity;

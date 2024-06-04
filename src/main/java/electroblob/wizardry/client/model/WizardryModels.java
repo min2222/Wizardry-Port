@@ -10,7 +10,7 @@ import electroblob.wizardry.item.ItemCrystal;
 import electroblob.wizardry.item.ItemSpectralDust;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.block.BlockPlanks;
+import net.minecraft.world.level.block.BlockPlanks;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

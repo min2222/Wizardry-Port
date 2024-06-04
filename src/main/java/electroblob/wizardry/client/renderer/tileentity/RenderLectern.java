@@ -2,7 +2,7 @@ package electroblob.wizardry.client.renderer.tileentity;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.tileentity.TileEntityLectern;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.world.level.block.BlockHorizontal;
 import net.minecraft.client.model.ModelBook;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;

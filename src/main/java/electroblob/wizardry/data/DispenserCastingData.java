@@ -6,7 +6,7 @@ import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.BlockDispenser;
+import net.minecraft.world.level.block.BlockDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;

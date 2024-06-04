@@ -2,9 +2,9 @@ package electroblob.wizardry.block;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.BlockObsidian;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.BlockObsidian;
+import net.minecraft.world.level.block.properties.PropertyInteger;
+import net.minecraft.world.level.block.state.BlockStateContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
-/** Like {@link net.minecraft.block.BlockFrostedIce}, but for lava instead of water. */
+/** Like {@link net.minecraft.world.level.block.BlockFrostedIce}, but for lava instead of water. */
 // This is mostly copied from that class, with a few changes
 public class BlockObsidianCrust extends BlockObsidian {
 

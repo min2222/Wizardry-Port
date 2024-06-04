@@ -2,7 +2,7 @@ package electroblob.wizardry.block;
 
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;

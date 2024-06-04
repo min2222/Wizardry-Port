@@ -3,7 +3,7 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.util.BlockUtils;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.entity.BlockEntity;

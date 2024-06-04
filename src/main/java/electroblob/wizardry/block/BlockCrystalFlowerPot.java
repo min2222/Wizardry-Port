@@ -5,7 +5,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.state.BlockFaceShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;

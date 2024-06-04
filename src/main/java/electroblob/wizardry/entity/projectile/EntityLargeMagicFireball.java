@@ -14,7 +14,7 @@ import net.minecraft.world.entity.projectile.EntityLargeFireball;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -97,7 +97,7 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	}
 
 	@SubscribeEvent
-	public static void onEntityJoinWorldEvent(EntityJoinWorldEvent event){
+	public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event){
 		// Replaces all vanilla large fireballs with wizardry ones
 		if(Wizardry.settings.replaceVanillaFireballs && event.getEntity() instanceof EntityLargeFireball){
 
