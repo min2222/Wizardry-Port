@@ -103,7 +103,7 @@ public class ItemFrostAxe extends ItemAxe implements IConjuredItem {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public boolean hasEffect(ItemStack stack){
+	public boolean isFoil(ItemStack stack){
 		return true;
 	}
 

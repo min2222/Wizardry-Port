@@ -2,6 +2,7 @@ package electroblob.wizardry.block;
 
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.Material;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.IBlockAccess;
 
 import java.util.EnumMap;

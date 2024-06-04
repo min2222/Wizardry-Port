@@ -58,7 +58,7 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public boolean hasEffect(ItemStack stack){
+	public boolean isFoil(ItemStack stack){
 		return true;
 	}
 

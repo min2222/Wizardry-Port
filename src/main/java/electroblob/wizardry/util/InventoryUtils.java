@@ -1,5 +1,6 @@
 package electroblob.wizardry.util;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;

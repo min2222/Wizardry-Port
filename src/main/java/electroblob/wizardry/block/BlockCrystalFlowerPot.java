@@ -3,6 +3,7 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockFaceShape;
@@ -81,7 +82,7 @@ public class BlockCrystalFlowerPot extends Block {
 	}
 
 	@Override
-	public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune){
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 		super.getDrops(drops, world, pos, state, fortune);
 		drops.add(new ItemStack(WizardryBlocks.crystal_flower));
 	}

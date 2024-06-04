@@ -27,7 +27,7 @@ public class ItemArmourUpgrade extends Item {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public boolean hasEffect(ItemStack stack){
+	public boolean isFoil(ItemStack stack){
 		return true;
 	}
 

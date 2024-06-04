@@ -140,7 +140,7 @@ public class ItemArtefact extends Item {
 	}
 
 	@Override
-	public boolean hasEffect(ItemStack stack){
+	public boolean isFoil(ItemStack stack){
 		return rarity == Rarity.EPIC;
 	}
 

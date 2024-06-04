@@ -205,7 +205,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean hasEffect(ItemStack stack){
+	public boolean isFoil(ItemStack stack){
 		return !Wizardry.settings.legacyWandLevelling && this.tier.level < Tier.MASTER.level
 				&& WandHelper.getProgression(stack) >= tier.next().getProgression();
 	}

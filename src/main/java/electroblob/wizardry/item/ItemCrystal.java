@@ -3,11 +3,11 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.NonNullList;
 
 /** Note that in 1.13, <i>the flattening</i> will make this class redundant, much like ItemCoal, which is probably its
  * closest analog in vanilla. */
