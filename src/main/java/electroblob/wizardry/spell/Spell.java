@@ -672,7 +672,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * formatting (i.e. not coloured).
 	 */
 	public Component getNameForTranslation(){
-		return new TextComponentTranslation(getTranslationKey());
+		return Component.translatable(getTranslationKey());
 	}
 
 	/**
@@ -688,7 +688,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * formatting (i.e. coloured).
 	 */
 	public Component getNameForTranslationFormatted(){
-		return new TextComponentTranslation(getTranslationKey()).setStyle(this.getElement().getColour());
+		return Component.translatable(getTranslationKey()).setStyle(this.getElement().getColour());
 	}
 
 	/**

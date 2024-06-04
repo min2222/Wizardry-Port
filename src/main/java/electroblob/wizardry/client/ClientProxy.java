@@ -695,7 +695,7 @@ public class ClientProxy extends CommonProxy {
 				Entity target = Minecraft.getMinecraft().world.getEntityByID(message.targetID);
 				if(target instanceof Mob){
 					((Possession)Spells.possession).possess(player, (Mob)target, message.duration);
-					player.sendStatusMessage(new TextComponentTranslation("spell." + Spells.possession.getRegistryName()
+					player.sendStatusMessage(Component.translatable("spell." + Spells.possession.getRegistryName()
 							+ ".success", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()), true);
 				}
 				else Wizardry.logger.warn("Received a PacketPossession, but the target ID did not match any living entity");

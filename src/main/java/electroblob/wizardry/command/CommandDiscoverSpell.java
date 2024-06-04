@@ -111,21 +111,21 @@ public class CommandDiscoverSpell extends CommandBase {
 				if(clear){
 					data.spellsDiscovered.clear();
 					if(server.sendCommandFeedback()) sender.sendMessage(
-							new TextComponentTranslation("commands." + Wizardry.MODID + ":discoverspell.clear", player.getName()));
+							Component.translatable("commands." + Wizardry.MODID + ":discoverspell.clear", player.getName()));
 				}else if(all){
 					data.spellsDiscovered.addAll(Spell.getAllSpells());
 					if(server.sendCommandFeedback()) sender.sendMessage(
-							new TextComponentTranslation("commands." + Wizardry.MODID + ":discoverspell.all", player.getName()));
+							Component.translatable("commands." + Wizardry.MODID + ":discoverspell.all", player.getName()));
 				}else{
 					if(data.hasSpellBeenDiscovered(spell)){
 						data.spellsDiscovered.remove(spell);
-						if(server.sendCommandFeedback()) sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":discoverspell.removespell",
+						if(server.sendCommandFeedback()) sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":discoverspell.removespell",
 								spell.getNameForTranslationFormatted(), player.getName()));
 					}else{
 						if(!MinecraftForge.EVENT_BUS
 								.post(new DiscoverSpellEvent(player, spell, DiscoverSpellEvent.Source.COMMAND))){
 							data.discoverSpell(spell);
-							if(server.sendCommandFeedback()) sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":discoverspell.addspell",
+							if(server.sendCommandFeedback()) sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":discoverspell.addspell",
 									spell.getNameForTranslationFormatted(), player.getName()));
 						}
 					}

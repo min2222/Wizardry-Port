@@ -35,7 +35,7 @@ public class Wither extends SpellRay {
 			// Has no effect on withers or wither skeletons.
 			if(MagicDamage.isEntityImmune(DamageType.WITHER, target)){
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
+						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));

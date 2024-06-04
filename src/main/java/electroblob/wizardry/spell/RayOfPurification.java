@@ -56,7 +56,7 @@ public class RayOfPurification extends SpellRay {
 
 			if(MagicDamage.isEntityImmune(DamageType.RADIANT, target)){
 				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
-				.sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
+				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			}else if (ticksInUse % 10 == 0) {
 

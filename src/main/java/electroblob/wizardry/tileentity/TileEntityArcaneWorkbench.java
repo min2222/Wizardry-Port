@@ -87,7 +87,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 	}
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount){
+	public ItemStack remove(int slot, int amount){
 		
 		ItemStack stack = getStackInSlot(slot);
 		

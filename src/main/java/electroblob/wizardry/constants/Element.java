@@ -80,7 +80,7 @@ public enum Element implements IStringSerializable {
 
 	/** Returns the translated display name for wizards of this element, shown in the trading GUI. */
 	public Component getWizardName(){
-		return new TextComponentTranslation("element." + getName() + ".wizard");
+		return Component.translatable("element." + getName() + ".wizard");
 	}
 
 	/** Returns this element's unlocalised name. Also used as the serialised string in block properties. */

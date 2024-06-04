@@ -3,6 +3,7 @@ package electroblob.wizardry.util;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 
 import java.util.*;
@@ -198,7 +199,7 @@ public final class NBTExtras {
 	 * <i>Usage note: this method complements {@link CompoundTag#setUniqueId(String, UUID)} and
 	 * {@link CompoundTag#getUniqueId(String)}, which store UUIDs by appending "Most" and "Least" to the given
 	 * key to store the most and least significant UUID bits respectively. It will not work for the UUID methods in
-	 * {@link net.minecraft.nbt.NBTUtil}, which store the long values under "M" and "L" in their own compound tag.</i>
+	 * {@link NbtUtils}, which store the long values under "M" and "L" in their own compound tag.</i>
 	 */
 	public static void removeUniqueId(CompoundTag tag, String key){
 		tag.removeTag(key + "Most");

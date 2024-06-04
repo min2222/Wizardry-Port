@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -42,7 +42,7 @@ public class RenderContainmentField {
 
 		if(player.isPotionActive(WizardryPotions.containment)){
 
-			Vec3 centre = GeometryUtils.getCentre(NBTUtil.getPosFromTag(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
+			Vec3 centre = GeometryUtils.getCentre(NbtUtils.getPosFromTag(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
 			float r = PotionContainment.getContainmentDistance(player.getActivePotionEffect(WizardryPotions.containment).getAmplifier());
 
 			GlStateManager.pushMatrix();

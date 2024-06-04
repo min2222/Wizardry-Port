@@ -70,7 +70,7 @@ public class ItemIdentificationScroll extends Item {
 							data.discoverSpell(spell);
 							player.playSound(WizardrySounds.MISC_DISCOVER_SPELL, 1.25f, 1);
 							if(!player.isCreative()) stack.shrink(1);
-							if(!world.isRemote) player.sendMessage(new TextComponentTranslation("spell.discover",
+							if(!world.isRemote) player.sendMessage(Component.translatable("spell.discover",
 									spell.getNameForTranslationFormatted()));
 
 							return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
@@ -80,7 +80,7 @@ public class ItemIdentificationScroll extends Item {
 			}
 			// If it found nothing to identify, it says so!
 			if(!world.isRemote) player.sendMessage(
-					new TextComponentTranslation("item." + Wizardry.MODID + ":identification_scroll.nothing_to_identify"));
+					Component.translatable("item." + Wizardry.MODID + ":identification_scroll.nothing_to_identify"));
 		}
 
 		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);

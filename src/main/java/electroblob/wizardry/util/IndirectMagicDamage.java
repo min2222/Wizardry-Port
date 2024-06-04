@@ -2,9 +2,9 @@ package electroblob.wizardry.util;
 
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 
-public class IndirectMagicDamage extends EntityDamageSourceIndirect implements IElementalDamage {
+public class IndirectMagicDamage extends IndirectEntityDamageSource implements IElementalDamage {
 
 	private final DamageType type;
 	private final boolean isRetaliatory;

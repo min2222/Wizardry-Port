@@ -529,7 +529,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 						caster.playSound(WizardrySounds.ITEM_WAND_LEVELUP, 1.25f, 1);
 						WizardryAdvancementTriggers.wand_levelup.triggerFor(caster);
 						if(!world.isRemote)
-							caster.sendMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":wand.levelup",
+							caster.sendMessage(Component.translatable("item." + Wizardry.MODID + ":wand.levelup",
 									this.getItemStackDisplayName(stack), nextTier.getNameForTranslationFormatted()));
 					}
 				}
@@ -584,7 +584,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		if(player.isSneaking() && entity instanceof Player && WizardData.get(player) != null){
 			String string = WizardData.get(player).toggleAlly((Player)entity) ? "item." + Wizardry.MODID + ":wand.addally"
 					: "item." + Wizardry.MODID + ":wand.removeally";
-			if(!player.world.isRemote) player.sendMessage(new TextComponentTranslation(string, entity.getName()));
+			if(!player.world.isRemote) player.sendMessage(Component.translatable(string, entity.getName()));
 			return true;
 		}
 

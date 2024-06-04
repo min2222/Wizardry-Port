@@ -202,7 +202,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 
 				if(stack.getTag() != null){
 					int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY) - 1;
-					stack.getTag().putInteger(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
+					stack.getTag().putInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
 					if(shotsLeft == 0 && !world.isRemote){
 						stack.setItemDamage(getMaxDamage(stack) - getAnimationFrames());
 					}

@@ -137,7 +137,7 @@ public final class WizardryEventHandler {
 		// If a spell is disabled in the config, it will not work.
 		if(!enabled){
 			if(event.getCaster() != null && !event.getCaster().world.isRemote) event.getCaster().sendMessage(
-					new TextComponentTranslation("spell.disabled", event.getSpell().getNameForTranslationFormatted()));
+					Component.translatable("spell.disabled", event.getSpell().getNameForTranslationFormatted()));
 			event.setCanceled(true);
 		}
 	}
@@ -175,7 +175,7 @@ public final class WizardryEventHandler {
 						// Sound and text only happen server-side, in survival, with discovery mode on, and only when
 						// the spell wasn't cast using commands.
 						EntityUtils.playSoundAtPlayer(player, WizardrySounds.MISC_DISCOVER_SPELL, 1.25f, 1);
-						player.sendMessage(new TextComponentTranslation("spell.discover",
+						player.sendMessage(Component.translatable("spell.discover",
 								event.getSpell().getNameForTranslationFormatted()));
 					}
 				}

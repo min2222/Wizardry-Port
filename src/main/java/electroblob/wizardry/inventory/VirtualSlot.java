@@ -87,9 +87,9 @@ public class VirtualSlot extends Slot {
 	}
 
 	@Override
-	public ItemStack decrStackSize(int amount){
+	public ItemStack remove(int amount){
 		if(isValid() && inventory instanceof TileEntityBookshelf) ((TileEntityBookshelf)inventory).sync();
-		return isValid() ? super.decrStackSize(amount) : ItemStack.EMPTY;
+		return isValid() ? super.remove(amount) : ItemStack.EMPTY;
 	}
 
 }

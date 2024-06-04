@@ -10,12 +10,12 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.damagesource.DamageSource;
@@ -35,9 +35,9 @@ import java.util.UUID;
 public class CurseOfSoulbinding extends SpellRay {
 
 	public static final IStoredVariable<Set<UUID>> TARGETS_KEY = new IStoredVariable.StoredVariable<>("soulboundCreatures",
-			s -> NBTExtras.listToNBT(s, NBTUtil::createUUIDTag),
+			s -> NBTExtras.listToNBT(s, NbtUtils::createUUIDTag),
 			// For some reason gradle screams at me unless I explicitly declare the type of t here, despite IntelliJ being fine without it
-			(ListTag t) -> new HashSet<>(NBTExtras.NBTToList(t, NBTUtil::getUUIDFromTag)),
+			(ListTag t) -> new HashSet<>(NBTExtras.NBTToList(t, NbtUtils::getUUIDFromTag)),
 			// Curse of soulbinding is lifted when the caster dies, but not when they switch dimensions.
 			Persistence.DIMENSION_CHANGE);
 

@@ -80,7 +80,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	// Still better to override these three because then we can sync only when necessary
 
 	@Override
-	public ItemStack decrStackSize(int slot, int amount){
+	public ItemStack remove(int slot, int amount){
 
 		this.fillWithLoot(null);
 
@@ -150,7 +150,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	@Override
 	public Component getDisplayName(){
-		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+		return this.hasCustomName() ? new TextComponentString(this.getName()) : Component.translatable(this.getName());
 	}
 
 	@Override

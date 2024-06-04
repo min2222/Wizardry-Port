@@ -201,7 +201,7 @@ public class CommandCastSpell extends CommandBase {
 						WizardryPacketHandler.net.sendToDimension(msg, world.provider.getDimension());
 
 						if(server.sendCommandFeedback()){
-							sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success_position_continuous",
+							sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":cast.success_position_continuous",
 									spell.getNameForTranslationFormatted(), origin.x, origin.y, origin.z, seconds));
 						}
 
@@ -223,7 +223,7 @@ public class CommandCastSpell extends CommandBase {
 						}
 
 						if(server.sendCommandFeedback()){
-							sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success_position",
+							sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":cast.success_position",
 									spell.getNameForTranslationFormatted(), origin.x, origin.y, origin.z));
 						}
 
@@ -255,10 +255,10 @@ public class CommandCastSpell extends CommandBase {
 							if(server.sendCommandFeedback()){
 								if(castAsOtherPlayer){
 									sender.sendMessage(
-											new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success_remote_continuous",
+											Component.translatable("commands." + Wizardry.MODID + ":cast.success_remote_continuous",
 													spell.getNameForTranslationFormatted(), caster.getName(), seconds));
 								}else{
-									sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success_continuous",
+									sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":cast.success_continuous",
 											spell.getNameForTranslationFormatted(), seconds));
 								}
 							}
@@ -283,10 +283,10 @@ public class CommandCastSpell extends CommandBase {
 
 						if(server.sendCommandFeedback()){
 							if(castAsOtherPlayer){
-								sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success_remote",
+								sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":cast.success_remote",
 										spell.getNameForTranslationFormatted(), caster.getName()));
 							}else{
-								sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.success",
+								sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":cast.success",
 										spell.getNameForTranslationFormatted()));
 							}
 						}
@@ -302,7 +302,7 @@ public class CommandCastSpell extends CommandBase {
 
 	/** Displays the "Unable to cast [spell]" message in the chat. */
 	private void displayFailMessage(ICommandSender sender, Spell spell){
-		Component message = new TextComponentTranslation("commands." + Wizardry.MODID + ":cast.fail",
+		Component message = Component.translatable("commands." + Wizardry.MODID + ":cast.fail",
 				spell.getNameForTranslationFormatted());
 		message.getStyle().setColor(ChatFormatting.RED);
 		sender.sendMessage(message);

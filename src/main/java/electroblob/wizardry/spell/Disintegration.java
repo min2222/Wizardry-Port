@@ -34,7 +34,7 @@ public class Disintegration extends SpellRay {
 		
 		if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
 			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-					new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
+					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 		}else{
 
 			target.setFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));

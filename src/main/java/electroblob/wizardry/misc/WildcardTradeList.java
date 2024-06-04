@@ -2,8 +2,8 @@ package electroblob.wizardry.misc;
 
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
@@ -62,7 +62,7 @@ public class WildcardTradeList extends MerchantRecipeList {
     			// Can't use ItemStack.areItemsEqualIgnoreDurability because that only works for items with durability, not subtypes.
     			&& stack1.getItem() == stack2.getItem()) return true;
     	
-        return ItemStack.areItemsEqual(stack1, stack2) && (!stack2.hasTagCompound() || stack1.hasTagCompound() && NBTUtil.areNBTEquals(stack2.getTag(), stack1.getTag(), false));
+        return ItemStack.areItemsEqual(stack1, stack2) && (!stack2.hasTagCompound() || stack1.hasTagCompound() && NbtUtils.areNBTEquals(stack2.getTag(), stack1.getTag(), false));
     }
 
 	@Override

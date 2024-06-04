@@ -40,7 +40,7 @@ public class ItemWizardHandbook extends Item {
 		if (Wizardry.settings.loadHandbook) {
 			player.openGui(Wizardry.instance, WizardryGuiHandler.WIZARD_HANDBOOK, world, 0, 0, 0);
 		} else if (!world.isRemote){
-			player.sendStatusMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":wizard_handbook.disabled"), false);
+			player.sendStatusMessage(Component.translatable("item." + Wizardry.MODID + ":wizard_handbook.disabled"), false);
 		}
 		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
 	}

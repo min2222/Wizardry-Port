@@ -81,7 +81,7 @@ public class CommandSetAlly extends CommandBase {
 						&& !EntityUtils.isPlayerOp((Player)sender, server)){
 					// Displays a chat message if a non-op tries to modify another player's allies.
 					if(server.sendCommandFeedback()){
-						TextComponentTranslation TextComponentTranslation2 = new TextComponentTranslation(
+						TextComponentTranslation TextComponentTranslation2 = Component.translatable(
 								"commands." + Wizardry.MODID + ":ally.permission");
 						TextComponentTranslation2.getStyle().setColor(ChatFormatting.RED);
 						allyOf.sendMessage(TextComponentTranslation2);
@@ -103,12 +103,12 @@ public class CommandSetAlly extends CommandBase {
 				if(WizardData.get(allyOf) != null){
 					String string = WizardData.get(allyOf).toggleAlly(ally) ? "add" : "remove";
 					if(executeAsOtherPlayer){
-						sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":ally." + string + "ally",
+						sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":ally." + string + "ally",
 								ally.getName(), allyOf.getName()));
 						// In this case, the player whose allies have been modified is also notified.
-						allyOf.sendMessage(new TextComponentTranslation("item.wand." + string + "ally", ally.getName()));
+						allyOf.sendMessage(Component.translatable("item.wand." + string + "ally", ally.getName()));
 					}else{
-						sender.sendMessage(new TextComponentTranslation("item.wand." + string + "ally", ally.getName()));
+						sender.sendMessage(Component.translatable("item.wand." + string + "ally", ally.getName()));
 					}
 				}
 			}

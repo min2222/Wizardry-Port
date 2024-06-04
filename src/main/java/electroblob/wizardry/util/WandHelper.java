@@ -151,7 +151,7 @@ public final class WandHelper {
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
 		if(wand.getTag() != null){
-			wand.getTag().putInteger(SELECTED_SPELL_KEY, getNextSpellIndex(wand));
+			wand.getTag().putInt(SELECTED_SPELL_KEY, getNextSpellIndex(wand));
 		}
 	}
 
@@ -161,7 +161,7 @@ public final class WandHelper {
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
 		if(wand.getTag() != null){
-			wand.getTag().putInteger(SELECTED_SPELL_KEY, getPreviousSpellIndex(wand));
+			wand.getTag().putInt(SELECTED_SPELL_KEY, getPreviousSpellIndex(wand));
 		}
 	}
 
@@ -179,7 +179,7 @@ public final class WandHelper {
 		if(getSpells(wand).length < 0) setSpells(wand, new Spell[ItemWand.BASE_SPELL_SLOTS]);
 
 		if(wand.getTag() != null){
-			wand.getTag().putInteger(SELECTED_SPELL_KEY, index);
+			wand.getTag().putInt(SELECTED_SPELL_KEY, index);
 		}
 
 		return true;
@@ -484,7 +484,7 @@ public final class WandHelper {
 
 		if(wand.getTag() == null) wand.setTag((new CompoundTag()));
 
-		wand.getTag().putInteger(PROGRESSION_KEY, progression);
+		wand.getTag().putInt(PROGRESSION_KEY, progression);
 	}
 
 	/** Returns the progression value for the given wand, or 0 if the wand has no data. */
@@ -532,12 +532,12 @@ public final class WandHelper {
 			if (crystals.getItem().getCount() * manaPerItem < chargeDepleted) {
 				// If there aren't enough crystals to fully charge the item
 				iManaStoringItem.rechargeMana(centre.getItem(), crystals.getItem().getCount() * manaPerItem);
-				crystals.decrStackSize(crystals.getItem().getCount());
+				crystals.remove(crystals.getItem().getCount());
 
 			} else {
 				// If there are excess crystals (or just enough)
 				iManaStoringItem.setMana(centre.getItem(), iManaStoringItem.getManaCapacity(centre.getItem()));
-				crystals.decrStackSize((int) Math.ceil(((double) chargeDepleted) / manaPerItem));
+				crystals.remove((int) Math.ceil(((double) chargeDepleted) / manaPerItem));
 			}
 
 			changed = true;

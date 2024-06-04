@@ -372,7 +372,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		ItemStack stack = player.getHeldItem(hand);
 
 		// Debugging
-		// player.addChatComponentMessage(new TextComponentTranslation("wizard.debug",
+		// player.addChatComponentMessage(Component.translatable("wizard.debug",
 		// Spell.get(spells[1]).getDisplayName(), Spell.get(spells[2]).getDisplayName(),
 		// Spell.get(spells[3]).getDisplayName()));
 
@@ -381,7 +381,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 			Spell spell = Spell.byMetadata(stack.getItemDamage());
 			if(this.spells.size() >= 4 && spell.canBeCastBy(this, true)){
 				// The set(...) method returns the element that was replaced - neat!
-				player.sendMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
+				player.sendMessage(Component.translatable("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
 						this.getDisplayName(), this.spells.set(rand.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
 						spell.getNameForTranslationFormatted()));
 				return true;
@@ -478,7 +478,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 						if(!world.isRemote && !this.getCustomer().isCreative() && Wizardry.settings.discoveryMode){
 							// Sound and text only happen server-side, in survival, with discovery mode on
 							EntityUtils.playSoundAtPlayer(this.getCustomer(), WizardrySounds.MISC_DISCOVER_SPELL, 1.25f, 1);
-							this.getCustomer().sendMessage(new TextComponentTranslation("spell.discover",
+							this.getCustomer().sendMessage(Component.translatable("spell.discover",
 									spell.getNameForTranslationFormatted()));
 						}
 					}

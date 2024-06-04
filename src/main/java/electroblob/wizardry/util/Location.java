@@ -1,7 +1,7 @@
 package electroblob.wizardry.util;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.core.BlockPos;
 
 import javax.annotation.concurrent.Immutable;
@@ -32,16 +32,16 @@ public class Location {
 	}
 
 	/** Creates and returns an {@link CompoundTag} representing this location. The returned compound tag is the
-	 * same as that returned by {@link NBTUtil#createPosTag(BlockPos)}, but with an extra "dimension" key. */
+	 * same as that returned by {@link NbtUtils#createPosTag(BlockPos)}, but with an extra "dimension" key. */
 	public CompoundTag toNBT(){
-		CompoundTag nbt = NBTUtil.createPosTag(pos);
+		CompoundTag nbt = NbtUtils.createPosTag(pos);
 		nbt.putInt("dimension", dimension);
 		return nbt;
 	}
 
 	/** Creates a new {@code Location} from the given {@link CompoundTag}. The given compound tag should be the
-	 * same as that returned by {@link NBTUtil#createPosTag(BlockPos)}, but with an extra "dimension" key. */
+	 * same as that returned by {@link NbtUtils#createPosTag(BlockPos)}, but with an extra "dimension" key. */
 	public static Location fromNBT(CompoundTag nbt){
-		return new Location(NBTUtil.getPosFromTag(nbt), nbt.getInt("dimension"));
+		return new Location(NbtUtils.getPosFromTag(nbt), nbt.getInt("dimension"));
 	}
 }

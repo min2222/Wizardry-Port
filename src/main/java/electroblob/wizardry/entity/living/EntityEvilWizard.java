@@ -13,6 +13,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.monster.EntityMob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +24,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -261,7 +261,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		ItemStack stack = player.getHeldItem(hand);
 
 		// Debugging
-		// player.addChatComponentMessage(new TextComponentTranslation("wizard.debug",
+		// player.addChatComponentMessage(Component.translatable("wizard.debug",
 		// Spell.get(spells[1]).getDisplayName(), Spell.get(spells[2]).getDisplayName(),
 		// Spell.get(spells[3]).getDisplayName()));
 
@@ -270,7 +270,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 			Spell spell = Spell.byMetadata(stack.getItemDamage());
 			if(this.spells.size() >= 4 && spell.canBeCastBy(this, true)){
 				// The set(...) method returns the element that was replaced - neat!
-				player.sendMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
+				player.sendMessage(Component.translatable("item." + Wizardry.MODID + ":spell_book.apply_to_wizard",
 						this.getDisplayName(), this.spells.set(rand.nextInt(3) + 1, spell).getNameForTranslationFormatted(),
 						spell.getNameForTranslationFormatted()));
 				return true;
@@ -288,7 +288,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		nbt.putInt("skin", this.textureIndex);
 		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> new NBTTagInt(spell.metadata())));
 		nbt.setBoolean("hasStructure", this.hasStructure);
-		NBTExtras.storeTagSafely(nbt, "groupUUIDs", NBTExtras.listToNBT(groupUUIDs, NBTUtil::createUUIDTag));
+		NBTExtras.storeTagSafely(nbt, "groupUUIDs", NBTExtras.listToNBT(groupUUIDs, NbtUtils::createUUIDTag));
 	}
 
 	@Override
@@ -299,7 +299,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 		this.spells = (List<Spell>)NBTExtras.NBTToList(nbt.getTagList("spells", NBT.TAG_INT),
 				(NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
 		this.hasStructure = nbt.getBoolean("hasStructure");
-		this.groupUUIDs.addAll(NBTExtras.NBTToList(nbt.getTagList("groupUUIDs", NBT.TAG_COMPOUND), NBTUtil::getUUIDFromTag));
+		this.groupUUIDs.addAll(NBTExtras.NBTToList(nbt.getTagList("groupUUIDs", NBT.TAG_COMPOUND), NbtUtils::getUUIDFromTag));
 	}
 	
 	@Override

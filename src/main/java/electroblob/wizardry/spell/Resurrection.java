@@ -79,10 +79,10 @@ public class Resurrection extends Spell {
 				WizardryPacketHandler.net.sendToDimension(msg, caster.dimension);
 
 				if(caster == nearestDeadAlly){
-					caster.getServer().getPlayerList().sendMessage(new TextComponentTranslation(
+					caster.getServer().getPlayerList().sendMessage(Component.translatable(
 							"spell." + this.getRegistryName() + ".resurrect_self", caster.getDisplayName()));
 				}else{
-					caster.getServer().getPlayerList().sendMessage(new TextComponentTranslation(
+					caster.getServer().getPlayerList().sendMessage(Component.translatable(
 							"spell." + this.getRegistryName() + ".resurrect_ally", nearestDeadAlly.getDisplayName(), caster.getDisplayName()));
 				}
 

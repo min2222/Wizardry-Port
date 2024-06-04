@@ -60,7 +60,7 @@ public class MindControl extends SpellRay {
 				if(!world.isRemote){
 					if(caster instanceof Player){
 						// Adds a message saying that the player/boss entity/wizard resisted mind control
-						((Player)caster).sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
+						((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 					}
 				}

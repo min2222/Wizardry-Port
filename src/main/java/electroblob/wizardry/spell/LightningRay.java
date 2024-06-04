@@ -47,7 +47,7 @@ public class LightningRay extends SpellRay {
 
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
 				if(!world.isRemote && ticksInUse == 1 && caster instanceof Player)
-					((Player)caster).sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
+					((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 							this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.

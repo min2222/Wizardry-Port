@@ -73,7 +73,7 @@ public class GreaterTelekinesis extends SpellRay {
 					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
+						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 				return false;
 			}
 

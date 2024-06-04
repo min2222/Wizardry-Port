@@ -33,14 +33,14 @@ public class InvokeWeather extends Spell {
 				int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
 				
 				if(world.isRaining()){
-					caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".sun"), true);
+					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".sun"), true);
 					world.getWorldInfo().setCleanWeatherTime(standardWeatherTime);
 					world.getWorldInfo().setRainTime(0);
 					world.getWorldInfo().setThunderTime(0);
 					world.getWorldInfo().setRaining(false);
 					world.getWorldInfo().setThundering(false);
 				}else{
-					caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".rain"), true);
+					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".rain"), true);
 					world.getWorldInfo().setCleanWeatherTime(0);
 					world.getWorldInfo().setRainTime(standardWeatherTime);
 					world.getWorldInfo().setThunderTime(standardWeatherTime);

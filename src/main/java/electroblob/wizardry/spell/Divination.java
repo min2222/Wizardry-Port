@@ -94,8 +94,8 @@ public class Divination extends Spell {
 		}
 
 		if(!world.isRemote){
-			caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + "."
-					+ strength.key, new TextComponentTranslation("spell." + this.getUnlocalisedName() + "."
+			caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + "."
+					+ strength.key, Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ RelativeFacing.relativise(direction, caster).name)), false);
 		}else{
 			switch(strength){

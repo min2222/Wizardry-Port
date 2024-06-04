@@ -49,7 +49,7 @@ public class SlotBookList extends SlotItemClassList {
 	// Therefore we only need to handle empty slot clicks
 
 	@Override
-	public ItemStack decrStackSize(int amount){
+	public ItemStack remove(int amount){
 		return ItemStack.EMPTY;
 	}
 

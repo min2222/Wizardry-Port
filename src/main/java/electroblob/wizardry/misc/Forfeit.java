@@ -91,19 +91,19 @@ public abstract class Forfeit {
 	 * @see Forfeit#getMessageForScroll()
 	 */
 	public Component getMessage(Component implementName){
-		return new TextComponentTranslation("forfeit." + name.toString(), implementName);
+		return Component.translatable("forfeit." + name.toString(), implementName);
 	}
 
 	/** Wrapper for {@link Forfeit#getMessage(Component)} with {@code implementName} set to the lang file key
 	 * {@code item.ebwizardry:wand.generic} */
 	public Component getMessageForWand(){
-		return getMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":wand.generic"));
+		return getMessage(Component.translatable("item." + Wizardry.MODID + ":wand.generic"));
 	}
 
 	/** Wrapper for {@link Forfeit#getMessage(Component)} with {@code implementName} set to the lang file key
 	 * {@code item.ebwizardry:scroll.generic} */
 	public Component getMessageForScroll(){
-		return getMessage(new TextComponentTranslation("item." + Wizardry.MODID + ":scroll.generic"));
+		return getMessage(Component.translatable("item." + Wizardry.MODID + ":scroll.generic"));
 	}
 
 	/** Returns the {@link SoundEvent} played when this forfeit is activated. */
@@ -170,7 +170,7 @@ public abstract class Forfeit {
 				Forfeit forfeit = getRandomForfeit(data.synchronisedRandom, event.getSpell().getTier(), event.getSpell().getElement());
 
 				if(forfeit == null){ // Should never happen, but just in case...
-					if(!event.getWorld().isRemote) player.sendMessage(new TextComponentTranslation("forfeit.ebwizardry:do_nothing"));
+					if(!event.getWorld().isRemote) player.sendMessage(Component.translatable("forfeit.ebwizardry:do_nothing"));
 					return;
 				}
 

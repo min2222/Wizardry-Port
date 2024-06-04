@@ -31,7 +31,7 @@ public class IndirectMinionDamage extends IndirectMagicDamage {
 	public Component getDeathMessage(LivingEntity victim){
 		Component itextcomponent = this.minion.getDisplayName();
 		String key = "death.attack." + this.damageType;
-		return new TextComponentTranslation(key, victim.getDisplayName(), itextcomponent);
+		return Component.translatable(key, victim.getDisplayName(), itextcomponent);
 	}
 
 }

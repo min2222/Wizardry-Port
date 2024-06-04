@@ -10,13 +10,13 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.monster.IMob;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -377,7 +377,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 						&& ((IElementalDamage)event.getSource()).isRetaliatory();
 
 				// All summoned creatures are classified as magic, so it makes sense to do it this way.
-				if(event.getSource() instanceof EntityDamageSourceIndirect){
+				if(event.getSource() instanceof IndirectEntityDamageSource){
 					newSource = new IndirectMinionDamage(event.getSource().damageType,
 							event.getSource().getImmediateSource(), event.getSource().getTrueSource(), summoner, type,
 							isRetaliatory);

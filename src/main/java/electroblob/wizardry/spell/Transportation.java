@@ -71,7 +71,7 @@ public class Transportation extends Spell {
 				if(locations == null) data.setVariable(Transportation.LOCATIONS_KEY, locations = new ArrayList<>(Transportation.MAX_REMEMBERED_LOCATIONS));
 
 				if(locations.isEmpty()){
-					if(!world.isRemote) caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 					return false;
 				}
 
@@ -80,7 +80,7 @@ public class Transportation extends Spell {
 					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.dimension).collect(Collectors.toList());
 
 					if(locationsInDimension.isEmpty()){
-						if(!world.isRemote) caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 						return false;
 					}
 
@@ -104,7 +104,7 @@ public class Transportation extends Spell {
 					if(destination.dimension == caster.dimension){
 						return attemptTravelTo(caster, world, destination.pos, modifiers);
 					}else{
-						if(!world.isRemote) caster.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isRemote) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 					}
 
 				}
@@ -161,7 +161,7 @@ public class Transportation extends Spell {
 			data.setVariable(COUNTDOWN_KEY, getProperty(TELEPORT_COUNTDOWN).intValue());
 			return true;
 		}else{
-			if(!world.isRemote) player.sendStatusMessage(new TextComponentTranslation("spell." + this.getUnlocalisedName() + ".missing"), true);
+			if(!world.isRemote) player.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".missing"), true);
 			return false;
 		}
 	}

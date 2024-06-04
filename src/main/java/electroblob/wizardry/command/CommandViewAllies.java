@@ -75,7 +75,7 @@ public class CommandViewAllies extends CommandBase {
 					&& !EntityUtils.isPlayerOp((Player)sender, server)){
 				// Displays a chat message if a non-op tries to view another player's allies.
 				if(server.sendCommandFeedback()){
-					TextComponentTranslation TextComponentTranslation2 = new TextComponentTranslation(
+					TextComponentTranslation TextComponentTranslation2 = Component.translatable(
 							"commands." + Wizardry.MODID + ":allies.permission");
 					TextComponentTranslation2.getStyle().setColor(ChatFormatting.RED);
 					player.sendMessage(TextComponentTranslation2);
@@ -99,15 +99,15 @@ public class CommandViewAllies extends CommandBase {
 			if(!names.isEmpty()){
 				playerList = joinNiceStringFromCollection(names);
 			}else{
-				playerList = new TextComponentTranslation("commands." + Wizardry.MODID + ":allies.none");
+				playerList = Component.translatable("commands." + Wizardry.MODID + ":allies.none");
 			}
 
 			// Ignore sendCommandFeedback here since that's the entire point of this command
 			if(executeAsOtherPlayer){
 				sender.sendMessage(
-						new TextComponentTranslation("commands." + Wizardry.MODID + ":allies.list_other", player.getName(), playerList));
+						Component.translatable("commands." + Wizardry.MODID + ":allies.list_other", player.getName(), playerList));
 			}else{
-				sender.sendMessage(new TextComponentTranslation("commands." + Wizardry.MODID + ":allies.list", playerList));
+				sender.sendMessage(Component.translatable("commands." + Wizardry.MODID + ":allies.list", playerList));
 			}
 		}
 	}

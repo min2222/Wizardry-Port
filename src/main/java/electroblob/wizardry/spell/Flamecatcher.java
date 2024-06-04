@@ -24,7 +24,7 @@ public class Flamecatcher extends SpellConjuration {
 	@Override
 	protected void addItemExtras(Player caster, ItemStack stack, SpellModifiers modifiers){
 		if(stack.getTag() == null) stack.setTag(new CompoundTag());
-		stack.getTag().putInteger(SHOTS_REMAINING_NBT_KEY, (int)(getProperty(SHOT_COUNT).intValue() * modifiers.get(SpellModifiers.POTENCY)));
+		stack.getTag().putInt(SHOTS_REMAINING_NBT_KEY, (int)(getProperty(SHOT_COUNT).intValue() * modifiers.get(SpellModifiers.POTENCY)));
 	}
 
 	@Override

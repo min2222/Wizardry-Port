@@ -146,7 +146,7 @@ public class LightningWeb extends SpellRay {
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
 			if(!world.isRemote && ticksInUse == 1 && caster instanceof Player)
-				((Player)caster).sendStatusMessage(new TextComponentTranslation("spell.resist", target.getName(),
+				((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 		}else{
 			EntityUtils.attackEntityWithoutKnockback(target,

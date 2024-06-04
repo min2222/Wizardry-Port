@@ -54,7 +54,7 @@ public class PocketFurnace extends Spell {
 						}
 						usesLeft -= stack.getCount();
 					}else{
-						caster.inventory.decrStackSize(i, usesLeft);
+						caster.inventory.remove(i, usesLeft);
 						caster.inventory.addItemStackToInventory(
 								new ItemStack(result.getItem(), usesLeft, result.getItemDamage()));
 						usesLeft = 0;

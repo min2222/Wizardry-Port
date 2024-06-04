@@ -163,7 +163,7 @@ public class Possession extends SpellRay {
 			Player player = (Player)caster;
 
 			if(!player.isCreative() && player.getHealth() <= getProperty(CRITICAL_HEALTH).floatValue()){
-				player.sendStatusMessage(new TextComponentTranslation(
+				player.sendStatusMessage(Component.translatable(
 						"spell." + this.getRegistryName() + ".insufficienthealth"), true);
 				return false;
 			}

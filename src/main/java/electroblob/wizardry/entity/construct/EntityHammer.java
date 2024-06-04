@@ -209,7 +209,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
 			if(!hammer.hasTagCompound()) hammer.setTag(new CompoundTag());
-			hammer.getTag().putInteger(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
+			hammer.getTag().putInt(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
 			hammer.setItemDamage(ticksExisted);
 			hammer.getTag().putFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
 

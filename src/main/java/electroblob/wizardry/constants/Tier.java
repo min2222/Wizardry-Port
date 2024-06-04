@@ -69,7 +69,7 @@ public enum Tier {
 	 * formatting (i.e. not coloured).
 	 */
 	public TextComponentTranslation getNameForTranslation(){
-		return new TextComponentTranslation("tier." + unlocalisedName);
+		return Component.translatable("tier." + unlocalisedName);
 	}
 
 	/** Returns the translated display name of this tier, with formatting. */
@@ -82,7 +82,7 @@ public enum Tier {
 	 * formatting (i.e. coloured).
 	 */
 	public Component getNameForTranslationFormatted(){
-		return new TextComponentTranslation("tier." + unlocalisedName).setStyle(this.colour);
+		return Component.translatable("tier." + unlocalisedName).setStyle(this.colour);
 	}
 
 	public String getUnlocalisedName(){

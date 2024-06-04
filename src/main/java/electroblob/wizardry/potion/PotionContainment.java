@@ -7,8 +7,8 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -40,10 +40,10 @@ public class PotionContainment extends PotionMagicEffect {
 
 		// Initialise the containment position to the entity's position if it wasn't set already
 		if(!target.getEntityData().hasKey(ENTITY_TAG)){
-			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NBTUtil.createPosTag(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
+			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.createPosTag(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
 		}
 
-		Vec3 origin = GeometryUtils.getCentre(NBTUtil.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
+		Vec3 origin = GeometryUtils.getCentre(NbtUtils.getPosFromTag(target.getEntityData().getCompoundTag(ENTITY_TAG)));
 
 		double x = target.posX, y = target.posY, z = target.posZ;
 

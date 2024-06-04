@@ -141,8 +141,8 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	@Override
 	public Component getDisplayName(){
 		if(getCaster() != null){
-			return new TextComponentTranslation(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
-					new TextComponentTranslation("entity." + this.getEntityString() + ".name"));
+			return Component.translatable(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
+					Component.translatable("entity." + this.getEntityString() + ".name"));
 		}else{
 			return super.getDisplayName();
 		}

@@ -15,6 +15,7 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.sounds.SoundSource;
@@ -182,7 +182,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		for(LivingEntity entity : entities){
 			entity.addPotionEffect(new MobEffectInstance(WizardryPotions.containment, 219));
-			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NBTUtil.createPosTag(this.pos));
+			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NbtUtils.createPosTag(this.pos));
 		}
 	}
 
@@ -190,11 +190,11 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	public CompoundTag writeToNBT(CompoundTag compound){
 
 		compound.setBoolean("activated", this.activated);
-		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NBTUtil.createPosTag(linkedContainer.getPos()));
+		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NbtUtils.createPosTag(linkedContainer.getPos()));
 
 		ListTag tagList = new ListTag();
 		for(UUID uuid : linkedWizards){
-			if(uuid != null) tagList.appendTag(NBTUtil.createUUIDTag(uuid));
+			if(uuid != null) tagList.appendTag(NbtUtils.createUUIDTag(uuid));
 		}
 		NBTExtras.storeTagSafely(compound, "wizards", tagList);
 
@@ -205,12 +205,12 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	public void readFromNBT(CompoundTag compound){
 
 		this.activated = compound.getBoolean("activated");
-		this.linkedContainerPos = NBTUtil.getPosFromTag(compound.getCompoundTag("linkedContainerPos"));
+		this.linkedContainerPos = NbtUtils.getPosFromTag(compound.getCompoundTag("linkedContainerPos"));
 
 		ListTag tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
 		int i = 0;
 		for(Tag tag : tagList){
-			if(tag instanceof CompoundTag) linkedWizards[i++] = NBTUtil.getUUIDFromTag((CompoundTag)tag);
+			if(tag instanceof CompoundTag) linkedWizards[i++] = NbtUtils.getUUIDFromTag((CompoundTag)tag);
 			else Wizardry.logger.warn("Unexpected tag type in NBT tag list of compound tags!");
 		}
 

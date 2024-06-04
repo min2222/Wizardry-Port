@@ -6,6 +6,7 @@ import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.EntityMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.Vec3;
@@ -189,14 +189,14 @@ public class EntityRemnant extends EntityMob {
 	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.setElement(Element.values()[nbt.getInt("Element")]);
-		if(nbt.hasKey("BoundOrigin")) boundOrigin = NBTUtil.getPosFromTag(nbt.getCompoundTag("BoundOrigin"));
+		if(nbt.hasKey("BoundOrigin")) boundOrigin = NbtUtils.getPosFromTag(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
 	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.putInt("Element", this.getElement().ordinal());
-		if(boundOrigin != null) nbt.setTag("BoundOrigin", NBTUtil.createPosTag(boundOrigin));
+		if(boundOrigin != null) nbt.setTag("BoundOrigin", NbtUtils.createPosTag(boundOrigin));
 	}
 
 	// AI classes (copied from EntityVex)

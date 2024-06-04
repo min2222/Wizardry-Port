@@ -38,7 +38,7 @@ public class Slime extends SpellRay {
 
 			if(target instanceof EntitySlime){
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
+						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 
 				if(!world.isRemote){

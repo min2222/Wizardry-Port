@@ -40,7 +40,7 @@ public class Freeze extends SpellRay {
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
+						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),

@@ -99,7 +99,7 @@ public class ChainLightning extends SpellRay {
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
 			if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
-					new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()),
+					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()),
 					true);
 		}else{
 			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
