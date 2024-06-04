@@ -92,7 +92,7 @@ public class ArcaneJammer extends SpellRay {
 		// sequences of consecutive seeds, so let's clear it out first to get to a more changeable value
 		random.nextInt(2);
 
-		if(event.getCaster() != null && event.getCaster().isPotionActive(WizardryPotions.arcane_jammer)
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.arcane_jammer)
 				// Arcane jammer I has a 1/2 chance, level II has a 2/3 chance, and so on
 				&& random.nextInt(event.getCaster().getActivePotionEffect(WizardryPotions.arcane_jammer).getAmplifier() + 2) > 0){
 
@@ -125,7 +125,7 @@ public class ArcaneJammer extends SpellRay {
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
 
 		if(event.getEntity() instanceof EntitySpellcasterIllager
-				&& event.getEntity().isPotionActive(WizardryPotions.arcane_jammer)){
+				&& event.getEntity().hasEffect(WizardryPotions.arcane_jammer)){
 
 			((EntitySpellcasterIllager)event.getEntity()).setSpellType(EntitySpellcasterIllager.SpellType.NONE);
 

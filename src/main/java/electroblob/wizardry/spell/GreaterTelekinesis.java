@@ -135,7 +135,7 @@ public class GreaterTelekinesis extends SpellRay {
 		
 		if(EntityUtils.canDamageBlocks(caster, world) && !BlockUtils.isBlockUnbreakable(world, pos)
 				&& level.getBlockState(pos).getMaterial().isSolid()
-				&& (level.getTileEntity(pos) == null || !level.getTileEntity(pos).getTileData().hasUniqueId(ArcaneLock.NBT_KEY))){
+				&& (level.getTileEntity(pos) == null || !level.getTileEntity(pos).getTileData().hasUUID(ArcaneLock.NBT_KEY))){
 			
 			if(!world.isClientSide){
 

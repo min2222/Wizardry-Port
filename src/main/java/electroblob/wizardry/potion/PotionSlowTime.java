@@ -59,13 +59,13 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		List<Entity> targetsInRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius(), host.getX(), host.getY(), host.getZ(), host.world, Entity.class);
 		targetsInRange.remove(host);
 		// Other entities with the slow time effect are unaffected
-		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).isPotionActive(WizardryPotions.slow_time));
+		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).hasEffect(WizardryPotions.slow_time));
 		if(!Wizardry.settings.slowTimeAffectsPlayers) targetsInRange.removeIf(t -> t instanceof Player);
 		targetsInRange.removeIf(t -> t instanceof Arrow && t.isEntityInsideOpaqueBlock());
 
 		for(Entity entity : targetsInRange){
 
-			entity.getEntityData().setBoolean(NBT_KEY, true);
+			entity.getPersistentData().setBoolean(NBT_KEY, true);
 
 			// If time is stopped, block all updates; otherwise block all updates except every [interval] ticks
 			entity.updateBlocked = stopTime || host.tickCount % interval != 0;
@@ -148,11 +148,11 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		List<Entity> loadedEntityList = new ArrayList<>(world.loadedEntityList);
 
 		for(Entity entity : loadedEntityList){
-			if(entity.getEntityData().getBoolean(NBT_KEY)){
+			if(entity.getPersistentData().getBoolean(NBT_KEY)){
 				// Currently only players can cast slow time, but you could apply the effect to NPCs with commands
 				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(getEffectRadius(), entity.getX(), entity.getY(), entity.getZ(), entity.world);
-				if(nearby.stream().noneMatch(e -> e.isPotionActive(WizardryPotions.slow_time))){
-					entity.getEntityData().removeTag(NBT_KEY);
+				if(nearby.stream().noneMatch(e -> e.hasEffect(WizardryPotions.slow_time))){
+					entity.getPersistentData().removeTag(NBT_KEY);
 					entity.updateBlocked = false;
 				}
 			}
@@ -164,7 +164,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 
 		LivingEntity entity = event.getEntity();
 
-		if(entity.isPotionActive(WizardryPotions.slow_time)){
+		if(entity.hasEffect(WizardryPotions.slow_time)){
 			performEffectConsistent(entity, entity.getActivePotionEffect(WizardryPotions.slow_time).getAmplifier());
 		}
 	}

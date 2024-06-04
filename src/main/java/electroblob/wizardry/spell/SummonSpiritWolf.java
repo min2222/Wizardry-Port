@@ -54,7 +54,7 @@ public class SummonSpiritWolf extends Spell {
 			EntitySpiritWolf wolf = new EntitySpiritWolf(world);
 			wolf.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 			wolf.setTamed(true);
-			wolf.setOwnerId(caster.getUniqueID());
+			wolf.setOwnerId(caster.getUUID());
 			// Potency gives the wolf more strength AND more health
 			wolf.getEntityAttribute(Attributes.ATTACK_DAMAGE).applyModifier(
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
@@ -64,7 +64,7 @@ public class SummonSpiritWolf extends Spell {
 
 			world.addFreshEntity(wolf);
 
-			data.setVariable(UUID_KEY, wolf.getUniqueID());
+			data.setVariable(UUID_KEY, wolf.getUUID());
 		}
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);

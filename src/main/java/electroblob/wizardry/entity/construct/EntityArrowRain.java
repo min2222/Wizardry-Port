@@ -34,7 +34,7 @@ public class EntityArrowRain extends EntityScaledConstruct {
 			arrow.motionY = -0.6;
 			arrow.motionZ = Mth.sin((float)Math.toRadians(this.rotationYaw + 90));
 
-			arrow.shootingEntity = this.getCaster();
+			arrow.getOwner() = this.getCaster();
 			arrow.setDamage(7.0d * damageMultiplier);
 
 			this.world.addFreshEntity(arrow);

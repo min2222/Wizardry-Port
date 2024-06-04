@@ -107,7 +107,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 					world.addFreshEntity(wizard);
 					wizards[i] = wizard;
-					linkedWizards[i] = wizard.getUniqueID();
+					linkedWizards[i] = wizard.getUUID();
 				}
 
 				for(EntityEvilWizard wizard : wizards) wizard.groupUUIDs.addAll(Arrays.asList(linkedWizards));
@@ -182,7 +182,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 		for(LivingEntity entity : entities){
 			entity.addEffect(new MobEffectInstance(WizardryPotions.containment, 219));
-			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.pos));
+			NBTExtras.storeTagSafely(entity.getPersistentData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.pos));
 		}
 	}
 

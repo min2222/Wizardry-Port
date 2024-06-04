@@ -193,7 +193,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 		stack.writeToNBT(itemTag);
 		nbt.setTag("item", itemTag);
 		nbt.putInt("imbuementTimer", imbuementTimer);
-		if(lastUser != null) nbt.setUniqueId("lastUser", lastUser.getUniqueID());
+		if(lastUser != null) nbt.setUniqueId("lastUser", lastUser.getUUID());
 		return nbt;
 	}
 
@@ -203,7 +203,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 		CompoundTag itemTag = nbt.getCompoundTag("item");
 		this.stack = new ItemStack(itemTag);
 		this.imbuementTimer = nbt.getInt("imbuementTimer");
-		this.lastUserUUID = nbt.getUniqueId("lastUser");
+		this.lastUserUUID = nbt.getUUID("lastUser");
 	}
 
 	@Override

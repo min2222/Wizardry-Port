@@ -69,8 +69,8 @@ public class Thunderstorm extends Spell {
 
 					if(!world.isClientSide){
 						EntityLightningBolt lightning = new EntityLightningBolt(world, x, y, z, false);
-						lightning.getEntityData().setUniqueId(LightningBolt.SUMMONER_NBT_KEY, caster.getUniqueID());
-						lightning.getEntityData().setFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+						lightning.getPersistentData().setUniqueId(LightningBolt.SUMMONER_NBT_KEY, caster.getUUID());
+						lightning.getPersistentData().setFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 						world.addWeatherEffect(lightning);
 					}
 

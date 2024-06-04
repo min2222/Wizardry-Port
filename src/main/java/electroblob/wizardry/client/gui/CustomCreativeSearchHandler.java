@@ -63,7 +63,7 @@ public class CustomCreativeSearchHandler {
 
 			if(tab == WizardryTabs.SPELLS){
 
-				GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)gui.inventorySlots;
+				GuiContainerCreative.ContainerCreative container = (GuiContainerCreative.ContainerCreative)gui.slots;
 				container.itemList.clear(); // Required or duplicates will appear!
 				String searchText = currentSearchField.getText().toLowerCase(Locale.ROOT);
 				tab.displayAllRelevantItems(container.itemList);

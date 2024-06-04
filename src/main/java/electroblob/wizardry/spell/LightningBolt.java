@@ -57,8 +57,8 @@ public class LightningBolt extends SpellRay {
 				if(doFireTick && !Wizardry.settings.playerBlockDamage) level.getGameRules().setOrCreateGameRule("doFireTick", "false");
 
 				EntityLightningBolt lightning = new EntityLightningBolt(world, pos.getX(), pos.getY(), pos.getZ(), false);
-				if(caster != null) lightning.getEntityData().setUniqueId(SUMMONER_NBT_KEY, caster.getUniqueID());
-				lightning.getEntityData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+				if(caster != null) lightning.getPersistentData().setUniqueId(SUMMONER_NBT_KEY, caster.getUUID());
+				lightning.getPersistentData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 				world.addWeatherEffect(lightning);
 
 				// Reset doFireTick to true if it was true before
@@ -79,14 +79,14 @@ public class LightningBolt extends SpellRay {
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onEntityStruckByLightningEvent(EntityStruckByLightningEvent event){
 
-		float damageModifier = event.getLightning().getEntityData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
+		float damageModifier = event.getLightning().getPersistentData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
 
 		Entity summoner = null;
 
-		if(event.getLightning().getEntityData().hasUniqueId(SUMMONER_NBT_KEY)){
+		if(event.getLightning().getPersistentData().hasUUID(SUMMONER_NBT_KEY)){
 
 			summoner = EntityUtils.getEntityByUUID(event.getLightning().world,
-					event.getLightning().getEntityData().getUniqueId(SUMMONER_NBT_KEY));
+					event.getLightning().getPersistentData().getUUID(SUMMONER_NBT_KEY));
 
 			if(!(summoner instanceof LivingEntity)) summoner = null;
 		}
@@ -99,16 +99,16 @@ public class LightningBolt extends SpellRay {
 
 			// Don't need DamageSafetyChecker here because this isn't an attack event
 			EntityUtils.attackEntityWithoutKnockback(event.getEntity(), source, damage);
-			event.getEntity().getEntityData().setBoolean(IMMUNE_TO_LIGHTNING_NBT_KEY, true);
+			event.getEntity().getPersistentData().setBoolean(IMMUNE_TO_LIGHTNING_NBT_KEY, true);
 		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
-		if(event.getEntity().getEntityData().hasKey(IMMUNE_TO_LIGHTNING_NBT_KEY)
+		if(event.getEntity().getPersistentData().contains(IMMUNE_TO_LIGHTNING_NBT_KEY)
 				&& event.getSource() == DamageSource.LIGHTNING_BOLT){
 			event.setCanceled(true);
-			event.getEntity().getEntityData().removeTag(IMMUNE_TO_LIGHTNING_NBT_KEY);
+			event.getEntity().getPersistentData().removeTag(IMMUNE_TO_LIGHTNING_NBT_KEY);
 		}
 	}
 	

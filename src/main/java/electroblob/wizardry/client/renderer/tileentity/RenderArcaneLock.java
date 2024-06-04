@@ -52,7 +52,7 @@ public class RenderArcaneLock {
 			if(tileentity == null) continue; // What the heck VoxelMap
 
 			if(tileentity.distanceToSqr(origin.x, origin.y, origin.z) <= tileentity.getMaxRenderDistanceSquared()
-					&& tileentity.getTileData().hasUniqueId(ArcaneLock.NBT_KEY)){
+					&& tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
 
 				if(!flag){
 

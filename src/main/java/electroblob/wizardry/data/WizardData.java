@@ -365,16 +365,16 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 	private void updateImbutedItem(ItemStack stack, Set<Imbuement> activeImbuements){
 
-		if(stack.isItemEnchanted()){
+		if(stack.isEnchanted()){
 
 			NBTTagList enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
-					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTagList();
+					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTags();
 
 			Iterator<NBTBase> iterator = enchantmentList.iterator();
 			// For each of the item's enchantments
 			while(iterator.hasNext()){
 				NBTTagCompound enchantmentTag = (NBTTagCompound) iterator.next();
-				Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
+				Enchantment enchantment = Enchantment.byId(enchantmentTag.getShort("id"));
 				// Ignores the enchantment unless it is an imbuement
 				if(enchantment instanceof Imbuement){
 					int duration = this.getImbuementDuration(enchantment);
@@ -402,12 +402,12 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 	 */
 	public boolean toggleAlly(Player player){
 		if(this.isPlayerAlly(player)){
-			this.allies.remove(player.getUniqueID());
+			this.allies.remove(player.getUUID());
 			// The remove method uses .equals() rather than == so this will work fine.
 			this.allyNames.remove(player.getName());
 			return false;
 		}else{
-			this.allies.add(player.getUniqueID());
+			this.allies.add(player.getUUID());
 			this.allyNames.add(player.getName());
 			return true;
 		}
@@ -415,7 +415,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 	/** Returns whether the given player is in this player's list of allies, or is on the same team as this player. */
 	public boolean isPlayerAlly(Player player){
-		return this.allies.contains(player.getUniqueID()) || this.player.isOnSameTeam(player);
+		return this.allies.contains(player.getUUID()) || this.player.isOnSameTeam(player);
 	}
 
 	/** Returns whether the player with the given UUID is in this player's list of allies. The player to whom the given
@@ -591,7 +591,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 		if(nbt != null){
 
 			this.imbuementDurations = NBTExtras.NBTToMap(nbt.getTagList("imbuements", NBT.TAG_COMPOUND),
-					(NBTTagInt tag) -> (Imbuement)Enchantment.getEnchantmentByID(tag.getInt()), NBTTagInt::getInt);
+					(NBTTagInt tag) -> (Imbuement)Enchantment.byId(tag.getInt()), NBTTagInt::getInt);
 
 			this.allies = new HashSet<>(NBTExtras.NBTToList(nbt.getTagList("allies", NBT.TAG_COMPOUND), NBTUtil::getUUIDFromTag));
 			this.allyNames = new HashSet<>(NBTExtras.NBTToList(nbt.getTagList("allyNames", NBT.TAG_STRING), NBTTagString::getString));

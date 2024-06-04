@@ -62,7 +62,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 	@SubscribeEvent(priority = EventPriority.LOW) // Doesn't really matter but there's no point processing it if casting is blocked
 	public static void onSpellCastPreEvent(SpellCastEvent.Pre event){
 		// Empowerment stacks extra potency on top of the existing potency.
-		if(event.getCaster() != null && event.getCaster().isPotionActive(WizardryPotions.empowerment)
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.empowerment)
 				&& !(event.getSpell() instanceof EmpoweringPresence)){ // Prevent exponential empowerment stacking!
 
 			float potency = 1 + Spells.empowering_presence.getProperty(POTENCY_PER_LEVEL).floatValue()

@@ -44,7 +44,7 @@ public class DonationPerksHandler {
 
 	/** Returns true if the given player's UUID appears in the list of donor UUIDs, false otherwise (thread-safe). */
 	public static boolean isDonor(Player player){
-		return DONOR_UUID_MAP.containsKey(player.getUniqueID());
+		return DONOR_UUID_MAP.containsKey(player.getUUID());
 	}
 
 	/** Sets each donor's perk element in order according to the given list. The given list <i>will</i> be modified. */
@@ -59,7 +59,7 @@ public class DonationPerksHandler {
 
 	/** Sets the donor perk to the given element for the given player and sends a packet to all clients if it changed. */
 	public static void setElement(ServerPlayer player, Element element){
-		Box<Element> box = DONOR_UUID_MAP.get(player.getUniqueID());
+		Box<Element> box = DONOR_UUID_MAP.get(player.getUUID());
 		if(box != null && box.get() != element){
 			box.set(element);
 			syncAll(player.dimension);
@@ -69,7 +69,7 @@ public class DonationPerksHandler {
 	/** Returns the given player's donor perk element, or null if they are not a donor (may also be null for donors if
 	 * they have disabled the perk). */
 	public static Element getElement(Player player){
-		Box<Element> box = DONOR_UUID_MAP.get(player.getUniqueID());
+		Box<Element> box = DONOR_UUID_MAP.get(player.getUUID());
 		return box == null ? null : box.get();
 	}
 

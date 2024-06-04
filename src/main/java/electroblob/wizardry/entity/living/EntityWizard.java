@@ -134,7 +134,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 				if((entity instanceof IMob && !(entity instanceof ISummonedCreature)
 
 						// or is a summoned creature with a mob owner or an owner who has attacked the wizard ...
-						|| entity instanceof ISummonedCreature && (((ISummonedCreature)entity).getOwner() instanceof IMob || ((ISummonedCreature)entity).getOwner() == this.getRevengeTarget() || ((ISummonedCreature) entity).getOwner() == this.getAttackTarget())
+						|| entity instanceof ISummonedCreature && (((ISummonedCreature)entity).getOwner() instanceof IMob || ((ISummonedCreature)entity).getOwner() == this.getLastHurtByMob() || ((ISummonedCreature) entity).getOwner() == this.getTarget())
 
 						// ... or in the whitelist ...
 						|| Arrays.asList(Wizardry.settings.summonedCreatureTargetsWhitelist)
@@ -299,12 +299,12 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		// Still better to store this to a local variable as it's almost certainly more efficient.
 		int healCooldown = this.getHealCooldown();
 
-		// This is now done slightly differently because isPotionActive doesn't work on client here, meaning that when
+		// This is now done slightly differently because hasEffect doesn't work on client here, meaning that when
 		// affected with arcane jammer and healCooldown == 0, whilst the wizard didn't actually heal or play the sound,
 		// the particles still spawned, and since healCooldown wasn't reset they spawned every tick until the arcane
 		// jammer wore off.
 		if(healCooldown == 0 && this.getHealth() < this.getMaxHealth() && this.getHealth() > 0
-				&& !this.isPotionActive(WizardryPotions.arcane_jammer)){
+				&& !this.hasEffect(WizardryPotions.arcane_jammer)){
 
 			// Healer wizards use greater heal.
 			this.heal(this.getElement() == Element.HEALING ? 8 : 4);
@@ -390,7 +390,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		// Won't trade with a player that has attacked them.
 		if(this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isShiftKeyDown()
-				&& this.getAttackTarget() != player){
+				&& this.getTarget() != player){
 			if(!this.level.isClientSide){
 				this.setCustomer(player);
 				player.displayVillagerTradeGui(this);
@@ -427,7 +427,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 
 		super.readEntityFromNBT(nbt);
 
-		if(nbt.hasKey("trades")){
+		if(nbt.contains("trades")){
 			NBTTagCompound nbttagcompound1 = nbt.getCompoundTag("trades");
 			this.trades = new WildcardTradeList(nbttagcompound1);
 		}

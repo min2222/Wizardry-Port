@@ -89,7 +89,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 			T projectile = projectileFactory.apply(world, caster);
 			projectile.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, velocity, 1.0f);
-			projectile.getEntityData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+			projectile.getPersistentData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 			addProjectileExtras(projectile, caster, modifiers);
 			world.addFreshEntity(projectile);
 		}
@@ -160,7 +160,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 		// TODO: Annoyingly, wither skulls apply 'direct' damage from their shooter so they won't be recognised here
 		if(event.getSource().getDirectEntity() != null && !(event.getSource() instanceof IElementalDamage)){ // Prevent infinite looping
 
-			float damageModifier = event.getSource().getDirectEntity().getEntityData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
+			float damageModifier = event.getSource().getDirectEntity().getPersistentData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
 
 			// Really, we just want to increase the damage without modifying the source, but that would cause an
 			// infinite loop so we need some way of identifying it - the easiest way is to use MagicDamage, which fits

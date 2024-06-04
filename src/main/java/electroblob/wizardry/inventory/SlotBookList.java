@@ -64,7 +64,7 @@ public class SlotBookList extends SlotItemClassList {
 	}
 
 	@Override
-	public void putStack(ItemStack stack){
+	public void set(ItemStack stack){
 		// Can't handle this here either because it gets tangled up with the 348-line behemoth that is
 		// Container#slotClick, which has all sorts of side-effects
 		// Instead, we need to delegate client-side, as before

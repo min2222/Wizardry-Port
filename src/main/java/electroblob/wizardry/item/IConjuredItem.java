@@ -123,9 +123,9 @@ public interface IConjuredItem {
 	@SubscribeEvent
 	static void onItemTossEvent(ItemTossEvent event){
 		// Prevents conjured items being thrown by dragging and dropping outside the inventory.
-		if(event.getEntityItem().getItem().getItem() instanceof IConjuredItem){
+		if(event.getEntity().getItem().getItem() instanceof IConjuredItem){
 			event.setCanceled(true);
-			event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
+			event.getPlayer().inventory.addItemStackToInventory(event.getEntity().getItem());
 		}
 	}
 }

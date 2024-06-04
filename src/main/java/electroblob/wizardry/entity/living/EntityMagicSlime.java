@@ -30,7 +30,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	// Setter + getter implementations
 	@Override public int getLifetime(){ return lifetime; }
 	@Override public void setLifetime(int lifetime){ this.lifetime = lifetime; }
-	@Override public UUID getOwnerId(){ return casterUUID; }
+	@Override public UUID getOwnerUUID(){ return casterUUID; }
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	public EntityMagicSlime(Level world){
@@ -52,7 +52,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		super(world);
 		this.setPosition(target.getX(), target.getY(), target.getZ());
 		this.startRiding(target);
-		if (caster != null) this.setOwnerId(caster.getUniqueID());
+		if (caster != null) this.setOwnerId(caster.getUUID());
 		this.setSlimeSize(2, false); // Needs to be called before setting the experience value to 0
 		this.experienceValue = 0;
 		this.lifetime = lifetime;
@@ -179,7 +179,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 
 	// This vanilla method has nothing to do with the custom despawn() method.
 	@Override protected boolean canDespawn(){
-		return getCaster() == null && getOwnerId() == null;
+		return getCaster() == null && getOwnerUUID() == null;
 	}
 
 }

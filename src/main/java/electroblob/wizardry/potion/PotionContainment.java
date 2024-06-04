@@ -39,11 +39,11 @@ public class PotionContainment extends PotionMagicEffect {
 		float maxDistance = getContainmentDistance(strength);
 
 		// Initialise the containment position to the entity's position if it wasn't set already
-		if(!target.getEntityData().hasKey(ENTITY_TAG)){
-			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.writeBlockPos(new BlockPos(target.position().subtract(0.5, 0.5, 0.5))));
+		if(!target.getPersistentData().contains(ENTITY_TAG)){
+			NBTExtras.storeTagSafely(target.getPersistentData(), ENTITY_TAG, NbtUtils.writeBlockPos(new BlockPos(target.position().subtract(0.5, 0.5, 0.5))));
 		}
 
-		Vec3 origin = GeometryUtils.getCentre(NbtUtils.readBlockPos(target.getEntityData().getCompoundTag(ENTITY_TAG)));
+		Vec3 origin = GeometryUtils.getCentre(NbtUtils.readBlockPos(target.getPersistentData().getCompoundTag(ENTITY_TAG)));
 
 		double x = target.getX(), y = target.getY(), z = target.getZ();
 
@@ -62,22 +62,22 @@ public class PotionContainment extends PotionMagicEffect {
 			target.addVelocity(0.15 * Math.signum(x - target.getX()), 0.15 * Math.signum(y - target.getY()), 0.15 * Math.signum(z - target.getZ()));
 			EntityUtils.undoGravity(target);
 			if(target.level.isClientSide){
-				target.world.playSound(target.getX(), target.getY(), target.getZ(), WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
+				target.level.playSound(target.getX(), target.getY(), target.getZ(), WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
 						WizardrySounds.SPELLS, 0.3f, 1f, false);
 			}
 		}
 
 		// Need to do this here because it's the only way to hook into potion ending both client- and server-side
-		if(target.getActivePotionEffect(this).getDuration() <= 1) target.getEntityData().removeTag(ENTITY_TAG);
+		if(target.getActivePotionEffect(this).getDuration() <= 1) target.getPersistentData().removeTag(ENTITY_TAG);
 
 	}
 
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 		// This is LAST-RESORT CLEANUP. It does NOT need checking every tick! We always check for the actual potion anyway.
-		if(event.getEntity().tickCount % 20 == 0 && event.getEntity().getEntityData().hasKey(ENTITY_TAG)
-				&& !event.getEntity().isPotionActive(WizardryPotions.containment)){
-			event.getEntity().getEntityData().removeTag(ENTITY_TAG);
+		if(event.getEntity().tickCount % 20 == 0 && event.getEntity().getPersistentData().contains(ENTITY_TAG)
+				&& !event.getEntity().hasEffect(WizardryPotions.containment)){
+			event.getEntity().getPersistentData().removeTag(ENTITY_TAG);
 		}
 	}
 

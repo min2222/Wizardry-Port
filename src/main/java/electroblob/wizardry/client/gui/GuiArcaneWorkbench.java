@@ -109,7 +109,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 	public GuiArcaneWorkbench(InventoryPlayer invPlayer, TileEntityArcaneWorkbench entity){
 		super(new ContainerArcaneWorkbench(invPlayer, entity));
-		this.arcaneWorkbenchContainer = (ContainerArcaneWorkbench)inventorySlots;
+		this.arcaneWorkbenchContainer = (ContainerArcaneWorkbench)slots;
 		this.playerInventory = invPlayer;
 		this.arcaneWorkbenchInventory = entity;
 		xSize = MAIN_GUI_WIDTH;
@@ -119,7 +119,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 	@Override
 	public void initGui(){
 
-		this.mc.player.openContainer = this.inventorySlots;
+		this.mc.player.openContainer = this.slots;
 		this.guiLeft = (this.width - MAIN_GUI_WIDTH) / 2; // Use MAIN_GUI_WIDTH, not xSize, otherwise JEI messes with it
 		this.guiTop = (this.getBbHeight() - this.ySize) / 2;
 
@@ -188,7 +188,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 			arcaneWorkbenchContainer.scrollTo((int)(getMaxScrollRows() * scroll + 0.5f));
 		}
 
-		Slot centreSlot = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT);
+		Slot centreSlot = this.slots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT);
 
 		// Update the GUI dimensions based on whether there is a wand present and whether there are bookshelves
 
@@ -263,7 +263,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		// Spell book slots (always use guiLeft and guiTop here regardless of bookshelf UI visibility
 		for(int i = 0; i < ContainerArcaneWorkbench.CRYSTAL_SLOT; i++){
 
-			Slot slot = this.inventorySlots.getSlot(i);
+			Slot slot = this.slots.getSlot(i);
 
 			if(slot.xPos >= 0 && slot.yPos >= 0){
 				// Slot background
@@ -290,8 +290,8 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		// Crystal + upgrade slot animations
 		if(animationTimer > 0){
 
-			Slot crystals = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CRYSTAL_SLOT);
-			Slot upgrades = this.inventorySlots.getSlot(ContainerArcaneWorkbench.UPGRADE_SLOT);
+			Slot crystals = this.slots.getSlot(ContainerArcaneWorkbench.CRYSTAL_SLOT);
+			Slot upgrades = this.slots.getSlot(ContainerArcaneWorkbench.UPGRADE_SLOT);
 
 			if(crystals.getHasStack()){
 
@@ -337,9 +337,9 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		// Tooltip only drawn if there is a wand
-		if(this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
+		if(this.slots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
 
-			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
+			ItemStack stack = this.slots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
 
 			if(!(stack.getItem() instanceof IWorkbenchItem)){
 				Wizardry.logger.warn("Invalid item in central slot of arcane workbench, how did that get there?!");
@@ -394,9 +394,9 @@ public class GuiArcaneWorkbench extends GuiContainer {
 			this.fontRenderer.drawString(I18n.format("container." + Wizardry.MODID + ":arcane_workbench.bookshelves"), 8, 6, 4210752);
 		}
 
-		if(this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
+		if(this.slots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getHasStack()){
 
-			ItemStack stack = this.inventorySlots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
+			ItemStack stack = this.slots.getSlot(ContainerArcaneWorkbench.CENTRE_SLOT).getItem();
 
 			if(!(stack.getItem() instanceof IWorkbenchItem)){
 				Wizardry.logger.warn("Invalid item in central slot of arcane workbench, how did that get there?!");
@@ -810,7 +810,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		private Spell getSpell(ItemStack stack){
 
-			ItemStack spellBook = inventorySlots.getSlot(index).getItem();
+			ItemStack spellBook = slots.getSlot(index).getItem();
 
 			if(!spellBook.isEmpty() && spellBook.getItem() instanceof ItemSpellBook){
 				return Spell.byMetadata(spellBook.getMetadata());
@@ -820,7 +820,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		private boolean shouldFlash(ItemStack stack){
-			ItemStack spellBook = inventorySlots.getSlot(index).getItem();
+			ItemStack spellBook = slots.getSlot(index).getItem();
 			return !spellBook.isEmpty() && spellBook.getItem() instanceof ItemSpellBook
 					&& Spell.byMetadata(spellBook.getMetadata()) != ((ISpellCastingItem)stack.getItem()).getSpells(stack)[index];
 		}

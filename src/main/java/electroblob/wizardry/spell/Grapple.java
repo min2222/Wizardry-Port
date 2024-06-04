@@ -353,7 +353,7 @@ public class Grapple extends Spell {
 					if(hit != null) target = hit.hitVec;
 				}
 			}else if(caster instanceof Mob){
-				Entity entity = ((Mob)caster).getAttackTarget();
+				Entity entity = ((Mob)caster).getTarget();
 				if(entity != null) target = GeometryUtils.getCentre(entity);
 			}
 

@@ -170,7 +170,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		ItemStack remainder = this.transferStackInSlot(player, index);
 
 		if(remainder == ItemStack.EMPTY && stack != ItemStack.EMPTY){
-			slot.putStack(ItemStack.EMPTY);
+			slot.set(ItemStack.EMPTY);
 			// The second parameter is never used...
 			if(player != null) player.dropItem(stack, false);
 		}
@@ -236,7 +236,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	public ItemStack transferStackInSlot(Player player, int clickedSlotId){
 
 		ItemStack remainder = ItemStack.EMPTY;
-		Slot slot = this.inventorySlots.get(clickedSlotId);
+		Slot slot = this.slots.get(clickedSlotId);
 
 		if(slot != null && slot.getHasStack()){
 
@@ -281,7 +281,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 			}
 
 			if(stack.getCount() == 0){
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			}else{
 				slot.onSlotChanged();
 			}
@@ -397,7 +397,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 				// Not sure why mergeItemStack differentiates between full/partial merging, as far as I can tell the
 				// following line will work for both cases
-				slot.putStack(stack.splitStack(contents.getMaxStackSize()));
+				slot.set(stack.splitStack(contents.getMaxStackSize()));
 				//slot.onSlotChanged();
 
 				if(stack.isEmpty()) return true; // The whole stack has been merged, so we're done!
@@ -440,7 +440,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		
 		if(centre.getItem().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
 			
-			Slot[] spellBooks = this.inventorySlots.subList(0, 8).toArray(new Slot[8]);
+			Slot[] spellBooks = this.slots.subList(0, 8).toArray(new Slot[8]);
 			
 			if(((IWorkbenchItem)centre.getItem().getItem())
 				.onApplyButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks)){
@@ -464,7 +464,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 
 		if(centre.getItem().getItem() instanceof IWorkbenchItem){ // Should always be true, but no harm in checking.
 
-			Slot[] spellBooks = this.inventorySlots.subList(0, 8).toArray(new Slot[8]);
+			Slot[] spellBooks = this.slots.subList(0, 8).toArray(new Slot[8]);
 
 			((IWorkbenchItem) centre.getItem().getItem()).onClearButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks);
 		}
@@ -555,7 +555,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		// unfortunately there is no way for a world event listener to detect whether the tile entity changed or not
 
 		// Remove slots that are no longer valid
-		this.inventorySlots.removeIf(s -> s instanceof VirtualSlot && !((VirtualSlot)s).isValid());
+		this.slots.removeIf(s -> s instanceof VirtualSlot && !((VirtualSlot)s).isValid());
 		bookshelfSlots.removeIf(s -> !s.isValid());
 
 		List<IInventory> bookshelves = BlockBookshelf.findNearbyBookshelves(tileentity.getWorld(), tileentity.getPos(), tileentity);
@@ -563,7 +563,7 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 		if(bookshelves.isEmpty() == hasBookshelves){ // If the bookshelf status changed
 
 			// Move all the slots appropriately
-			for(Slot slot : this.inventorySlots){
+			for(Slot slot : this.slots){
 				if(!(slot instanceof SlotBookList || slot instanceof VirtualSlot)){
 					slot.xPos += bookshelves.isEmpty() ? -BOOKSHELF_UI_WIDTH : BOOKSHELF_UI_WIDTH;
 				}

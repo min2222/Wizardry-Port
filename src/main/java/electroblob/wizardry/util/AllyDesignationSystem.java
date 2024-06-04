@@ -4,11 +4,13 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.MindControl;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -102,7 +104,7 @@ public final class AllyDesignationSystem {
 	 *         - The target is a creature that was summoned/controlled by the attacker or by an ally of the attacker.
 	 *         <p></p>
 	 *         - The target is a creature that was tamed by the attacker or by an ally of the attacker
-	 *         (see {@link net.minecraft.world.entity.IEntityOwnable}).
+	 *         (see {@link net.minecraft.world.entity.OwnableEntity}).
 	 *         <p></p>
 	 *         <i>As of wizardry 4.1.2, this method now returns <b>true</b> instead of false if the attacker is null. This
 	 *         is because in the vast majority of cases, it makes more sense this way: if a construct has no caster, it
@@ -111,7 +113,7 @@ public final class AllyDesignationSystem {
 	public static boolean isValidTarget(Entity attacker, Entity target){
 
 		// Owned entities inherit their owner's allies
-		if(attacker instanceof IEntityOwnable && !isValidTarget(((IEntityOwnable)attacker).getOwner(), target)) return false;
+		if(attacker instanceof OwnableEntity && !isValidTarget(((OwnableEntity)attacker).getOwner(), target)) return false;
 
 		// Always return false if the target is null
 		if(target == null) return false;
@@ -127,9 +129,9 @@ public final class AllyDesignationSystem {
 
 		// Use a positive check for these rather than a negative check for monsters, because we only want mobs
 		// that are definitely passive
-		if(Wizardry.settings.passiveMobsAreAllies && (target.isCreatureType(EnumCreatureType.AMBIENT, false)
-				|| target.isCreatureType(EnumCreatureType.CREATURE, false)
-				|| target.isCreatureType(EnumCreatureType.WATER_CREATURE, false))){
+		if(Wizardry.settings.passiveMobsAreAllies && (target.getType().getCategory().equals(MobCategory.AMBIENT)
+				|| target.getType().getCategory().equals(MobCategory.CREATURE)
+				|| target.getType().getCategory().equals(MobCategory.WATER_CREATURE))){
 			return false;
 		}
 
@@ -139,23 +141,23 @@ public final class AllyDesignationSystem {
 //		}
 
 		// Tests whether the target is a creature that was summoned/tamed (or is otherwise owned) by the attacker
-		if(target instanceof IEntityOwnable && ((IEntityOwnable)target).getOwner() == attacker){
+		if(target instanceof OwnableEntity && ((OwnableEntity)target).getOwner() == attacker){
 			return false;
 		}
 
 		// Tests whether the target is a creature that was summoned/tamed (or is otherwise owned) by the attacker
-		if(target instanceof IEntityOwnable && attacker instanceof Mob && !(((Mob)attacker).getRevengeTarget() == ((IEntityOwnable)target).getOwner() || ((Mob)attacker).getAttackTarget() == ((IEntityOwnable)target).getOwner())){
+		if(target instanceof OwnableEntity && attacker instanceof Mob && !(((Mob)attacker).getLastHurtByMob() == ((OwnableEntity)target).getOwner() || ((Mob)attacker).getTarget() == ((OwnableEntity)target).getOwner())){
 			return false;
 		}
 
 		// Tests whether the target is a creature that was mind controlled by the attacker
-		if(target instanceof Mob && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
+		if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.mind_control)){
 
-			CompoundTag entityNBT = target.getEntityData();
+			CompoundTag entityNBT = target.getPersistentData();
 
-			if(entityNBT != null && entityNBT.hasUniqueId(MindControl.NBT_KEY)){
-				if(attacker == EntityUtils.getEntityByUUID(target.world,
-						entityNBT.getUniqueId(MindControl.NBT_KEY))){
+			if(entityNBT != null && entityNBT.hasUUID(MindControl.NBT_KEY)){
+				if(attacker == EntityUtils.getEntityByUUID(target.level,
+						entityNBT.getUUID(MindControl.NBT_KEY))){
 					return false;
 				}
 			}
@@ -177,17 +179,17 @@ public final class AllyDesignationSystem {
 //					return false;
 //				}
 
-			}else if(target instanceof IEntityOwnable){
+			}else if(target instanceof OwnableEntity){
 				// Tests whether the target is a creature that was summoned/tamed by an ally of the attacker
-				if(isOwnerAlly((Player)attacker, (IEntityOwnable)target)) return false;
+				if(isOwnerAlly((Player)attacker, (OwnableEntity)target)) return false;
 
-			}else if(target instanceof Mob && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
+			}else if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.mind_control)){
 				// Tests whether the target is a creature that was mind controlled by an ally of the attacker
-				CompoundTag entityNBT = target.getEntityData();
+				CompoundTag entityNBT = target.getPersistentData();
 
-				if(entityNBT != null && entityNBT.hasKey(MindControl.NBT_KEY)){
+				if(entityNBT != null && entityNBT.contains(MindControl.NBT_KEY)){
 
-					Entity controller = EntityUtils.getEntityByUUID(target.world, entityNBT.getUniqueId(MindControl.NBT_KEY));
+					Entity controller = EntityUtils.getEntityByUUID(target.level, entityNBT.getUUID(MindControl.NBT_KEY));
 
 					if(controller instanceof Player && WizardData.get((Player)attacker).isPlayerAlly((Player)controller)){
 						return false;
@@ -200,14 +202,14 @@ public final class AllyDesignationSystem {
 	}
 
 	/** Umbrella method that covers both {@link AllyDesignationSystem#isPlayerAlly(Player, Player)} and
-	 * {@link AllyDesignationSystem#isOwnerAlly(Player, IEntityOwnable)}, returning true if the second entity is
+	 * {@link AllyDesignationSystem#isOwnerAlly(Player, OwnableEntity)}, returning true if the second entity is
 	 * either owned by the first entity, an ally of the first entity, or owned by an ally of the first entity. This is
 	 * generally used to determine targets for healing or other group buffs. */
 	public static boolean isAllied(LivingEntity allyOf, LivingEntity possibleAlly){
 
 		// Owned entities inherit their owner's allies
-		if(allyOf instanceof IEntityOwnable){
-			Entity owner = ((IEntityOwnable)allyOf).getOwner();
+		if(allyOf instanceof OwnableEntity){
+			Entity owner = ((OwnableEntity)allyOf).getOwner();
 			if(owner instanceof LivingEntity && (owner == possibleAlly || isAllied((LivingEntity)owner, possibleAlly))) return true;
 		}
 
@@ -216,8 +218,8 @@ public final class AllyDesignationSystem {
 			return true;
 		}
 
-		if(possibleAlly instanceof IEntityOwnable){
-			IEntityOwnable pet = (IEntityOwnable)possibleAlly;
+		if(possibleAlly instanceof OwnableEntity){
+			OwnableEntity pet = (OwnableEntity)possibleAlly;
 			if(pet.getOwner() == allyOf) return true;
 			if(allyOf instanceof Player && isOwnerAlly((Player)allyOf, pet)) return true;
 		}
@@ -226,20 +228,20 @@ public final class AllyDesignationSystem {
 	}
 
 	/** Helper method for testing if the second player is an ally of the first player. Makes the code neater.
-	 * @see AllyDesignationSystem#isOwnerAlly(Player, IEntityOwnable) */
+	 * @see AllyDesignationSystem#isOwnerAlly(Player, OwnableEntity) */
 	public static boolean isPlayerAlly(Player allyOf, Player possibleAlly){
 		WizardData data = WizardData.get(allyOf);
 		return data != null && data.isPlayerAlly(possibleAlly);
 	}
 
-	/** Helper method for testing if the given {@link net.minecraft.world.entity.IEntityOwnable}'s owner is an ally of the
+	/** Helper method for testing if the given {@link net.minecraft.world.entity.OwnableEntity}'s owner is an ally of the
 	 * given player. This works even when the owner is not logged in, though it may not correctly respect teams when
 	 * that is the case. */
-	public static boolean isOwnerAlly(Player allyOf, IEntityOwnable ownable){
+	public static boolean isOwnerAlly(Player allyOf, OwnableEntity ownable){
 		WizardData data = WizardData.get(allyOf);
 		if(data == null) return false;
 		Entity owner = ownable.getOwner();
-		return owner instanceof Player ? data.isPlayerAlly((Player)owner) : data.isPlayerAlly(ownable.getOwnerId());
+		return owner instanceof Player ? data.isPlayerAlly((Player)owner) : data.isPlayerAlly(ownable.getOwnerUUID());
 	}
 
 	@SubscribeEvent

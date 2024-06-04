@@ -57,7 +57,7 @@ public class ItemBlankScroll extends Item implements IWorkbenchItem {
 				if(crystals.getItem().getCount() * manaPerItem > cost){
 					// Rounds up to the nearest whole crystal
 					crystals.remove(Mth.ceil((float)cost / manaPerItem));
-					centre.putStack(new ItemStack(WizardryItems.scroll, centre.getItem().getCount(), spell.metadata()));
+					centre.set(new ItemStack(WizardryItems.scroll, centre.getItem().getCount(), spell.metadata()));
 					return true;
 				}
 				

@@ -232,7 +232,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 			event.setCanceled(true);
 
 			EntityMagicFireball fireball = new EntityMagicFireball(event.getWorld());
-			fireball.thrower = ((EntitySmallFireball)event.getEntity()).shootingEntity;
+			fireball.thrower = ((EntitySmallFireball)event.getEntity()).getOwner();
 			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(5);
 			fireball.setBurnDuration(5);

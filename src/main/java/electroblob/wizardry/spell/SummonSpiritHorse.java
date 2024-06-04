@@ -63,7 +63,7 @@ public class SummonSpiritHorse extends Spell {
 			horse.getEntityAttribute(EntitySpiritHorse.JUMP_STRENGTH).applyModifier(new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER,
 					modifiers.amplified(SpellModifiers.POTENCY, 0.25f) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 
-			data.setVariable(UUID_KEY, horse.getUniqueID());
+			data.setVariable(UUID_KEY, horse.getUUID());
 		}
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);

@@ -73,12 +73,12 @@ public class WizardTradeTweaksHandler {
 			if(trades == null) return;
 
 			// Using == the specific item rather than instanceof because that's how trades do it.
-			if(gui.inventorySlots.getSlot(0).getItem().getItem() == WizardryItems.spell_book
-					|| gui.inventorySlots.getSlot(1).getItem().getItem() == WizardryItems.spell_book){
+			if(gui.slots.getSlot(0).getItem().getItem() == WizardryItems.spell_book
+					|| gui.slots.getSlot(1).getItem().getItem() == WizardryItems.spell_book){
 
 				for(MerchantRecipe trade : trades){
 					if(trade.getItemToBuy().getItem() == WizardryItems.spell_book && trade.getSecondItemToBuy().isEmpty()){
-						Slot slot = gui.inventorySlots.getSlot(2);
+						Slot slot = gui.slots.getSlot(2);
 						// It still doesn't look quite right because the slot highlight is behind the item, but it'll do
 						// until/unless I find a better solution.
 						DrawingUtils.drawItemAndTooltip(gui, trade.getItemToSell(), slot.xPos, slot.yPos, event.getMouseX(), event.getMouseY(),
@@ -88,7 +88,7 @@ public class WizardTradeTweaksHandler {
 			}
 
 			// New spell indicator
-			if(gui.inventorySlots instanceof ContainerMerchant){
+			if(gui.slots instanceof ContainerMerchant){
 
 				if(tradeIndex < trades.size()){ // Seems to happen with certain mods' GUIs
 
@@ -103,8 +103,8 @@ public class WizardTradeTweaksHandler {
 						if(Wizardry.settings.discoveryMode && !player.isCreative() && Wizardry.proxy.shouldDisplayDiscovered(spell, recipe.getItemToSell())
 								&& WizardData.get(player) != null && !WizardData.get(player).hasSpellBeenDiscovered(spell)){
 
-							int x = gui.inventorySlots.getSlot(2).xPos + 14;
-							int y = gui.inventorySlots.getSlot(2).yPos - 17;
+							int x = gui.slots.getSlot(2).xPos + 14;
+							int y = gui.slots.getSlot(2).yPos - 17;
 
 							RenderHelper.enableGUIStandardItemLighting();
 							GlStateManager.color(1, 1, 1);

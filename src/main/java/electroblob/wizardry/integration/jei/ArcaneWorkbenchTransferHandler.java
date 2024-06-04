@@ -39,12 +39,12 @@ public class ArcaneWorkbenchTransferHandler implements IRecipeTransferInfo<Conta
 
 	@Override
 	public List<Slot> getRecipeSlots(ContainerArcaneWorkbench container){
-		return container.inventorySlots.subList(0, ContainerArcaneWorkbench.UPGRADE_SLOT + 1);
+		return container.slots.subList(0, ContainerArcaneWorkbench.UPGRADE_SLOT + 1);
 	}
 
 	@Override
-	public List<Slot> getInventorySlots(ContainerArcaneWorkbench container){
-		List<Slot> slots = new ArrayList<>(container.inventorySlots.subList(ContainerArcaneWorkbench.UPGRADE_SLOT + 1, ContainerArcaneWorkbench.UPGRADE_SLOT + 37));
+	public List<Slot> getslots(ContainerArcaneWorkbench container){
+		List<Slot> slots = new ArrayList<>(container.slots.subList(ContainerArcaneWorkbench.UPGRADE_SLOT + 1, ContainerArcaneWorkbench.UPGRADE_SLOT + 37));
 		slots.addAll(container.getBookshelfSlots());
 		return slots;
 	}

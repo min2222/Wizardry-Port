@@ -138,7 +138,7 @@ public class GuiSpellDisplay {
 		boolean mainHand = true;
 
 		if(!(wand.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)wand.getItem()).showSpellHUD(player, wand))){
-			wand = player.getItemInHandOffhand();
+			wand = player.getOffHandItem();
 			mainHand = false;
 			// If the player isn't holding a spellcasting item that shows the HUD, then nothing else needs to be done.
 			if(!(wand.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)wand.getItem()).showSpellHUD(player, wand)))
@@ -244,7 +244,7 @@ public class GuiSpellDisplay {
 
 		// The space available to render the spell HUD
 		float xSpace = (float)(width/2 - HALF_HOTBAR_WIDTH);
-		if(!player.getItemInHandOffhand().isEmpty()
+		if(!player.getOffHandItem().isEmpty()
 				// Tests whether the offhand slot is rendered on the same side of the hotbar as the spell HUD
 				&& (player.getPrimaryHand() == EnumHandSide.LEFT) == flipX){
 			xSpace -= OFFHAND_SLOT_WIDTH;
@@ -290,7 +290,7 @@ public class GuiSpellDisplay {
 				progress = maxCooldown == 0 ? 1 : (maxCooldown - (float)cooldown + partialTicks) / maxCooldown;
 			}
 
-			skin.drawBackground(x, y, flipX, flipY, icon, progress, player.isCreative(), player.isPotionActive(WizardryPotions.arcane_jammer));
+			skin.drawBackground(x, y, flipX, flipY, icon, progress, player.isCreative(), player.hasEffect(WizardryPotions.arcane_jammer));
 
 		}
 
@@ -317,7 +317,7 @@ public class GuiSpellDisplay {
 		String format = cooldown > 0 ? "\u00A78" : spell.getElement().getFormattingCode();
 		if(!discovered) format = "\u00A79";
 		// Obfuscates the spell name if the player has the arcane jammer effect
-		if(player.isPotionActive(WizardryPotions.arcane_jammer)) format = format + "\u00A7k";
+		if(player.hasEffect(WizardryPotions.arcane_jammer)) format = format + "\u00A7k";
 		
 		String name = discovered ? spell.getDisplayName() : SpellGlyphData.getGlyphName(spell, player.world);
 		name = format + name;

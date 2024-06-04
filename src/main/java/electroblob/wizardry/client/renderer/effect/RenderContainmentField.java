@@ -40,9 +40,9 @@ public class RenderContainmentField {
 
 		Player player = Minecraft.getMinecraft().player;
 
-		if(player.isPotionActive(WizardryPotions.containment)){
+		if(player.hasEffect(WizardryPotions.containment)){
 
-			Vec3 centre = GeometryUtils.getCentre(NbtUtils.readBlockPos(player.getEntityData().getCompoundTag(PotionContainment.ENTITY_TAG)));
+			Vec3 centre = GeometryUtils.getCentre(NbtUtils.readBlockPos(player.getPersistentData().getCompoundTag(PotionContainment.ENTITY_TAG)));
 			float r = PotionContainment.getContainmentDistance(player.getActivePotionEffect(WizardryPotions.containment).getAmplifier());
 
 			GlStateManager.pushMatrix();

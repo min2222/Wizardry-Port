@@ -25,7 +25,7 @@ public class LayerDiamond extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return !entity.isInvisible() && entity.isPotionActive(WizardryPotions.diamondflesh);
+		return !entity.isInvisible() && entity.hasEffect(WizardryPotions.diamondflesh);
 	}
 
 	@Override

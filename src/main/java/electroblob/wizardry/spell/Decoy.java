@@ -61,7 +61,7 @@ public class Decoy extends Spell {
 					caster.getZ(), world, Mob.class)){
 				// More likely to trick mobs the higher the damage multiplier
 				// The default base value is 0.5, so modifiers of 2 or more will guarantee mobs are tricked
-				if(creature.getAttackTarget() == caster && world.random.nextFloat()
+				if(creature.getTarget() == caster && world.random.nextFloat()
 						< getProperty(MOB_TRICK_CHANCE).floatValue() * modifiers.get(SpellModifiers.POTENCY)){
 					creature.setAttackTarget(decoy);
 				}

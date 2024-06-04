@@ -10,7 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.IEntityOwnable;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundSource;
@@ -30,7 +30,7 @@ import java.util.UUID;
  *
  * @since Wizardry 1.0
  */
-public abstract class EntityMagicConstruct extends Entity implements IEntityOwnable, IEntityAdditionalSpawnData {
+public abstract class EntityMagicConstruct extends Entity implements OwnableEntity, IEntityAdditionalSpawnData {
 
 	/** The UUID of the caster. As of Wizardry 4.3, this <b>is</b> synced, and rather than storing the caster
 	 * instance via a weak reference, it is fetched from the UUID each time it is needed in
@@ -99,7 +99,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 
 	@Override
 	protected void readEntityFromNBT(CompoundTag nbttagcompound){
-		if(nbttagcompound.hasUniqueId("casterUUID")) casterUUID = nbttagcompound.getUniqueId("casterUUID");
+		if(nbttagcompound.hasUUID("casterUUID")) casterUUID = nbttagcompound.getUUID("casterUUID");
 		lifetime = nbttagcompound.getInt("lifetime");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
@@ -140,7 +140,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 
 	@Nullable
 	@Override
-	public UUID getOwnerId(){
+	public UUID getOwnerUUID(){
 		return casterUUID;
 	}
 
@@ -158,7 +158,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	@Nullable
 	public LivingEntity getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
 
-		Entity entity = EntityUtils.getEntityByUUID(world, getOwnerId());
+		Entity entity = EntityUtils.getEntityByUUID(world, getOwnerUUID());
 
 		if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 			Wizardry.logger.warn("{} has a non-living owner!", this);
@@ -169,7 +169,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 	
 	public void setCaster(@Nullable LivingEntity caster){
-		this.casterUUID = caster == null ? null : caster.getUniqueID();
+		this.casterUUID = caster == null ? null : caster.getUUID();
 	}
 
 	/**

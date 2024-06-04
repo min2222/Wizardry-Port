@@ -79,10 +79,10 @@ public class VirtualSlot extends Slot {
 	}
 
 	@Override
-	public void putStack(ItemStack stack){
+	public void set(ItemStack stack){
 		if(isValid()){
 			if(inventory instanceof TileEntityBookshelf) ((TileEntityBookshelf)inventory).sync();
-			super.putStack(stack);
+			super.set(stack);
 		}
 	}
 

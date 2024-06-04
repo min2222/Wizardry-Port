@@ -52,8 +52,8 @@ public class Intimidate extends SpellAreaEffect {
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
-			CompoundTag entityNBT = target.getEntityData();
-			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUniqueID());
+			CompoundTag entityNBT = target.getPersistentData();
+			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUUID());
 
 			target.addEffect(new MobEffectInstance(WizardryPotions.fear,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
@@ -120,15 +120,15 @@ public class Intimidate extends SpellAreaEffect {
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		// No need to do this every tick either
-		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().isPotionActive(WizardryPotions.fear)
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.fear)
 				&& event.getEntity() instanceof EntityCreature){
 
-			CompoundTag entityNBT = event.getEntity().getEntityData();
+			CompoundTag entityNBT = event.getEntity().getPersistentData();
 			EntityCreature creature = (EntityCreature)event.getEntity();
 
-			if(entityNBT != null && entityNBT.hasUniqueId(NBT_KEY)){
+			if(entityNBT != null && entityNBT.hasUUID(NBT_KEY)){
 
-				Entity caster = EntityUtils.getEntityByUUID(creature.world, entityNBT.getUniqueId(NBT_KEY));
+				Entity caster = EntityUtils.getEntityByUUID(creature.world, entityNBT.getUUID(NBT_KEY));
 
 				if(caster instanceof LivingEntity){
 					double distance = BASE_AVOID_DISTANCE + AVOID_DISTANCE_PER_LEVEL

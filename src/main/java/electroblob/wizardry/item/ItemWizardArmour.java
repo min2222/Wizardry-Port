@@ -325,7 +325,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 		if(upgrade.getHasStack()){
 			ItemStack original = centre.getItem().copy();
-			centre.putStack(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
+			centre.set(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
 			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
 		}
 		

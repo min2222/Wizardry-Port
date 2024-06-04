@@ -104,7 +104,7 @@ public class Resurrection extends Spell {
 		player.experienceLevel = 0;
 		player.experienceTotal = 0;
 		// Not sure what potion core is 'fixing' but it breaks my resurrection, so let's unfix it!
-		player.getEntityData().removeTag(POTION_CORE_FIX_NBT_KEY);
+		player.getPersistentData().removeTag(POTION_CORE_FIX_NBT_KEY);
 
 		if(player.world.isClientSide){
 			ParticleBuilder.spawnHealParticles(player.world, player);
@@ -139,7 +139,7 @@ public class Resurrection extends Spell {
 					ItemStack wand = firstPersonPlayer.getMainHandItem();
 
 					if(!(wand.getItem() instanceof ISpellCastingItem)){
-						wand = firstPersonPlayer.getItemInHandOffhand();
+						wand = firstPersonPlayer.getOffHandItem();
 						if(!(wand.getItem() instanceof ISpellCastingItem)) return;
 					}
 

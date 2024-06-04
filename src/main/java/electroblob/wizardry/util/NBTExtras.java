@@ -197,7 +197,7 @@ public final class NBTExtras {
 	 * no idea.
 	 * <p></p>
 	 * <i>Usage note: this method complements {@link CompoundTag#setUniqueId(String, UUID)} and
-	 * {@link CompoundTag#getUniqueId(String)}, which store UUIDs by appending "Most" and "Least" to the given
+	 * {@link CompoundTag#getUUID(String)}, which store UUIDs by appending "Most" and "Least" to the given
 	 * key to store the most and least significant UUID bits respectively. It will not work for the UUID methods in
 	 * {@link NbtUtils}, which store the long values under "M" and "L" in their own compound tag.</i>
 	 */

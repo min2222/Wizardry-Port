@@ -106,7 +106,7 @@ public class Paralysis extends SpellRay {
 		// Disables entities' AI when under the effects of paralysis and re-enables it on the last update of the effect
 		// - this can't be in the potion class because it requires access to the duration and hence the actual
 		// PotionEffect instance
-		if(event.getEntity() instanceof Mob && event.getEntity().isPotionActive(WizardryPotions.paralysis)){
+		if(event.getEntity() instanceof Mob && event.getEntity().hasEffect(WizardryPotions.paralysis)){
 			int timeLeft = event.getEntity().getActivePotionEffect(WizardryPotions.paralysis).getDuration();
 			((Mob)event.getEntity()).setNoAI(timeLeft > 1);
 		}
@@ -115,7 +115,7 @@ public class Paralysis extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 		// Paralysed creatures snap out of paralysis when they take critical damage
-		if(event.getEntity().isPotionActive(WizardryPotions.paralysis) && event.getEntity().getHealth()
+		if(event.getEntity().hasEffect(WizardryPotions.paralysis) && event.getEntity().getHealth()
 				- event.getAmount() <= Spells.paralysis.getProperty(CRITICAL_HEALTH).floatValue()){
 			event.getEntity().removePotionEffect(WizardryPotions.paralysis);
 		}

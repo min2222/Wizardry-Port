@@ -49,7 +49,7 @@ public class PotionDecay extends PotionMagicEffect {
 
 		// Do the timing check first, it'll cut out 95% of calls to all subsequent conditions
 		if(target.tickCount % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.level.isClientSide
-				&& target.isPotionActive(WizardryPotions.decay) && target.onGround){
+				&& target.hasEffect(WizardryPotions.decay) && target.onGround){
 
 			List<Entity> entities = target.level.getEntitiesWithinAABBExcludingEntity(target,
 					target.getBoundingBox());
@@ -60,10 +60,10 @@ public class PotionDecay extends PotionMagicEffect {
 			
 			// The victim spreading the decay is the 'caster' here, so that it can actually wear off, otherwise it
 			// just gets infected with its own decay and the effect lasts forever.
-			EntityDecay decay = new EntityDecay(target.world);
+			EntityDecay decay = new EntityDecay(target.level);
 			decay.setCaster(target);
 			decay.setPosition(target.getX(), target.getY(), target.getZ());
-			target.world.addFreshEntity(decay);
+			target.level.addFreshEntity(decay);
 		}
 	}
 

@@ -27,7 +27,7 @@ public class LayerMindControl extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return !entity.isInvisible() && (entity.isPotionActive(WizardryPotions.mind_control) || entity.getEntityData().getBoolean(Possession.NBT_KEY));
+		return !entity.isInvisible() && (entity.hasEffect(WizardryPotions.mind_control) || entity.getPersistentData().getBoolean(Possession.NBT_KEY));
 	}
 
 	@Override

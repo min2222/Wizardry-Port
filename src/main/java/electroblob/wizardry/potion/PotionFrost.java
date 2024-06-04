@@ -33,7 +33,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 
 	@SubscribeEvent
 	public static void onBreakSpeedEvent(BreakSpeed event){
-		if(event.getEntity().isPotionActive(WizardryPotions.frost)){
+		if(event.getEntity().hasEffect(WizardryPotions.frost)){
 			// Amplifier + 1 because it starts at 0
 			event.setNewSpeed(event.getOriginalSpeed() * (1 - Constants.FROST_FATIGUE_PER_LEVEL
 					* (event.getEntity().getActivePotionEffect(WizardryPotions.frost).getAmplifier() + 1)));
@@ -42,7 +42,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 
 	@SubscribeEvent
 	public static void onLivingJumpEvent(LivingJumpEvent event){
-		if(event.getEntity().isPotionActive(WizardryPotions.frost)){
+		if(event.getEntity().hasEffect(WizardryPotions.frost)){
 			if(event.getEntity().getActivePotionEffect(WizardryPotions.frost).getAmplifier() == 0){
 				event.getEntity().motionY *= 0.5;
 			}else{
@@ -54,7 +54,7 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 	@Override
 	public void performEffect(LivingEntity entitylivingbase, int strength) {
 		if (entitylivingbase.isBurning()) {
-			if (entitylivingbase.isPotionActive(WizardryPotions.frost)) {
+			if (entitylivingbase.hasEffect(WizardryPotions.frost)) {
 				entitylivingbase.removePotionEffect(WizardryPotions.frost);
 				entitylivingbase.extinguish();
 			}

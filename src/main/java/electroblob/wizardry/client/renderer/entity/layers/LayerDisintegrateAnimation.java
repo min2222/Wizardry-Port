@@ -38,12 +38,12 @@ public class LayerDisintegrateAnimation<T extends LivingEntity> extends LayerTil
 
 	@Override
 	public boolean shouldRender(T entity, float partialTicks){
-		return entity.getEntityData().hasKey(Disintegration.NBT_KEY);
+		return entity.getPersistentData().contains(Disintegration.NBT_KEY);
 	}
 
 	@Override
 	public ResourceLocation getTexture(T entity, float partialTicks){
-		return TEXTURES[Mth.clamp(entity.tickCount - entity.getEntityData().getInt(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
+		return TEXTURES[Mth.clamp(entity.tickCount - entity.getPersistentData().getInt(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class LayerDisintegrateAnimation<T extends LivingEntity> extends LayerTil
 
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Pre<LivingEntity> event){
-		if(event.getEntity().getEntityData().hasKey(Disintegration.NBT_KEY)){
+		if(event.getEntity().getPersistentData().contains(Disintegration.NBT_KEY)){
 			event.getEntity().deathTime = 0;
 			event.getEntity().setInvisible(true);
 		}
@@ -65,7 +65,7 @@ public class LayerDisintegrateAnimation<T extends LivingEntity> extends LayerTil
 
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
-		if(event.getEntity().getEntityData().hasKey(Disintegration.NBT_KEY)) event.getEntity().setInvisible(false);
+		if(event.getEntity().getPersistentData().contains(Disintegration.NBT_KEY)) event.getEntity().setInvisible(false);
 	}
 
 }

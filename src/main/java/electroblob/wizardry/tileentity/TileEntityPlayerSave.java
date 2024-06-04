@@ -29,7 +29,7 @@ public class TileEntityPlayerSave extends BlockEntity {
 	@Override
 	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
-		if(tagCompound.hasUniqueId("casterUUID")) casterUUID = tagCompound.getUniqueId("casterUUID");
+		if(tagCompound.hasUUID("casterUUID")) casterUUID = tagCompound.getUUID("casterUUID");
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class TileEntityPlayerSave extends BlockEntity {
 	}
 
 	public void setCaster(@Nullable LivingEntity caster){
-		this.casterUUID = caster == null ? null : caster.getUniqueID();
+		this.casterUUID = caster == null ? null : caster.getUUID();
 	}
 
 	@Override

@@ -230,7 +230,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
-		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getItemInHandOffhand());
+		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getOffHandItem());
 
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is false, the cooldowns will be decremented.
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is true and isHeld is true, the cooldowns will also be decremented.
@@ -823,7 +823,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 		if(upgrade.getHasStack()){
 			ItemStack original = centre.getItem().copy();
-			centre.putStack(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
+			centre.set(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
 			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
 		}
 

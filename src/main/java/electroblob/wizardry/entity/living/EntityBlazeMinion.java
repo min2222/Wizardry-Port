@@ -37,7 +37,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	@Override
-	public UUID getOwnerId(){
+	public UUID getOwnerUUID(){
 		return casterUUID;
 	}
 
@@ -140,7 +140,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 
 	// This vanilla method has nothing to do with the custom despawn() method.
 	@Override protected boolean canDespawn(){
-		return getCaster() == null && getOwnerId() == null;
+		return getCaster() == null && getOwnerUUID() == null;
 	}
 
 	@Override

@@ -78,7 +78,7 @@ import java.util.UUID;
  * sacrifices have to be made when it comes to Java style - because adding on to a pre-existing program is not a good
  * way of doing this sort of thing anyway, but we have no choice about that! */
 @Mod.EventBusSubscriber
-public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOwnable {
+public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEntity {
 
 	// Remember that ALL fields are static and final in interfaces, even if they don't explicitly state that.
 	String NAMEPLATE_TRANSLATION_KEY = "entity." + Wizardry.MODID + ":summonedcreature.nameplate";
@@ -103,7 +103,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Implementing classes should implement this to return their owner UUID field. */
 	@Nullable
 	@Override
-	UUID getOwnerId(); // Only overridden because I wanted to add javadoc!
+	UUID getOwnerUUID(); // Only overridden because I wanted to add javadoc!
 
 	@Nullable
 	@Override
@@ -121,7 +121,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 
 		if(this instanceof Entity){ // Bit of a cheat but it saves having yet another method just to get the world
 
-			Entity entity = EntityUtils.getEntityByUUID(((Entity)this).world, getOwnerId());
+			Entity entity = EntityUtils.getEntityByUUID(((Entity)this).world, getOwnerUUID());
 
 			if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 				Wizardry.logger.warn("{} has a non-living owner!", this);
@@ -140,7 +140,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Sets the EntityLivingBase that summoned this creature.
 	 */
 	default void setCaster(@Nullable LivingEntity caster){
-		setOwnerId(caster == null ? null : caster.getUniqueID());
+		setOwnerId(caster == null ? null : caster.getUUID());
 	}
 
 	// Miscellaneous
@@ -191,8 +191,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 			if(target instanceof Player){
 				// ...unless the creature was summoned by a good wizard who the player has not angered.
 				if(getCaster() instanceof EntityWizard){
-					if(getCaster().getRevengeTarget() != target
-							&& ((EntityWizard)getCaster()).getAttackTarget() != target) {
+					if(getCaster().getLastHurtByMob() != target
+							&& ((EntityWizard)getCaster()).getTarget() != target) {
 						return false;
 					}
 				}
@@ -204,7 +204,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 			if((target instanceof IMob || target instanceof ISummonedCreature
 					|| (target instanceof EntityWizard && !(getCaster() instanceof EntityWizard))
 					// ...or something that's attacking the owner...
-					|| (target instanceof Mob && ((Mob)target).getAttackTarget() == getCaster())
+					|| (target instanceof Mob && ((Mob)target).getTarget() == getCaster())
 					// ...or in the whitelist...
 					|| Arrays.asList(Wizardry.settings.summonedCreatureTargetsWhitelist)
 					.contains(EntityList.getKey(target.getClass())))
@@ -271,7 +271,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 */
 	default void writeNBTDelegate(CompoundTag tagcompound){
 		if(this.getCaster() != null){
-			tagcompound.setUniqueId("casterUUID", this.getCaster().getUniqueID());
+			tagcompound.setUniqueId("casterUUID", this.getCaster().getUUID());
 		}
 		tagcompound.putInt("lifetime", getLifetime());
 	}
@@ -281,7 +281,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * very little point in doing that since anything extra could just be added to readEntityFromNBT anyway.
 	 */
 	default void readNBTDelegate(CompoundTag tagcompound){
-		this.setOwnerId(tagcompound.getUniqueId("casterUUID"));
+		this.setOwnerId(tagcompound.getUUID("casterUUID"));
 		this.setLifetime(tagcompound.getInt("lifetime"));
 	}
 
@@ -402,7 +402,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 					((ISummonedCreature)event.getSource().getEntity()).onSuccessfulAttack(event.getEntity());
 					// If the target revenge-targeted the summoner, make it revenge-target the minion instead
 					// (if it didn't revenge-target, do nothing)
-					if(event.getEntity().getRevengeTarget() == summoner
+					if(event.getEntity().getLastHurtByMob() == summoner
 							&& event.getSource().getEntity() instanceof LivingEntity){
 						event.getEntity().setRevengeTarget((LivingEntity)event.getSource().getEntity());
 					}

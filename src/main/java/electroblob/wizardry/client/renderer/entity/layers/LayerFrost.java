@@ -26,7 +26,7 @@ public class LayerFrost extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return !entity.isInvisible() && entity.isPotionActive(WizardryPotions.frost) || entity.getEntityData().getBoolean(BlockStatue.FROZEN_NBT_KEY);
+		return !entity.isInvisible() && entity.hasEffect(WizardryPotions.frost) || entity.getPersistentData().getBoolean(BlockStatue.FROZEN_NBT_KEY);
 	}
 
 	@Override

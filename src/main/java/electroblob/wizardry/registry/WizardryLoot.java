@@ -140,7 +140,7 @@ public final class WizardryLoot {
 
 //	@SubscribeEvent
 //	public static void onLivingSpawnEvent(LivingSpawnEvent.SpecialSpawn event){
-//		if(event.getSpawner() != null) event.getEntity().getEntityData().setBoolean(FROM_SPAWNER_NBT_FLAG, true);
+//		if(event.getSpawner() != null) event.getEntity().getPersistentData().setBoolean(FROM_SPAWNER_NBT_FLAG, true);
 //	}
 
 }

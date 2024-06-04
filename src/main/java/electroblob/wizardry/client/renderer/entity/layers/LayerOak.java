@@ -25,7 +25,7 @@ public class LayerOak extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return !entity.isInvisible() && entity.isPotionActive(WizardryPotions.oakflesh);
+		return !entity.isInvisible() && entity.hasEffect(WizardryPotions.oakflesh);
 	}
 
 	@Override

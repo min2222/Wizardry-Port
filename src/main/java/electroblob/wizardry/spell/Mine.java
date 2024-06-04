@@ -55,7 +55,7 @@ public class Mine extends SpellRay {
 		if(caster instanceof Player){
 			if(caster.getMainHandItem().getItem() instanceof ISpellCastingItem){
 				caster.swingArm(InteractionHand.MAIN_HAND);
-			}else if(caster.getItemInHandOffhand().getItem() instanceof ISpellCastingItem){
+			}else if(caster.getOffHandItem().getItem() instanceof ISpellCastingItem){
 				caster.swingArm(InteractionHand.OFF_HAND);
 			}
 		}

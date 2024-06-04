@@ -53,20 +53,20 @@ public interface Imbuement {
 	@SubscribeEvent
 	public static void onItemTossEvent(ItemTossEvent event){
 		// Instantly disenchants an imbued weapon if it is thrown on the ground.
-		removeImbuements(event.getEntityItem().getItem());
+		removeImbuements(event.getEntity().getItem());
 	}
 
 	/** Removes all imbuements from the given itemstack. */
 	static void removeImbuements(ItemStack stack){
-		if(stack.isItemEnchanted()){
+		if(stack.isEnchanted()){
 			// No need to check what enchantments the item has, since remove() does nothing if the element does not exist
 			ListTag enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
-					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTagList();
+					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTags();
 			// Check all enchantments of the item
 			Iterator<Tag> enchantmentIt = enchantmentList.iterator();
 			while(enchantmentIt.hasNext()){
 				CompoundTag enchantmentTag = (CompoundTag) enchantmentIt.next();
-				Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
+				Enchantment enchantment = Enchantment.byId(enchantmentTag.getShort("id"));
 				// If the item contains a magic weapon enchantment, remove it from the item
 				if(enchantment instanceof Imbuement){
 					((Imbuement) enchantment).onImbuementRemoval(stack);
@@ -85,7 +85,7 @@ public interface Imbuement {
 		if(event.getContainer() instanceof ContainerChest){
 			// Still not sure if it's better to set stacks in slots or modify the itemstack list directly, but I would
 			// imagine it's the former.
-			for(Slot slot : event.getContainer().inventorySlots){
+			for(Slot slot : event.getContainer().slots){
 				ItemStack slotStack = slot.getItem();
 				if(slotStack.getItem() instanceof EnchantedBookItem){
 					// We don't care about the level of the enchantments
@@ -93,13 +93,13 @@ public interface Imbuement {
 					// Removes all imbuements
 					if(Iterables.removeIf(enchantmentList, tag -> {
 						CompoundTag enchantmentTag = (CompoundTag) tag;
-						return Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"))
+						return Enchantment.byId(enchantmentTag.getShort("id"))
 								instanceof Imbuement;
 					})){
 						// If any imbuements were removed, inform about the removal of the enchantment(s), or
 						// delete the book entirely if there are none left.
 						if(enchantmentList.isEmpty()){
-							slot.putStack(ItemStack.EMPTY);
+							slot.set(ItemStack.EMPTY);
 							Wizardry.logger.info("Deleted enchanted book with illegal enchantments");
 						}else{
 							// Inform about enchantment removal
@@ -119,14 +119,14 @@ public interface Imbuement {
 
 			Arrow arrow = (Arrow)event.getEntity();
 
-			if(arrow.shootingEntity instanceof LivingEntity){
+			if(arrow.getOwner() instanceof LivingEntity){
 
-				LivingEntity archer = (LivingEntity)arrow.shootingEntity;
+				LivingEntity archer = (LivingEntity)arrow.getOwner();
 
 				ItemStack bow = archer.getMainHandItem();
 
 				if(!ImbueWeapon.isBow(bow)){
-					bow = archer.getItemInHandOffhand();
+					bow = archer.getOffHandItem();
 					if(!ImbueWeapon.isBow(bow)) return;
 				}
 
@@ -145,8 +145,8 @@ public interface Imbuement {
 				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon, bow);
 
 				if(level > 0){
-					if(arrow.getEntityData() != null){
-						arrow.getEntityData().putInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY, level);
+					if(arrow.getPersistentData() != null){
+						arrow.getPersistentData().putInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY, level);
 					}
 				}
 			}

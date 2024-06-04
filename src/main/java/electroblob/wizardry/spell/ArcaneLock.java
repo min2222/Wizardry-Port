@@ -65,16 +65,16 @@ public class ArcaneLock extends SpellRay {
 
 		if(tileentity != null){
 
-			if(tileentity.getTileData().hasUniqueId(NBT_KEY)){
+			if(tileentity.getTileData().hasUUID(NBT_KEY)){
 				// Unlocking
-				if(level.getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(NBT_KEY)) == player){
+				if(level.getPlayerEntityByUUID(tileentity.getTileData().getUUID(NBT_KEY)) == player){
 					NBTExtras.removeUniqueId(tileentity.getTileData(), NBT_KEY);
 					world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 					return true;
 				}
 			}else{
 				// Locking
-				tileentity.getTileData().setUniqueId(NBT_KEY, player.getUniqueID());
+				tileentity.getTileData().setUniqueId(NBT_KEY, player.getUUID());
 				world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 				return true;
 			}
@@ -98,10 +98,10 @@ public class ArcaneLock extends SpellRay {
 			BlockEntity tileentity = event.getWorld().getTileEntity(event.getPos());
 
 			// Prevents arcane-locked containers from being opened
-			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID
-			if(tileentity != null && tileentity.getTileData().hasUniqueId(ArcaneLock.NBT_KEY)){
-				// Why is getUniqueId marked @Nullable? It literally creates a UUID and returns it!
-				Player owner = event.getWorld().getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(ArcaneLock.NBT_KEY));
+			// Need to check if it has the unique id first because if it is absent getUUID will return the nil UUID
+			if(tileentity != null && tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
+				// Why is getUUID marked @Nullable? It literally creates a UUID and returns it!
+				Player owner = event.getWorld().getPlayerEntityByUUID(tileentity.getTileData().getUUID(ArcaneLock.NBT_KEY));
 				// Only the player that owns the lock or an ally of that player may open the container
 				// If nobody owns it (i.e. it's part of a shrine, or the owner logged out), player will be null
 				// Unfortunately we can't get the owner's allies if the owner is offline
@@ -139,12 +139,12 @@ public class ArcaneLock extends SpellRay {
 			BlockEntity tileentity = level.getTileEntity(pos);
 
 			// Prevents arcane-locked containers from being broken
-			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID
-			if(tileentity != null && tileentity.getTileData().hasUniqueId(ArcaneLock.NBT_KEY)){
+			// Need to check if it has the unique id first because if it is absent getUUID will return the nil UUID
+			if(tileentity != null && tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
 				// Only the player that owns the lock may break the container
 				// If nobody owns it (i.e. it's part of a shrine), player will be null
-				// Why is getUniqueId marked @Nullable? It literally creates a UUID and returns it!
-				if(breaker.getUniqueID() != tileentity.getTileData().getUniqueId(ArcaneLock.NBT_KEY)){
+				// Why is getUUID marked @Nullable? It literally creates a UUID and returns it!
+				if(breaker.getUUID() != tileentity.getTileData().getUUID(ArcaneLock.NBT_KEY)){
 					return true;
 				}
 			}
@@ -164,7 +164,7 @@ public class ArcaneLock extends SpellRay {
 	public static void onExplosionEvent(ExplosionEvent.Detonate event){
 		// Prevents arcane-locked containers from being exploded
 		event.getAffectedBlocks().removeIf(pos -> event.getWorld().getTileEntity(pos) != null
-				&& event.getWorld().getTileEntity(pos).getTileData().hasUniqueId(NBT_KEY));
+				&& event.getWorld().getTileEntity(pos).getTileData().hasUUID(NBT_KEY));
 	}
 
 }

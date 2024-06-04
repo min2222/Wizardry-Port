@@ -44,7 +44,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	@Override
-	public UUID getOwnerId(){
+	public UUID getOwnerUUID(){
 		return casterUUID;
 	}
 
@@ -114,7 +114,7 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 
 	// This vanilla method has nothing to do with the custom despawn() method.
 	@Override protected boolean canDespawn(){
-		return getCaster() == null && getOwnerId() == null;
+		return getCaster() == null && getOwnerUUID() == null;
 	}
 
 	@Override

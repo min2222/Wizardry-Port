@@ -63,9 +63,9 @@ public final class WizardryClientEventHandler {
 
 				String activeShader = Minecraft.getMinecraft().entityRenderer.getShaderGroup().getShaderGroupName();
 
-				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getMinecraft().player.isPotionActive(WizardryPotions.slow_time))
-						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getMinecraft().player.isPotionActive(WizardryPotions.sixth_sense))
-						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getMinecraft().player.isPotionActive(WizardryPotions.transience))){
+				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.slow_time))
+						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.sixth_sense))
+						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.transience))){
 
 					if(activeShader.equals(SixthSense.SHADER.toString())
 					|| activeShader.equals(Transience.SHADER.toString())) RenderBlinkEffect.playBlinkEffect();
@@ -110,7 +110,7 @@ public final class WizardryClientEventHandler {
 	public static void onMouseEvent(MouseEvent event){
 
 		// Prevents the player looking around when paralysed
-		if(Minecraft.getMinecraft().player.isPotionActive(WizardryPotions.paralysis)
+		if(Minecraft.getMinecraft().player.hasEffect(WizardryPotions.paralysis)
 				&& Minecraft.getMinecraft().inGameHasFocus){
 			event.setCanceled(true);
 			Minecraft.getMinecraft().player.prevRotationYaw = 0;
@@ -125,7 +125,7 @@ public final class WizardryClientEventHandler {
 	@SubscribeEvent
 	public static void onInputUpdateEvent(InputUpdateEvent event){
 		// Prevents the player moving when paralysed
-		if(event.getEntity().isPotionActive(WizardryPotions.paralysis)){
+		if(event.getEntity().hasEffect(WizardryPotions.paralysis)){
 			event.getMovementInput().moveForward = 0;
 			event.getMovementInput().moveStrafe = 0;
 			event.getMovementInput().jump = false;

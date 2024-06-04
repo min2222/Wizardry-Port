@@ -27,7 +27,7 @@ public class LayerStone extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return entity.getEntityData().getBoolean(BlockStatue.PETRIFIED_NBT_KEY);
+		return entity.getPersistentData().getBoolean(BlockStatue.PETRIFIED_NBT_KEY);
 	}
 
 	@Override

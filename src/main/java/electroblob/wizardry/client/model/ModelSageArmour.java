@@ -109,8 +109,8 @@ public class ModelSageArmour extends ModelArmourFixer {
 	}
 
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5){
-		if(entity.isInvisible() && !entity.getEntityData().getBoolean(BlockStatue.PETRIFIED_NBT_KEY)
-				&& !entity.getEntityData().getBoolean(BlockStatue.FROZEN_NBT_KEY)) return;
+		if(entity.isInvisible() && !entity.getPersistentData().getBoolean(BlockStatue.PETRIFIED_NBT_KEY)
+				&& !entity.getPersistentData().getBoolean(BlockStatue.FROZEN_NBT_KEY)) return;
 		super.render(entity, f, f1, f2, f3, f4, f5);
 		setRotationAngles(f, f1, f2, f3, f4, f5, entity);
 		this.robe.render(f5);

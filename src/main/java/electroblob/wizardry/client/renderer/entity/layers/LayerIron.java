@@ -25,7 +25,7 @@ public class LayerIron extends LayerTiledOverlay<LivingEntity> {
 
 	@Override
 	public boolean shouldRender(LivingEntity entity, float partialTicks){
-		return !entity.isInvisible() && entity.isPotionActive(WizardryPotions.ironflesh);
+		return !entity.isInvisible() && entity.hasEffect(WizardryPotions.ironflesh);
 	}
 
 	@Override

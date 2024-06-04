@@ -91,7 +91,7 @@ public final class WizardryEventHandler {
 	public static void onPlaySoundAtEntityEvent(PlayLevelSoundEvent.AtEntity event){
 		// Muffle (there's no spell class for it so it's here instead)
 		if(event.getEntity() instanceof LivingEntity
-				&& ((LivingEntity)event.getEntity()).isPotionActive(WizardryPotions.muffle)){
+				&& ((LivingEntity)event.getEntity()).hasEffect(WizardryPotions.muffle)){
 			event.setCanceled(true);
 		}
 	}
@@ -196,7 +196,7 @@ public final class WizardryEventHandler {
 		if(event.getEntity() instanceof Mob && event.getTarget() != null){
 
 			// Muffle
-			if(event.getTarget().isPotionActive(WizardryPotions.muffle)){
+			if(event.getTarget().hasEffect(WizardryPotions.muffle)){
 
 				Vec3 vec = event.getTarget().getPositionEyes(1).subtract(event.getEntity().getPositionEyes(1));
 				// Find the angle between the direction the mob is looking and the direction the player is in
@@ -209,14 +209,14 @@ public final class WizardryEventHandler {
 			}
 
 			// Mirage
-			if(event.getTarget().isPotionActive(WizardryPotions.mirage)){
+			if(event.getTarget().hasEffect(WizardryPotions.mirage)){
 				// Can't find players under mirage at all! (Pretty sure this excludes revenge-targeting)
 				((Mob)event.getEntity()).setAttackTarget(null);
 			}
 
 			// Blindness tweak
 			// I'm not going as far as potion core's implementation, this is just so it does *something* to mobs
-			if(event.getEntity().isPotionActive(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
+			if(event.getEntity().hasEffect(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
 					&& Wizardry.settings.blindnessTweak && event.getTarget().distanceToSqr(event.getEntity()) > 3.5 * 3.5){
 				// Can't detect anything more than 3.5 blocks away (roughly the player's view distance when blinded)
 				((Mob)event.getEntity()).setAttackTarget(null);
@@ -265,12 +265,12 @@ public final class WizardryEventHandler {
 			if(attacker.getDistance(event.getEntity()) < 10){
 
 				// Fireskin
-				if(event.getEntity().isPotionActive(WizardryPotions.fireskin)
+				if(event.getEntity().hasEffect(WizardryPotions.fireskin)
 						&& !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
 					attacker.setSecondsOnFire(Spells.fire_breath.getProperty(Spell.BURN_DURATION).intValue() * 20);
 
 				// Ice Shroud
-				if(event.getEntity().isPotionActive(WizardryPotions.ice_shroud)
+				if(event.getEntity().hasEffect(WizardryPotions.ice_shroud)
 						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity())
 						&& !(attacker instanceof FakePlayer)) // Fake players cause problems
 					attacker.addEffect(new MobEffectInstance(WizardryPotions.frost,
@@ -278,7 +278,7 @@ public final class WizardryEventHandler {
 							Spells.ice_shroud.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 				// Static Aura
-				if(event.getEntity().isPotionActive(WizardryPotions.static_aura)){
+				if(event.getEntity().hasEffect(WizardryPotions.static_aura)){
 
 					if(level.isClientSide){
 
@@ -332,9 +332,9 @@ public final class WizardryEventHandler {
 
 		// Freezing bow
 		if(event.getSource().getDirectEntity() instanceof Arrow
-				&& event.getSource().getDirectEntity().getEntityData() != null){
+				&& event.getSource().getDirectEntity().getPersistentData() != null){
 
-			int level = event.getSource().getDirectEntity().getEntityData()
+			int level = event.getSource().getDirectEntity().getPersistentData()
 					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
@@ -373,7 +373,7 @@ public final class WizardryEventHandler {
 						spell.cast(event.getEntity().world, (Mob)event.getEntity(), InteractionHand.MAIN_HAND, count,
 								// TODO: This implementation of modifiers relies on them being accessible client-side.
 								// 		 Right now that doesn't matter because NPCs don't use modifiers, but they might in future
-								((Mob)event.getEntity()).getAttackTarget(), modifiers);
+								((Mob)event.getEntity()).getTarget(), modifiers);
 
 						((ISpellCaster)event.getEntity()).setSpellCounter(count + 1);
 					}

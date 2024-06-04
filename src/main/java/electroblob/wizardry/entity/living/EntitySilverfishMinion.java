@@ -35,7 +35,7 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	// Setter + getter implementations
 	@Override public int getLifetime(){ return lifetime; }
 	@Override public void setLifetime(int lifetime){ this.lifetime = lifetime; }
-	@Override public UUID getOwnerId(){ return casterUUID; }
+	@Override public UUID getOwnerUUID(){ return casterUUID; }
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new silverfish minion in the given world. */
@@ -151,7 +151,7 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 
 	// This vanilla method has nothing to do with the custom despawn() method.
 	@Override protected boolean canDespawn(){
-		return getCaster() == null && getOwnerId() == null;
+		return getCaster() == null && getOwnerUUID() == null;
 	}
 
 	@Override

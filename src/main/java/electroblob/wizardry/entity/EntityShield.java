@@ -41,7 +41,7 @@ public class EntityShield extends Entity {
 
 	@Override
 	public void tick(){
-		// System.out.println("Shield exists, ID: " + this.getUniqueID().toString());
+		// System.out.println("Shield exists, ID: " + this.getUUID().toString());
 		Player entityplayer = player != null ? player.get() : null;
 		if(entityplayer != null){
 			this.setPositionAndRotation(entityplayer.getX() + entityplayer.getLookVec().x * 0.3,

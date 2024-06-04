@@ -35,7 +35,7 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 				ItemStack wand = player.getMainHandItem();
 
 				if(!(wand.getItem() instanceof ISpellCastingItem)){
-					wand = player.getItemInHandOffhand();
+					wand = player.getOffHandItem();
 				}
 
 				switch(message.controlType){

@@ -22,8 +22,8 @@ public class SlotWorkbenchItem extends Slot {
 	}
 
 	@Override
-	public void putStack(ItemStack stack){
-		super.putStack(stack);
+	public void set(ItemStack stack){
+		super.set(stack);
 		this.container.onSlotChanged(slotNumber, stack, null);
 	}
 

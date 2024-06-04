@@ -57,8 +57,8 @@ public class Disintegration extends SpellRay {
 		if(world.isClientSide){ // FIXME: Various syncing issues here!
 			// Set NBT client-side, it's only for rendering
 			// Normally dying entities are ignored but we're fiddling with them here so double-check
-			if(!target.getEntityData().hasKey(NBT_KEY)){
-				target.getEntityData().putInt(NBT_KEY, target.tickCount);
+			if(!target.getPersistentData().contains(NBT_KEY)){
+				target.getPersistentData().putInt(NBT_KEY, target.tickCount);
 			}
 		}else{
 			for(int i = 0; i < count; i++){

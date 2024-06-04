@@ -425,7 +425,7 @@ public class ItemArtefact extends Item {
 
 				if(artefact == WizardryItems.ring_battlemage){
 
-					if(player.getItemInHandOffhand().getItem() instanceof ISpellCastingItem
+					if(player.getOffHandItem().getItem() instanceof ISpellCastingItem
 						&& ImbueWeapon.isSword(player.getMainHandItem())){
 						modifiers.set(SpellModifiers.POTENCY, 1.1f * potency, false);
 					}
@@ -501,7 +501,7 @@ public class ItemArtefact extends Item {
 						ItemStack wand = player.getMainHandItem();
 
 						if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)){
-							wand = player.getItemInHandOffhand();
+							wand = player.getOffHandItem();
 							if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)) return;
 						}
 
@@ -554,13 +554,13 @@ public class ItemArtefact extends Item {
 		LivingEntity entity = event.getEntity();
 
 		// No point doing this every tick, every 2.5 seconds should be enough
-		if(entity.tickCount % 50 == 0 && entity.isPotionActive(WizardryPotions.mind_control)){
+		if(entity.tickCount % 50 == 0 && entity.hasEffect(WizardryPotions.mind_control)){
 
-			CompoundTag entityNBT = entity.getEntityData();
+			CompoundTag entityNBT = entity.getPersistentData();
 
-			if(entityNBT.hasUniqueId(MindControl.NBT_KEY)){
+			if(entityNBT.hasUUID(MindControl.NBT_KEY)){
 
-				Entity caster = EntityUtils.getEntityByUUID(entity.world, entityNBT.getUniqueId(MindControl.NBT_KEY));
+				Entity caster = EntityUtils.getEntityByUUID(entity.world, entityNBT.getUUID(MindControl.NBT_KEY));
 
 				if(caster instanceof Player){
 
@@ -670,7 +670,7 @@ public class ItemArtefact extends Item {
 							&& event.getSource().getEntity() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getEntity();
-						((Banish)Spells.banish).teleport(target, target.world, 8 + target.world.random.nextDouble() * 8);
+						((Banish)Spells.banish).teleport(target, target.level, 8 + target.level.random.nextDouble() * 8);
 					}
 
 				}else if(artefact == WizardryItems.amulet_transience){
@@ -750,7 +750,7 @@ public class ItemArtefact extends Item {
 
 					if(!player.level.isClientSide && player.world.random.nextFloat() < 0.15f
 							&& event.getEntity().getHealth() < 12f // Otherwise it's a bit overpowered!
-							&& event.getEntity().isPotionActive(WizardryPotions.frost)
+							&& event.getEntity().hasEffect(WizardryPotions.frost)
 							&& EntityUtils.isMeleeDamage(event.getSource())){
 
 						event.setAmount(12f);
@@ -782,7 +782,7 @@ public class ItemArtefact extends Item {
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY))){
 
 						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, 400));
-						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUniqueID());
+						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUUID());
 					}
 
 				}else if(artefact == WizardryItems.ring_leeching){

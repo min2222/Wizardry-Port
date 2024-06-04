@@ -37,7 +37,7 @@ public class GuardianBeam extends SpellRay {
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-				if(!((LivingEntity)target).canBreatheUnderwater() && !((LivingEntity)target).isPotionActive(MobEffects.WATER_BREATHING)){
+				if(!((LivingEntity)target).canBreatheUnderwater() && !((LivingEntity)target).hasEffect(MobEffects.WATER_BREATHING)){
 					target.setAir(Math.max(-20, target.getAir() - getProperty(AIR_DEPLETION).intValue()));
 				}
 			}

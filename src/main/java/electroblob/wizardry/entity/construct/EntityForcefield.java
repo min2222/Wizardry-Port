@@ -102,7 +102,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 				WizardryItems.ring_defender)){
 			targets.removeIf(t -> t instanceof EntityMagicArrow && !this.isValidTarget(((EntityMagicArrow)t).getCaster())
 								|| t instanceof EntityThrowable && !this.isValidTarget(((EntityThrowable)t).getThrower())
-								|| t instanceof Arrow && !this.isValidTarget(((Arrow)t).shootingEntity));
+								|| t instanceof Arrow && !this.isValidTarget(((Arrow)t).getOwner()));
 		}
 
 		for(Entity target : targets){

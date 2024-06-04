@@ -219,7 +219,7 @@ public class Possession extends SpellRay {
 			target.discard();
 			target.setNoAI(true);
 			target.setAttackTarget(null);
-			target.getEntityData().setBoolean(NBT_KEY, true);
+			target.getPersistentData().setBoolean(NBT_KEY, true);
 
 			// Attributes
 
@@ -269,14 +269,14 @@ public class Possession extends SpellRay {
 						possessor.getY(), possessor.getZ(), possessor.world, Mob.class)){
 					// Mobs are dumb, if a player possesses something they're like "Huh?! Where'd you go?"
 					// Of course, this won't last long if the player attacks them, since they'll revenge-target them
-					if(creature.getAttackTarget() == possessor && !creature.canAttackClass(target.getClass()))
+					if(creature.getTarget() == possessor && !creature.canAttackClass(target.getClass()))
 						creature.setAttackTarget(null);
 				}
 
 				// Inventory and items
 
-				if(possessor.getEntityData() != null){
-					NBTExtras.storeTagSafely(possessor.getEntityData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new ListTag()));
+				if(possessor.getPersistentData() != null){
+					NBTExtras.storeTagSafely(possessor.getPersistentData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new ListTag()));
 				}
 
 				possessor.inventory.clear();
@@ -327,7 +327,7 @@ public class Possession extends SpellRay {
 
 			victim.isDead = false;
 			victim.setNoAI(false);
-			victim.getEntityData().removeTag(NBT_KEY);
+			victim.getPersistentData().removeTag(NBT_KEY);
 			victim.setPosition(player.getX(), player.getY(), player.getZ());
 			if(!player.world.isClientSide) player.world.addFreshEntity(victim);
 
@@ -366,8 +366,8 @@ public class Possession extends SpellRay {
 
 			player.inventory.clear();
 
-			if(player.getEntityData() != null){
-				player.inventory.readFromNBT(player.getEntityData().getTagList(INVENTORY_NBT_KEY, NBT.TAG_COMPOUND));
+			if(player.getPersistentData() != null){
+				player.inventory.readFromNBT(player.getPersistentData().getTagList(INVENTORY_NBT_KEY, NBT.TAG_COMPOUND));
 			}
 
 			player.inventoryContainer.detectAndSendChanges();
@@ -704,7 +704,7 @@ public class Possession extends SpellRay {
 	static void onItemTossEvent(ItemTossEvent event){
 		if(isPossessing(event.getPlayer())){ // Can't drop items while possessing
 			event.setCanceled(true);
-			event.getPlayer().inventory.addItemStackToInventory(event.getEntityItem().getItem());
+			event.getPlayer().inventory.addItemStackToInventory(event.getEntity().getItem());
 		}
 	}
 

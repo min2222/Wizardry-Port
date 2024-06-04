@@ -42,7 +42,7 @@ public class EntityDecay extends EntityMagicConstruct {
 					// If this check wasn't here the potion would be reapplied every tick and hence the entity would be
 					// damaged each tick.
 					// In this case, we do want particles to be shown.
-					if(!target.isPotionActive(WizardryPotions.decay))
+					if(!target.hasEffect(WizardryPotions.decay))
 						target.addEffect(new MobEffectInstance(WizardryPotions.decay,
 								Spells.decay.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
 				}

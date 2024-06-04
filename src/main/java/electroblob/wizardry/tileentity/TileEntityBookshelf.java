@@ -198,7 +198,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 			}
 		}
 
-		if(nbt.hasKey("CustomName", NBT.TAG_STRING)) this.customName = nbt.getString("CustomName");
+		if(nbt.contains("CustomName", NBT.TAG_STRING)) this.customName = nbt.getString("CustomName");
 	}
 
 	@Override

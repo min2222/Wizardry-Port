@@ -65,7 +65,7 @@ public final class InventoryUtils {
 	public static List<ItemStack> getPrioritisedHotbarAndOffhand(Player player){
 		List<ItemStack> hotbar = getHotbar(player);
 		// Adds the offhand item to the beginning of the list so it is processed before the hotbar
-		hotbar.add(0, player.getItemInHandOffhand());
+		hotbar.add(0, player.getOffHandItem());
 		// Moves the item in the main hand to the beginning of the list so it is processed first
 		hotbar.remove(player.getMainHandItem());
 		hotbar.add(0, player.getMainHandItem());

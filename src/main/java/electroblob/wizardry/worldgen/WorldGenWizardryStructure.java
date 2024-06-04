@@ -251,7 +251,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 						CompoundTag entry = (CompoundTag)nbtbase;
 
-						if(entry.hasKey("ChunkX") && entry.hasKey("ChunkZ") && entry.hasKey("BB")){
+						if(entry.contains("ChunkX") && entry.contains("ChunkZ") && entry.contains("BB")){
 
 							int i = entry.getInt("ChunkX");
 							int j = entry.getInt("ChunkZ");

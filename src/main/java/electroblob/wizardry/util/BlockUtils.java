@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.properties.IProperty;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -14,8 +15,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CactusBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -67,9 +70,9 @@ public final class BlockUtils {
 
 		BlockState state = block.defaultBlockState();
 
-		for(IProperty property : source.getPropertyKeys()){
+		for(Property property : source.getProperties()){
 			// It ain't pretty but it works
-			state = state.withProperty(property, (Comparable)source.getProperties().get(property));
+			state = state.setValue(property, (Comparable)source.getValue(property));
 		}
 
 		return state;
@@ -84,13 +87,13 @@ public final class BlockUtils {
 	 */
 	public static int getLightLevel(Level world, BlockPos pos){
 
-		int i = level.getLightFromNeighbors(pos);
+		int i = world.getLightFromNeighbors(pos);
 
         if(world.isThundering()){
-            int j = level.getSkylightSubtracted();
-            level.setSkylightSubtracted(10);
-            i = level.getLightFromNeighbors(pos);
-            level.setSkylightSubtracted(j);
+            int j = world.getSkylightSubtracted();
+            world.setSkylightSubtracted(10);
+            i = world.getLightFromNeighbors(pos);
+            world.setSkylightSubtracted(j);
         }
 
         return i;
@@ -108,8 +111,8 @@ public final class BlockUtils {
 	 * @see BlockUtils#canBlockBeReplaced(Level, BlockPos)
 	 */
 	public static boolean canBlockBeReplaced(Level world, BlockPos pos, boolean excludeLiquids){
-		return (world.isEmptyBlock(new BlockPos(pos)) || level.getBlockState(pos).getMaterial().isReplaceable())
-				&& (!excludeLiquids || !level.getBlockState(pos).getMaterial().isLiquid());
+		return (world.isEmptyBlock(new BlockPos(pos)) || world.getBlockState(pos).getMaterial().isReplaceable())
+				&& (!excludeLiquids || !world.getBlockState(pos).getMaterial().isLiquid());
 	}
 
 	/**
@@ -131,7 +134,7 @@ public final class BlockUtils {
 	 * {@code level.getBlockState(pos).getBlockHardness(world, pos) == -1.0f}
 	 */
 	public static boolean isBlockUnbreakable(Level world, BlockPos pos){
-		return !world.isEmptyBlock(new BlockPos(pos)) && level.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
+		return !world.isEmptyBlock(new BlockPos(pos)) && world.getBlockState(pos).getDestroySpeed(world, pos) == -1.0f;
 	}
 
 	/**
@@ -164,14 +167,14 @@ public final class BlockUtils {
 
 		for(int i=-(int)radius; i<=radius; i++){
 
-			float r1 = Math.sqrt(radius*radius - i*i);
+			float r1 = (float) Math.sqrt(radius*radius - i*i);
 
 			for(int j=-(int)r1; j<=r1; j++){
 
-				float r2 = Math.sqrt(radius*radius - i*i - j*j);
+				float r2 = (float) Math.sqrt(radius*radius - i*i - j*j);
 
 				for(int k=-(int)r2; k<=r2; k++){
-					sphere.add(centre.add(i, j, k));
+					sphere.add(centre.offset(i, j, k));
 				}
 			}
 		}
@@ -222,7 +225,7 @@ public final class BlockUtils {
 	 */
 	public static boolean canPlaceBlock(@Nullable Entity placer, Level world, BlockPos pos){
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			Wizardry.logger.warn("BlockUtils#canPlaceBlock called from the client side! Blocks should be modified server-side only");
 			return true;
 		}
@@ -231,14 +234,14 @@ public final class BlockUtils {
 
 		if(world.isOutsideBuildHeight(pos)) return false;
 		// This line *should* trigger bukkit plugin hooks
-		if(placer instanceof Player && !world.isBlockModifiable((Player)placer, pos)) return false;
+		if(placer instanceof Player && !world.mayInteract((Player)placer, pos)) return false;
 
-		BlockSnapshot snapshot = BlockSnapshot.getBlockSnapshot(world, pos);
+		BlockSnapshot snapshot = BlockSnapshot.create(world.dimension(), world, pos);
 		// Despite there being a separate event for players, BOTH events seem to be fired for players during normal placement
-		if(ForgeEventFactory.onBlockPlace(placer, snapshot, Direction.UP).isCanceled()) return false;
+		if(ForgeEventFactory.onBlockPlace(placer, snapshot, Direction.UP)) return false;
 
-		if(placer instanceof Player && ForgeEventFactory.onPlayerBlockPlace(
-				(Player)placer, snapshot, Direction.UP, InteractionHand.MAIN_HAND).isCanceled()){
+		if(placer instanceof Player && ForgeEventFactory.onBlockPlace(
+				(Player)placer, snapshot, Direction.UP)){
 			return false;
 		}
 
@@ -281,7 +284,7 @@ public final class BlockUtils {
 	 */
 	public static int checkBlockBreakXP(@Nullable Entity breaker, Level world, BlockPos pos){
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			Wizardry.logger.warn("BlockUtils#checkBlockBreakXP called from the client side! Blocks should be modified server-side only");
 			return 0;
 		}
@@ -294,14 +297,14 @@ public final class BlockUtils {
 
 		if(breaker instanceof Player){
 			// This line *should* trigger bukkit plugin hooks
-			if(!world.isBlockModifiable((Player)breaker, pos)) return -1;
+			if(!world.mayInteract((Player)breaker, pos)) return -1;
 		}else if(breaker == null){
 			// Also need this for dispensers
-			if(!world.isBlockModifiable(fakeplayer, pos)) return -1;
+			if(!world.mayInteract(fakeplayer, pos)) return -1;
 		}
 
 		// I think this is irrelevant in forge because it's only for vanilla entities, but bukkit might use it
-		BlockState state = level.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		if(!state.getBlock().canEntityDestroy(state, world, pos, breaker)) return -1;
 		// Although the forge event only needs an EntityLivingBase, it seems it's not supposed to be for players
 		if(breaker instanceof Mob && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
@@ -317,7 +320,7 @@ public final class BlockUtils {
 		int xp = 0;
 
 		if(breaker instanceof ServerPlayer){
-			xp = ForgeHooks.onBlockBreakEvent(world, ((ServerPlayer)breaker).interactionManager.getGameType(), (ServerPlayer)breaker, pos);
+			xp = ForgeHooks.onBlockBreakEvent(world, ((ServerPlayer)breaker).gameMode.getGameModeForPlayer(), (ServerPlayer)breaker, pos);
 		}
 
 		return xp;
@@ -334,10 +337,10 @@ public final class BlockUtils {
 	 * @return True if the given block is a tree block, false if not.
 	 */
 	public static boolean isTreeBlock(Level world, BlockPos pos){
-		Block block = level.getBlockState(pos).getBlock();
-		return block instanceof BlockLog || block instanceof BlockCactus
-				|| block.isLeaves(level.getBlockState(pos), world, pos) || block.isFoliage(world, pos)
-				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, level.getBlockState(pos));
+		BlockState block = world.getBlockState(pos);
+		return block.is(BlockTags.LOGS) || block.getBlock() instanceof CactusBlock
+				|| block.getMaterial() == Material.LEAVES || block.isFoliage(world, pos)
+				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, world.getBlockState(pos));
 	}
 
 	/**

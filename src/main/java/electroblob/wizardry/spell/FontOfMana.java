@@ -52,7 +52,7 @@ public class FontOfMana extends SpellAreaEffect {
 	@SubscribeEvent(priority = EventPriority.LOW) // Doesn't really matter but there's no point processing it if casting is blocked
 	public static void onSpellCastPreEvent(SpellCastEvent.Pre event){
 		// Moved from ItemWand (quite why this wasn't done with modifiers before I don't know!)
-		if(event.getCaster() != null && event.getCaster().isPotionActive(WizardryPotions.font_of_mana)){
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.font_of_mana)){
 			// Dividing by this rather than setting it takes upgrades and font of mana into account simultaneously
 			event.getModifiers().set(WizardryItems.cooldown_upgrade, event.getModifiers().get(WizardryItems.cooldown_upgrade)
 					/ (2 + event.getCaster().getActivePotionEffect(WizardryPotions.font_of_mana).getAmplifier()), false);

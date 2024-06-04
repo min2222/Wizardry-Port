@@ -78,7 +78,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIB
 	@Override
 	public boolean shouldExecute(){
 
-		LivingEntity entitylivingbase = this.attacker.getAttackTarget();
+		LivingEntity entitylivingbase = this.attacker.getTarget();
 
 		if(entitylivingbase == null){
 			return false;

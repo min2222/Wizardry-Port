@@ -54,7 +54,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 		LivingEntity host = event.getEntity();
 
-		if(host.isPotionActive(WizardryPotions.frost_step)){
+		if(host.hasEffect(WizardryPotions.frost_step)){
 			// Mimics the behaviour of the frost walker enchantment itself
 			if(!host.level.isClientSide){
 

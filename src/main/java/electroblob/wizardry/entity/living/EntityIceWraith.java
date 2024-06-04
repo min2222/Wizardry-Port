@@ -176,7 +176,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 	@Override
 	public boolean hurt(DamageSource source, float amount){
 		// Removes the damage from being wet that applies to blazes by checking if the mob is actually drowning.
-		if(source == DamageSource.DROWN && (this.getAir() > 0 || this.isPotionActive(MobEffects.WATER_BREATHING))){
+		if(source == DamageSource.DROWN && (this.getAir() > 0 || this.hasEffect(MobEffects.WATER_BREATHING))){
 			// In this case, the ice wraith is not actually drowning, so cancel the damage.
 			return false;
 		}else{
@@ -223,7 +223,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 
 		@Override
 		public boolean shouldExecute(){
-			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getTarget();
 			return entitylivingbase != null && entitylivingbase.isEntityAlive();
 		}
 
@@ -241,7 +241,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 		@Override
 		public void updateTask(){
 			--this.attackTime;
-			LivingEntity entitylivingbase = this.blaze.getAttackTarget();
+			LivingEntity entitylivingbase = this.blaze.getTarget();
 			if(entitylivingbase == null) return; // Dynamic stealth breaks things, let's un-break them
 			double d0 = this.blaze.distanceToSqr(entitylivingbase);
 

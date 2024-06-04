@@ -205,7 +205,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 	@Override
 	public void setRevengeTarget(@Nullable LivingEntity target){
-		if(target == null || !groupUUIDs.contains(target.getUniqueID())) super.setRevengeTarget(target);
+		if(target == null || !groupUUIDs.contains(target.getUUID())) super.setRevengeTarget(target);
 	}
 
 	@Override
@@ -215,12 +215,12 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 
 		int healCooldown = this.getHealCooldown();
 
-		// This is now done slightly differently because isPotionActive doesn't work on client here, meaning that when
+		// This is now done slightly differently because hasEffect doesn't work on client here, meaning that when
 		// affected with arcane jammer and healCooldown == 0, whilst the wizard didn't actually heal or play the sound,
 		// the particles still spawned, and since healCooldown wasn't reset they spawned every tick until the arcane
 		// jammer wore off.
 		if(healCooldown == 0 && this.getHealth() < this.getMaxHealth() && this.getHealth() > 0
-				&& !this.isPotionActive(WizardryPotions.arcane_jammer)){
+				&& !this.hasEffect(WizardryPotions.arcane_jammer)){
 
 			// Healer wizards use greater heal.
 			this.heal(this.getElement() == Element.HEALING ? 8 : 4);

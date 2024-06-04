@@ -54,7 +54,7 @@ public class WitherSkull extends Spell {
 			witherskull.accelerationY = look.y * acceleration;
 			witherskull.accelerationZ = look.z * acceleration;
 
-			witherskull.shootingEntity = caster;
+			witherskull.getOwner() = caster;
 			world.addFreshEntity(witherskull);
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -82,7 +82,7 @@ public class WitherSkull extends Spell {
 				witherskull.accelerationY = dy / caster.getDistance(target) * 0.1;
 				witherskull.accelerationZ = dz / caster.getDistance(target) * 0.1;
 
-				witherskull.shootingEntity = caster;
+				witherskull.getOwner() = caster;
 				witherskull.setPosition(caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ());
 
 				world.addFreshEntity(witherskull);

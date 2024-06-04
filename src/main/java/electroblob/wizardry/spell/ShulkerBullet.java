@@ -87,14 +87,14 @@ public class ShulkerBullet extends Spell {
 				bullet.writeToNBT(nbt);
 				nbt.putInt("Dir", direction.getIndex());
 				BlockPos pos = new BlockPos(target);
-				CompoundTag targetTag = NbtUtils.createUUIDTag(target.getUniqueID());
+				CompoundTag targetTag = NbtUtils.createUUIDTag(target.getUUID());
 				targetTag.putInt("X", pos.getX());
 				targetTag.putInt("Y", pos.getY());
 				targetTag.putInt("Z", pos.getZ());
 				NBTExtras.storeTagSafely(nbt, "Target", targetTag);
 				bullet.readFromNBT(nbt); // LOL I just modified private fields without reflection
 
-				bullet.getEntityData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+				bullet.getPersistentData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 
 				world.addFreshEntity(bullet);
 			}

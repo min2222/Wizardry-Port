@@ -104,7 +104,7 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 			event.setCanceled(true);
 
 			EntityLargeMagicFireball fireball = new EntityLargeMagicFireball(event.getWorld());
-			fireball.thrower = ((EntityLargeFireball)event.getEntity()).shootingEntity;
+			fireball.thrower = ((EntityLargeFireball)event.getEntity()).getOwner();
 			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(6);
 			// Don't set the burn duration because vanilla large fireballs don't set mobs on fire directly

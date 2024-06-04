@@ -159,7 +159,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 
 			// This is only when position == 1 because world.destroyBlock calls this function for the other blocks.
 			if(tileentity != null && tileentity.position == 1 && tileentity.creature != null){
-				tileentity.creature.getEntityData().removeTag(BlockStatue.PETRIFIED_NBT_KEY);
+				tileentity.creature.getPersistentData().removeTag(BlockStatue.PETRIFIED_NBT_KEY);
 				tileentity.creature.isDead = false;
 				world.addFreshEntity(tileentity.creature);
 			}
@@ -194,7 +194,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		if(target.deathTime > 0) return false;
 
 		BlockPos pos = new BlockPos(target);
-		Level world = target.world;
+		Level world = target.level;
 
 		target.hurtTime = 0; // Stops the entity looking red while frozen and the resulting z-fighting
 		target.extinguish();
@@ -208,7 +208,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 			
-			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}
@@ -227,7 +227,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 2);
 			}
 
-			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}
@@ -251,7 +251,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				((TileEntityStatue)level.getTileEntity(pos.up(2))).setCreatureAndPart(target, 3, 3);
 			}
 
-			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}

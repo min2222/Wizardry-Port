@@ -189,7 +189,7 @@ public class EntityRemnant extends EntityMob {
 	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.setElement(Element.values()[nbt.getInt("Element")]);
-		if(nbt.hasKey("BoundOrigin")) boundOrigin = NbtUtils.readBlockPos(nbt.getCompoundTag("BoundOrigin"));
+		if(nbt.contains("BoundOrigin")) boundOrigin = NbtUtils.readBlockPos(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
@@ -209,8 +209,8 @@ public class EntityRemnant extends EntityMob {
 
 		@Override
 		public boolean shouldExecute(){
-			if(EntityRemnant.this.getAttackTarget() != null && !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.random.nextInt(7) == 0){
-				return EntityRemnant.this.distanceToSqr(EntityRemnant.this.getAttackTarget()) > 4.0D;
+			if(EntityRemnant.this.getTarget() != null && !EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.random.nextInt(7) == 0){
+				return EntityRemnant.this.distanceToSqr(EntityRemnant.this.getTarget()) > 4.0D;
 			}else{
 				return false;
 			}
@@ -218,12 +218,12 @@ public class EntityRemnant extends EntityMob {
 
 		@Override
 		public boolean shouldContinueExecuting(){
-			return EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.isAttacking() && EntityRemnant.this.getAttackTarget() != null && EntityRemnant.this.getAttackTarget().isEntityAlive();
+			return EntityRemnant.this.getMoveHelper().isUpdating() && EntityRemnant.this.isAttacking() && EntityRemnant.this.getTarget() != null && EntityRemnant.this.getTarget().isEntityAlive();
 		}
 
 		@Override
 		public void startExecuting(){
-			LivingEntity entitylivingbase = EntityRemnant.this.getAttackTarget();
+			LivingEntity entitylivingbase = EntityRemnant.this.getTarget();
 			if(entitylivingbase == null) return;
 			Vec3 vec3d = entitylivingbase.getPositionEyes(1.0F);
 			EntityRemnant.this.moveHelper.setMoveTo(vec3d.x, vec3d.y, vec3d.z, 1.0D);
@@ -239,7 +239,7 @@ public class EntityRemnant extends EntityMob {
 		@Override
 		public void updateTask(){
 
-			LivingEntity entitylivingbase = EntityRemnant.this.getAttackTarget();
+			LivingEntity entitylivingbase = EntityRemnant.this.getTarget();
 
 			if(entitylivingbase == null) return;
 
@@ -288,11 +288,11 @@ public class EntityRemnant extends EntityMob {
 					EntityRemnant.this.motionY += d1 / d3 * 0.05D * this.speed;
 					EntityRemnant.this.motionZ += d2 / d3 * 0.05D * this.speed;
 
-					if(EntityRemnant.this.getAttackTarget() == null){
+					if(EntityRemnant.this.getTarget() == null){
 						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(EntityRemnant.this.motionX, EntityRemnant.this.motionZ)) * (180F / (float)Math.PI);
 					}else{
-						double d4 = EntityRemnant.this.getAttackTarget().getX() - EntityRemnant.this.getX();
-						double d5 = EntityRemnant.this.getAttackTarget().getZ() - EntityRemnant.this.getZ();
+						double d4 = EntityRemnant.this.getTarget().getX() - EntityRemnant.this.getX();
+						double d5 = EntityRemnant.this.getTarget().getZ() - EntityRemnant.this.getZ();
 						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(d4, d5)) * (180F / (float)Math.PI);
 					}
 
@@ -333,7 +333,7 @@ public class EntityRemnant extends EntityMob {
 				if(EntityRemnant.this.world.isEmptyBlock(blockpos1)){
 					EntityRemnant.this.moveHelper.setMoveTo((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.5D, (double)blockpos1.getZ() + 0.5D, 0.25D);
 
-					if(EntityRemnant.this.getAttackTarget() == null){
+					if(EntityRemnant.this.getTarget() == null){
 						EntityRemnant.this.getLookHelper().setLookPosition((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.5D, (double)blockpos1.getZ() + 0.5D, 180.0F, 20.0F);
 					}
 

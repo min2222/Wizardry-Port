@@ -123,7 +123,7 @@ public class MindControl extends SpellRay {
 	}
 
 	public static void startControlling(Mob target, LivingEntity controller, int duration){
-		target.getEntityData().setUniqueId(NBT_KEY, controller.getUniqueID());
+		target.getPersistentData().setUniqueId(NBT_KEY, controller.getUUID());
 		target.addEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
 	}
 
@@ -171,13 +171,13 @@ public class MindControl extends SpellRay {
 	/** Retrieves the given entity's controller and decides whether it needs to search for a target. */
 	private static void processTargeting(Level world, Mob entity, LivingEntity currentTarget){
 		
-		if(entity.isPotionActive(WizardryPotions.mind_control) && MindControl.canControl(entity)){
+		if(entity.hasEffect(WizardryPotions.mind_control) && MindControl.canControl(entity)){
 
-			CompoundTag entityNBT = entity.getEntityData();
+			CompoundTag entityNBT = entity.getPersistentData();
 
-			if(entityNBT != null && entityNBT.hasUniqueId(MindControl.NBT_KEY)){
+			if(entityNBT != null && entityNBT.hasUUID(MindControl.NBT_KEY)){
 
-				Entity caster = EntityUtils.getEntityByUUID(world, entityNBT.getUniqueId(MindControl.NBT_KEY));
+				Entity caster = EntityUtils.getEntityByUUID(world, entityNBT.getUUID(MindControl.NBT_KEY));
 
 				if(caster instanceof LivingEntity){
 
@@ -203,14 +203,14 @@ public class MindControl extends SpellRay {
 		// Of course, in survival this code is unlikely to be used much because the entity will always try to target the
 		// player and hence will rarely have no target.
 		// No need to do it every tick either!
-		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().isPotionActive(WizardryPotions.mind_control)
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.mind_control)
 				&& event.getEntity() instanceof Mob){
 			
 			Mob entity = (Mob)event.getEntity();
 			
 			// Processes targeting if the current target is null or has died
-			if(((Mob)event.getEntity()).getAttackTarget() == null
-				|| !((Mob)event.getEntity()).getAttackTarget().isEntityAlive()){
+			if(((Mob)event.getEntity()).getTarget() == null
+				|| !((Mob)event.getEntity()).getTarget().isEntityAlive()){
 			
 				processTargeting(entity.world, entity, null);
 			}

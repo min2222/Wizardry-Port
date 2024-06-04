@@ -62,7 +62,7 @@ public class ContainerBookshelf extends Container {
 	public ItemStack transferStackInSlot(Player player, int clickedSlotId){
 
 		ItemStack remainder = ItemStack.EMPTY;
-		Slot slot = this.inventorySlots.get(clickedSlotId);
+		Slot slot = this.slots.get(clickedSlotId);
 
 		if(slot != null && slot.getHasStack()){
 
@@ -72,7 +72,7 @@ public class ContainerBookshelf extends Container {
 			// Bookshelf -> inventory
 			if(clickedSlotId < BlockBookshelf.SLOT_COUNT){
 				// Tries to move the stack into the player's inventory. If this fails...
-				if(!this.mergeItemStack(stack, BlockBookshelf.SLOT_COUNT, this.inventorySlots.size(), true)){
+				if(!this.mergeItemStack(stack, BlockBookshelf.SLOT_COUNT, this.slots.size(), true)){
 					return ItemStack.EMPTY; // ...nothing else happens.
 				}
 			}
@@ -90,7 +90,7 @@ public class ContainerBookshelf extends Container {
 			}
 
 			if(stack.getCount() == 0){
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			}else{
 				slot.onSlotChanged();
 			}
@@ -152,11 +152,11 @@ public class ContainerBookshelf extends Container {
 		}
 
 		@Override
-		public void putStack(ItemStack stack){
+		public void set(ItemStack stack){
 			boolean statusChanged = this.getItem().isEmpty() != stack.isEmpty()
 					|| BlockBookshelf.getBookItems().indexOf(this.getItem().getItem())
 					!= BlockBookshelf.getBookItems().indexOf(stack.getItem());
-			super.putStack(stack);
+			super.set(stack);
 			if(statusChanged) ContainerBookshelf.this.onSlotChanged();
 		}
 

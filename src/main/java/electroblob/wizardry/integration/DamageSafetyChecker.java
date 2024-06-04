@@ -74,14 +74,14 @@ public final class DamageSafetyChecker {
 			}
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * target.world.loadedEntityList.size()){
+		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * target.level.loadedEntityList.size()){
 			// This should never ever happen unless another mod is intercepting non-entity-based damage and damaging
 			// the same target.
 			logInterception(originalSourceName, true);
 			return false;
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * target.world.loadedEntityList.size()){
+		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * target.level.loadedEntityList.size()){
 			// Sometimes this is unavoidable, it's neither mod's fault but without some kind of forge standard or
 			// universal cooperation there's no easy way to prevent it.
 			logInterception(originalSourceName, false);

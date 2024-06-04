@@ -53,7 +53,7 @@ import java.util.UUID;
  * @since Wizardry 1.0
  * @author Electroblob
  */
-// TODO: Might be a good idea to have this implement IEntityOwnable as well
+// TODO: Might be a good idea to have this implement OwnableEntity as well
 public abstract class EntityMagicArrow extends Entity implements IProjectile, IEntityAdditionalSpawnData {
 
 	public static final double LAUNCH_Y_OFFSET = 0.1;
@@ -568,7 +568,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		tag.setByte("inGround", (byte)(this.inGround ? 1 : 0));
 		tag.setFloat("damageMultiplier", this.damageMultiplier);
 		if(this.getCaster() != null){
-			tag.setUniqueId("casterUUID", this.getCaster().getUniqueID());
+			tag.setUniqueId("casterUUID", this.getCaster().getUUID());
 		}
 	}
 
@@ -584,7 +584,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		this.arrowShake = tag.getByte("shake") & 255;
 		this.inGround = tag.getByte("inGround") == 1;
 		this.damageMultiplier = tag.getFloat("damageMultiplier");
-		casterUUID = tag.getUniqueId("casterUUID");
+		casterUUID = tag.getUUID("casterUUID");
 	}
 	
 	@Override

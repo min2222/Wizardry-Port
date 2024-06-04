@@ -262,7 +262,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	@Override
 	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
-		casterUUID = nbttagcompound.getUniqueId("casterUUID");
+		casterUUID = nbttagcompound.getUUID("casterUUID");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
 
@@ -270,7 +270,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		if(this.getCaster() != null){
-			nbttagcompound.setUniqueId("casterUUID", this.getCaster().getUniqueID());
+			nbttagcompound.setUniqueId("casterUUID", this.getCaster().getUUID());
 		}
 		nbttagcompound.setFloat("damageMultiplier", damageMultiplier);
 	}

@@ -179,7 +179,7 @@ public abstract class Forfeit {
 				ItemStack stack = player.getMainHandItem();
 
 				if(!(stack.getItem() instanceof ISpellCastingItem)){
-					stack = player.getItemInHandOffhand();
+					stack = player.getOffHandItem();
 					if(!(stack.getItem() instanceof ISpellCastingItem)) stack = ItemStack.EMPTY;
 				}
 

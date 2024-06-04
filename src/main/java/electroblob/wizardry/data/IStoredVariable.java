@@ -103,7 +103,7 @@ public interface IStoredVariable<T> extends IVariable<T> {
 			// A system allowing any kind of variable to be stored on the fly cannot be made without casting somewhere.
 			// However, doing it like this means we only cast once, below, and proper regulation of access means we
 			// can effectively guarantee the cast is safe.
-			return nbt.hasKey(key) ? deserialiser.apply((E)nbt.getTag(key)) : null; // Still gotta check it ain't null
+			return nbt.contains(key) ? deserialiser.apply((E)nbt.getTag(key)) : null; // Still gotta check it ain't null
 		}
 
 		@Override
