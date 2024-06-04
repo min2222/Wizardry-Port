@@ -49,7 +49,7 @@ public class ShadowWard extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			double dx = -1 + 2 * world.random.nextFloat();
 			double dy = -1 + world.random.nextFloat();
 			double dz = -1 + 2 * world.random.nextFloat();
@@ -66,7 +66,7 @@ public class ShadowWard extends Spell {
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof LivingEntity){
+		if(event.getSource() != null && event.getSource().getEntity() instanceof LivingEntity){
 
 			if(EntityUtils.isCasting(event.getEntity(), Spells.shadow_ward) && !event.getSource().isUnblockable()
 					&& !(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).isRetaliatory())){
@@ -78,10 +78,10 @@ public class ShadowWard extends Spell {
 				// Now we can preserve the original damage source (sort of) as long as we make it retaliatory.
 				// For some reason this isn't working, so I've reverted to plain old magic damage for now.
 				//event.getEntity().hurt(
-				//		MagicDamage.causeDirectMagicDamage(event.getSource().getTrueSource(), DamageType.MAGIC, true), event.getAmount() * 0.5f);
+				//		MagicDamage.causeDirectMagicDamage(event.getSource().getEntity(), DamageType.MAGIC, true), event.getAmount() * 0.5f);
 				DamageSafetyChecker.attackEntitySafely(event.getEntity(), DamageSource.MAGIC, event.getAmount()
 						* (1 - reflectedFraction), event.getSource().getDamageType());
-				event.getSource().getTrueSource().hurt(MagicDamage.causeDirectMagicDamage(
+				event.getSource().getEntity().hurt(MagicDamage.causeDirectMagicDamage(
 						event.getEntity(), DamageType.MAGIC, true), event.getAmount() * reflectedFraction);
 			}
 		}

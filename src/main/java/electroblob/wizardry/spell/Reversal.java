@@ -42,7 +42,7 @@ public class Reversal extends SpellRay {
 			List<MobEffectInstance> negativePotions = new ArrayList<>(caster.getActivePotionEffects());
 			negativePotions.removeIf(p -> !p.getPotion().isBadEffect());
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				if(negativePotions.isEmpty()) return false; // Needs potion effects to reverse!
 

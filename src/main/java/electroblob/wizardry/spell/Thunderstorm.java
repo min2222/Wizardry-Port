@@ -67,7 +67,7 @@ public class Thunderstorm extends Spell {
 
 				if(y != null){
 
-					if(!level.isClientSide){
+					if(!world.isClientSide){
 						EntityLightningBolt lightning = new EntityLightningBolt(world, x, y, z, false);
 						lightning.getEntityData().setUniqueId(LightningBolt.SUMMONER_NBT_KEY, caster.getUniqueID());
 						lightning.getEntityData().setFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
@@ -84,7 +84,7 @@ public class Thunderstorm extends Spell {
 
 						if(AllyDesignationSystem.isValidTarget(caster, secondaryTarget)){
 
-							if(level.isClientSide){
+							if(world.isClientSide){
 
 								ParticleBuilder.create(Type.LIGHTNING).pos(x, y, z).target(secondaryTarget).spawn(world);
 
@@ -111,7 +111,7 @@ public class Thunderstorm extends Spell {
 								if(!secondaryTargets.contains(tertiaryTarget)
 										&& AllyDesignationSystem.isValidTarget(caster, tertiaryTarget)){
 
-									if(level.isClientSide){
+									if(world.isClientSide){
 										ParticleBuilder.create(Type.LIGHTNING).entity(secondaryTarget)
 												.pos(0, secondaryTarget.getBbHeight() / 2, 0).target(tertiaryTarget).spawn(world);
 										ParticleBuilder.spawnShockParticles(world, tertiaryTarget.getX(),

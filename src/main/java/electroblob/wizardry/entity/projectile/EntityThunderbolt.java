@@ -54,9 +54,9 @@ public class EntityThunderbolt extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(level.isClientSide){
 			ParticleBuilder.create(Type.SPARK, rand, getX(), getY() + height/2, getZ(), 0.1, false).spawn(world);

@@ -57,7 +57,7 @@ public class Transportation extends Spell {
 
 		WizardData data = WizardData.get(caster);
 		// Fixes the sound not playing in first person.
-		if(level.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
+		if(world.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 		// Only works when the caster is in the same dimension.
 		if(data != null){
@@ -71,7 +71,7 @@ public class Transportation extends Spell {
 				if(locations == null) data.setVariable(Transportation.LOCATIONS_KEY, locations = new ArrayList<>(Transportation.MAX_REMEMBERED_LOCATIONS));
 
 				if(locations.isEmpty()){
-					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 					return false;
 				}
 
@@ -80,7 +80,7 @@ public class Transportation extends Spell {
 					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.dimension).collect(Collectors.toList());
 
 					if(locationsInDimension.isEmpty()){
-						if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 						return false;
 					}
 
@@ -93,7 +93,7 @@ public class Transportation extends Spell {
 						// This makes my life easier in update() below, and is a kind of useful feature too
 						locations.remove(destination);
 						locations.add(destination);
-						if(!level.isClientSide) data.sync();
+						if(!world.isClientSide) data.sync();
 						return true;
 					}
 
@@ -104,7 +104,7 @@ public class Transportation extends Spell {
 					if(destination.dimension == caster.dimension){
 						return attemptTravelTo(caster, world, destination.pos, modifiers);
 					}else{
-						if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 					}
 
 				}
@@ -161,7 +161,7 @@ public class Transportation extends Spell {
 			data.setVariable(COUNTDOWN_KEY, getProperty(TELEPORT_COUNTDOWN).intValue());
 			return true;
 		}else{
-			if(!level.isClientSide) player.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".missing"), true);
+			if(!world.isClientSide) player.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".missing"), true);
 			return false;
 		}
 	}
@@ -170,7 +170,7 @@ public class Transportation extends Spell {
 
 		if(countdown == null) return 0;
 
-		if(!player.level.isClientSide){
+		if(!player.world.isClientSide){
 
 			WizardData data = WizardData.get(player);
 

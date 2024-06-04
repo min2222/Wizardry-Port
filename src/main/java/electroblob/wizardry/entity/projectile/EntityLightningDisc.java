@@ -36,9 +36,9 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		// Particle effect
 		if(level.isClientSide){

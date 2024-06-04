@@ -168,7 +168,7 @@ public class Possession extends SpellRay {
 				return false;
 			}
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 				if(possess(player, (Mob)target, duration)){
 					return true;
@@ -204,7 +204,7 @@ public class Possession extends SpellRay {
 	 */
 	public boolean possess(Player possessor, Mob target, int duration){
 
-		if(possessor.isSneaking()) return false;
+		if(possessor.isShiftKeyDown()) return false;
 
 		if(WizardData.get(possessor) != null){
 
@@ -213,7 +213,7 @@ public class Possession extends SpellRay {
 
 			possessor.setPositionAndRotation(target.getX(), target.getY(), target.getZ(), target.rotationYaw, target.rotationPitch);
 			possessor.eyeHeight = target.getEyeHeight();
-			setSize(possessor, target.width, target.getBbHeight());
+			setSize(possessor, target.getBbWidth(), target.getBbHeight());
 
 			target.dismountRidingEntity();
 			target.discard();
@@ -256,7 +256,7 @@ public class Possession extends SpellRay {
 				}
 			}
 
-			if(possessor.level.isClientSide){
+			if(possessor.world.isClientSide){
 				// Shaders and effects
 				Wizardry.proxy.loadShader(possessor, SHADER);
 				Wizardry.proxy.playBlinkEffect(possessor);
@@ -329,7 +329,7 @@ public class Possession extends SpellRay {
 			victim.setNoAI(false);
 			victim.getEntityData().removeTag(NBT_KEY);
 			victim.setPosition(player.getX(), player.getY(), player.getZ());
-			if(!player.level.isClientSide) player.world.spawnEntity(victim);
+			if(!player.world.isClientSide) player.world.spawnEntity(victim);
 
 			for(MobEffectInstance effect : player.getActivePotionEffects()){
 				if(effect.getPotion() instanceof PotionSlowTime) continue; // Don't transfer slow time
@@ -353,7 +353,7 @@ public class Possession extends SpellRay {
 			player.capabilities.isFlying = false;
 		}
 
-		if(player.level.isClientSide && player == net.minecraft.client.Minecraft.getMinecraft().player){
+		if(player.world.isClientSide && player == net.minecraft.client.Minecraft.getMinecraft().player){
 			net.minecraft.client.Minecraft.getMinecraft().entityRenderer.stopUseShader();
 			Wizardry.proxy.playBlinkEffect(player);
 		}
@@ -375,7 +375,7 @@ public class Possession extends SpellRay {
 
 		this.playSound(player.world, player, 0, -1, null, "end");
 
-		if(!player.level.isClientSide && player instanceof ServerPlayer){
+		if(!player.world.isClientSide && player instanceof ServerPlayer){
 			WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(player, null, 0), player);
 			WizardryPacketHandler.net.sendTo(new PacketPossession.Message(player, null, 0), (ServerPlayer)player);
 		}
@@ -400,11 +400,11 @@ public class Possession extends SpellRay {
 
 		if(possessionTimer > 0){
 
-			if(isPossessing(player) && !player.isSneaking()){
+			if(isPossessing(player) && !player.isShiftKeyDown()){
 
 				possessionTimer--;
 
-				if(player.level.isClientSide){
+				if(player.world.isClientSide){
 					ParticleBuilder.create(Type.DARK_MAGIC, player).clr(0.1f, 0, 0.3f).spawn(player.world);
 					Wizardry.proxy.loadShader(player, SHADER);
 				}
@@ -446,15 +446,15 @@ public class Possession extends SpellRay {
 
 	/** Copied from Entity#setSize, with the call to move(...) removed. This is presumably also better than reflecting
 	 * into Entity#setSize, which is protected. */
-	private static void setSize(Entity entity, float width, float height){
+	private static void setSize(Entity entity, float getBbWidth(), float height){
 
-		if(width != entity.width || height != entity.getBbHeight()){
+		if(getBbWidth() != entity.getBbWidth() || height != entity.getBbHeight()){
 
-			entity.width = width;
+			entity.getBbWidth() = getBbWidth();
 			entity.getBbHeight() = height;
 
-			double halfWidth = (double)width / 2.0D;
-			entity.setEntityBoundingBox(new AABB(entity.getX() - halfWidth, entity.getY(), entity.getZ() - halfWidth, entity.getX() + halfWidth, entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfWidth));
+			double halfgetBbWidth() = (double)getBbWidth() / 2.0D;
+			entity.setEntityBoundingBox(new AABB(entity.getX() - halfgetBbWidth(), entity.getY(), entity.getZ() - halfgetBbWidth(), entity.getX() + halfgetBbWidth(), entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfgetBbWidth()));
 		}
 	}
 
@@ -477,7 +477,7 @@ public class Possession extends SpellRay {
 				possessee.motionZ = event.player.motionZ;
 				possessee.onGround = event.player.onGround;
 
-				possessee.onUpdate(); // Event though it's not in the world, it still needs updating
+				possessee.tick(); // Event though it's not in the world, it still needs updating
 				possessee.tickCount++; // Normally gets updated from World
 
 				if(possessee.getHealth() <= 0){
@@ -488,12 +488,12 @@ public class Possession extends SpellRay {
 			}
 		}
 
-		// Right at the end of EntityPlayer#onUpdate() it calls EntityPlayer#updateSize(), which resets the player's
+		// Right at the end of EntityPlayer#tick() it calls EntityPlayer#updateSize(), which resets the player's
 		// size (and is also where this event is fired from, oddly enough) ... but not on my watch!
 		if(event.phase == TickEvent.Phase.END){
 			Mob possessee = getPossessee(event.player);
 			if(possessee != null){
-				setSize(event.player, possessee.width, possessee.getBbHeight());
+				setSize(event.player, possessee.getBbWidth(), possessee.getBbHeight());
 			}
 		}
 	}

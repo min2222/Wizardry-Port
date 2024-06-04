@@ -49,7 +49,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	public BlockState getStateFromMeta(int meta){
 		Direction enumfacing = Direction.byIndex(meta);
 		if(enumfacing.getAxis() == Direction.Axis.Y) enumfacing = Direction.NORTH;
-		return this.getDefaultState().withProperty(FACING, enumfacing);
+		return this.defaultBlockState().withProperty(FACING, enumfacing);
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 	@Override
 	public BlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+		return this.defaultBlockState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 
 		BlockEntity tileEntity = world.getTileEntity(pos);
 
-		if(tileEntity == null || player.isSneaking()){
+		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;
 		}
 

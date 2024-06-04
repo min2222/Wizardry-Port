@@ -62,7 +62,7 @@ public class ImbueWeapon extends Spell {
 					continue;
 				}
 
-				if(level.isClientSide){
+				if(world.isClientSide){
 					for(int i=0; i<10; i++){
 						double x = caster.getX() + world.random.nextDouble() * 2 - 1;
 						double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();

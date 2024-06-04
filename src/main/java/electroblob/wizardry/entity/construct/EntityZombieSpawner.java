@@ -29,9 +29,9 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(lifetime - tickCount > 10 && spawnTimer-- == 0){
 

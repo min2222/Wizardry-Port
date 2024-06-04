@@ -63,8 +63,8 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 	}
 

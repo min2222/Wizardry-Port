@@ -41,14 +41,14 @@ public class Fangs extends Spell {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		if(!spawnFangs(world, caster.getPositionVector(), GeometryUtils.horizontalise(caster.getLookVec()), caster, modifiers)) return false;
+		if(!spawnFangs(world, caster.position(), GeometryUtils.horizontalise(caster.getLookVec()), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		if(!spawnFangs(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()).normalize(), caster, modifiers)) return false;
+		if(!spawnFangs(world, caster.position(), target.position().subtract(caster.position()).normalize(), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -62,14 +62,14 @@ public class Fangs extends Spell {
 
 	protected boolean spawnFangs(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		boolean defensiveCircle = caster instanceof Player && caster.isSneaking()
+		boolean defensiveCircle = caster instanceof Player && caster.isShiftKeyDown()
 				&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.ring_evoker);
 
 		if(!defensiveCircle && direction.lengthSquared() == 0) return false; // Prevent casting directly down/up
 
 		boolean flag = false;
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			double x = origin.x;
 			double y = caster == null ? origin.y : origin.y + caster.getEyeHeight();
@@ -126,8 +126,8 @@ public class Fangs extends Spell {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
-		if(event.getSource().getImmediateSource() instanceof EntityEvokerFangs){
-			if(!AllyDesignationSystem.isValidTarget(event.getSource().getTrueSource(), event.getEntity())){
+		if(event.getSource().getDirectEntity() instanceof EntityEvokerFangs){
+			if(!AllyDesignationSystem.isValidTarget(event.getSource().getEntity(), event.getEntity())){
 				event.setCanceled(true); // Don't attack allies
 			}
 		}

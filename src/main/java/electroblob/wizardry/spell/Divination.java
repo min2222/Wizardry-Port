@@ -93,7 +93,7 @@ public class Divination extends Spell {
 			strength = Strength.forWeight(calculateWeight(world, caster, target, range, modifiers));
 		}
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ strength.key, Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ RelativeFacing.relativise(direction, caster).name)), false);

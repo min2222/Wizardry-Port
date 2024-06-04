@@ -73,8 +73,8 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 	}
 

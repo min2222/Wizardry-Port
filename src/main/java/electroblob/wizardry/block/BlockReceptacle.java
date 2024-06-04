@@ -118,7 +118,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	public boolean canPlaceBlockOnSide(Level world, BlockPos pos, Direction side){
 
 		if(side != Direction.UP && side != Direction.DOWN
-				&& world.getBlockState(pos.offset(side.getOpposite())).getBlock() instanceof BlockImbuementAltar){
+				&& world.getBlockState(pos.relative(side.getOpposite())).getBlock() instanceof BlockImbuementAltar){
 			return true;
 		}
 		return super.canPlaceBlockOnSide(world, pos, side);
@@ -143,23 +143,23 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	public BlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 
 		if(this.canPlaceAt(world, pos, facing)){
-			return this.getDefaultState().withProperty(FACING, facing);
+			return this.defaultBlockState().withProperty(FACING, facing);
 		}else{
 
 			for(Direction enumfacing : Direction.Plane.HORIZONTAL){
 				if(this.canPlaceAt(world, pos, enumfacing)){
-					return this.getDefaultState().withProperty(FACING, enumfacing);
+					return this.defaultBlockState().withProperty(FACING, enumfacing);
 				}
 			}
 
-			return this.getDefaultState();
+			return this.defaultBlockState();
 		}
 	}
 
 	// Why is everything in BlockTorch private, for goodness sake...
 	private boolean canPlaceAt(Level world, BlockPos pos, Direction facing){
 
-		BlockPos blockpos = pos.offset(facing.getOpposite());
+		BlockPos blockpos = pos.relative(facing.getOpposite());
 		BlockState state = world.getBlockState(blockpos);
 		Block block = state.getBlock();
 		BlockFaceShape blockfaceshape = state.getBlockFaceShape(world, blockpos, facing);
@@ -274,7 +274,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		if(placer instanceof Player){
-			BlockPos centre = pos.offset(world.getBlockState(pos).getValue(FACING).getOpposite());
+			BlockPos centre = pos.relative(world.getBlockState(pos).getValue(FACING).getOpposite());
 			if(world.getBlockState(centre).getBlock() == WizardryBlocks.imbuement_altar
 					&& Arrays.stream(Direction.HORIZONTALS).allMatch(f -> world.getBlockState(centre.offset(f)).getBlock() == WizardryBlocks.receptacle)){
 				WizardryAdvancementTriggers.restore_imbuement_altar.triggerFor((Player)placer);

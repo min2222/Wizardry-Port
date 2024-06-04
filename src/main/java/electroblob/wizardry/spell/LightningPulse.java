@@ -48,7 +48,7 @@ public class LightningPulse extends Spell {
 					target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK),
 							getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-					if(!level.isClientSide){
+					if(!world.isClientSide){
 
 						double dx = target.getX() - caster.getX();
 						double dz = target.getZ() - caster.getZ();
@@ -69,7 +69,7 @@ public class LightningPulse extends Spell {
 				}
 			}
 			
-			if(level.isClientSide){
+			if(world.isClientSide){
 				ParticleBuilder.create(Type.LIGHTNING_PULSE).pos(caster.getX(), caster.getY()
 						+ GeometryUtils.ANTI_Z_FIGHTING_OFFSET, caster.getZ())
 				.scale(modifiers.get(WizardryItems.blast_upgrade)).spawn(world);

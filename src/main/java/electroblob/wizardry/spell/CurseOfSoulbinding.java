@@ -90,7 +90,7 @@ public class CurseOfSoulbinding extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		if(!event.getEntity().level.isClientSide && event.getEntity() instanceof Player
+		if(!event.getEntity().world.isClientSide && event.getEntity() instanceof Player
 				&& !event.getSource().isUnblockable() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 

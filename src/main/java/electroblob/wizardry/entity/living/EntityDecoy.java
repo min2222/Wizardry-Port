@@ -65,13 +65,13 @@ public class EntityDecoy extends EntitySummonedCreature {
 	}
 
 	@Override
-	public boolean isSneaking(){
+	public boolean isShiftKeyDown(){
 		return false;
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		if(this.getCaster() == null || this.getCaster().isDead){
 			this.discard();
 			this.onDespawn();

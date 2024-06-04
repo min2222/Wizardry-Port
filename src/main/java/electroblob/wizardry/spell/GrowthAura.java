@@ -46,9 +46,9 @@ public class GrowthAura extends Spell {
 
 				IGrowable plant = (IGrowable)state.getBlock();
 
-				if(plant.canGrow(world, pos, state, level.isClientSide)){
+				if(plant.canGrow(world, pos, state, world.isClientSide)){
 
-					if(!level.isClientSide){
+					if(!world.isClientSide){
 						if(plant.canUseBonemeal(world, world.rand, pos, state)){
 							if(world.random.nextFloat() < 0.35f && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_growth)){
 								int i = 0;

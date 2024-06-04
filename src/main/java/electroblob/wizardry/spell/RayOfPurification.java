@@ -55,7 +55,7 @@ public class RayOfPurification extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 
 			if(MagicDamage.isEntityImmune(DamageType.RADIANT, target)){
-				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			}else if (ticksInUse % 10 == 0) {
@@ -91,7 +91,7 @@ public class RayOfPurification extends SpellRay {
 	protected void spawnParticleRay(Level world, Vec3 origin, Vec3 direction, LivingEntity caster, double distance){
 
 		if(caster != null){
-			ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.getPositionVector()))
+			ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.position()))
 					.length(distance).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f)
 					.scale(Mth.sin(caster.tickCount * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}else{

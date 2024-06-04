@@ -77,7 +77,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 
 	@Override
 	// This method allows the code for the item's timer to be greatly simplified by damaging it directly from
-	// onUpdate() and removing the workaround that involved WizardData and all sorts of crazy stuff.
+	// tick() and removing the workaround that involved WizardData and all sorts of crazy stuff.
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged){
 
 		if(!oldStack.isEmpty() || !newStack.isEmpty()){
@@ -109,7 +109,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);

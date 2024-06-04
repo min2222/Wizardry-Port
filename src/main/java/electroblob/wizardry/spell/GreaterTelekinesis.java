@@ -72,7 +72,7 @@ public class GreaterTelekinesis extends SpellRay {
 			if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
 					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 				return false;
 			}
@@ -82,9 +82,9 @@ public class GreaterTelekinesis extends SpellRay {
 				((EntityLevitatingBlock)target).setCaster(caster); // Yep, you can steal other players' blocks in mid-air!
 			}
 			
-			Vec3 targetPos = target.getPositionVector().add(0, target.getBbHeight()/2, 0);
+			Vec3 targetPos = target.position().add(0, target.getBbHeight()/2, 0);
 			
-			if(caster.isSneaking()){
+			if(caster.isShiftKeyDown()){
 				
 				Vec3 look = caster.getLookVec().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
 				target.addVelocity(look.x, look.y, look.z);
@@ -111,10 +111,10 @@ public class GreaterTelekinesis extends SpellRay {
 				((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 			}
 			
-			if(level.isClientSide){
+			if(world.isClientSide){
 
 				ParticleBuilder.create(Type.BEAM).entity(caster).clr(0.2f, 0.6f + 0.3f * world.random.nextFloat(), 1)
-				.pos(origin.subtract(caster.getPositionVector())).target(target).time(0)
+				.pos(origin.subtract(caster.position())).target(target).time(0)
 				.scale(Mth.sin(ticksInUse * 0.3f) * 0.1f + 0.9f).spawn(world);
 				
 				if(ticksInUse % 18 == 1) ParticleBuilder.create(Type.FLASH).entity(target).pos(0, target.getBbHeight()/2, 0)
@@ -137,7 +137,7 @@ public class GreaterTelekinesis extends SpellRay {
 				&& world.getBlockState(pos).getMaterial().isSolid()
 				&& (world.getTileEntity(pos) == null || !world.getTileEntity(pos).getTileData().hasUniqueId(ArcaneLock.NBT_KEY))){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				EntityLevitatingBlock block = new EntityLevitatingBlock(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 						world.getBlockState(pos));

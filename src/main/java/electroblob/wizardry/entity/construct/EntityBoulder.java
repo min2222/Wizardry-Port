@@ -48,14 +48,14 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(level.isClientSide && !soundStarted && onGround){
 			soundStarted = true;
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_BOULDER_ROLL, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		this.motionY -= 0.03999999910593033D; // Gravity
 
@@ -158,7 +158,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				double y = getY() + random.nextDouble() * height;
 				double z = getZ() + (random.nextDouble() - 0.5) * width;
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - getX()) * 0.1,
-						(y - getY() + height / 2) * 0.1, (z - getZ()) * 0.1, Block.getStateId(Blocks.DIRT.getDefaultState()));
+						(y - getY() + height / 2) * 0.1, (z - getZ()) * 0.1, Block.getStateId(Blocks.DIRT.defaultBlockState()));
 			}
 
 			world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);

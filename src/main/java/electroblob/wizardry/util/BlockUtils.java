@@ -65,7 +65,7 @@ public final class BlockUtils {
 	@SuppressWarnings({"unchecked", "rawtypes"}) // Don't complain to me about Mojang's code design...
 	public static BlockState copyState(Block block, BlockState source){
 
-		BlockState state = block.getDefaultState();
+		BlockState state = block.defaultBlockState();
 
 		for(IProperty property : source.getPropertyKeys()){
 			// It ain't pretty but it works
@@ -108,7 +108,7 @@ public final class BlockUtils {
 	 * @see BlockUtils#canBlockBeReplaced(Level, BlockPos)
 	 */
 	public static boolean canBlockBeReplaced(Level world, BlockPos pos, boolean excludeLiquids){
-		return (world.isAirBlock(new BlockPos(pos)) || world.getBlockState(pos).getMaterial().isReplaceable())
+		return (world.isEmptyBlock(new BlockPos(pos)) || world.getBlockState(pos).getMaterial().isReplaceable())
 				&& (!excludeLiquids || !world.getBlockState(pos).getMaterial().isLiquid());
 	}
 
@@ -131,7 +131,7 @@ public final class BlockUtils {
 	 * {@code world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f}
 	 */
 	public static boolean isBlockUnbreakable(Level world, BlockPos pos){
-		return !world.isAirBlock(new BlockPos(pos)) && world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
+		return !world.isEmptyBlock(new BlockPos(pos)) && world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
 	}
 
 	/**
@@ -372,7 +372,7 @@ public final class BlockUtils {
 
 		if(block instanceof BlockChest){
 			for(Direction enumfacing : Direction.Plane.HORIZONTAL){
-				BlockPos pos1 = pos.offset(enumfacing);
+				BlockPos pos1 = pos.relative(enumfacing);
 				if(world.getBlockState(pos1).getBlock() == block){
 					return pos1;
 				}
@@ -414,13 +414,13 @@ public final class BlockUtils {
 		Block block = state.getBlock();
 
 		if(isWaterSource(state)){
-			world.setBlockState(pos, Blocks.ICE.getDefaultState());
+			world.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		}else if(freezeLava && isLavaSource(state)){
-			world.setBlockState(pos, Blocks.OBSIDIAN.getDefaultState());
+			world.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
 		}else if(freezeLava && (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)){
-			world.setBlockState(pos, Blocks.COBBLESTONE.getDefaultState());
+			world.setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
 		}else if(canBlockBeReplaced(world, pos.up()) && Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos.up())){
-			world.setBlockState(pos.up(), Blocks.SNOW_LAYER.getDefaultState());
+			world.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
 		}else{
 			return false;
 		}
@@ -460,7 +460,7 @@ public final class BlockUtils {
 
 		for(int i = doubleSided ? -range : 0; i <= range && i < currentBest; i++){ // Now short-circuits for efficiency
 
-			BlockPos testPos = pos.offset(direction, i);
+			BlockPos testPos = pos.relative(direction, i);
 
 			if(criteria.test(world, testPos, direction)){
 				// Because the loop now short-circuits, this must be closer than the previous surface found
@@ -608,19 +608,19 @@ public final class BlockUtils {
 
 		/** Returns a {@code SurfaceCriteria} with the opposite arrangement to this one. */
 		default SurfaceCriteria flip(){
-			return (world, pos, side) -> this.test(world, pos.offset(side), side.getOpposite());
+			return (world, pos, side) -> this.test(world, pos.relative(side), side.getOpposite());
 		}
 
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
 		static SurfaceCriteria basedOn(BiPredicate<Level, BlockPos> condition){
-			return (world, pos, side) -> condition.test(world, pos) && !condition.test(world, pos.offset(side));
+			return (world, pos, side) -> condition.test(world, pos) && !condition.test(world, pos.relative(side));
 		}
 
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
 		static SurfaceCriteria basedOn(Predicate<BlockState> condition){
-			return (world, pos, side) -> condition.test(world.getBlockState(pos)) && !condition.test(world.getBlockState(pos.offset(side)));
+			return (world, pos, side) -> condition.test(world.getBlockState(pos)) && !condition.test(world.getBlockState(pos.relative(side)));
 		}
 
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through and
@@ -629,18 +629,18 @@ public final class BlockUtils {
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side and
 		 * a block that is replaceable. This means the surface can be built on. */
-		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.isSideSolid(pos, side) && world.getBlockState(pos.offset(side)).getBlock().isReplaceable(world, pos.offset(side));
+		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.isSideSolid(pos, side) && world.getBlockState(pos.relative(side)).getBlock().isReplaceable(world, pos.relative(side));
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side
 		 * or a liquid, and an air block. Used for freezing water and placing snow. */
 		// Was getNearestFloorLevelB
 		SurfaceCriteria SOLID_LIQUID_TO_AIR = (world, pos, side) -> (world.getBlockState(pos).getMaterial().isLiquid()
-				|| world.isSideSolid(pos, side) && world.isAirBlock(pos.offset(side)));
+				|| world.isSideSolid(pos, side) && world.isEmptyBlock(pos.relative(side)));
 
 		/** Surface criterion which defines a surface as the boundary between any non-air block and an air block.
 		 * Used for particles, and is also good for placing fire. */
 		// Was getNearestFloorLevelC
-		SurfaceCriteria NOT_AIR_TO_AIR = basedOn(Level::isAirBlock).flip();
+		SurfaceCriteria NOT_AIR_TO_AIR = basedOn(Level::isEmptyBlock).flip();
 
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through, and
 		 * a block that can be moved through or a tree block (log or leaves). Used for structure generation. */

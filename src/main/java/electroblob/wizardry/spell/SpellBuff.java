@@ -116,8 +116,8 @@ public class SpellBuff extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(caster, modifiers) && !level.isClientSide) return false;
-		if(level.isClientSide) this.spawnParticles(world, caster, modifiers);
+		if(!this.applyEffects(caster, modifiers) && !world.isClientSide) return false;
+		if(world.isClientSide) this.spawnParticles(world, caster, modifiers);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -128,8 +128,8 @@ public class SpellBuff extends Spell {
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
 		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(caster, modifiers) && !level.isClientSide) return false;
-		if(level.isClientSide) this.spawnParticles(world, caster, modifiers);
+		if(!this.applyEffects(caster, modifiers) && !world.isClientSide) return false;
+		if(world.isClientSide) this.spawnParticles(world, caster, modifiers);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -154,8 +154,8 @@ public class SpellBuff extends Spell {
 		if(nearestEntity == null) return false;
 
 		// Only return on the server side or the client probably won't spawn particles
-		if(!this.applyEffects(nearestEntity, modifiers) && !level.isClientSide) return false;
-		if(level.isClientSide) this.spawnParticles(world, nearestEntity, modifiers);
+		if(!this.applyEffects(nearestEntity, modifiers) && !world.isClientSide) return false;
+		if(world.isClientSide) this.spawnParticles(world, nearestEntity, modifiers);
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
 		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
 

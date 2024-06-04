@@ -108,7 +108,7 @@ public class Grapple extends Spell {
 
 		// If the vine stretched too far
 		if(distance > maxLength){
-			if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
+			if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 				spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), direction, distance);
 			}
 			data.setVariable(TARGET_KEY, null);
@@ -119,7 +119,7 @@ public class Grapple extends Spell {
 
 		if(extending){
 			// Extension
-			if(level.isClientSide){
+			if(world.isClientSide){
 				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 				ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 						.target(origin.add(direction.scale(ticksInUse * extensionSpeed))).tvel(direction.scale(extensionSpeed))
@@ -136,7 +136,7 @@ public class Grapple extends Spell {
 
 				case BLOCK:
 					// Payout
-					if(caster.isSneaking() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
+					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
 						velocity = new Vec3(velocity.x, distance < maxLength-1 ? -PAYOUT_SPEED : distance-maxLength+1, velocity.z);
 
 					// Reel the caster towards the block hit
@@ -147,7 +147,7 @@ public class Grapple extends Spell {
 
 					if(caster.motionY > 0 && !Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0; // Reset fall distance if the caster moves upwards
 
-					if(level.isClientSide){
+					if(world.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 								.target(target).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
@@ -161,7 +161,7 @@ public class Grapple extends Spell {
 
 				case ENTITY:
 					// Payout
-					if(caster.isSneaking() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
+					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
 						velocity = new Vec3(velocity.x, distance < maxLength-1 ? PAYOUT_SPEED : maxLength-1-distance, velocity.z);
 
 					// Reel the entity hit towards the caster
@@ -178,7 +178,7 @@ public class Grapple extends Spell {
 						}
 					}
 
-					if(level.isClientSide){
+					if(world.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 								.target(entity).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
@@ -192,7 +192,7 @@ public class Grapple extends Spell {
 
 				default:
 					// Missed
-					if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
+					if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 						spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), direction, distance);
 					}
 					//caster.resetActiveHand();
@@ -231,7 +231,7 @@ public class Grapple extends Spell {
 
 		// If the vine stretched too far
 		if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
-			if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
+			if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 				spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 			}
 			return false;
@@ -262,7 +262,7 @@ public class Grapple extends Spell {
 			hookPosition = targetVec;
 		}
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 			ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).tvel(vec.scale(extensionSpeed))
 					.seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
@@ -293,7 +293,7 @@ public class Grapple extends Spell {
 
 			// If the vine stretched too far
 			if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
-				if(level.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
+				if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 					spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 				}
 				return false;
@@ -324,7 +324,7 @@ public class Grapple extends Spell {
 				hookPosition = target;
 			}
 
-			if(level.isClientSide){
+			if(world.isClientSide){
 				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 				ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
 			}
@@ -371,7 +371,7 @@ public class Grapple extends Spell {
 			this.playSound(world, origin, duration, duration, modifiers, "release");
 		}
 
-		if(level.isClientSide && origin != null && direction != null){
+		if(world.isClientSide && origin != null && direction != null){
 
 			float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 			double distance = Math.min(target.subtract(origin).length(), duration * extensionSpeed);

@@ -69,7 +69,7 @@ public class SpeedTime extends Spell {
 
 		if(!entities.isEmpty()){
 			for(int i = 0; i < potencyLevel; i++){
-				entities.forEach(Entity::onUpdate);
+				entities.forEach(Entity::tick);
 			}
 			flag = true;
 		}
@@ -86,7 +86,7 @@ public class SpeedTime extends Spell {
 			flag = true;
 		}
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.getPosition(), radius);
 
@@ -102,7 +102,7 @@ public class SpeedTime extends Spell {
 		}
 
 		// Particle effects
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			for(int i=1; i<3; i++){
 

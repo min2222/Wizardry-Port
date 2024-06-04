@@ -50,7 +50,7 @@ public class LightningBolt extends SpellRay {
 		
 		if(world.canBlockSeeSky(pos.up())){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				// Temporarily disable the fire tick gamerule if player block damage is disabled
 				// Bit of a hack but it works fine!
 				boolean doFireTick = world.getGameRules().getBoolean("doFireTick");

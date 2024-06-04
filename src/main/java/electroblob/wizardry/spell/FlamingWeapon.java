@@ -43,7 +43,7 @@ public class FlamingWeapon extends Spell {
 					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.flaming_weapon,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 
-					if(level.isClientSide){
+					if(world.isClientSide){
 						for(int i=0; i<10; i++){
 							double x = caster.getX() + world.random.nextDouble() * 2 - 1;
 							double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();

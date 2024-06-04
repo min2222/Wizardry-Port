@@ -42,7 +42,7 @@ public class SummonSpiritHorse extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			Entity oldHorse = EntityUtils.getEntityByUUID(world, data.getVariable(UUID_KEY));
 

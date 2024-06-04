@@ -31,7 +31,7 @@ public class EntityFirebolt extends EntityMagicProjectile {
 					damage);
 
 			if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit))
-				entityHit.setFire(Spells.firebolt.getProperty(Spell.BURN_DURATION).intValue());
+				entityHit.setSecondsOnFire(Spells.firebolt.getProperty(Spell.BURN_DURATION).intValue());
 		}
 
 		this.playSound(WizardrySounds.ENTITY_FIREBOLT_HIT, 2, 0.8f + random.nextFloat() * 0.3f);
@@ -48,9 +48,9 @@ public class EntityFirebolt extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(level.isClientSide){
 			ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE, this).time(14).spawn(world);

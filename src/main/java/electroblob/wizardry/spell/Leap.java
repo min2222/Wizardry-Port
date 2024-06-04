@@ -27,7 +27,7 @@ public class Leap extends Spell {
 			double horizontalSpeed = getProperty(HORIZONTAL_SPEED).floatValue();
 			caster.addVelocity(caster.getLookVec().x * horizontalSpeed, 0, caster.getLookVec().z * horizontalSpeed);
 
-			if(level.isClientSide){
+			if(world.isClientSide){
 				for(int i = 0; i < 10; i++){
 					double x = caster.getX() + world.random.nextFloat() - 0.5F;
 					double y = caster.getY();

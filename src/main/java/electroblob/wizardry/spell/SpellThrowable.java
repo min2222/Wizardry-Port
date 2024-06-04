@@ -85,7 +85,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 			T projectile = projectileFactory.apply(world, caster);
 			projectile.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, velocity, 1.0f);
@@ -104,7 +104,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 		if(target != null){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 				T projectile = projectileFactory.apply(world, caster);
 				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
@@ -158,17 +158,17 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
 		// TODO: Annoyingly, wither skulls apply 'direct' damage from their shooter so they won't be recognised here
-		if(event.getSource().getImmediateSource() != null && !(event.getSource() instanceof IElementalDamage)){ // Prevent infinite looping
+		if(event.getSource().getDirectEntity() != null && !(event.getSource() instanceof IElementalDamage)){ // Prevent infinite looping
 
-			float damageModifier = event.getSource().getImmediateSource().getEntityData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
+			float damageModifier = event.getSource().getDirectEntity().getEntityData().getFloat(DAMAGE_MODIFIER_NBT_KEY);
 
 			// Really, we just want to increase the damage without modifying the source, but that would cause an
 			// infinite loop so we need some way of identifying it - the easiest way is to use MagicDamage, which fits
 			// quite nicely since we can only get here if the entity was from a spell anyway
 			if(damageModifier > 0){
 
-				Entity projectile = event.getSource().getImmediateSource();
-				Entity shooter = event.getSource().getTrueSource();
+				Entity projectile = event.getSource().getDirectEntity();
+				Entity shooter = event.getSource().getEntity();
 
 				DamageSource newSource = shooter == projectile
 						? MagicDamage.causeDirectMagicDamage(projectile, DamageType.MAGIC)
@@ -176,7 +176,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 				// Copy over any relevant 'attributes' the original DamageSource might have had.
 				if(event.getSource().isExplosion()) newSource.setExplosion();
-				if(event.getSource().isFireDamage()) newSource.setFireDamage();
+				if(event.getSource().isFireDamage()) newSource.setSecondsOnFireDamage();
 				if(event.getSource().isProjectile()) newSource.setProjectile();
 
 				DamageSafetyChecker.attackEntitySafely(event.getEntity(), newSource,

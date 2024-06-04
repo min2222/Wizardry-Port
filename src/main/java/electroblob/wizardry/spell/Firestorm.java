@@ -32,13 +32,13 @@ public class Firestorm extends SpellAreaEffect {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		burnNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
+		burnNearbyBlocks(world, caster.position(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, modifiers);
 	}
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		burnNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
+		burnNearbyBlocks(world, caster.position(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, target, modifiers);
 	}
 
@@ -50,7 +50,7 @@ public class Firestorm extends SpellAreaEffect {
 
 	@Override
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
-		target.setFire(getProperty(BURN_DURATION).intValue());
+		target.setSecondsOnFire(getProperty(BURN_DURATION).intValue());
 		return true;
 	}
 
@@ -82,7 +82,7 @@ public class Firestorm extends SpellAreaEffect {
 
 	private void burnNearbyBlocks(Level world, Vec3 origin, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
+		if(!world.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
 
@@ -102,7 +102,7 @@ public class Firestorm extends SpellAreaEffect {
 						// Randomised with weighting so that the nearer the block the more likely it is to be set alight.
 						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
-							world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+							world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 						}
 					}
 				}

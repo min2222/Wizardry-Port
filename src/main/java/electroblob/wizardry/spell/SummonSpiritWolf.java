@@ -42,7 +42,7 @@ public class SummonSpiritWolf extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			Entity oldWolf = EntityUtils.getEntityByUUID(world, data.getVariable(UUID_KEY));
 

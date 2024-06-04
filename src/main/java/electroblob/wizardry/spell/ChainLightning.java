@@ -57,7 +57,7 @@ public class ChainLightning extends SpellRay {
 
 			for(LivingEntity secondaryTarget : secondaryTargets){
 
-				electrocute(world, caster, target.getPositionVector().add(0, target.getBbHeight()/2, 0), secondaryTarget,
+				electrocute(world, caster, target.position().add(0, target.getBbHeight()/2, 0), secondaryTarget,
 						getProperty(SECONDARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 				// Tertiary chaining effect
@@ -74,7 +74,7 @@ public class ChainLightning extends SpellRay {
 					tertiaryTargets = tertiaryTargets.subList(0, getProperty(TERTIARY_MAX_TARGETS).intValue());
 
 				for(LivingEntity tertiaryTarget : tertiaryTargets){
-					electrocute(world, caster, secondaryTarget.getPositionVector().add(0, secondaryTarget.getBbHeight()/2, 0),
+					electrocute(world, caster, secondaryTarget.position().add(0, secondaryTarget.getBbHeight()/2, 0),
 							tertiaryTarget, getProperty(TERTIARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 				}
 			}
@@ -98,17 +98,17 @@ public class ChainLightning extends SpellRay {
 	private void electrocute(Level world, Entity caster, Vec3 origin, Entity target, float damage){
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-			if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()),
 					true);
 		}else{
 			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
 		}
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			
 			ParticleBuilder.create(Type.LIGHTNING).entity(caster)
-			.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
+			.pos(caster != null ? origin.subtract(caster.position()) : origin).target(target).spawn(world);
 			
 			ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight()/2, target.getZ());
 		}

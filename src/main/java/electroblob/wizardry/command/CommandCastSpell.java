@@ -99,7 +99,7 @@ public class CommandCastSpell extends CommandBase {
 
 			if(i + 3 < arguments.length){
 
-				Vec3 vec3d = sender.getPositionVector();
+				Vec3 vec3d = sender.position();
 				CoordinateArg x = parseCoordinate(vec3d.x, arguments[i++], true);
 				CoordinateArg y = parseCoordinate(vec3d.y, arguments[i++], 0, 256, false);
 				CoordinateArg z = parseCoordinate(vec3d.z, arguments[i++], true);

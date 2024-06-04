@@ -46,7 +46,7 @@ public interface IElementalDamage {
 
 			if(event.getEntity().isEntityUndead()
 					&& ((IElementalDamage)event.getSource()).getType() == DamageType.RADIANT){
-				event.getEntity().setFire(8); // Same as zombies/skeletons in sunlight
+				event.getEntity().setSecondsOnFire(8); // Same as zombies/skeletons in sunlight
 			}
 		}
 	}

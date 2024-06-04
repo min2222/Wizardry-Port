@@ -57,7 +57,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 
 	@Override
 	public BlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(HALF, meta == 0 ? EnumBlockHalf.LOWER : EnumBlockHalf.UPPER);
+		return this.defaultBlockState().withProperty(HALF, meta == 0 ? EnumBlockHalf.LOWER : EnumBlockHalf.UPPER);
 	}
 
 	@Override
@@ -85,13 +85,13 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	public void placeAt(Level world, BlockPos lowerPos, int flags){
-		world.setBlockState(lowerPos, this.getDefaultState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 0), flags);
-		world.setBlockState(lowerPos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(AGE, 0), flags);
+		world.setBlockAndUpdate(lowerPos, this.defaultBlockState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 0), flags);
+		world.setBlockAndUpdate(lowerPos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(AGE, 0), flags);
 	}
 
 	@Override
 	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		world.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
+		world.setBlockAndUpdate(pos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
 	}
 
 	@Override

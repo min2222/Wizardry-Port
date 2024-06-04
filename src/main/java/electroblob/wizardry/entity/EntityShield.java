@@ -40,7 +40,7 @@ public class EntityShield extends Entity {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 		// System.out.println("Shield exists, ID: " + this.getUniqueID().toString());
 		Player entityplayer = player != null ? player.get() : null;
 		if(entityplayer != null){
@@ -65,9 +65,9 @@ public class EntityShield extends Entity {
 	}
 
 	public boolean hurt(DamageSource source, float damage){
-		if(source != null && source.getImmediateSource() instanceof IProjectile){
-			world.playSound(null, source.getImmediateSource().getX(), source.getImmediateSource().getY(),
-					source.getImmediateSource().getZ(), WizardrySounds.ENTITY_SHIELD_DEFLECT, WizardrySounds.SPELLS, 0.3f, 1.3f);
+		if(source != null && source.getDirectEntity() instanceof IProjectile){
+			world.playSound(null, source.getDirectEntity().getX(), source.getDirectEntity().getY(),
+					source.getDirectEntity().getZ(), WizardrySounds.ENTITY_SHIELD_DEFLECT, WizardrySounds.SPELLS, 0.3f, 1.3f);
 		}
 		super.hurt(source, damage);
 		return false;

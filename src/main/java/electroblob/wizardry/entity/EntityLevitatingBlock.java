@@ -74,7 +74,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(suspendTimer > 0){
 			suspendTimer--;
@@ -147,7 +147,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 						BlockState iblockstate = this.world.getBlockState(blockpos1);
 
-						if(this.world.isAirBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
+						if(this.world.isEmptyBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
 							if(!isConcreteInWater && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
 								this.onGround = false;
 								return;
@@ -166,7 +166,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
 										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down())))
-										&& this.world.setBlockState(blockpos1, getBlock(), 3)){
+										&& this.world.setBlockAndUpdate(blockpos1, getBlock(), 3)){
 
 									if(block instanceof BlockFalling){
 										((BlockFalling)block).onEndFalling(this.world, blockpos1, getBlock(), iblockstate);

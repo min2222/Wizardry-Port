@@ -45,7 +45,7 @@ public class Decoy extends Spell {
 	
 	private void spawnDecoy(Level world, LivingEntity caster, SpellModifiers modifiers, double splitSpeed){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			EntityDecoy decoy = new EntityDecoy(world);
 			decoy.setCaster(caster);
 			decoy.setLifetime(getProperty(DECOY_LIFETIME).intValue());

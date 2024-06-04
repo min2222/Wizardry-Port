@@ -70,7 +70,7 @@ public class BlockCrystalFlowerPot extends Block {
 			player.dropItem(stack, false);
 		}
 
-		world.setBlockState(pos, Blocks.FLOWER_POT.getDefaultState());
+		world.setBlockAndUpdate(pos, Blocks.FLOWER_POT.defaultBlockState());
 
 		return true;
 	}

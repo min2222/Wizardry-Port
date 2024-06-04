@@ -70,7 +70,7 @@ public class Banish extends SpellRay {
 		Integer y = BlockUtils.getNearestFloor(world,
 				new BlockPos(x, (int)entity.getY(), z), (int)radius);
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			for(int i=0; i<10; i++){
 				double dx1 = entity.getX();
@@ -96,7 +96,7 @@ public class Banish extends SpellRay {
 				return false;
 			}
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				entity.setPositionAndUpdate(x + 0.5, y + 1, z + 0.5);
 			}
 

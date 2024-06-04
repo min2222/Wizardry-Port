@@ -22,7 +22,7 @@ public class PocketWorkbench extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			caster.openGui(Wizardry.instance, WizardryGuiHandler.PORTABLE_CRAFTING, world, (int)caster.getX(),
 					(int)caster.getY(), (int)caster.getZ());
 		}

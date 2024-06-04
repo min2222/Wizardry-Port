@@ -38,7 +38,7 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
 	@Override
 	// This method allows the code for the item's timer to be greatly simplified by damaging it directly from
-	// onUpdate() and removing the workaround that involved WizardData and all sorts of crazy stuff.
+	// tick() and removing the workaround that involved WizardData and all sorts of crazy stuff.
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged){
 
 		if(!oldStack.isEmpty() || !newStack.isEmpty()){

@@ -30,7 +30,7 @@ public class DragonFireball extends Spell {
 
 		Vec3 look = caster.getLookVec();
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			EntityDragonFireball fireball = new EntityDragonFireball(world, caster, 1, 1, 1);
 
@@ -56,7 +56,7 @@ public class DragonFireball extends Spell {
 
 		if(target != null){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				EntityDragonFireball fireball = new EntityDragonFireball(world, caster, 1, 1, 1);
 

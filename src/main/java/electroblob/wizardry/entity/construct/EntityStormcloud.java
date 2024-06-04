@@ -30,9 +30,9 @@ public class EntityStormcloud extends EntityScaledConstruct {
 		return false;
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		this.move(MoverType.SELF, motionX, 0, motionZ);
 
@@ -76,7 +76,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 		if(stormcloudRingActive){
 			EntityUtils.getLivingWithinRadius(width * 3, getX(), getY(), getZ(), world).stream()
 					.filter(this::isValidTarget).min(Comparator.comparingDouble(this::distanceToSqr)).ifPresent(e -> {
-				Vec3 vel = e.getPositionVector().subtract(this.getPositionVector()).normalize().scale(0.2);
+				Vec3 vel = e.position().subtract(this.position()).normalize().scale(0.2);
 				this.motionX = vel.x;
 				this.motionZ = vel.z;
 			});

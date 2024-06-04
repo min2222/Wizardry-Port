@@ -36,7 +36,7 @@ public class MindTrick extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				if(target instanceof Player){
 
@@ -76,7 +76,7 @@ public class MindTrick extends SpellRay {
 
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof LivingEntity){
+		if(event.getSource() != null && event.getSource().getEntity() instanceof LivingEntity){
 			// Cancels the mind trick effect if the creature takes damage
 			// This has been moved to within an (event.getSource().getEntity() instanceof EntityLivingBase) check so it
 			// doesn't crash the game with a ConcurrentModificationException. If you think about it, mind trick only

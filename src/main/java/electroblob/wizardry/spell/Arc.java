@@ -30,16 +30,16 @@ public class Arc extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 		
-			if(level.isClientSide){
+			if(world.isClientSide){
 				// Rather neatly, the entity can be set here and if it's null nothing will happen.
 				ParticleBuilder.create(Type.LIGHTNING).entity(caster)
-				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
+				.pos(caster != null ? origin.subtract(caster.position()) : origin).target(target).spawn(world);
 				ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight()/2, target.getZ());
 			}
 	
 			// This is a lot neater than it was, thanks to the damage type system.
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist",
 						target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{

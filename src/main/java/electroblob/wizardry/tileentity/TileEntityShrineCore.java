@@ -145,7 +145,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 					new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), x, y, z, 64));
 
 			if(world.getBlockState(pos).getBlock() == WizardryBlocks.runestone_pedestal){
-				world.setBlockState(pos, WizardryBlocks.runestone_pedestal.getDefaultState()
+				world.setBlockAndUpdate(pos, WizardryBlocks.runestone_pedestal.defaultBlockState()
 						.withProperty(BlockPedestal.ELEMENT, world.getBlockState(pos).getValue(BlockPedestal.ELEMENT)));
 			}else{
 				Wizardry.logger.warn("What's going on?! A shrine core is being conquered but the block at its position is not a runestone pedestal!");

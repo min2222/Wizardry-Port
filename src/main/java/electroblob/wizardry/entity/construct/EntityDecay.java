@@ -26,9 +26,9 @@ public class EntityDecay extends EntityMagicConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(this.random.nextInt(700) == 0 && this.tickCount + 100 < lifetime)
 			this.playSound(WizardrySounds.ENTITY_DECAY_AMBIENT, 0.2F + random.nextFloat() * 0.2F,

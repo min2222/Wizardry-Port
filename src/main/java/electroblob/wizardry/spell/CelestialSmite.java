@@ -41,10 +41,10 @@ public class CelestialSmite extends SpellRay {
 
 		for(LivingEntity target : targets){
 			EntityUtils.attackEntityWithoutKnockback(target, source, damage);
-			target.setFire(getProperty(BURN_DURATION).intValue());
+			target.setSecondsOnFire(getProperty(BURN_DURATION).intValue());
 		}
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			ParticleBuilder.create(Type.BEAM).pos(hit.x, world.getActualHeight(), hit.z).target(hit).scale(8)
 			.clr(0xffbf00).time(10).spawn(world);

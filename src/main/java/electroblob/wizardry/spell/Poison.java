@@ -40,7 +40,7 @@ public class Poison extends SpellRay {
 			
 			// Has no effect on undead or spiders.
 			if(MagicDamage.isEntityImmune(DamageType.POISON, target)){
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON),

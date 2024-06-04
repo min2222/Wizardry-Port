@@ -60,7 +60,7 @@ import java.util.Random;
  * <p></p>
  * - {@code onItemRightClick} is where non-continuous spells are cast, and it sets the item in use for continuous spells<br>
  * - {@code onUsingTick} does the casting for continuous spells<br>
- * - {@code onUpdate} deals with the cooldowns for the spells<br>
+ * - {@code tick} deals with the cooldowns for the spells<br>
  * <br>
  * See {@link ISpellCastingItem} for more detail on the {@code canCast(...)} and {@code cast(...)} methods.<br>
  * See {@link WandHelper} for everything related to wand NBT.
@@ -229,7 +229,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
+	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
 		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getHeldItemOffhand());
 
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is false, the cooldowns will be decremented.
@@ -581,7 +581,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, Player player, LivingEntity entity, EnumHand hand){
 
-		if(player.isSneaking() && entity instanceof Player && WizardData.get(player) != null){
+		if(player.isShiftKeyDown() && entity instanceof Player && WizardData.get(player) != null){
 			String string = WizardData.get(player).toggleAlly((Player)entity) ? "item." + Wizardry.MODID + ":wand.addally"
 					: "item." + Wizardry.MODID + ":wand.removeally";
 			if(!player.level.isClientSide) player.sendMessage(Component.translatable(string, entity.getName()));
@@ -667,7 +667,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			LivingEntity entity = (LivingEntity)rayTrace.entityHit;
 
 			// Sets the selected minion's target to the right-clicked entity
-			if(player.isSneaking() && WizardData.get(player) != null && WizardData.get(player).selectedMinion != null){
+			if(player.isShiftKeyDown() && WizardData.get(player) != null && WizardData.get(player).selectedMinion != null){
 
 				ISummonedCreature minion = WizardData.get(player).selectedMinion.get();
 

@@ -61,13 +61,13 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(level.isClientSide && this.tickCount == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_WITHERING_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 

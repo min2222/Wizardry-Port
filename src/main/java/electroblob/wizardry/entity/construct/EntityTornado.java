@@ -51,9 +51,9 @@ public class EntityTornado extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		double radius = width/2;
 
@@ -73,7 +73,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 			if(this.world.getBlockState(pos).getMaterial() == Material.LAVA){
 				// Fire tornado!
-				this.setFire(5);
+				this.setSecondsOnFire(5);
 			}
 		}
 
@@ -98,7 +98,7 @@ public class EntityTornado extends EntityScaledConstruct {
 					double dz = (this.getZ() - target.getZ() > 0 ? 0.5 : -0.5) - (this.getZ() - target.getZ()) * 0.125;
 
 					if(this.isBurning()){
-						target.setFire(4); // Just a fun Easter egg so no properties here!
+						target.setSecondsOnFire(4); // Just a fun Easter egg so no properties here!
 					}
 
 					float damage = Spells.tornado.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;

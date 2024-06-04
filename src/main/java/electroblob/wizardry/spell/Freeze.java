@@ -39,7 +39,7 @@ public class Freeze extends SpellRay {
 			}
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.frost,
@@ -58,7 +58,7 @@ public class Freeze extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		if(!level.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
+		if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
 			BlockUtils.freeze(world, pos, true);
 		}
 		

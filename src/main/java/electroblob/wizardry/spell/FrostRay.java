@@ -54,7 +54,7 @@ public class FrostRay extends SpellRay {
 			if(target.isBurning()) target.extinguish();
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
-				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle

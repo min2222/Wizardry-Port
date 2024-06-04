@@ -146,7 +146,7 @@ public final class InventoryUtils {
 
 	/**
 	 * A version of {@link Entity#replaceItemInInventory(int, ItemStack)} that takes a slot index specific to the main,
-	 * armour and offhand inventories, as passed to {@link Item#onUpdate(ItemStack, Level, Entity, int, boolean)},
+	 * armour and offhand inventories, as passed to {@link Item#tick(ItemStack, Level, Entity, int, boolean)},
 	 * rather than the proper slot index used everywhere else (just <i>why</i>, Mojang?).
 	 * @param entity The entity to replace the item for
 	 * @param slot The slot index to replace

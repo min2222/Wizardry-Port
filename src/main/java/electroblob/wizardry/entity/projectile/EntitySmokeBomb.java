@@ -32,7 +32,7 @@ public class EntitySmokeBomb extends EntityBomb {
 		// Particle effect
 		if(level.isClientSide){
 			
-			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(world);
+			ParticleBuilder.create(Type.FLASH).pos(this.position()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(world);
 			
 			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 						

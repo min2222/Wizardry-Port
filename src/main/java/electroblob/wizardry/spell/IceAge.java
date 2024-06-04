@@ -36,13 +36,13 @@ public class IceAge extends SpellAreaEffect {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		freezeNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
+		freezeNearbyBlocks(world, caster.position(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, modifiers);
 	}
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		freezeNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
+		freezeNearbyBlocks(world, caster.position(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, target, modifiers);
 	}
 
@@ -98,7 +98,7 @@ public class IceAge extends SpellAreaEffect {
 
 	private void freezeNearbyBlocks(Level world, Vec3 origin, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
+		if(!world.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
 

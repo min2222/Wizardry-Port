@@ -39,7 +39,7 @@ public class SixthSense extends Spell {
 				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 				(int)((modifiers.get(WizardryItems.range_upgrade) - 1f) / Constants.RANGE_INCREASE_PER_LEVEL)));
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);
 			Wizardry.proxy.playBlinkEffect(caster);
 		}
@@ -50,7 +50,7 @@ public class SixthSense extends Spell {
 
 	@SubscribeEvent
 	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
-		if(event.getEntity().level.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
+		if(event.getEntity().world.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());

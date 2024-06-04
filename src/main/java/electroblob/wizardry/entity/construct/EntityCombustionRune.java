@@ -28,9 +28,9 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(!this.level.isClientSide){
 

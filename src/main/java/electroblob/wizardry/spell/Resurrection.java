@@ -52,7 +52,7 @@ public class Resurrection extends Spell {
 
 		double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		if(!level.isClientSide && caster.getServer() != null){
+		if(!world.isClientSide && caster.getServer() != null){
 			// Potency reduces the time you have to wait to resurrect an ally
 			int waitTime = (int)(getProperty(WAIT_TIME).floatValue() / modifiers.get(SpellModifiers.POTENCY));
 
@@ -106,7 +106,7 @@ public class Resurrection extends Spell {
 		// Not sure what potion core is 'fixing' but it breaks my resurrection, so let's unfix it!
 		player.getEntityData().removeTag(POTION_CORE_FIX_NBT_KEY);
 
-		if(player.level.isClientSide){
+		if(player.world.isClientSide){
 			ParticleBuilder.spawnHealParticles(player.world, player);
 			this.playSound(player.world, player, 0, -1, null); // We know the modifiers parameter isn't used
 		}
@@ -130,7 +130,7 @@ public class Resurrection extends Spell {
 
 			Player player = (Player)event.getEntity();
 
-			if(player.level.isClientSide && !player.isEntityAlive()){
+			if(player.world.isClientSide && !player.isEntityAlive()){
 
 				Player firstPersonPlayer = Wizardry.proxy.getThePlayer();
 

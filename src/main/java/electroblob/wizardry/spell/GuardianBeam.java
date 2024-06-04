@@ -42,7 +42,7 @@ public class GuardianBeam extends SpellRay {
 				}
 			}
 			
-			if(level.isClientSide){
+			if(world.isClientSide){
 
 				float t = (ticksInUse % 50) / 50f;
 				float yellowness = t * t;
@@ -51,7 +51,7 @@ public class GuardianBeam extends SpellRay {
 				int b = 128 - (int)(yellowness * 64.0F);
 
 				if(ticksInUse % 3 == 0) ParticleBuilder.create(Type.GUARDIAN_BEAM).entity(caster)
-				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target)
+				.pos(caster != null ? origin.subtract(caster.position()) : origin).target(target)
 				.clr(r, g, b).spawn(world);
 
 				Vec3 direction = GeometryUtils.getCentre(target).subtract(origin);

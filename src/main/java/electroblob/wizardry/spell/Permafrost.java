@@ -54,7 +54,7 @@ public class Permafrost extends SpellRay {
 
 		boolean flag = false;
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
 			// Results in the following patterns:
@@ -84,7 +84,7 @@ public class Permafrost extends SpellRay {
 
 		if(world.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
 			if(BlockUtils.canPlaceBlock(caster, world, pos)){
-				world.setBlockState(pos, WizardryBlocks.permafrost.getDefaultState());
+				world.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
 				world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.permafrost, duration);
 				return true;
 			}

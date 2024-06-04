@@ -125,18 +125,18 @@ public class EntityRemnant extends EntityMob {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		// Use the same trick as EntityVex to fly through stuff
 		this.noClip = true;
-		super.onUpdate();
+		super.tick();
 		this.noClip = false;
 
 		this.setNoGravity(true);
 
 		if(level.isClientSide){
 
-			Vec3 centre = this.getPositionVector().add(0, height/2, 0);
+			Vec3 centre = this.position().add(0, height/2, 0);
 
 			int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(this.getElement());
 
@@ -264,7 +264,7 @@ public class EntityRemnant extends EntityMob {
 		}
 
 		@Override
-		public void onUpdateMoveHelper(){
+		public void tickMoveHelper(){
 
 			if(this.action == EntityMoveHelper.Action.MOVE_TO){
 
@@ -330,7 +330,7 @@ public class EntityRemnant extends EntityMob {
 			for(int i = 0; i < 3; ++i){
 				BlockPos blockpos1 = blockpos.add(EntityRemnant.this.random.nextInt(15) - 7, EntityRemnant.this.random.nextInt(11) - 5, EntityRemnant.this.random.nextInt(15) - 7);
 
-				if(EntityRemnant.this.world.isAirBlock(blockpos1)){
+				if(EntityRemnant.this.world.isEmptyBlock(blockpos1)){
 					EntityRemnant.this.moveHelper.setMoveTo((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.5D, (double)blockpos1.getZ() + 0.5D, 0.25D);
 
 					if(EntityRemnant.this.getAttackTarget() == null){

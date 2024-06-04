@@ -49,7 +49,7 @@ public class FrostBarrier extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
-			if(!createBarriers(world, caster.getPositionVector(), caster.getLookVec(), caster, modifiers)) return false;
+			if(!createBarriers(world, caster.position(), caster.getLookVec(), caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
 		}
@@ -61,7 +61,7 @@ public class FrostBarrier extends Spell {
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(caster.onGround){
-			if(!createBarriers(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()),
+			if(!createBarriers(world, caster.position(), target.position().subtract(caster.position()),
 					caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
@@ -80,7 +80,7 @@ public class FrostBarrier extends Spell {
 
 	private boolean createBarriers(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			direction = GeometryUtils.horizontalise(direction);
 			Vec3 centre = origin.add(direction.scale(BARRIER_DISTANCE - BARRIER_ARC_RADIUS)); // Arc centred behind caster

@@ -55,7 +55,7 @@ public class ArcaneJammer extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.arcane_jammer,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + (int)((modifiers.get(SpellModifiers.POTENCY) - 1)

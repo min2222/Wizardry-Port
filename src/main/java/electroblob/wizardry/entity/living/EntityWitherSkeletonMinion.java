@@ -108,8 +108,8 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 	}
 

@@ -14,7 +14,7 @@ public class IndirectMagicDamage extends IndirectEntityDamageSource implements I
 		this.type = type;
 		this.isRetaliatory = isRetaliatory;
 		this.setMagicDamage();
-		if(type == DamageType.FIRE) this.setFireDamage();
+		if(type == DamageType.FIRE) this.setSecondsOnFireDamage();
 		if(type == DamageType.BLAST) this.setExplosion();
 	}
 

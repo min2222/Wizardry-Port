@@ -79,9 +79,9 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(tickCount == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_FORCEFIELD_AMBIENT, WizardrySounds.SPELLS, 0.5f, 1, true);
@@ -110,15 +110,15 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 			if(this.isValidTarget(target)){
 
 				Vec3 currentPos = Arrays.stream(GeometryUtils.getVertices(target.getBoundingBox()))
-						.min(Comparator.comparingDouble(v -> v.distanceTo(this.getPositionVector())))
-						.orElse(target.getPositionVector()); // This will never happen, it's just here to make the compiler happy
+						.min(Comparator.comparingDouble(v -> v.distanceTo(this.position())))
+						.orElse(target.position()); // This will never happen, it's just here to make the compiler happy
 
 				double currentDistance = target.getDistance(this);
 
 				// Estimate the target's position next tick
 				// We have to assume the same vertex is closest or the velocity will be wrong
 				Vec3 nextTickPos = currentPos.add(target.motionX, target.motionY, target.motionZ);
-				double nextTickDistance = nextTickPos.distanceTo(this.getPositionVector());
+				double nextTickDistance = nextTickPos.distanceTo(this.position());
 
 				boolean flag;
 
@@ -140,7 +140,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 								MagicDamage.DamageType.MAGIC), 1);
 					}
 
-					Vec3 targetRelativePos = currentPos.subtract(this.getPositionVector());
+					Vec3 targetRelativePos = currentPos.subtract(this.position());
 
 					double nudgeVelocity = this.contains(target) ? -0.1 : 0.1;
 					if(EntityUtils.isLiving(target)) nudgeVelocity = 0.25;
@@ -156,7 +156,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 					// How far the target needs to move towards the centre (negative means away from the centre)
 					double distanceTowardsCentre = -(targetRelativePos.length() - radius) - (radius - nextTickDistance);
-					Vec3 targetNewPos = target.getPositionVector().add(targetRelativePos.normalize().scale(distanceTowardsCentre));
+					Vec3 targetNewPos = target.position().add(targetRelativePos.normalize().scale(distanceTowardsCentre));
 					target.setPosition(targetNewPos.x, targetNewPos.y, targetNewPos.z);
 
 					world.playSound(target.getX(), target.getY(), target.getZ(), WizardrySounds.ENTITY_FORCEFIELD_DEFLECT,
@@ -179,7 +179,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 						float yaw = (float)Math.atan2(relativeImpactPos.x, -relativeImpactPos.z);
 						float pitch = (float)Math.asin(relativeImpactPos.y/ radius);
 
-						ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector().add(relativeImpactPos))
+						ParticleBuilder.create(Type.FLASH).pos(this.position().add(relativeImpactPos))
 						.time(6).face((float)(yaw * 180/Math.PI), (float)(pitch * 180/Math.PI))
 						.clr(0.9f, 0.95f, 1).spawn(world);
 
@@ -207,7 +207,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	@Override
 	public boolean contains(Vec3 vec){
-		return vec.distanceTo(this.getPositionVector()) < radius; // The surface counts as outside
+		return vec.distanceTo(this.position()) < radius; // The surface counts as outside
 	}
 
 	/** Returns true if the given bounding box is completely inside this forcefield (the surface counts as outside). */
@@ -230,10 +230,10 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		// Find the closest point to the centre
 		// http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
 		Vec3 line = endpoint.subtract(origin);
-		double t = -origin.subtract(this.getPositionVector()).dotProduct(line) / line.lengthSquared();
+		double t = -origin.subtract(this.position()).dotProduct(line) / line.lengthSquared();
 		Vec3 closestPoint = origin.add(line.scale(t));
 		// Now calculate the distance from that point to the centre (squared because that's all we need)
-		double dsquared = closestPoint.squareDistanceTo(this.getPositionVector());
+		double dsquared = closestPoint.squareDistanceTo(this.position());
 		double rsquared = Math.pow(radius + fuzziness, 2);
 		// If the minimum distance is outside the radius (plus fuzziness) then there is no intercept
 		if(dsquared > rsquared) return null;
@@ -277,15 +277,15 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
-		if(event.getSource().getTrueSource() instanceof Player && event.getSource().isProjectile()
-				&& ItemArtefact.isArtefactActive((Player)event.getSource().getTrueSource(), WizardryItems.ring_defender)){
+		if(event.getSource().getEntity() instanceof Player && event.getSource().isProjectile()
+				&& ItemArtefact.isArtefactActive((Player)event.getSource().getEntity(), WizardryItems.ring_defender)){
 				return; // Players wearing a ring of the defender can shoot stuff as normal, so don't cancel the event
 		}
 
-		if(!event.getSource().isUnblockable() && event.getSource().getTrueSource() != null && event.getEntity() != null
-			&& !(event.getSource().getImmediateSource() instanceof EntityForcefield)){ // If the damage was from a forcefield that's ok
+		if(!event.getSource().isUnblockable() && event.getSource().getEntity() != null && event.getEntity() != null
+			&& !(event.getSource().getDirectEntity() instanceof EntityForcefield)){ // If the damage was from a forcefield that's ok
 			// This condition will be false if both entities are outside a forcefield or both are in the same one
-			if(getSurroundingForcefield(event.getEntity()) != getSurroundingForcefield(event.getSource().getTrueSource())){
+			if(getSurroundingForcefield(event.getEntity()) != getSurroundingForcefield(event.getSource().getEntity())){
 				event.setCanceled(true);
 			}
 		}
@@ -301,7 +301,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 		forcefields.removeIf(f -> !f.contains(vec));
 		// There should only be one left at this point since we now have anti-overlap, but commands might bypass that
-		return forcefields.stream().min(Comparator.comparingDouble(f -> vec.squareDistanceTo(f.getPositionVector())))
+		return forcefields.stream().min(Comparator.comparingDouble(f -> vec.squareDistanceTo(f.position())))
 				.orElse(null);
 	}
 
@@ -315,13 +315,13 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 		forcefields.removeIf(f -> !f.contains(box));
 		// There should only be one left at this point since we now have anti-overlap, but commands might bypass that
-		return forcefields.stream().min(Comparator.comparingDouble(f -> vec.squareDistanceTo(f.getPositionVector())))
+		return forcefields.stream().min(Comparator.comparingDouble(f -> vec.squareDistanceTo(f.position())))
 				.orElse(null);
 	}
 
 	@Nullable
 	private static EntityForcefield getSurroundingForcefield(Entity entity){
-		return getSurroundingForcefield(entity.world, entity.getBoundingBox(), entity.getPositionVector());
+		return getSurroundingForcefield(entity.world, entity.getBoundingBox(), entity.position());
 	}
 
 	@SubscribeEvent
@@ -342,7 +342,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		// If the player is trying to interact across a forcefield boundary, cancel the event
 		// The most pragmatic solution here is to use the centres - it's not perfect, but it's simple!
 		if(getSurroundingForcefield(event.getWorld(), GeometryUtils.getCentre(box))
-				!= getSurroundingForcefield(event.getWorld(), event.getEntity().getPositionVector())){
+				!= getSurroundingForcefield(event.getWorld(), event.getEntity().position())){
 			event.setCanceled(true);
 		}
 	}

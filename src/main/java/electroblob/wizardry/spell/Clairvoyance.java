@@ -54,7 +54,7 @@ public class Clairvoyance extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		if(data != null && !caster.isSneaking()){
+		if(data != null && !caster.isShiftKeyDown()){
 
 			Integer dimension = data.getVariable(DIMENSION_KEY);
 			BlockPos location = data.getVariable(LOCATION_KEY);
@@ -62,7 +62,7 @@ public class Clairvoyance extends Spell {
 			if(dimension != null && caster.dimension == dimension){
 				if(location != null){
 
-					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
+					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
 
 					EntityZombie arbitraryZombie = new EntityZombie(world){
 						@Override
@@ -91,7 +91,7 @@ public class Clairvoyance extends Spell {
 
 							this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-							if(!level.isClientSide && caster instanceof ServerPlayer){
+							if(!world.isClientSide && caster instanceof ServerPlayer){
 								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.duration_upgrade)),
 										(ServerPlayer)caster);
 							}
@@ -100,18 +100,18 @@ public class Clairvoyance extends Spell {
 						}
 					}
 
-					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
+					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
 
 				}else{
-					if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 				}
 			}else{
-				if(!level.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+				if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 			}
 		}
 
 		// Fixes the problem with the sound not playing for the client of the caster.
-		if(level.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
+		if(world.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 		return false;
 	}
@@ -149,7 +149,7 @@ public class Clairvoyance extends Spell {
 	@SubscribeEvent
 	public static void onRightClickBlockEvent(PlayerInteractEvent.RightClickBlock event){
 
-		if(event.getEntity().isSneaking()){
+		if(event.getEntity().isShiftKeyDown()){
 
 			// The event now has an ItemStack, which greatly simplifies hand-related stuff.
 			ItemStack stack = event.getItemStack();

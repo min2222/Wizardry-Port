@@ -255,11 +255,11 @@ public final class WizardryEventHandler {
 		// Retaliatory effects
 		// These are better off here because the revenge effects are pretty similar, and I'd rather keep the (lengthy)
 		// if statement in one place.
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof LivingEntity
+		if(event.getSource() != null && event.getSource().getEntity() instanceof LivingEntity
 				&& !event.getSource().isProjectile() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
-			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
+			LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
 			Level world = event.getEntity().world;
 
 			if(attacker.getDistance(event.getEntity()) < 10){
@@ -267,7 +267,7 @@ public final class WizardryEventHandler {
 				// Fireskin
 				if(event.getEntity().isPotionActive(WizardryPotions.fireskin)
 						&& !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
-					attacker.setFire(Spells.fire_breath.getProperty(Spell.BURN_DURATION).intValue() * 20);
+					attacker.setSecondsOnFire(Spells.fire_breath.getProperty(Spell.BURN_DURATION).intValue() * 20);
 
 				// Ice Shroud
 				if(event.getEntity().isPotionActive(WizardryPotions.ice_shroud)
@@ -309,9 +309,9 @@ public final class WizardryEventHandler {
 		}
 
 		// Flaming and freezing swords
-		if(event.getSource().getTrueSource() instanceof LivingEntity){
+		if(event.getSource().getEntity() instanceof LivingEntity){
 
-			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
+			LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
 
 			// Players can only ever attack with their main hand, so this is the right method to use here.
 			if(!attacker.getMainHandItem().isEmpty() && ImbueWeapon.isSword(attacker.getMainHandItem())){
@@ -320,7 +320,7 @@ public final class WizardryEventHandler {
 						attacker.getMainHandItem());
 
 				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
-					event.getEntity().setFire(level * 4);
+					event.getEntity().setSecondsOnFire(level * 4);
 
 				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon,
 						attacker.getMainHandItem());
@@ -331,10 +331,10 @@ public final class WizardryEventHandler {
 		}
 
 		// Freezing bow
-		if(event.getSource().getImmediateSource() instanceof Arrow
-				&& event.getSource().getImmediateSource().getEntityData() != null){
+		if(event.getSource().getDirectEntity() instanceof Arrow
+				&& event.getSource().getDirectEntity().getEntityData() != null){
 
-			int level = event.getSource().getImmediateSource().getEntityData()
+			int level = event.getSource().getDirectEntity().getEntityData()
 					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
@@ -344,7 +344,7 @@ public final class WizardryEventHandler {
 		// Damage scaling
 		if(event.getSource() != null && event.getSource() instanceof IElementalDamage){
 
-			if(event.getSource().getTrueSource() instanceof Player){
+			if(event.getSource().getEntity() instanceof Player){
 				event.setAmount((float)(event.getAmount() * Wizardry.settings.playerDamageScale));
 			}else{
 				event.setAmount((float)(event.getAmount() * Wizardry.settings.npcDamageScale));
@@ -385,9 +385,9 @@ public final class WizardryEventHandler {
 	@SubscribeEvent(priority = EventPriority.LOWEST) // No siphoning if the event is cancelled, that could be exploited...
 	public static void onLivingDeathEvent(LivingDeathEvent event){
 
-		if(event.getSource().getTrueSource() instanceof Player){
+		if(event.getSource().getEntity() instanceof Player){
 
-			Player player = (Player)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getEntity();
 
 			// Compatibility with "Lycanites Mobs" -it uses custom loot drop logic which can't be hooked, given the
 			// number of mobs that spawn as Lycanites when this mod is active it would massively nerf the wizard drops

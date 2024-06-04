@@ -50,7 +50,7 @@ public class Charge extends Spell {
 
 		WizardData.get(caster).setVariable(CHARGE_MODIFIERS, modifiers);
 
-		if(level.isClientSide) world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, caster.getX(), caster.getY() + caster.getBbHeight()/2, caster.getZ(), 0, 0, 0);
+		if(world.isClientSide) world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, caster.getX(), caster.getY() + caster.getBbHeight()/2, caster.getZ(), 0, 0, 0);
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 
@@ -73,7 +73,7 @@ public class Charge extends Spell {
 			player.motionX = look.x * speed;
 			player.motionZ = look.z * speed;
 
-			if(player.level.isClientSide){
+			if(player.world.isClientSide){
 				for(int i = 0; i < 5; i++){
 					ParticleBuilder.create(Type.SPARK, player).spawn(player.world);
 				}
@@ -89,7 +89,7 @@ public class Charge extends Spell {
 			collided.forEach(e -> e.hurt(MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.SHOCK), damage));
 			collided.forEach(e -> e.addVelocity(player.motionX * knockback, player.motionY * knockback + 0.3f, player.motionZ * knockback));
 
-			if(player.level.isClientSide) player.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE,
+			if(player.world.isClientSide) player.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE,
 					player.getX() + player.motionX, player.getY() + player.getBbHeight()/2, player.getZ() + player.motionZ, 0, 0, 0);
 
 			if(collided.isEmpty()) chargeTime--;
@@ -105,10 +105,10 @@ public class Charge extends Spell {
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		// Players are immune to melee damage while charging
-		if(event.getEntity() instanceof Player && event.getSource().getTrueSource() instanceof LivingEntity){
+		if(event.getEntity() instanceof Player && event.getSource().getEntity() instanceof LivingEntity){
 
 			Player player = (Player)event.getEntity();
-			LivingEntity attacker = (LivingEntity)event.getSource().getTrueSource();
+			LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
 
 			if(WizardData.get(player) != null){
 

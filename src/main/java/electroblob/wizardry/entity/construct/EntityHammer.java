@@ -69,9 +69,9 @@ public class EntityHammer extends EntityMagicConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 //		if(this.tickCount % 20 == 1 && !this.onGround && level.isClientSide){
 //			// Though this sound does repeat, it stops when it hits the ground.

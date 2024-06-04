@@ -32,9 +32,9 @@ public class ParticleCloud extends ParticleWizardry {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 		
 		// Fading
 		float fadeTime = this.particleMaxAge * 0.3f;

@@ -39,9 +39,9 @@ public class MossifierTemplateProcessor implements ITemplateProcessor {
 
 		if(world.random.nextFloat() < chance){
 			if(info.blockState.getBlock() == Blocks.COBBLESTONE){
-				return new Template.BlockInfo(info.pos, Blocks.MOSSY_COBBLESTONE.getDefaultState(), info.tileentityData);
+				return new Template.BlockInfo(info.pos, Blocks.MOSSY_COBBLESTONE.defaultBlockState(), info.tileentityData);
 			}else if(info.blockState.getBlock() == Blocks.STONEBRICK){
-				return new Template.BlockInfo(info.pos, Blocks.STONEBRICK.getDefaultState()
+				return new Template.BlockInfo(info.pos, Blocks.STONEBRICK.defaultBlockState()
 						.withProperty(BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.MOSSY), info.tileentityData);
 			}
 		}

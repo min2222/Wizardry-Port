@@ -31,9 +31,9 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(this.tickCount > 600 && this.getCaster() == null && !this.level.isClientSide){
 			this.discard();

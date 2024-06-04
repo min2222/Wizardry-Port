@@ -67,8 +67,8 @@ public abstract class EntitySummonedCreature extends EntityCreature implements I
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 	}
 

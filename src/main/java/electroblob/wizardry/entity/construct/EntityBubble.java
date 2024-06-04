@@ -40,9 +40,9 @@ public class EntityBubble extends EntityMagicConstruct {
 		return false;
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		// Synchronises the rider field
 		if((this.rider == null || this.rider.get() == null)

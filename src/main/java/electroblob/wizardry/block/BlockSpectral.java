@@ -84,7 +84,7 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos,
                                         Direction side){
 
-		BlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+		BlockState iblockstate = blockAccess.getBlockState(pos.relative(side));
 		Block block = iblockstate.getBlock();
 
 		return block == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);

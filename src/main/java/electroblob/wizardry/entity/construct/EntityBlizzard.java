@@ -30,13 +30,13 @@ public class EntityBlizzard extends EntityScaledConstruct {
 		return false;
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
 		if(this.tickCount % 120 == 1){
 			this.playSound(WizardrySounds.ENTITY_BLIZZARD_AMBIENT, 1.0f, 1.0f);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		// This is a good example of why you might define a spell base property without necessarily using it in the
 		// spell - in fact, blizzard doesn't even have a spell class (yet)

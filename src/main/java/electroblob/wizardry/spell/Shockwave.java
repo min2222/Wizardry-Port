@@ -47,7 +47,7 @@ public class Shockwave extends SpellAreaEffect {
 			if(!Wizardry.settings.playersMoveEachOther) return false;
 
 			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)){
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 				return false;
@@ -56,13 +56,13 @@ public class Shockwave extends SpellAreaEffect {
 
 		// Produces a linear profile from 0 at the edge of the radius to 1 at the epicentre radius, then
 		// a constant value of 1 within the epicentre radius.
-		float proximity = (float)(1 - (Math.max(origin.distanceTo(target.getPositionVector()) - EPICENTRE_RADIUS, 0))/(radius - EPICENTRE_RADIUS));
+		float proximity = (float)(1 - (Math.max(origin.distanceTo(target.position()) - EPICENTRE_RADIUS, 0))/(radius - EPICENTRE_RADIUS));
 
 		// Damage increases closer to player up to a maximum of 4 hearts (at 1 block distance).
 		target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
 				getProperty(DAMAGE).floatValue() * proximity * modifiers.get(SpellModifiers.POTENCY));
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			// Entity speed increases closer to the player to a maximum of 3 (at 1 block distance).
 			// This is the entity's speed compared to its distance from the player. Used for a similar triangles

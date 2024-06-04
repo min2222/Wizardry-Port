@@ -44,7 +44,7 @@ public class Flight extends Spell {
 			if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0.0f;
 		}
 		
-		if(level.isClientSide){
+		if(world.isClientSide){
 			double x = caster.getX() - 1 + world.random.nextDouble() * 2;
 			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
 			double z = caster.getZ() - 1 + world.random.nextDouble() * 2;

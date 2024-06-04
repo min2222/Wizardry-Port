@@ -31,9 +31,9 @@ public class EntityMeteor extends EntityFallingBlock {
 	}
 
 	public EntityMeteor(Level world, double x, double y, double z, float blastMultiplier, boolean damageBlocks){
-		super(world, x, y, z, WizardryBlocks.meteor.getDefaultState());
+		super(world, x, y, z, WizardryBlocks.meteor.defaultBlockState());
 		this.motionY = -1.0D;
-		this.setFire(200);
+		this.setSecondsOnFire(200);
 		this.blastMultiplier = blastMultiplier;
 		this.damageBlocks = damageBlocks;
 	}
@@ -44,14 +44,14 @@ public class EntityMeteor extends EntityFallingBlock {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(this.tickCount % 16 == 1 && level.isClientSide){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_METEOR_FALLING, WizardrySounds.SPELLS, 3.0f, 1.0f, false);
 		}
 
 		// You'd think the best way to do this would be to call super and do all the exploding stuff in fall() instead.
-		// However, for some reason, fallTile is null on the client side, causing an NPE in super.onUpdate()
+		// However, for some reason, fallTile is null on the client side, causing an NPE in super.tick()
 
 		this.prevgetX() = this.getX();
 		this.prevgetY() = this.getY();
@@ -96,7 +96,7 @@ public class EntityMeteor extends EntityFallingBlock {
 
 	@Override
 	public BlockState getBlock(){
-		return WizardryBlocks.meteor.getDefaultState(); // For some reason the superclass version returns null on the
+		return WizardryBlocks.meteor.defaultBlockState(); // For some reason the superclass version returns null on the
 														// client
 	}
 

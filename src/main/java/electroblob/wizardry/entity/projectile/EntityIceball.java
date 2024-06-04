@@ -51,7 +51,7 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				if(rayTrace.sideHit == Direction.UP && !level.isClientSide && world.isSideSolid(pos, Direction.UP)
 						&& BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canPlaceBlock(thrower, world, pos)){
-					world.setBlockState(pos.up(), Blocks.SNOW_LAYER.getDefaultState());
+					world.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
 				}
 			}
 
@@ -62,9 +62,9 @@ public class EntityIceball extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(level.isClientSide){
 
@@ -75,7 +75,7 @@ public class EntityIceball extends EntityMagicProjectile {
 				double dz = (random.nextDouble() - 0.5) * width;
 				double v = 0.06;
 				ParticleBuilder.create(ParticleBuilder.Type.SNOW)
-						.pos(this.getPositionVector().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
+						.pos(this.position().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
 						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + random.nextInt(4)).spawn(world);
 
 				if(tickCount > 1){
@@ -83,7 +83,7 @@ public class EntityIceball extends EntityMagicProjectile {
 					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2;
 					dz = (random.nextDouble() - 0.5) * width;
 					ParticleBuilder.create(ParticleBuilder.Type.SNOW)
-							.pos(this.getPositionVector().add(dx - this.motionX, dy, dz - this.motionZ))
+							.pos(this.position().add(dx - this.motionX, dy, dz - this.motionZ))
 							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(8 + random.nextInt(4)).spawn(world);
 				}
 			}

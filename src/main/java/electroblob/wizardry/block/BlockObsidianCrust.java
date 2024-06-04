@@ -31,7 +31,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 	@Override
 	public BlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(AGE, Mth.clamp(meta, 0, 3));
+		return this.defaultBlockState().withProperty(AGE, Mth.clamp(meta, 0, 3));
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 		int i = 0;
 
 		for(Direction enumfacing : Direction.values()){
-			if(world.getBlockState(pos.offset(enumfacing)).getBlock() == this){
+			if(world.getBlockState(pos.relative(enumfacing)).getBlock() == this){
 				++i;
 
 				if(i >= 4){
@@ -77,7 +77,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 		if(i < 3){
 
-			world.setBlockState(pos, state.withProperty(AGE, i + 1), 2);
+			world.setBlockAndUpdate(pos, state.withProperty(AGE, i + 1), 2);
 			world.scheduleUpdate(pos, this, Mth.getInt(random, 20, 40));
 
 		}else{
@@ -88,7 +88,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 				for(Direction enumfacing : Direction.values()){
 
-					BlockPos blockpos = pos.offset(enumfacing);
+					BlockPos blockpos = pos.relative(enumfacing);
 					BlockState iblockstate = world.getBlockState(blockpos);
 
 					if(iblockstate.getBlock() == this){
@@ -100,7 +100,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 	}
 
 	protected void melt(Level world, BlockPos pos){
-		world.setBlockState(pos, Blocks.LAVA.getDefaultState());
+		world.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 		world.neighborChanged(pos, Blocks.LAVA, pos);
 	}
 

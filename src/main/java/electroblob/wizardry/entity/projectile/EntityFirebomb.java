@@ -41,13 +41,13 @@ public class EntityFirebomb extends EntityBomb {
 					damage);
 
 			if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit))
-				entityHit.setFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
+				entityHit.setSecondsOnFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
 		}
 
 		// Particle effect
 		if(level.isClientSide){
 			
-			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier).clr(1, 0.6f, 0)
+			ParticleBuilder.create(Type.FLASH).pos(this.position()).scale(5 * blastMultiplier).clr(1, 0.6f, 0)
 			.spawn(world);
 
 			for(int i = 0; i < 60 * blastMultiplier; i++){
@@ -79,7 +79,7 @@ public class EntityFirebomb extends EntityBomb {
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FIRE),
 							Spells.firebomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
-					target.setFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
+					target.setSecondsOnFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
 				}
 			}
 

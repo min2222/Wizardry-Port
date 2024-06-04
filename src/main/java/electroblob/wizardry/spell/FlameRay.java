@@ -51,13 +51,13 @@ public class FlameRay extends SpellRay {
 		if(target instanceof LivingEntity){
 
 			if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-				if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
+				if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
 				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.
 			}else if(ticksInUse % 10 == 0){
-				target.setFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				EntityUtils.attackEntityWithoutKnockback(target,
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.FIRE),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));

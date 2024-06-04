@@ -80,8 +80,8 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 	}
 

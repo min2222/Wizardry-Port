@@ -61,7 +61,7 @@ public class BlockCrystal extends Block {
 	
 	@Override
     public BlockState getStateFromMeta(int metadata){
-        return this.getDefaultState().withProperty(ELEMENT, Element.values()[metadata]);
+        return this.defaultBlockState().withProperty(ELEMENT, Element.values()[metadata]);
     }
 
     @Override

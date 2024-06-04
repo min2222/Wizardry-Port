@@ -32,7 +32,7 @@ public class IceStatue extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(target instanceof Mob && !level.isClientSide){
+		if(target instanceof Mob && !world.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
 			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){

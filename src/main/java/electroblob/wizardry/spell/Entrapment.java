@@ -32,7 +32,7 @@ public class Entrapment extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				// Deals a small amount damage so the target counts as being hit by the caster
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
 				

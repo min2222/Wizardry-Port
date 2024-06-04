@@ -152,7 +152,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	 */
 	protected boolean spawnConstruct(Level world, double x, double y, double z, @Nullable Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
 		
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			// Creates a new construct using the supplied factory
 			T construct = constructFactory.apply(world);
 			// Sets the position of the construct (and initialises its bounding box)

@@ -63,10 +63,10 @@ public class BlockCrystalFlower extends BlockBush {
 					event.getWorld().random.nextInt(4) - event.getWorld().random.nextInt(4),
 					event.getWorld().random.nextInt(8) - event.getWorld().random.nextInt(8));
 
-			if(event.getWorld().isAirBlock(new BlockPos(pos))
+			if(event.getWorld().isEmptyBlock(new BlockPos(pos))
 					&& (!event.getWorld().provider.isNether() || pos.getY() < 127)
 					&& WizardryBlocks.crystal_flower.canPlaceBlockAt(event.getWorld(), pos)){
-				event.getWorld().setBlockState(pos, WizardryBlocks.crystal_flower.getDefaultState(), 2);
+				event.getWorld().setBlockAndUpdate(pos, WizardryBlocks.crystal_flower.defaultBlockState(), 2);
 			}
 		}
 	}

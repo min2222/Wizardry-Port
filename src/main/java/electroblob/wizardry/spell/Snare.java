@@ -32,8 +32,8 @@ public class Snare extends SpellRay {
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(side == Direction.UP && world.isSideSolid(pos, Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos.up())){
-			if(!level.isClientSide){
-				world.setBlockState(pos.up(), WizardryBlocks.snare.getDefaultState());
+			if(!world.isClientSide){
+				world.setBlockAndUpdate(pos.up(), WizardryBlocks.snare.defaultBlockState());
 				((TileEntityPlayerSave)world.getTileEntity(pos.up())).setCaster(caster);
 				((TileEntityPlayerSave)world.getTileEntity(pos.up())).sync();
 			}

@@ -33,8 +33,8 @@ public class ParticleBuff extends ParticleWizardry {
 
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		if(this.particleAge > this.particleMaxAge/2) this.particleAlpha = 2f - 2f*(float)this.particleAge/(float)this.particleMaxAge;
 	}
 	

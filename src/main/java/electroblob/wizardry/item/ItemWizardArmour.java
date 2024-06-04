@@ -475,7 +475,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			// Repeat the calculation from EntityAIFindNearestPlayer, but ignoring wizard armour
 			AttributeInstance attribute = event.getEntity().getEntityAttribute(Attributes.FOLLOW_RANGE);
 			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
-			if(event.getTarget().isSneaking()) followRange *= 0.8;
+			if(event.getTarget().isShiftKeyDown()) followRange *= 0.8;
 			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();
 			if(f < 0.1F) f = 0.1F;
 			followRange *= 0.7F * f;

@@ -29,7 +29,7 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
-		entityHit.setFire(Spells.flamecatcher.getProperty(Spell.BURN_DURATION).intValue());
+		entityHit.setSecondsOnFire(Spells.flamecatcher.getProperty(Spell.BURN_DURATION).intValue());
 		this.playSound(WizardrySounds.ENTITY_FLAMECATCHER_ARROW_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 		if(this.level.isClientSide) ParticleBuilder.create(Type.FLASH).pos(getX(), getY(), getZ()).clr(0xff6d00).spawn(world);
 	}

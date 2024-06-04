@@ -28,7 +28,7 @@ public class InvokeWeather extends Spell {
 
 		if(caster.dimension == 0){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
 				
@@ -51,7 +51,7 @@ public class InvokeWeather extends Spell {
 				}
 			}
 
-			if(level.isClientSide){
+			if(world.isClientSide){
 				for(int i = 0; i < 10; i++){
 					double x = caster.getX() + world.random.nextDouble() * 2 - 1;
 					double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();

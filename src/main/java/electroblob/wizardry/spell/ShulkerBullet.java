@@ -58,7 +58,7 @@ public class ShulkerBullet extends Spell {
 
 	private boolean shoot(Level world, @Nullable LivingEntity caster, double x, double y, double z, Direction direction, SpellModifiers modifiers){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 

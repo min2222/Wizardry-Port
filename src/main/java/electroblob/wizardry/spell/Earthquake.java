@@ -41,7 +41,7 @@
 	@Override
 	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, x, y + 0.1, z, 0, 0, 0);
 

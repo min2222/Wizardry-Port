@@ -19,7 +19,7 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
 		if(Ints.contains(Wizardry.settings.flowerDimensions, world.provider.getDimension())){
-			this.generatePlant(WizardryBlocks.crystal_flower.getDefaultState(), world, random, 8 + chunkX * 16, 8 + chunkZ * 16, 2, 20);
+			this.generatePlant(WizardryBlocks.crystal_flower.defaultBlockState(), world, random, 8 + chunkX * 16, 8 + chunkZ * 16, 2, 20);
 		}
 	}
 
@@ -50,10 +50,10 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 
 				BlockPos pos = new BlockPos(i1, j1, k1);
 
-				if(world.isBlockLoaded(pos) && world.isAirBlock(pos) && (!world.provider.isNether() || j1 < 127)
+				if(world.isBlockLoaded(pos) && world.isEmptyBlock(pos) && (!world.provider.isNether() || j1 < 127)
 						&& state.getBlock().canPlaceBlockOnSide(world, pos, Direction.UP)){
 
-					world.setBlockState(pos, state, 2);
+					world.setBlockAndUpdate(pos, state, 2);
 				}
 			}
 		}

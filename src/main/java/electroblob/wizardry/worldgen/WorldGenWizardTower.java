@@ -42,10 +42,10 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 	public WorldGenWizardTower(){
 		// These are initialised here because it's a convenient point after the blocks are registered
 		specialWallBlocks = ImmutableMap.of(
-				BiomeDictionary.Type.MESA, Blocks.RED_SANDSTONE.getDefaultState(),
-				BiomeDictionary.Type.MOUNTAIN, Blocks.STONEBRICK.getDefaultState(),
-				BiomeDictionary.Type.NETHER, Blocks.NETHER_BRICK.getDefaultState(),
-				BiomeDictionary.Type.SANDY, Blocks.SANDSTONE.getDefaultState()
+				BiomeDictionary.Type.MESA, Blocks.RED_SANDSTONE.defaultBlockState(),
+				BiomeDictionary.Type.MOUNTAIN, Blocks.STONEBRICK.defaultBlockState(),
+				BiomeDictionary.Type.NETHER, Blocks.NETHER_BRICK.defaultBlockState(),
+				BiomeDictionary.Type.SANDY, Blocks.SANDSTONE.defaultBlockState()
 		);
 	}
 
@@ -79,7 +79,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 		final Biome biome = world.getBiome(origin);
 
 		final BlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
-				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.getDefaultState());
+				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.defaultBlockState());
 
 		final float mossiness = getBiomeMossiness(biome);
 		final BlockPlanks.EnumType woodType = BlockUtils.getBiomeWoodVariant(biome);

@@ -139,7 +139,7 @@ public interface Imbuement {
 
 				if(EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.flaming_weapon, bow) > 0){
 					// Again, this is exactly what happens in ItemBow (flame is flame; level does nothing).
-					arrow.setFire(100);
+					arrow.setSecondsOnFire(100);
 				}
 
 				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon, bow);

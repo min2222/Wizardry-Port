@@ -40,7 +40,7 @@ public class PotionContainment extends PotionMagicEffect {
 
 		// Initialise the containment position to the entity's position if it wasn't set already
 		if(!target.getEntityData().hasKey(ENTITY_TAG)){
-			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.writeBlockPos(new BlockPos(target.getPositionVector().subtract(0.5, 0.5, 0.5))));
+			NBTExtras.storeTagSafely(target.getEntityData(), ENTITY_TAG, NbtUtils.writeBlockPos(new BlockPos(target.position().subtract(0.5, 0.5, 0.5))));
 		}
 
 		Vec3 origin = GeometryUtils.getCentre(NbtUtils.readBlockPos(target.getEntityData().getCompoundTag(ENTITY_TAG)));

@@ -86,7 +86,7 @@ public class WizardryControlHandler {
 		ItemStack wand = getWandInUse(player);
 		if(wand == null) return;
 
-		if(Minecraft.getMinecraft().inGameHasFocus && !wand.isEmpty() && event.getDwheel() != 0 && player.isSneaking()
+		if(Minecraft.getMinecraft().inGameHasFocus && !wand.isEmpty() && event.getDwheel() != 0 && player.isShiftKeyDown()
 				&& Wizardry.settings.shiftScrolling){
 
 			event.setCanceled(true);

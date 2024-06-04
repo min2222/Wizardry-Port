@@ -30,9 +30,9 @@ public class ParticleSphere extends ParticleWizardry {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 	}
 

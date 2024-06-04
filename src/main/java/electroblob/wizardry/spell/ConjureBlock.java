@@ -33,9 +33,9 @@ public class ConjureBlock extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster != null && caster.isSneaking() && world.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
+		if(caster != null && caster.isShiftKeyDown() && world.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				// Dispelling of blocks
 				world.setBlockToAir(pos);
 			}else{
@@ -46,18 +46,18 @@ public class ConjureBlock extends SpellRay {
 			return true;
 		}
 		
-		pos = pos.offset(side);
+		pos = pos.relative(side);
 		
-		if(level.isClientSide){
+		if(world.isClientSide){
 			ParticleBuilder.create(Type.FLASH).pos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).scale(3)
 			.clr(0.75f, 1, 0.85f).spawn(world);
 		}
 		
 		if(BlockUtils.canBlockBeReplaced(world, pos)){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
-				world.setBlockState(pos, WizardryBlocks.spectral_block.getDefaultState());
+				world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
 				
 				if(world.getTileEntity(pos) instanceof TileEntityTimer){
 					((TileEntityTimer)world.getTileEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()

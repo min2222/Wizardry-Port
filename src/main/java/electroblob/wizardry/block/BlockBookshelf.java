@@ -80,7 +80,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 	@Override
 	public BlockState getStateForPlacement(Level world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+		return this.defaultBlockState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	// Why on earth are these two not in BlockHorizontal?
@@ -116,7 +116,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	public BlockState getStateFromMeta(int meta){
 		EnumFacing enumfacing = EnumFacing.byIndex(meta);
 		if(enumfacing.getAxis() == EnumFacing.Axis.Y) enumfacing = EnumFacing.NORTH;
-		return this.getDefaultState().withProperty(FACING, enumfacing);
+		return this.defaultBlockState().withProperty(FACING, enumfacing);
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 		BlockEntity tileEntity = world.getTileEntity(pos);
 
-		if(tileEntity == null || player.isSneaking()){
+		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;
 		}
 

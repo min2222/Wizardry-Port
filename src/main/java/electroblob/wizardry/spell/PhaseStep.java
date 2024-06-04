@@ -38,7 +38,7 @@ public class PhaseStep extends Spell {
 
 		// This is here because the conditions are false on the client for whatever reason. (see the Javadoc for cast()
 		// for an explanation)
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			for(int i = 0; i < 10; i++){
 				double dx1 = caster.getX();
@@ -67,7 +67,7 @@ public class PhaseStep extends Spell {
 			// i represents how far the player needs to teleport to get through the wall
 			for(int i = 0; i <= maxThickness; i++){
 
-				BlockPos pos1 = pos.offset(rayTrace.sideHit.getOpposite(), i);
+				BlockPos pos1 = pos.relative(rayTrace.sideHit.getOpposite(), i);
 
 				// Prevents the player from teleporting through unbreakable blocks, so they cannot cheat in other
 				// mods' mazes and dungeons.
@@ -80,13 +80,13 @@ public class PhaseStep extends Spell {
 			}
 
 			// If no suitable position was found on the other side of the wall, works like blink instead
-			pos = pos.offset(rayTrace.sideHit);
+			pos = pos.relative(rayTrace.sideHit);
 
 			Vec3 vec = GeometryUtils.getFaceCentre(pos, Direction.DOWN);
 			if(attemptTeleport(world, toTeleport, vec, teleportMount, caster, ticksInUse, modifiers)) return true;
 
 		}else{ // The ray trace missed
-			Vec3 vec = caster.getPositionVector().add(caster.getLookVec().scale(range));
+			Vec3 vec = caster.position().add(caster.getLookVec().scale(range));
 			if(attemptTeleport(world, toTeleport, vec, teleportMount, caster, ticksInUse, modifiers)) return true;
 		}
 
@@ -102,7 +102,7 @@ public class PhaseStep extends Spell {
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 			if(!teleportMount && caster.isRiding()) caster.dismountRidingEntity();
-			if(!level.isClientSide) toTeleport.setPositionAndUpdate(destination.x, destination.y, destination.z);
+			if(!world.isClientSide) toTeleport.setPositionAndUpdate(destination.x, destination.y, destination.z);
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;

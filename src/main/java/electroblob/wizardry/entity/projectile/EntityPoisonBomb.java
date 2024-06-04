@@ -51,7 +51,7 @@ public class EntityPoisonBomb extends EntityBomb {
 		// Particle effect
 		if(level.isClientSide){
 			
-			ParticleBuilder.create(Type.FLASH).pos(this.getPositionVector()).scale(5 * blastMultiplier)
+			ParticleBuilder.create(Type.FLASH).pos(this.position()).scale(5 * blastMultiplier)
 			.clr(0.2f + random.nextFloat() * 0.3f, 0.6f, 0.0f).spawn(world);
 			
 			for(int i = 0; i < 60 * blastMultiplier; i++){

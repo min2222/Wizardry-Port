@@ -107,7 +107,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 		BlockPos pos = new BlockPos(x, y, z);
 		
 		// In this case it looks nice to have them all explode out from one position! (It also makes the code simpler...)
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			for(int i=0; i<getProperty(MINION_COUNT).intValue(); i++){
 
 				T minion = minionFactory.apply(world);
@@ -142,7 +142,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	// Protected since someone might want to extend this class and change the behaviour of this method.
 	protected boolean spawnMinions(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			for(int i=0; i<getProperty(MINION_COUNT).intValue(); i++){
 
 				int range = getProperty(SUMMON_RADIUS).intValue();

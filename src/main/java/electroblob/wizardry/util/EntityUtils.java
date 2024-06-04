@@ -353,15 +353,15 @@ public final class EntityUtils {
 	public static boolean isMeleeDamage(DamageSource source){
 
 		// With the exception of minions, melee damage always has the same entity for immediate/true source
-		if(!(source instanceof MinionDamage) && source.getImmediateSource() != source.getTrueSource()) return false;
+		if(!(source instanceof MinionDamage) && source.getDirectEntity() != source.getEntity()) return false;
 		if(source.isProjectile()) return false; // Projectile damage obviously isn't melee damage
 		if(source.isUnblockable()) return false; // Melee damage should always be blockable
 		if(!(source instanceof MinionDamage) && source instanceof IElementalDamage) return false;
-		if(!(source.getTrueSource() instanceof LivingEntity)) return false; // Only living things can melee!
+		if(!(source.getEntity() instanceof LivingEntity)) return false; // Only living things can melee!
 
-		if(source.getTrueSource() instanceof Player && source.getDamageLocation() != null
-				&& source.getDamageLocation().distanceTo(source.getTrueSource().getPositionVector()) > ((LivingEntity)source
-				.getTrueSource()).getEntityAttribute(Player.REACH_DISTANCE).getAttributeValue()){
+		if(source.getEntity() instanceof Player && source.getDamageLocation() != null
+				&& source.getDamageLocation().distanceTo(source.getEntity().position()) > ((LivingEntity)source
+				.getEntity()).getEntityAttribute(Player.REACH_DISTANCE).getAttributeValue()){
 			return false; // Out of melee reach for players
 		}
 

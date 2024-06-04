@@ -23,13 +23,13 @@ public class EntityHealAura extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(this.tickCount % 25 == 1){
 			this.playSound(WizardrySounds.ENTITY_HEAL_AURA_AMBIENT, 0.1f, 1.0f);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		if(!this.level.isClientSide){
 

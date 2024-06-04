@@ -81,7 +81,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 				entityHit.hurt(source, damage);
 
 				if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit) && getBurnDuration() > 0)
-					entityHit.setFire(getBurnDuration());
+					entityHit.setSecondsOnFire(getBurnDuration());
 
 			}else{
 
@@ -89,8 +89,8 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				// Remember that canPlaceBlock should ALWAYS be the last thing that gets checked, or it risks other mods
 				// thinking the block was placed even when a later condition prevents it, which may have side-effects
-				if(this.world.isAirBlock(pos) && BlockUtils.canPlaceBlock(thrower, world, pos)){
-					this.world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+				if(this.world.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(thrower, world, pos)){
+					this.world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 				}
 			}
 
@@ -105,9 +105,9 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(level.isClientSide){
 
@@ -118,7 +118,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 				double dz = (random.nextDouble() - 0.5) * width;
 				double v = 0.06;
 				ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
-						.pos(this.getPositionVector().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
+						.pos(this.position().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
 						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
 
 				if(tickCount > 1){
@@ -126,7 +126,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2 - 0.1;
 					dz = (random.nextDouble() - 0.5) * width;
 					ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
-							.pos(this.getPositionVector().add(dx - this.motionX, dy, dz - this.motionZ))
+							.pos(this.position().add(dx - this.motionX, dy, dz - this.motionZ))
 							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
 				}
 			}
@@ -153,9 +153,9 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 			this.markVelocityChanged();
 
-			if(source.getTrueSource() != null){
+			if(source.getEntity() != null){
 
-				Vec3 vec3d = source.getTrueSource().getLookVec();
+				Vec3 vec3d = source.getEntity().getLookVec();
 
 				if(vec3d != null){
 
@@ -169,8 +169,8 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				}
 
-				if(source.getTrueSource() instanceof LivingEntity){
-					this.setCaster((LivingEntity)source.getTrueSource());
+				if(source.getEntity() instanceof LivingEntity){
+					this.setCaster((LivingEntity)source.getEntity());
 				}
 
 				return true;

@@ -154,7 +154,7 @@ public class BakedModelGenerateOverrides implements IBakedModel {
 
 				for(ItemOverride override : overrides){
 					IModel replacement = ModelLoaderRegistry.getModel(override.getLocation()).retexture(ImmutableMap.copyOf(vanillaOriginal.textures));
-					replacementMap.put(override.getLocation(), replacement.bake(unbakedOriginal.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
+					replacementMap.put(override.getLocation(), replacement.bake(unbakedOriginal.defaultBlockState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
 				}
 
 				ItemOverrideListMapped overrideList = new ItemOverrideListMapped(overrides, replacementMap);

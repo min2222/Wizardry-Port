@@ -182,8 +182,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 			StructureBoundingBox box = new StructureBoundingBox(origin, origin.add(template.transformedSize(settings.getRotation())).add(-1, -1, -1));
 
 			// DEBUG
-//			world.setBlockState(new BlockPos(box.minX, box.minY, box.minZ), Blocks.CONCRETE.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.MAGENTA));
-//			world.setBlockState(new BlockPos(box.maxX, box.maxY, box.maxZ), Blocks.CONCRETE.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.MAGENTA));
+//			world.setBlockAndUpdate(new BlockPos(box.minX, box.minY, box.minZ), Blocks.CONCRETE.defaultBlockState().withProperty(BlockColored.COLOR, EnumDyeColor.MAGENTA));
+//			world.setBlockAndUpdate(new BlockPos(box.maxX, box.maxY, box.maxZ), Blocks.CONCRETE.defaultBlockState().withProperty(BlockColored.COLOR, EnumDyeColor.MAGENTA));
 
 			if(!Wizardry.settings.fastWorldgen){
 				for(WorldGenWizardryStructure generator : generators.values()){

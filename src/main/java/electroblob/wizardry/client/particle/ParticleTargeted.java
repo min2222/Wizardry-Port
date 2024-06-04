@@ -60,9 +60,9 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(!Double.isNaN(targetVelX) && !Double.isNaN(targetVelY) && !Double.isNaN(targetVelZ)){
 			this.targetX += this.targetVelX;

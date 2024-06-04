@@ -19,7 +19,7 @@ public class WorldGenCrystalOre implements IWorldGenerator {
 	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
 		if(Ints.contains(Wizardry.settings.oreDimensions, world.provider.getDimension())){
-			this.addOreSpawn(WizardryBlocks.crystal_ore.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 16, 16, 5, 7, 5, 30);
+			this.addOreSpawn(WizardryBlocks.crystal_ore.defaultBlockState(), world, random, chunkX * 16, chunkZ * 16, 16, 16, 5, 7, 5, 30);
 		}
 	}
 

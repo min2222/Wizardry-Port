@@ -47,7 +47,7 @@ public class CurseUndeath extends Curse {
 							itemstack.setItemDamage(itemstack.getItemDamage() + entitylivingbase.world.random.nextInt(2));
 							if (itemstack.getItemDamage() >= itemstack.getMaxDamage()) {
 								if (itemstack.getItem() instanceof ItemWizardArmour) {
-									entitylivingbase.setFire(8);
+									entitylivingbase.setSecondsOnFire(8);
 								} else {
 									entitylivingbase.renderBrokenItemStack(itemstack);
 									entitylivingbase.setItemStackToSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
@@ -60,7 +60,7 @@ public class CurseUndeath extends Curse {
 				}
 
 				if(flag){
-					entitylivingbase.setFire(8);
+					entitylivingbase.setSecondsOnFire(8);
 				}
 			}
 		}

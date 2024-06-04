@@ -49,7 +49,7 @@ public abstract class WorldGenUndergroundStructure extends WorldGenWizardryStruc
 			}
 
 			if((pos.getX() == origin.getX() || pos.getX() == corner.getX() || pos.getZ() == origin.getZ() || pos.getZ() == corner.getZ())
-					&& pos.getY() == origin.getY() + 1 && world.isAirBlock(pos) && world.isAirBlock(pos.up())){
+					&& pos.getY() == origin.getY() + 1 && world.isEmptyBlock(pos) && world.isEmptyBlock(pos.up())){
 				if(entrances++ > MAX_ENTRANCES) return null;
 			}
 		}

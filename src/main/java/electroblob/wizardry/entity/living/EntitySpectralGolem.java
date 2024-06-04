@@ -83,8 +83,8 @@ public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCre
 	}
 
 	@Override
-	public void onUpdate(){
-		super.onUpdate();
+	public void tick(){
+		super.tick();
 		this.updateDelegate();
 
 		// Adds a dust particle effect

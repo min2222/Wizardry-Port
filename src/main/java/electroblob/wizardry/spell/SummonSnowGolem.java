@@ -26,7 +26,7 @@ public class SummonSnowGolem extends Spell {
 		BlockPos pos = BlockUtils.findNearbyFloorSpace(caster, 2, 4);
 		if(pos == null) return false;
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			
 			EntitySnowman snowman = new EntitySnowman(world);
 			snowman.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);

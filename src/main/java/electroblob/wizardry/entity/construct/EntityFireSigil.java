@@ -28,9 +28,9 @@ public class EntityFireSigil extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(!this.level.isClientSide){
 
@@ -55,7 +55,7 @@ public class EntityFireSigil extends EntityScaledConstruct {
 					target.motionZ = velZ;
 
 					if(!MagicDamage.isEntityImmune(DamageType.FIRE, target))
-						target.setFire(Spells.fire_sigil.getProperty(Spell.BURN_DURATION).intValue());
+						target.setSecondsOnFire(Spells.fire_sigil.getProperty(Spell.BURN_DURATION).intValue());
 
 					this.playSound(WizardrySounds.ENTITY_FIRE_SIGIL_TRIGGER, 1, 1);
 

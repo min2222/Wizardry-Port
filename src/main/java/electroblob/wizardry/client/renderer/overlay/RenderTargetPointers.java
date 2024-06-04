@@ -42,7 +42,7 @@ public class RenderTargetPointers {
 		}
 
 		// Target selection pointer
-		if(mc.player.isSneaking() && wand.getItem() instanceof ISpellCastingItem && EntityUtils.isLiving(event.getEntity())
+		if(mc.player.isShiftKeyDown() && wand.getItem() instanceof ISpellCastingItem && EntityUtils.isLiving(event.getEntity())
 				&& data != null && data.selectedMinion != null){
 
 			// -> Moved this in here so it isn't called every tick

@@ -31,10 +31,10 @@ public class Ignite extends SpellRay {
 		if(target instanceof LivingEntity) {
 			
 			if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-				if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				target.setFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 			}
 			
 			return true;
@@ -46,12 +46,12 @@ public class Ignite extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		pos = pos.offset(side);
+		pos = pos.relative(side);
 		
-		if(world.isAirBlock(pos)){
+		if(world.isEmptyBlock(pos)){
 			
-			if(!level.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
-				world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+			if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
+				world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 			}
 			
 			return true;

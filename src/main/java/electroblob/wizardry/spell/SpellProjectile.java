@@ -98,7 +98,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			// Creates a projectile from the supplied factory
 			T projectile = projectileFactory.apply(world);
 			// Sets the necessary parameters
@@ -123,7 +123,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 		
 		if(target != null){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				// Creates a projectile from the supplied factory
 				T projectile = projectileFactory.apply(world);
 				// Sets the necessary parameters
@@ -151,7 +151,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			// Creates a projectile from the supplied factory
 			T projectile = projectileFactory.apply(world);
 			// Sets the necessary parameters

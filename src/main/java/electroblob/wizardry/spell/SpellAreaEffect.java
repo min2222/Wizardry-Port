@@ -104,7 +104,7 @@ public abstract class SpellAreaEffect extends Spell {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		boolean result = findAndAffectEntities(world, caster.getPositionVector(),
+		boolean result = findAndAffectEntities(world, caster.position(),
 				caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return result;
@@ -112,7 +112,7 @@ public abstract class SpellAreaEffect extends Spell {
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		boolean result = findAndAffectEntities(world, caster.getPositionVector(), caster, ticksInUse, modifiers);
+		boolean result = findAndAffectEntities(world, caster.position(), caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return result;
 	}
@@ -146,7 +146,7 @@ public abstract class SpellAreaEffect extends Spell {
 			if(affectEntity(world, origin, caster, target, i++, ticksInUse, modifiers)) result = true;
 		}
 
-		if(level.isClientSide) spawnParticleEffect(world, origin, radius, caster, modifiers);
+		if(world.isClientSide) spawnParticleEffect(world, origin, radius, caster, modifiers);
 		return result;
 	}
 

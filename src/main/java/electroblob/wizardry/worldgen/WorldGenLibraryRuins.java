@@ -67,7 +67,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 						// Behold, three different ways of doing the same thing, because this is pre-flattening!
 						// Also, stone bricks are about the least consistently-named thing in the entire game, so yay
 						if(i.blockState.getBlock() == Blocks.COBBLESTONE){
-							return new Template.BlockInfo(i.pos, Blocks.STONEBRICK.getDefaultState(), i.tileentityData);
+							return new Template.BlockInfo(i.pos, Blocks.STONEBRICK.defaultBlockState(), i.tileentityData);
 						}else if(i.blockState.getBlock() == Blocks.STONE_SLAB
 								&& i.blockState.getValue(BlockStoneSlab.VARIANT) == EnumType.COBBLESTONE){
 							return new Template.BlockInfo(i.pos, i.blockState.withProperty(BlockStoneSlab.VARIANT, EnumType.SMOOTHBRICK), i.tileentityData);
@@ -83,7 +83,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 				new MossifierTemplateProcessor(mossiness, 0.04f, origin.getY() + 1),
 				// Stone brick smasher-upper
 				(w, p, i) -> i.blockState.getBlock() == Blocks.STONEBRICK && w.random.nextFloat() < 0.1f ?
-						new Template.BlockInfo(i.pos, Blocks.STONEBRICK.getDefaultState().withProperty(
+						new Template.BlockInfo(i.pos, Blocks.STONEBRICK.defaultBlockState().withProperty(
 								BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.CRACKED), i.tileentityData) : i,
 				// Bookshelf marker
 				(w, p, i) -> {

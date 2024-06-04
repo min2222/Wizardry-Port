@@ -32,7 +32,7 @@ public class Meteor extends SpellRay {
 
 		if(ItemArtefact.isArtefactActive(caster, WizardryItems.ring_meteor)){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				EntityMeteor meteor = new EntityMeteor(world, caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ(),
 						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
@@ -65,7 +65,7 @@ public class Meteor extends SpellRay {
 		
 		if(world.canBlockSeeSky(pos.up())){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				EntityMeteor meteor = new EntityMeteor(world, pos.getX(), pos.getY() + 50, pos.getZ(),
 						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
 				world.spawnEntity(meteor);

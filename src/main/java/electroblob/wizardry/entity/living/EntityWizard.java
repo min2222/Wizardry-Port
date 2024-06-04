@@ -389,7 +389,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		}
 
 		// Won't trade with a player that has attacked them.
-		if(this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isSneaking()
+		if(this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isShiftKeyDown()
 				&& this.getAttackTarget() != player){
 			if(!this.level.isClientSide){
 				this.setCustomer(player);
@@ -878,8 +878,8 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	@Override
 	public boolean hurt(DamageSource source, float damage){
 
-		if(source.getTrueSource() instanceof Player){
-			WizardryAdvancementTriggers.anger_wizard.triggerFor((Player)source.getTrueSource());
+		if(source.getEntity() instanceof Player){
+			WizardryAdvancementTriggers.anger_wizard.triggerFor((Player)source.getEntity());
 		}
 
 		return super.hurt(source, damage);

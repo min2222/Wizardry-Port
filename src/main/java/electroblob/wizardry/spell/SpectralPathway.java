@@ -42,7 +42,7 @@ public class SpectralPathway extends Spell {
 
 		boolean flag = false;
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			// Gets the coordinates of the nearest block intersection to the player's feet.
 			// Remember that a block always takes the coordinates of its northwestern corner.
@@ -69,7 +69,7 @@ public class SpectralPathway extends Spell {
 
 	private boolean placePathwayBlockIfPossible(Level world, BlockPos pos, float durationMultiplier){
 		if(BlockUtils.canBlockBeReplaced(world, pos, true)){
-			world.setBlockState(pos, WizardryBlocks.spectral_block.getDefaultState());
+			world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
 			if(world.getTileEntity(pos) instanceof TileEntityTimer){
 				((TileEntityTimer)world.getTileEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
 			}

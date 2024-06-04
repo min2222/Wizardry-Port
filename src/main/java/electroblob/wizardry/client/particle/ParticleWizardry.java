@@ -385,9 +385,9 @@ public abstract class ParticleWizardry extends Particle {
 	}
 	
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(this.canCollide && this.onGround){
 			// I reject your friction and substitute my own!

@@ -25,13 +25,13 @@ public class Glide extends Spell {
 
 	@Override
 	protected void playSound(Level world, LivingEntity entity, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
-		if(ticksInUse == 0 && level.isClientSide) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
+		if(ticksInUse == 0 && world.isClientSide) Wizardry.proxy.playSpellSoundLoop(entity, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
 				WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f));
 	}
 
 	@Override
 	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
-		if(ticksInUse == 0 && level.isClientSide){
+		if(ticksInUse == 0 && world.isClientSide){
 			Wizardry.proxy.playSpellSoundLoop(world, x, y, z, this, this.sounds[0], this.sounds[0], SoundEvents.UI_TOAST_OUT,
 					WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f), duration);
 		}
@@ -56,7 +56,7 @@ public class Glide extends Spell {
 			if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0.0f;
 		}
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 			double x = caster.getX() - 0.25 + world.random.nextDouble() / 2;
 			double y = caster.getY() + world.random.nextDouble();
 			double z = caster.getZ() - 0.25 + world.random.nextDouble() / 2;

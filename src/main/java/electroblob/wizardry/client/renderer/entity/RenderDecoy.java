@@ -45,7 +45,7 @@ public class RenderDecoy extends RenderBiped<EntityDecoy> {
 			float limbSwingAmount = entity.getCaster().limbSwingAmount;
 			float prevLimbSwingAmount = entity.getCaster().prevLimbSwingAmount;
 			int hurtTime = entity.getCaster().hurtTime;
-			boolean sneak = entity.getCaster().isSneaking();
+			boolean sneak = entity.getCaster().isShiftKeyDown();
 			Entity mount = entity.getCaster().getRidingEntity();
 
 			// Assign decoy's animation fields to the caster

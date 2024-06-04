@@ -33,7 +33,7 @@ public class Whirlwind extends SpellRay {
 		if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
 				|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-			if(!level.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			return false;
 		}
@@ -43,7 +43,7 @@ public class Whirlwind extends SpellRay {
 			
 			Vec3 vec = target.getPositionEyes(1).subtract(origin).normalize();
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				float velocity = getProperty(REPULSION_VELOCITY).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
@@ -57,7 +57,7 @@ public class Whirlwind extends SpellRay {
 				}
 			}
 
-			if(level.isClientSide){
+			if(world.isClientSide){
 				
 				double distance = target.getDistance(origin.x, origin.y, origin.z);
 				

@@ -36,10 +36,10 @@ public class Light extends Spell {
 
 			BlockPos pos = rayTrace.getBlockPos().offset(rayTrace.sideHit);
 
-			if(world.isAirBlock(pos)){
+			if(world.isEmptyBlock(pos)){
 
-				if(!level.isClientSide){
-					world.setBlockState(pos, WizardryBlocks.magic_light.getDefaultState());
+				if(!world.isClientSide){
+					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
 					if(world.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
 								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
@@ -58,9 +58,9 @@ public class Light extends Spell {
 
 			BlockPos pos = new BlockPos(x, y, z);
 
-			if(world.isAirBlock(pos)){
-				if(!level.isClientSide){
-					world.setBlockState(pos, WizardryBlocks.magic_light.getDefaultState());
+			if(world.isEmptyBlock(pos)){
+				if(!world.isClientSide){
+					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
 					if(world.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
 								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));

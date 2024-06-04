@@ -47,7 +47,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 
 	@Override
 	public BlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(ACTIVE, meta == 1);
+		return this.defaultBlockState().withProperty(ACTIVE, meta == 1);
 	}
 
 	@Override
@@ -104,8 +104,8 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
 
 		boolean shouldBeActive = Arrays.stream(Direction.HORIZONTALS)
-				.allMatch(s -> world.getBlockState(pos.offset(s)).getBlock() == WizardryBlocks.receptacle
-							&& world.getBlockState(pos.offset(s)).getValue(BlockReceptacle.FACING) == s);
+				.allMatch(s -> world.getBlockState(pos.relative(s)).getBlock() == WizardryBlocks.receptacle
+							&& world.getBlockState(pos.relative(s)).getValue(BlockReceptacle.FACING) == s);
 
 		if(world.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
 
@@ -114,7 +114,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 			ItemStack stack = ItemStack.EMPTY;
 			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getItem();
 
-			world.setBlockState(pos, world.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
+			world.setBlockAndUpdate(pos, world.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
 
 			// Copy over contents of altar from before to new tile entity
 			te = world.getTileEntity(pos);
@@ -135,7 +135,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 
 		BlockEntity tileEntity = world.getTileEntity(pos);
 
-		if(!(tileEntity instanceof TileEntityImbuementAltar) || player.isSneaking()){
+		if(!(tileEntity instanceof TileEntityImbuementAltar) || player.isShiftKeyDown()){
 			return false;
 		}
 

@@ -68,7 +68,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 
 		BlockEntity tileEntity = world.getTileEntity(pos);
 
-		if(tileEntity == null || player.isSneaking()){
+		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;
 		}
 

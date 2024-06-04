@@ -49,7 +49,7 @@ public class WallOfFrost extends SpellRay {
 	@Override
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		// Wall of frost now freezes entities solid too!
-		if(target instanceof Mob && !level.isClientSide){
+		if(target instanceof Mob && !world.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
 			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
 					caster, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
@@ -64,33 +64,33 @@ public class WallOfFrost extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
-		if(!level.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
+		if(!world.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
 			// Stops the ice being placed floating above snow and grass. Directions other than up included for
 			// completeness.
 			if(BlockUtils.canBlockBeReplaced(world, pos)){
 				// Moves the blockpos back into the block
-				pos = pos.offset(side.getOpposite());
+				pos = pos.relative(side.getOpposite());
 			}
 
 			if(origin.squareDistanceTo(pos.getX(), pos.getY(), pos.getZ()) > MINIMUM_PLACEMENT_RANGE * MINIMUM_PLACEMENT_RANGE
 					&& world.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && world.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
 
-				pos = pos.offset(side);
+				pos = pos.relative(side);
 				
 				int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
 				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-					world.setBlockState(pos, WizardryBlocks.dry_frosted_ice.getDefaultState());
+					world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
 					world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
 				}
 
 				// Builds a 2 block high wall if it hits the ground
 				if(side == Direction.UP){
-					pos = pos.offset(side);
+					pos = pos.relative(side);
 
 					if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-						world.setBlockState(pos, WizardryBlocks.dry_frosted_ice.getDefaultState());
+						world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
 						world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
 					}
 				}

@@ -25,9 +25,9 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		setSize(1, 1); // This one probably should be small
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		double speed = Spells.earthquake.getProperty(Earthquake.SPREAD_SPEED).doubleValue();
 
@@ -46,7 +46,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				BlockPos pos = new BlockPos(x, y, z);
 
-				if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isAirBlock(pos) && world.isBlockNormalCube(pos, false)
+				if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isEmptyBlock(pos) && world.isBlockNormalCube(pos, false)
 						// Checks that the block above is not solid, since this causes the falling sand to vanish.
 						&& !world.isBlockNormalCube(pos.up(), false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){
 

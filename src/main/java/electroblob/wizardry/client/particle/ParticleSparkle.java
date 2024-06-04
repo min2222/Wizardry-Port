@@ -26,9 +26,9 @@ public class ParticleSparkle extends ParticleWizardry {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 		
 		// Fading
 		if(this.particleAge > this.particleMaxAge / 2){

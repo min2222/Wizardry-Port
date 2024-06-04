@@ -245,18 +245,18 @@ public final class AllyDesignationSystem {
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
-		if(event.getSource() != null && event.getSource().getTrueSource() instanceof Player
+		if(event.getSource() != null && event.getSource().getEntity() instanceof Player
 				&& event.getSource() instanceof IElementalDamage){
 
 			if(event.getEntity() instanceof Player){
 				// Prevents any magic damage to allied players if friendly fire is disabled for players
-				if(Wizardry.settings.friendlyFire.blockPlayers && isPlayerAlly((Player)event.getSource().getTrueSource(), (Player)event.getEntity())){
+				if(Wizardry.settings.friendlyFire.blockPlayers && isPlayerAlly((Player)event.getSource().getEntity(), (Player)event.getEntity())){
 					event.setCanceled(true);
 				}
 			}else{
 				// Prevents any magic damage to entities owned by allied players if friendly fire is disabled for owned creatures
 				// Since we're dealing with players separately we might as well just use isAllied
-				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((Player)event.getSource().getTrueSource(), event.getEntity())){
+				if(Wizardry.settings.friendlyFire.blockOwned && isAllied((Player)event.getSource().getEntity(), event.getEntity())){
 					event.setCanceled(true);
 				}
 			}

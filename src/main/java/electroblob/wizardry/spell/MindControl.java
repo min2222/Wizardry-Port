@@ -57,7 +57,7 @@ public class MindControl extends SpellRay {
 		if(EntityUtils.isLiving(target)){
 				
 			if(!canControl(target)){
-				if(!level.isClientSide){
+				if(!world.isClientSide){
 					if(caster instanceof Player){
 						// Adds a message saying that the player/boss entity/wizard resisted mind control
 						((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
@@ -67,7 +67,7 @@ public class MindControl extends SpellRay {
 
 			}else if(target instanceof Mob){
 
-				if(!level.isClientSide){
+				if(!world.isClientSide){
 					if(!MindControl.findMindControlTarget((Mob)target, caster, world)){
 						// If no valid target was found, this just acts like mind trick.
 						((Mob)target).setAttackTarget(null);
@@ -76,15 +76,15 @@ public class MindControl extends SpellRay {
 
 				if(target instanceof EntitySheep && ((EntitySheep)target).getFleeceColor() == EnumDyeColor.BLUE
 						&& EntityUtils.canDamageBlocks(caster, world)){
-					if(!level.isClientSide) ((EntitySheep)target).setFleeceColor(EnumDyeColor.RED); // Wololo!
+					if(!world.isClientSide) ((EntitySheep)target).setFleeceColor(EnumDyeColor.RED); // Wololo!
 					world.playSound(caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
 				}
 
-				if(!level.isClientSide) startControlling((Mob)target, caster,
+				if(!world.isClientSide) startControlling((Mob)target, caster,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 			}
 
-			if(level.isClientSide){
+			if(world.isClientSide){
 				
 				for(int i=0; i<10; i++){
 					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),

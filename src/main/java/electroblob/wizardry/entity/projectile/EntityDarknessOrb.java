@@ -44,9 +44,9 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 		this.discard();
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(level.isClientSide){
 			

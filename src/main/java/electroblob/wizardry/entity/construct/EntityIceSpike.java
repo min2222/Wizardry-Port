@@ -30,8 +30,8 @@ public class EntityIceSpike extends EntityMagicConstruct {
 		this.setRotation(-facing.getHorizontalAngle(), GeometryUtils.getPitch(facing));
 		float yaw = (-facing.getHorizontalAngle()) * (float)Math.PI/180;
 		float pitch = (GeometryUtils.getPitch(facing) - 90) * (float)Math.PI/180;
-		Vec3 min = this.getPositionVector().add(new Vec3(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
-		Vec3 max = this.getPositionVector().add(new Vec3(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
+		Vec3 min = this.position().add(new Vec3(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
+		Vec3 max = this.position().add(new Vec3(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
 		this.setEntityBoundingBox(new AABB(min.x, min.y, min.z, max.x, max.y, max.z));
 	}
 
@@ -40,7 +40,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		double extensionSpeed = 0;
 
@@ -75,7 +75,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 			}
 		}
 
-		super.onUpdate();
+		super.tick();
 	}
 
 	@Override

@@ -93,7 +93,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				double x = rayTrace.hitVec.x;
 				double y = rayTrace.hitVec.y;
@@ -104,7 +104,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 		}else if(!requiresFloor){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				Vec3 look = caster.getLookVec();
 				
@@ -132,7 +132,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 
 		if(target != null && caster.getDistance(target) <= range){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				double x = target.getX();
 				double y = target.getY();
@@ -177,7 +177,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
 				!requiresFloor)){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				double x1 = rayTrace.hitVec.x;
 				double y1 = rayTrace.hitVec.y;
@@ -188,7 +188,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 		}else if(!requiresFloor){
 			
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				
 				if(!spawnConstruct(world, endpoint.x, endpoint.y, endpoint.z, null, null, modifiers)) return false;
 			}

@@ -65,7 +65,7 @@ public class Metamorphosis extends SpellRay {
 
 			// Sneaking allows the entities to be cycled through in the other direction.
 			// Dispensers always cycle through entities in the normal direction.
-			Class<? extends LivingEntity> newEntityClass = caster != null && caster.isSneaking() ?
+			Class<? extends LivingEntity> newEntityClass = caster != null && caster.isShiftKeyDown() ?
 					TRANSFORMATIONS.inverse().get(target.getClass()) : TRANSFORMATIONS.get(target.getClass());
 
 			if(newEntityClass == null) return false;
@@ -82,7 +82,7 @@ public class Metamorphosis extends SpellRay {
 			
 			if(newEntity == null) return false;
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				// Transfers attributes from the old entity to the new one.
 				newEntity.setHealth(((LivingEntity)target).getHealth());
 				CompoundTag tag = new CompoundTag();

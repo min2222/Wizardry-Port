@@ -45,7 +45,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		// Bit of a cheat but it's easier than trying to sync FrostBarrier#addConstructExtras
 		if(level.isClientSide && firstUpdate){
@@ -74,7 +74,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 		if(tickCount == delay + 1) this.playSound(WizardrySounds.ENTITY_ICE_BARRIER_EXTEND, 1, 1.5f);
 
-		super.onUpdate();
+		super.tick();
 
 		Vec3 look = this.getLookVec();
 
@@ -88,7 +88,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 				// For some reason the player position seems to be off by 1 block in x and z, no idea how so for now
 				// I've just fudged it by adding 1 to x and z
-				double perpendicularDist = getSignedPerpendicularDistance(entity.getPositionVector().add(1, 0, 1));
+				double perpendicularDist = getSignedPerpendicularDistance(entity.position().add(1, 0, 1));
 
 				if(Math.abs(perpendicularDist) < entity.width/2 + THICKNESS/2){
 

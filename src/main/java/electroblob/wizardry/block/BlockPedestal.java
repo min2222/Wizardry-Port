@@ -108,8 +108,8 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 			metadata -= ELEMENT.getAllowedValues().size();
 		}
 		Element element = Element.values()[metadata];
-		if(!ELEMENT.getAllowedValues().contains(element)) return this.getDefaultState().withProperty(NATURAL, natural);
-		return this.getDefaultState().withProperty(ELEMENT, element).withProperty(NATURAL, natural);
+		if(!ELEMENT.getAllowedValues().contains(element)) return this.defaultBlockState().withProperty(NATURAL, natural);
+		return this.defaultBlockState().withProperty(ELEMENT, element).withProperty(NATURAL, natural);
 	}
 
 	@Override

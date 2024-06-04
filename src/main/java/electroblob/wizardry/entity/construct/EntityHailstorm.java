@@ -18,9 +18,9 @@ public class EntityHailstorm extends EntityScaledConstruct {
 		return false;
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(!this.level.isClientSide){
 

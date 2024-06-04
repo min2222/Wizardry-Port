@@ -58,7 +58,7 @@ public class SpellConjuration extends Spell {
 
 		if(conjureItem(caster, modifiers)){
 			
-			if(level.isClientSide) spawnParticles(world, caster, modifiers);
+			if(world.isClientSide) spawnParticles(world, caster, modifiers);
 			
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;

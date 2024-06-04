@@ -40,7 +40,7 @@ public class EntityEmber extends EntityMagicProjectile {
 	protected void onImpact(HitResult result){
 
 //		if(result.entityHit != null){
-//			result.entityHit.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
+//			result.entityHit.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
 //		}
 
 		if(result.typeOfHit == HitResult.Type.BLOCK){
@@ -61,14 +61,14 @@ public class EntityEmber extends EntityMagicProjectile {
 		super.applyEntityCollision(entity);
 
 		if(entity instanceof LivingEntity && ((LivingEntity)entity).getHealth() > 0){
-			entity.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
+			entity.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
 		}
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(this.collidedVertically){
 			this.motionY += this.getGravityVelocity();
@@ -78,7 +78,7 @@ public class EntityEmber extends EntityMagicProjectile {
 
 		world.getEntitiesInAABBexcluding(thrower, this.getBoundingBox(), e -> e instanceof LivingEntity)
 				.stream().filter(e -> !(e instanceof LivingEntity) || ((LivingEntity)e).getHealth() > 0)
-				.forEach(e -> e.setFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
+				.forEach(e -> e.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
 
 		// Copied from ParticleLava
 		if(this.random.nextFloat() > (float)this.tickCount / this.getLifetime()){

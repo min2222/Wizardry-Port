@@ -66,9 +66,9 @@ public class EntityBlackHole extends EntityScaledConstruct {
 		nbttagcompound.setIntArray("randomiser2", randomiser2);
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		// System.out.println("Client side: " + this.level.isClientSide + ", Caster: " + this.caster);
 
@@ -108,7 +108,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 					if(random.nextInt(Math.max(1, (int)this.distanceToSqr(pos) * 3)) == 0){
 
-						if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isAirBlock(pos)
+						if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isEmptyBlock(pos)
 								&& world.isBlockNormalCube(pos, false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){
 							// Checks that the block above is not solid, since this causes the falling block to vanish.
 //							&& !world.isBlockNormalCube(pos.up(), false)){

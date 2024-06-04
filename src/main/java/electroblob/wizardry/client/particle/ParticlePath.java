@@ -39,7 +39,7 @@ public class ParticlePath extends ParticleWizardry {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		this.prevgetX() = this.getX();
 		this.prevgetY() = this.getY();

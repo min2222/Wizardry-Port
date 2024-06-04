@@ -41,13 +41,13 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
 		if(level.isClientSide && this.tickCount == 1){
 			Wizardry.proxy.playMovingSound(this, WizardrySounds.ENTITY_RADIANT_TOTEM_AMBIENT, WizardrySounds.SPELLS, 1, 1, true);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		double radius = Spells.radiant_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
@@ -91,7 +91,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 				targetsRemaining--;
 
 				if(level.isClientSide){
-					ParticleBuilder.create(Type.BEAM).pos(this.getPositionVector().add(0, height/2, 0))
+					ParticleBuilder.create(Type.BEAM).pos(this.position().add(0, height/2, 0))
 							.target(ally).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f).spawn(world);
 				}
 			}
@@ -114,7 +114,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 				targetsRemaining--;
 
 				if(level.isClientSide){
-					ParticleBuilder.create(Type.BEAM).pos(this.getPositionVector().add(0, height/2, 0))
+					ParticleBuilder.create(Type.BEAM).pos(this.position().add(0, height/2, 0))
 							.target(target).clr(1, 0.6f + 0.3f * world.random.nextFloat(), 0.2f).spawn(world);
 				}
 			}

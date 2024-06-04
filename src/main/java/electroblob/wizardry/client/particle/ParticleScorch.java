@@ -39,9 +39,9 @@ public class ParticleScorch extends ParticleWizardry {
 	}
 	
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		// Colour fading (scorch particles do this slightly differently)
 		float ageFraction = Math.min((float)this.particleAge / ((float)this.particleMaxAge * 0.5f), 1);

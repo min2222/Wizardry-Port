@@ -206,7 +206,7 @@ public abstract class Forfeit {
 	/** Called from the preInit method in the main mod class to set up all the forfeits. */
 	public static void register(){
 
-		add(Tier.NOVICE, Element.FIRE, create("burn_self", (w, p) -> p.setFire(5)));
+		add(Tier.NOVICE, Element.FIRE, create("burn_self", (w, p) -> p.setSecondsOnFire(5)));
 
 		add(Tier.APPRENTICE, Element.FIRE, create("fireball", (w, p) -> {
 			if(!w.isRemote){
@@ -244,8 +244,8 @@ public abstract class Forfeit {
 			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
 				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition(), 6);
 				for(BlockPos pos : sphere){
-					if(w.random.nextBoolean() && w.isAirBlock(pos) && BlockUtils.canPlaceBlock(p, w, pos))
-						w.setBlockState(pos, Blocks.FIRE.getDefaultState());
+					if(w.random.nextBoolean() && w.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(p, w, pos))
+						w.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 				}
 			}
 		}));
@@ -400,7 +400,7 @@ public abstract class Forfeit {
 				for(EnumFacing direction : EnumFacing.HORIZONTALS){
 					BlockPos pos = p.getPosition().offset(direction);
 					if(BlockUtils.canBlockBeReplaced(w, pos) && BlockUtils.canPlaceBlock(p, w, pos))
-						w.setBlockState(pos, WizardryBlocks.snare.getDefaultState());
+						w.setBlockAndUpdate(pos, WizardryBlocks.snare.defaultBlockState());
 				}
 			}
 		}));
@@ -427,7 +427,7 @@ public abstract class Forfeit {
 			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
 				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition().up(), 2);
 				sphere.removeIf(pos -> !BlockUtils.canBlockBeReplaced(w, pos, true) || !BlockUtils.canPlaceBlock(p, w, pos));
-				sphere.forEach(pos -> w.setBlockState(pos, Blocks.WATER.getDefaultState()));
+				sphere.forEach(pos -> w.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState()));
 			}
 		}));
 

@@ -295,8 +295,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	}
 
 	/**
-	 * Implementors should call this from onUpdate. Can be overridden as long as super is called, but there's very
-	 * little point in doing that since anything extra could just be added to onUpdate anyway.
+	 * Implementors should call this from tick. Can be overridden as long as super is called, but there's very
+	 * little point in doing that since anything extra could just be added to tick anyway.
 	 */
 	default void updateDelegate(){
 
@@ -334,7 +334,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 
 		WizardData data = WizardData.get(player);
 		// Selects one of the player's minions.
-		if(player.isSneaking() && stack.getItem() instanceof ISpellCastingItem){
+		if(player.isShiftKeyDown() && stack.getItem() instanceof ISpellCastingItem){
 
 			if(!player.level.isClientSide && data != null && this.getCaster() == player){
 
@@ -360,9 +360,9 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 
 		// Rather than bother overriding entire attack methods in ISummonedCreature implementations, it's easier (and
 		// more robust) to use LivingAttackEvent to modify the damage source.
-		if(event.getSource().getTrueSource() instanceof ISummonedCreature){
+		if(event.getSource().getEntity() instanceof ISummonedCreature){
 
-			LivingEntity summoner = ((ISummonedCreature)event.getSource().getTrueSource()).getCaster();
+			LivingEntity summoner = ((ISummonedCreature)event.getSource().getEntity()).getCaster();
 
 			if(summoner != null){
 
@@ -379,32 +379,32 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 				// All summoned creatures are classified as magic, so it makes sense to do it this way.
 				if(event.getSource() instanceof IndirectEntityDamageSource){
 					newSource = new IndirectMinionDamage(event.getSource().damageType,
-							event.getSource().getImmediateSource(), event.getSource().getTrueSource(), summoner, type,
+							event.getSource().getDirectEntity(), event.getSource().getEntity(), summoner, type,
 							isRetaliatory);
 				}else if(event.getSource() instanceof EntityDamageSource){
 					// Name is copied over so it uses the appropriate vanilla death message
-					newSource = new MinionDamage(event.getSource().damageType, event.getSource().getTrueSource(), summoner,
+					newSource = new MinionDamage(event.getSource().damageType, event.getSource().getEntity(), summoner,
 							type, isRetaliatory);
 				}
 
 				// Copy over any relevant 'attributes' the original DamageSource might have had.
 				if(event.getSource().isExplosion()) newSource.setExplosion();
-				if(event.getSource().isFireDamage()) newSource.setFireDamage();
+				if(event.getSource().isFireDamage()) newSource.setSecondsOnFireDamage();
 				if(event.getSource().isProjectile()) newSource.setProjectile();
 
-				// For some reason Minecraft calculates knockback relative to DamageSource#getTrueSource. In vanilla this
+				// For some reason Minecraft calculates knockback relative to DamageSource#getEntity. In vanilla this
 				// is unnoticeable, but it looks a bit weird with summoned creatures involved - so this fixes that.
 				// Damage safety checker falls back to the original damage source, so it behaves as if the creature has
 				// no summoner.
 				if(DamageSafetyChecker.attackEntitySafely(event.getEntity(), newSource, event.getAmount(), event.getSource(), false)){
-					// Uses event.getSource().getTrueSource() as this means the target is knocked back from the minion
-					EntityUtils.applyStandardKnockback(event.getSource().getTrueSource(), event.getEntity());
-					((ISummonedCreature)event.getSource().getTrueSource()).onSuccessfulAttack(event.getEntity());
+					// Uses event.getSource().getEntity() as this means the target is knocked back from the minion
+					EntityUtils.applyStandardKnockback(event.getSource().getEntity(), event.getEntity());
+					((ISummonedCreature)event.getSource().getEntity()).onSuccessfulAttack(event.getEntity());
 					// If the target revenge-targeted the summoner, make it revenge-target the minion instead
 					// (if it didn't revenge-target, do nothing)
 					if(event.getEntity().getRevengeTarget() == summoner
-							&& event.getSource().getTrueSource() instanceof LivingEntity){
-						event.getEntity().setRevengeTarget((LivingEntity)event.getSource().getTrueSource());
+							&& event.getSource().getEntity() instanceof LivingEntity){
+						event.getEntity().setRevengeTarget((LivingEntity)event.getSource().getEntity());
 					}
 				}
 

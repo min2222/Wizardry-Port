@@ -161,7 +161,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			BlockEntity tileEntity = world.getTileEntity(pos.offset(side));
+			BlockEntity tileEntity = world.getTileEntity(pos.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				elements[side.getHorizontalIndex()] = ((TileEntityReceptacle)tileEntity).getElement();
@@ -178,7 +178,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			BlockEntity tileEntity = world.getTileEntity(pos.offset(side));
+			BlockEntity tileEntity = world.getTileEntity(pos.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				((TileEntityReceptacle)tileEntity).setElement(null);

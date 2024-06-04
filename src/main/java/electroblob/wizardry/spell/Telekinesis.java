@@ -44,7 +44,7 @@ public class Telekinesis extends SpellRay {
 
 			if (!player.getMainHandItem().isEmpty()) {
 
-				if (!level.isClientSide) {
+				if (!world.isClientSide) {
 					ItemEntity item = player.entityDropItem(player.getMainHandItem(), 0);
 					// Makes the item move towards the caster
 					item.motionX = (origin.x - player.getX()) / 20;

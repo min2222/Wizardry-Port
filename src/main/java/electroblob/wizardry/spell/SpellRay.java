@@ -161,7 +161,7 @@ public abstract class SpellRay extends Spell {
 		
 		Vec3 look = caster.getLookVec();
 		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
-		if(!this.isContinuous && level.isClientSide && !Wizardry.proxy.isFirstPerson(caster)){
+		if(!this.isContinuous && world.isClientSide && !Wizardry.proxy.isFirstPerson(caster)){
 			origin = origin.add(look.scale(1.2));
 		}
 
@@ -192,7 +192,7 @@ public abstract class SpellRay extends Spell {
 
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
 				// the block is not air and (optionally) not a liquid.
-				if(!world.isAirBlock(pos) && (!world.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
+				if(!world.isEmptyBlock(pos) && (!world.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
 					targetPos = new Vec3(x + 0.5, y + 1, z + 0.5);
 				}
 			}
@@ -292,7 +292,7 @@ public abstract class SpellRay extends Spell {
 		if(!flag && !onMiss(world, caster, origin, direction, ticksInUse, modifiers)) return false;
 		
 		// Particle spawning
-		if(level.isClientSide){
+		if(world.isClientSide){
 			spawnParticleRay(world, origin, direction, caster, range);
 		}
 		

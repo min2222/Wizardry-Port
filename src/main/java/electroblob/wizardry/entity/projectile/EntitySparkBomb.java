@@ -80,7 +80,7 @@ public class EntitySparkBomb extends EntityBomb {
 							Spells.spark_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 
 				}else{
-					ParticleBuilder.create(Type.LIGHTNING).pos(this.getPositionVector()).target(target).spawn(world);
+					ParticleBuilder.create(Type.LIGHTNING).pos(this.position()).target(target).spawn(world);
 					ParticleBuilder.spawnShockParticles(world, target.getX(), target.getY() + target.getBbHeight()/2, target.getZ());
 				}
 			}

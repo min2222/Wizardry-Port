@@ -71,7 +71,7 @@ public class LightningWeb extends SpellRay {
                 .limit(getProperty(SECONDARY_MAX_TARGETS).intValue())
                 .forEach(secondaryTarget -> {
                     electrocute(world, caster,
-                        target.getPositionVector().add(0, target.getBbHeight() / 2, 0),
+                        target.position().add(0, target.getBbHeight() / 2, 0),
                         secondaryTarget,
                         getProperty(SECONDARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY),
                         ticksInUse
@@ -96,7 +96,7 @@ public class LightningWeb extends SpellRay {
                         .limit(getProperty(TERTIARY_MAX_TARGETS).intValue())
                         .forEach(tertiaryTarget ->
                             electrocute(world, caster,
-                                secondaryTarget.getPositionVector().add(0, secondaryTarget.getBbHeight() / 2, 0),
+                                secondaryTarget.position().add(0, secondaryTarget.getBbHeight() / 2, 0),
                                 tertiaryTarget,
                                 getProperty(TERTIARY_DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY),
                                 ticksInUse
@@ -116,13 +116,13 @@ public class LightningWeb extends SpellRay {
 	@Override
 	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		// This is a nice example of when onMiss is used for more than just returning a boolean
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			// The arc does not reach full range when it has a free end
 			double freeRange = 0.8 * getRange(world, origin, direction, caster, ticksInUse, modifiers);
 
 			if(caster != null){
-				ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.getPositionVector()))
+				ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.position()))
 						.length(freeRange).clr(0.2f, 0.6f, 1).spawn(world);
 			}else{
 				ParticleBuilder.create(Type.BEAM).pos(origin).target(origin.add(direction.scale(freeRange)))
@@ -131,7 +131,7 @@ public class LightningWeb extends SpellRay {
 
 			if(ticksInUse % 4 == 0){
 				if(caster != null){
-					ParticleBuilder.create(Type.LIGHTNING).entity(caster).pos(origin.subtract(caster.getPositionVector()))
+					ParticleBuilder.create(Type.LIGHTNING).entity(caster).pos(origin.subtract(caster.position()))
 							.length(freeRange).spawn(world);
 				}else{
 					ParticleBuilder.create(Type.LIGHTNING).pos(origin).target(origin.add(direction.scale(freeRange))).spawn(world);
@@ -145,7 +145,7 @@ public class LightningWeb extends SpellRay {
 	private void electrocute(Level world, Entity caster, Vec3 origin, Entity target, float damage, int ticksInUse){
 
 		if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
-			if(!level.isClientSide && ticksInUse == 1 && caster instanceof Player)
+			if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player)
 				((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 		}else{
@@ -153,14 +153,14 @@ public class LightningWeb extends SpellRay {
 					MagicDamage.causeDirectMagicDamage(caster, DamageType.SHOCK), damage);
 		}
 
-		if(level.isClientSide){
+		if(world.isClientSide){
 
 			ParticleBuilder.create(Type.BEAM).entity(caster).clr(0.2f, 0.6f, 1)
-			.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
+			.pos(caster != null ? origin.subtract(caster.position()) : origin).target(target).spawn(world);
 
 			if(ticksInUse % 3 == 0){
 				ParticleBuilder.create(Type.LIGHTNING).entity(caster)
-				.pos(caster != null ? origin.subtract(caster.getPositionVector()) : origin).target(target).spawn(world);
+				.pos(caster != null ? origin.subtract(caster.position()) : origin).target(target).spawn(world);
 			}
 
 			// Particle effect

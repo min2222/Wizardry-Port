@@ -68,7 +68,7 @@ public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
 
 	@Override
 	// This method allows the code for the item's timer to be greatly simplified by damaging it directly from
-	// onUpdate() and removing the workaround that involved WizardData and all sorts of crazy stuff.
+	// tick() and removing the workaround that involved WizardData and all sorts of crazy stuff.
 	public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged){
 
 		if(!oldStack.isEmpty() || !newStack.isEmpty()){
@@ -80,7 +80,7 @@ public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
 		int damage = stack.getItemDamage();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setItemDamage(damage + 1);
@@ -95,7 +95,7 @@ public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
 		if(!MagicDamage.isEntityImmune(DamageType.FIRE, target))
-			target.setFire(Spells.flaming_axe.getProperty(Spell.BURN_DURATION).intValue());
+			target.setSecondsOnFire(Spells.flaming_axe.getProperty(Spell.BURN_DURATION).intValue());
 		return false;
 	}
 

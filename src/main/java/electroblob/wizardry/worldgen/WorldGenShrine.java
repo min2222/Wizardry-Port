@@ -65,7 +65,7 @@ public class WorldGenShrine extends WorldGenSurfaceStructure {
 
 			if(entry.getValue().equals(CORE_DATA_BLOCK_TAG)){
 				// This bit could have been done with a template processor, but we also need to link the chest and lock it
-				world.setBlockState(entry.getKey(), WizardryBlocks.runestone_pedestal.getDefaultState()
+				world.setBlockAndUpdate(entry.getKey(), WizardryBlocks.runestone_pedestal.defaultBlockState()
 						.withProperty(BlockPedestal.ELEMENT, element).withProperty(BlockPedestal.NATURAL, true));
 
 				BlockEntity core = world.getTileEntity(entry.getKey());

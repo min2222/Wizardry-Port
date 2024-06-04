@@ -123,7 +123,7 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 
 		bindEntityTexture(entity);
 
-		Vec3[] vertices = GeometryUtils.getVertices(entity.getBoundingBox().offset(entity.getPositionVector()
+		Vec3[] vertices = GeometryUtils.getVertices(entity.getBoundingBox().offset(entity.position()
 				.add(0, entity.getBbHeight()/2, 0).scale(-1)));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

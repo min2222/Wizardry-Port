@@ -36,7 +36,7 @@ public class Cobwebs extends SpellRay {
 		
 		boolean flag = false;
 		
-		pos = pos.offset(side);
+		pos = pos.relative(side);
 
 		int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
 
@@ -46,9 +46,9 @@ public class Cobwebs extends SpellRay {
 
 		for(BlockPos pos1 : sphere){
 
-			if(world.isAirBlock(pos1)){
-				if(!level.isClientSide){
-					world.setBlockState(pos1, WizardryBlocks.vanishing_cobweb.getDefaultState());
+			if(world.isEmptyBlock(pos1)){
+				if(!world.isClientSide){
+					world.setBlockAndUpdate(pos1, WizardryBlocks.vanishing_cobweb.defaultBlockState());
 					if(world.getTileEntity(pos1) instanceof TileEntityTimer){
 						((TileEntityTimer)world.getTileEntity(pos1))
 								.setLifetime((int)(getProperty(DURATION).doubleValue()

@@ -47,7 +47,7 @@ public class ModelBookshelf implements IModel {
 
 			IModel bookshelfModel = ModelLoaderRegistry.getModel(bookshelfModelLocation);
 			// I don't know why default state works here (surely it ought to be the state param?), but it works so who cares
-			IBakedModel bookshelf = bookshelfModel.bake(bookshelfModel.getDefaultState(), format, bakedTextureGetter);
+			IBakedModel bookshelf = bookshelfModel.bake(bookshelfModel.defaultBlockState(), format, bakedTextureGetter);
 
 			IBakedModel[][] books = getBakedBookModels(format, bakedTextureGetter);
 
@@ -77,7 +77,7 @@ public class ModelBookshelf implements IModel {
 
 				for(int j = 0; j < BlockBookshelf.SLOT_COUNT; j++){
 					IModel bookModel = ModelLoaderRegistry.getModel(new ModelResourceLocation(bookModelLocations.get(j), variant)).retexture(retexturer);
-					bakedBookModels.get(variant)[i][j] = bookModel.bake(bookModel.getDefaultState(), format, bakedTextureGetter); // Same here!
+					bakedBookModels.get(variant)[i][j] = bookModel.bake(bookModel.defaultBlockState(), format, bakedTextureGetter); // Same here!
 				}
 			}
 		}

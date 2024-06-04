@@ -56,7 +56,7 @@ public class ForestOfThorns extends Spell {
 
 	private boolean summonThorns(Level world, @Nullable LivingEntity caster, BlockPos origin, SpellModifiers modifiers){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.blast_upgrade);
 

@@ -64,14 +64,14 @@ public class WorldGenUndergroundLibraryRuins extends WorldGenUndergroundStructur
 
 		ITemplateProcessor processor = new MultiTemplateProcessor(true,
 				// Erase walls and ceilings where caves were
-				(w, p, i) -> w.isAirBlock(p) && !nonReplaceableBlocks.contains(i.blockState.getBlock()) ? null : i,
+				(w, p, i) -> w.isEmptyBlock(p) && !nonReplaceableBlocks.contains(i.blockState.getBlock()) ? null : i,
 				// Cobblestone/stone brick
 				(w, p, i) -> {
 					if(w.random.nextFloat() > stoneBrickChance){
 						// Behold, three different ways of doing the same thing, because this is pre-flattening!
 						// Also, stone bricks are about the least consistently-named thing in the entire game, so yay
 						if(i.blockState.getBlock() == Blocks.COBBLESTONE){
-							return new Template.BlockInfo(i.pos, Blocks.STONEBRICK.getDefaultState(), i.tileentityData);
+							return new Template.BlockInfo(i.pos, Blocks.STONEBRICK.defaultBlockState(), i.tileentityData);
 						}else if(i.blockState.getBlock() == Blocks.STONE_SLAB
 								&& i.blockState.getValue(BlockStoneSlab.VARIANT) == EnumType.COBBLESTONE){
 							return new Template.BlockInfo(i.pos, i.blockState.withProperty(BlockStoneSlab.VARIANT, EnumType.SMOOTHBRICK), i.tileentityData);
@@ -87,7 +87,7 @@ public class WorldGenUndergroundLibraryRuins extends WorldGenUndergroundStructur
 				new MossifierTemplateProcessor(mossiness, 0.04f, origin.getY() + 1),
 				// Stone brick smasher-upper
 				(w, p, i) -> i.blockState.getBlock() == Blocks.STONEBRICK && w.random.nextFloat() < 0.1f ?
-						new Template.BlockInfo(i.pos, Blocks.STONEBRICK.getDefaultState().withProperty(
+						new Template.BlockInfo(i.pos, Blocks.STONEBRICK.defaultBlockState().withProperty(
 								BlockStoneBrick.VARIANT, BlockStoneBrick.EnumType.CRACKED), i.tileentityData) : i,
 				// Bookshelf marker
 				(w, p, i) -> {

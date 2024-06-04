@@ -60,7 +60,7 @@ public class Mine extends SpellRay {
 			}
 		}
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			if(BlockUtils.isBlockUnbreakable(world, pos)) return false;
 			// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation

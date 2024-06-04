@@ -69,7 +69,7 @@ public class RenderFireRing extends Render<EntityFireRing> {
 		if(s >= 1){
 			GlStateManager.disableLighting();
 			TextureAtlasSprite icon = Minecraft.getMinecraft().getBlockRendererDispatcher()
-					.getModelForState(Blocks.FIRE.getDefaultState()).getParticleTexture();
+					.getModelForState(Blocks.FIRE.defaultBlockState()).getParticleTexture();
 			float s1 = entity.width/5;
 			int sides = (int)(16 * s1);
 			float height = 1.0f;

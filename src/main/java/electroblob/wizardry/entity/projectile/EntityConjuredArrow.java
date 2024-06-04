@@ -20,8 +20,8 @@ public class EntityConjuredArrow extends Arrow {
 	}
 
 	@Override
-	public void onUpdate() {
-		super.onUpdate();
+	public void tick() {
+		super.tick();
 		if (this.timeInGround > 400) {
 			this.discard();
 		}

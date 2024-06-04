@@ -38,7 +38,7 @@ public class Blink extends Spell {
 
 		// It's worth noting that on the client side, the cast() method only gets called if the server side
 		// cast method succeeded, so you need not check any conditions for spawning particles.
-		if(level.isClientSide){
+		if(world.isClientSide){
 			for(int i = 0; i < 10; i++){
 				double dx = caster.getX();
 				double dy = caster.getY() + 2 * world.random.nextFloat();
@@ -64,7 +64,7 @@ public class Blink extends Spell {
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 				if(!teleportMount && caster.isRiding()) caster.dismountRidingEntity();
-				if(!level.isClientSide) toTeleport.setPositionAndUpdate(vec.x, vec.y, vec.z);
+				if(!world.isClientSide) toTeleport.setPositionAndUpdate(vec.x, vec.y, vec.z);
 
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 				return true;
@@ -91,7 +91,7 @@ public class Blink extends Spell {
 		// cast method succeeded, so you need not check any conditions for spawning particles.
 
 		// For some reason, the wizard version spwans the particles where the wizard started
-		if(level.isClientSide){
+		if(world.isClientSide){
 			for(int i = 0; i < 10; i++){
 				double dx1 = caster.getX();
 				double dy1 = caster.getY() + caster.getBbHeight() * world.random.nextFloat();
@@ -117,7 +117,7 @@ public class Blink extends Spell {
 			// Plays before and after so it is heard from both positions
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 				caster.setPositionAndUpdate(x + 0.5, y + 1, z + 0.5);
 			}
 

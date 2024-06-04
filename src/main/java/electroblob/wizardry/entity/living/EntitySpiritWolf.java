@@ -76,9 +76,9 @@ public class EntitySpiritWolf extends EntityWolf {
 	}
 	
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(dispelTimer > 0){
 			if(dispelTimer++ > DISPEL_TIME){
@@ -104,7 +104,7 @@ public class EntitySpiritWolf extends EntityWolf {
 
 			// Allows the owner (but not other players) to dispel the spirit wolf using a
 			// wand.
-			if(stack.getItem() instanceof ISpellCastingItem && this.getOwner() == player && player.isSneaking()){
+			if(stack.getItem() instanceof ISpellCastingItem && this.getOwner() == player && player.isShiftKeyDown()){
 				// Prevents accidental double clicking.
 				if(this.tickCount > 20){
 					

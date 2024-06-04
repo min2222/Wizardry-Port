@@ -28,7 +28,7 @@ public class ItemCrystalFlower extends ItemBlock {
 			if(tileEntity.getFlowerPotItem() == null || tileEntity.getFlowerPotItem() == Items.AIR){
 				player.addStat(StatList.FLOWER_POTTED);
 				if(!player.capabilities.isCreativeMode) player.getHeldItem(hand).shrink(1);
-				world.setBlockState(pos, WizardryBlocks.crystal_flower_pot.getDefaultState());
+				world.setBlockAndUpdate(pos, WizardryBlocks.crystal_flower_pot.defaultBlockState());
 				return InteractionResult.SUCCESS;
 			}
 		}

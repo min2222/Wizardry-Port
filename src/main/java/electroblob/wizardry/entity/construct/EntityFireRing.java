@@ -24,13 +24,13 @@ public class EntityFireRing extends EntityScaledConstruct {
 		return false;
 	}
 
-	public void onUpdate(){
+	public void tick(){
 
 		if(this.tickCount % 40 == 1){
 			this.playSound(WizardrySounds.ENTITY_FIRE_RING_AMBIENT, 4.0f, 0.7f);
 		}
 
-		super.onUpdate();
+		super.tick();
 
 		if(this.tickCount % 5 == 0 && !this.level.isClientSide){
 
@@ -46,7 +46,7 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 					if(!MagicDamage.isEntityImmune(DamageType.FIRE, target)){
 
-						target.setFire(Spells.ring_of_fire.getProperty(Spell.BURN_DURATION).intValue());
+						target.setSecondsOnFire(Spells.ring_of_fire.getProperty(Spell.BURN_DURATION).intValue());
 
 						float damage = Spells.ring_of_fire.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 

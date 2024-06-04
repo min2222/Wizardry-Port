@@ -103,9 +103,9 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	}
 
 	@Override
-	public void onUpdate(){
+	public void tick(){
 
-		super.onUpdate();
+		super.tick();
 
 		if(getLifetime() >=0 && this.tickCount > getLifetime()){
 			this.discard();
@@ -116,8 +116,8 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 
 			Vec3 velocity = new Vec3(motionX, motionY, motionZ);
 
-			HitResult hit = RayTracer.rayTrace(world, this.getPositionVector(),
-					this.getPositionVector().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
+			HitResult hit = RayTracer.rayTrace(world, this.position(),
+					this.position().add(velocity.scale(SEEKING_TIME)), getSeekingStrength(), false,
 					true, false, LivingEntity.class, RayTracer.ignoreEntityFilter(null));
 
 			if(hit != null && hit.entityHit != null){
@@ -125,7 +125,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 				if(AllyDesignationSystem.isValidTarget(getThrower(), hit.entityHit)){
 
 					Vec3 direction = new Vec3(hit.entityHit.getX(), hit.entityHit.getY() + hit.entityHit.getBbHeight()/2,
-							hit.entityHit.getZ()).subtract(this.getPositionVector()).normalize().scale(velocity.length());
+							hit.entityHit.getZ()).subtract(this.position()).normalize().scale(velocity.length());
 
 					motionX = motionX + 2 * (direction.x - motionX) / SEEKING_TIME;
 					motionY = motionY + 2 * (direction.y - motionY) / SEEKING_TIME;

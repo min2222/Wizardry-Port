@@ -363,10 +363,10 @@ public class ItemArtefact extends Item {
 						List<Entity> projectiles = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), world, Entity.class);
 						projectiles.removeIf(e -> !(e instanceof IProjectile));
 						Vec3 look = player.getLookVec();
-						Vec3 playerPos = player.getPositionVector().add(0, player.getBbHeight()/2, 0);
+						Vec3 playerPos = player.position().add(0, player.getBbHeight()/2, 0);
 
 						for(Entity projectile : projectiles){
-							Vec3 vec = playerPos.subtract(projectile.getPositionVector()).normalize();
+							Vec3 vec = playerPos.subtract(projectile.position()).normalize();
 							double angle = Math.acos(vec.scale(-1).dotProduct(look));
 							if(angle > Math.PI * 0.4f) continue; // (Roughly) the angle the shield will protect
 							Vec3 velocity = new Vec3(projectile.motionX, projectile.motionY, projectile.motionZ).normalize();
@@ -388,7 +388,7 @@ public class ItemArtefact extends Item {
 						List<EntityIceBarrier> barriers = world.getEntitiesWithinAABB(EntityIceBarrier.class, player.getBoundingBox().grow(1.5));
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
-						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.getPositionVector().subtract(player.getPositionVector())) > 0)){
+						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.position().subtract(player.position())) > 0)){
 							player.addEffect(new MobEffectInstance(WizardryPotions.ward, 50, 1));
 						}
 
@@ -629,9 +629,9 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_potential){
 
 					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
-						&& event.getSource().getTrueSource() instanceof LivingEntity){
+						&& event.getSource().getEntity() instanceof LivingEntity){
 
-						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
+						LivingEntity target = (LivingEntity)event.getSource().getEntity();
 
 						if(player.level.isClientSide){
 
@@ -667,9 +667,9 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_banishing){
 
 					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
-							&& event.getSource().getTrueSource() instanceof LivingEntity){
+							&& event.getSource().getEntity() instanceof LivingEntity){
 
-						LivingEntity target = (LivingEntity)event.getSource().getTrueSource();
+						LivingEntity target = (LivingEntity)event.getSource().getEntity();
 						((Banish)Spells.banish).teleport(target, target.world, 8 + target.world.random.nextDouble() * 8);
 					}
 
@@ -683,9 +683,9 @@ public class ItemArtefact extends Item {
 			}
 		}
 
-		if(event.getSource().getTrueSource() instanceof Player){
+		if(event.getSource().getEntity() instanceof Player){
 
-			Player player = (Player)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getEntity();
 			ItemStack mainhandItem = player.getMainHandItem();
 			Level world = player.world;
 
@@ -696,7 +696,7 @@ public class ItemArtefact extends Item {
 					// Other mods can always make their own events if they want their own spellcasting items to do this
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.FIRE){
-						event.getEntity().setFire(5);
+						event.getEntity().setSecondsOnFire(5);
 					}
 
 				}else if(artefact == WizardryItems.ring_ice_melee){
@@ -777,7 +777,7 @@ public class ItemArtefact extends Item {
 					if((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 						// or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
-						|| (event.getSource().getImmediateSource() == player && !EntityUtils.isMeleeDamage(event.getSource())
+						|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY))){
 
@@ -791,7 +791,7 @@ public class ItemArtefact extends Item {
 					if(player.world.random.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 							// ...or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
-							|| (event.getSource().getImmediateSource() == player && !EntityUtils.isMeleeDamage(event.getSource())
+							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s) != Spells.life_drain)))){
@@ -807,9 +807,9 @@ public class ItemArtefact extends Item {
 					if((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.POISON))
 							// ...or it was from a dart...
-							|| event.getSource().getImmediateSource() instanceof EntityDart
+							|| event.getSource().getDirectEntity() instanceof EntityDart
 							// ...or it's direct, non-melee damage and the player is holding a wand with an earth spell selected
-							|| (event.getSource().getImmediateSource() == player && !EntityUtils.isMeleeDamage(event.getSource())
+							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.EARTH))){
 
@@ -822,9 +822,9 @@ public class ItemArtefact extends Item {
 					if((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FORCE))
 							// ...or it was from a force orb...
-							|| event.getSource().getImmediateSource() instanceof EntityForceOrb
+							|| event.getSource().getDirectEntity() instanceof EntityForceOrb
 							// ...or it's direct, non-melee damage and the player is holding a wand with a sorcery spell selected
-							|| (event.getSource().getImmediateSource() == player && !EntityUtils.isMeleeDamage(event.getSource())
+							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.SORCERY))){
 
@@ -844,9 +844,9 @@ public class ItemArtefact extends Item {
 	@SubscribeEvent
 	public static void onLivingDeathEvent(LivingDeathEvent event){
 
-		if(event.getSource().getTrueSource() instanceof Player){
+		if(event.getSource().getEntity() instanceof Player){
 
-			Player player = (Player)event.getSource().getTrueSource();
+			Player player = (Player)event.getSource().getEntity();
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 

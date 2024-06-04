@@ -15,14 +15,14 @@ import java.util.Map;
 
 // A note on the use of the vanilla damagesources:
 // When using indirect damage sources, the SECOND argument is the original entity (i.e. the caster), and the
-// FIRST argument is the actual projectile or whatever that does the damage. getTrueSource() will return
-// the original entity, and getImmediateSource() will return the projectile.
+// FIRST argument is the actual projectile or whatever that does the damage. getEntity() will return
+// the original entity, and getDirectEntity() will return the projectile.
 
 // The vanilla approach to damage types is inconsistent, to say the least. Poison is simply 'magic', and relies on
 // EntityLivingBase.isPotionApplicable to determine whether an entity is affected or not. Wither, on the other hand, is
 // its own damage type, but again relies on the potion to determine what is immune (which in vanilla is nothing). Fire
 // has a proper implementation of course, with both block-based and projectile-based types, and any other damagesource
-// can also be designated as fire damage with setFireDamage(). Likewise, projectile and explosion damage can also be
+// can also be designated as fire damage with setSecondsOnFireDamage(). Likewise, projectile and explosion damage can also be
 // applied to any damagesource, but these aren't considered types in their own right; rather, they seem to be damage
 // type 'attributes'. This is my attempt to collect all of these into a reasonably coherent system.
 
@@ -119,7 +119,7 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 		this.type = type;
 		this.isRetaliatory = isRetaliatory;
 		this.setMagicDamage();
-		if(type == DamageType.FIRE) this.setFireDamage();
+		if(type == DamageType.FIRE) this.setSecondsOnFireDamage();
 		if(type == DamageType.BLAST) this.setExplosion();
 	}
 

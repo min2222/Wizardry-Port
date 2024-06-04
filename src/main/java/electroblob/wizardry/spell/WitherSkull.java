@@ -42,7 +42,7 @@ public class WitherSkull extends Spell {
 
 		Vec3 look = caster.getLookVec();
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 
 			EntityWitherSkull witherskull = new EntityWitherSkull(world, caster, 1, 1, 1);
 
@@ -69,7 +69,7 @@ public class WitherSkull extends Spell {
 
 		if(target != null){
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				EntityWitherSkull witherskull = new EntityWitherSkull(world, caster, 1, 1, 1);
 
