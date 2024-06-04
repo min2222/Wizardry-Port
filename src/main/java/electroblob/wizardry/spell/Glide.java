@@ -6,10 +6,10 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.level.Level;
 
 public class Glide extends Spell {
@@ -38,7 +38,7 @@ public class Glide extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.motionY < -0.1 && !caster.isInWater()){
 

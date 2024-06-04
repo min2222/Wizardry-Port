@@ -15,11 +15,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.entity.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -123,7 +123,7 @@ public class MindControl extends SpellRay {
 
 	public static void startControlling(EntityLiving target, LivingEntity controller, int duration){
 		target.getEntityData().setUniqueId(NBT_KEY, controller.getUniqueID());
-		target.addPotionEffect(new PotionEffect(WizardryPotions.mind_control, duration, 0));
+		target.addPotionEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
 	}
 
 	/**
@@ -233,7 +233,7 @@ public class MindControl extends SpellRay {
 		onEffectEnd(event.getPotionEffect(), event.getEntity());
 	}
 
-	private static void onEffectEnd(PotionEffect effect, Entity entity){
+	private static void onEffectEnd(MobEffectInstance effect, Entity entity){
 		if(effect != null && effect.getPotion() == WizardryPotions.mind_control && entity instanceof EntityLiving){
 			((EntityLiving)entity).setAttackTarget(null); // End effect
 			((EntityLiving)entity).setRevengeTarget(null); // End effect

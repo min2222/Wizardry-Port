@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -241,7 +241,7 @@ public class RenderContainmentField {
 	}
 
 	private static void drawVertex(BufferBuilder buffer, double x, double y, double z, float u, float v, float alpha){
-		float f = MathHelper.clamp(1 - (float)(x*x + y*y + z*z) / FADE_DISTANCE_SQUARED, 0, 1);
+		float f = Mth.clamp(1 - (float)(x*x + y*y + z*z) / FADE_DISTANCE_SQUARED, 0, 1);
 		buffer.pos(x, y, z).tex(u, v).color(1, 1, 1, f * alpha).endVertex();
 	}
 

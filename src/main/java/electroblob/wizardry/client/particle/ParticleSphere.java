@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
@@ -106,15 +106,15 @@ public class ParticleSphere extends ParticleWizardry {
 
 				float latitude = goingUp ? -theta : theta;
 
-				float hRadius = radius * MathHelper.cos(latitude);
-				float vy = radius * MathHelper.sin(latitude);
-				float vx = hRadius * MathHelper.sin(longitude);
-				float vz = hRadius * MathHelper.cos(longitude);
+				float hRadius = radius * Mth.cos(latitude);
+				float vy = radius * Mth.sin(latitude);
+				float vx = hRadius * Mth.sin(longitude);
+				float vz = hRadius * Mth.cos(longitude);
 
 				buffer.pos(vx, vy, vz).color(r, g, b, a).endVertex();
 
-				vx = hRadius * MathHelper.sin(longitude + longStep);
-				vz = hRadius * MathHelper.cos(longitude + longStep);
+				vx = hRadius * Mth.sin(longitude + longStep);
+				vz = hRadius * Mth.cos(longitude + longStep);
 
 				buffer.pos(vx, vy, vz).color(r, g, b, a).endVertex();
 			}

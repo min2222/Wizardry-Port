@@ -1,7 +1,7 @@
 package electroblob.wizardry.misc;
 
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;

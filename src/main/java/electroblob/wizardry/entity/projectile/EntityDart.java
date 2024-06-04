@@ -5,9 +5,9 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
 
@@ -27,7 +27,7 @@ public class EntityDart extends EntityMagicArrow {
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		// Adds a weakness effect to the target.
-		entityHit.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
+		entityHit.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
 				Spells.dart.getProperty(Spell.EFFECT_STRENGTH).intValue(), false, false));
 		this.playSound(WizardrySounds.ENTITY_DART_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 	}

@@ -5,6 +5,8 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityFlying;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -14,10 +16,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -130,12 +130,12 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 		}
 
 		if(seconds > 0){
-			target.addPotionEffect(new PotionEffect(MobEffects.POISON, seconds * 20, 0));
+			target.addPotionEffect(new MobEffectInstance(MobEffects.POISON, seconds * 20, 0));
 		}
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

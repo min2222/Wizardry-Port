@@ -13,8 +13,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.util.Mth;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.level.Level;
 
@@ -84,7 +84,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			// * Potions and xp bottles seem to have more gravity (because that makes sense...)
 			float g = 0.03f;
 			// Assume horizontal projection
-			return range / MathHelper.sqrt(2 * launchHeight/g);
+			return range / Mth.sqrt(2 * launchHeight/g);
 		}
 	}
 
@@ -96,7 +96,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	//return MathHelper.sqrt(MathHelper.sqrt(g*g * (launchHeight*launchHeight + range*range)) - g*launchHeight);
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			// Creates a projectile from the supplied factory
@@ -119,7 +119,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		
 		if(target != null){
 

@@ -1,10 +1,10 @@
 package electroblob.wizardry.potion;
 
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
-import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -60,7 +60,7 @@ public interface ISyncedPotion {
 		onPotionEffectEnd(event.getPotionEffect(), event.getEntityLiving());
 	}
 
-	static void onPotionEffectEnd(PotionEffect effect, LivingEntity host){
+	static void onPotionEffectEnd(MobEffectInstance effect, LivingEntity host){
 
 		if(effect != null && effect.getPotion() instanceof ISyncedPotion
 				&& ((ISyncedPotion)effect.getPotion()).shouldSync(host)){

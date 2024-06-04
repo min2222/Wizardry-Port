@@ -7,9 +7,9 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class EntityDecay extends EntityMagicConstruct {
 					// damaged each tick.
 					// In this case, we do want particles to be shown.
 					if(!target.isPotionActive(WizardryPotions.decay))
-						target.addPotionEffect(new PotionEffect(WizardryPotions.decay,
+						target.addPotionEffect(new MobEffectInstance(WizardryPotions.decay,
 								Spells.decay.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
 				}
 			}
@@ -55,7 +55,7 @@ public class EntityDecay extends EntityMagicConstruct {
 			float brightness = rand.nextFloat() * 0.4f;
 			
 			ParticleBuilder.create(Type.DARK_MAGIC)
-			.pos(this.posX + radius * MathHelper.cos(angle), this.posY, this.posZ + radius * MathHelper.sin(angle))
+			.pos(this.posX + radius * Mth.cos(angle), this.posY, this.posZ + radius * Mth.sin(angle))
 			.clr(brightness, 0, brightness + 0.1f)
 			.spawn(world);
 		}

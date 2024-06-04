@@ -3,12 +3,11 @@ package electroblob.wizardry.client.renderer.tileentity;
 import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -26,7 +25,7 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 		GlStateManager.rotate(180, 0F, 0F, 1F);
 
 		float t = Minecraft.getMinecraft().player.ticksExisted + partialTicks;
-		GlStateManager.translate(0, 0.05f * MathHelper.sin(t/15), 0);
+		GlStateManager.translate(0, 0.05f * Mth.sin(t/15), 0);
 
 		this.renderItem(tileentity, t);
 		this.renderRays(tileentity, partialTicks);
@@ -110,11 +109,11 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 			buffer.pos(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
 			buffer.pos(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
 
-			double x1 = scale * MathHelper.sin((t + 40 * j) * ((float)Math.PI / 180));
-			double z1 = scale * MathHelper.cos((t + 40 * j) * ((float)Math.PI / 180));
+			double x1 = scale * Mth.sin((t + 40 * j) * ((float)Math.PI / 180));
+			double z1 = scale * Mth.cos((t + 40 * j) * ((float)Math.PI / 180));
 
-			double x2 = scale * MathHelper.sin((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
-			double z2 = scale * MathHelper.cos((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double x2 = scale * Mth.sin((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double z2 = scale * Mth.cos((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
 			buffer.pos(x1, 0, z1).color(r2, g2, b2, 0).endVertex();
 			buffer.pos(x2, 0, z2).color(r2, g2, b2, 0).endVertex();

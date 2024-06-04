@@ -2,7 +2,7 @@ package electroblob.wizardry.client.gui;
 
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 
 public class GuiSpellBook extends GuiSpellInfo {

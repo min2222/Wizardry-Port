@@ -8,11 +8,11 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -27,7 +27,7 @@ public class PhaseStep extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		boolean teleportMount = caster.isRiding() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
 		boolean hitLiquids = teleportMount && caster.getRidingEntity() instanceof EntityBoat; // Boats teleport to the surface

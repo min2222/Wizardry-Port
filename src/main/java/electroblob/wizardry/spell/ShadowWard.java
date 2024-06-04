@@ -8,13 +8,13 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -47,7 +47,7 @@ public class ShadowWard extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(world.isRemote){
 			double dx = -1 + 2 * world.rand.nextFloat();
@@ -73,7 +73,7 @@ public class ShadowWard extends Spell {
 
 				event.setCanceled(true);
 
-				float reflectedFraction = MathHelper.clamp(Spells.shadow_ward.getProperty(REFLECTED_FRACTION).floatValue(), 0, 1);
+				float reflectedFraction = Mth.clamp(Spells.shadow_ward.getProperty(REFLECTED_FRACTION).floatValue(), 0, 1);
 
 				// Now we can preserve the original damage source (sort of) as long as we make it retaliatory.
 				// For some reason this isn't working, so I've reverted to plain old magic damage for now.

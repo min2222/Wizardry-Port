@@ -3,14 +3,14 @@ package electroblob.wizardry.event;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * ImbuementActivateEvent is fired when {@link TileEntityImbuementAltar#getImbuementResult(net.minecraft.item.ItemStack, electroblob.wizardry.constants.Element[],
+ * ImbuementActivateEvent is fired when {@link TileEntityImbuementAltar#getImbuementResult(ItemStack, electroblob.wizardry.constants.Element[],
  * boolean, Level, Player)} is called to allow adding in imbuement "recipes" dynamically, based on the
  * contents of the Imbuement altar's receptacles and the item placed on the altar.
  *

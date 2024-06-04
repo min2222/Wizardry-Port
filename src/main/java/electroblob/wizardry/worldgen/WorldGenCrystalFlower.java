@@ -3,7 +3,7 @@ package electroblob.wizardry.worldgen;
 import com.google.common.primitives.Ints;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryBlocks;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -34,7 +34,7 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 	 * @param chancesToSpawn Number of chances to spawn a flower patch
 	 * @param groupSize The number of times to try generating a flower per flower patch spawn
 	 */
-	public void generatePlant(IBlockState state, Level world, Random random, int x, int z, int chancesToSpawn, int groupSize){
+	public void generatePlant(BlockState state, Level world, Random random, int x, int z, int chancesToSpawn, int groupSize){
 
 		for(int i = 0; i < chancesToSpawn; i++){
 

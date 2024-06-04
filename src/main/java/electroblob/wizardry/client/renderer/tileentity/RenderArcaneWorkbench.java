@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 public class RenderArcaneWorkbench extends TileEntitySpecialRenderer<TileEntityArcaneWorkbench> {
@@ -89,7 +89,7 @@ public class RenderArcaneWorkbench extends TileEntitySpecialRenderer<TileEntityA
 			GlStateManager.rotate(180, 0, 1, 0);
 			GlStateManager.rotate((float)(viewAngle - 90f), 0, 0, 1);
 			// Does the floaty thing		<- #bestcommentever
-			GlStateManager.translate(0.0F, 0.0F, 0.56f + 0.05f * MathHelper.sin((tileentity.timer + partialTicks)/15));//(float)tileentity.yOffset / 5000.0F + 0.55f);
+			GlStateManager.translate(0.0F, 0.0F, 0.56f + 0.05f * Mth.sin((tileentity.timer + partialTicks)/15));//(float)tileentity.yOffset / 5000.0F + 0.55f);
 			GlStateManager.scale(0.75F, 0.75F, 0.75F);
 			// This is what the item frame uses so it's definitely what we want.
 			Minecraft.getMinecraft().getRenderItem().renderItem(stack, TransformType.FIXED);

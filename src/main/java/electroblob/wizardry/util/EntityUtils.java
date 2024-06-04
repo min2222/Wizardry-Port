@@ -7,6 +7,8 @@ import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -15,15 +17,13 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.level.Level;
@@ -106,7 +106,7 @@ public final class EntityUtils {
 	 * @param entityType The class of entity to search for; pass in Entity.class for all entities
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinRadius(double radius, double x, double y, double z, Level world, Class<T> entityType){
-		AxisAlignedBB aabb = new AxisAlignedBB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
+		AABB aabb = new AABB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
 		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
 		for(int i = 0; i < entityList.size(); i++){
 			if(entityList.get(i).getDistance(x, y, z) > radius){
@@ -145,7 +145,7 @@ public final class EntityUtils {
 	 * @param entityType The class of entity to search for; pass in Entity.class for all entities
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinCylinder(double radius, double x, double y, double z, double height, Level world, Class<T> entityType) {
-		AxisAlignedBB aabb = new AxisAlignedBB(x - radius, y, z - radius, x + radius, y + height, z + radius);
+		AABB aabb = new AABB(x - radius, y, z - radius, x + radius, y + height, z + radius);
 		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
 		for(T entity : entityList) {
 			if (entity.getDistance(x, entity.posY, z) > radius) {
@@ -253,7 +253,7 @@ public final class EntityUtils {
 	public static Vec3 findSpaceForTeleport(Entity entity, Vec3 destination, boolean accountForPassengers){
 
 		Level world = entity.world;
-		AxisAlignedBB box = entity.getEntityBoundingBox();
+		AABB box = entity.getEntityBoundingBox();
 
 		if(accountForPassengers){
 			for(Entity passenger : entity.getPassengers()){
@@ -264,10 +264,10 @@ public final class EntityUtils {
 		box = box.offset(destination.subtract(entity.posX, entity.posY, entity.posZ));
 
 		// All the parameters of this method are INCLUSIVE, so even the max coordinates should be rounded down
-		Iterable<BlockPos> cuboid = BlockPos.getAllInBox(MathHelper.floor(box.minX), MathHelper.floor(box.minY),
-				MathHelper.floor(box.minZ), MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ));
+		Iterable<BlockPos> cuboid = BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
+				Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ));
 
-		if(Streams.stream(cuboid).noneMatch(b -> world.collidesWithAnyBlock(new AxisAlignedBB(b)))){
+		if(Streams.stream(cuboid).noneMatch(b -> world.collidesWithAnyBlock(new AABB(b)))){
 			// Nothing in the way
 			return destination;
 
@@ -278,18 +278,18 @@ public final class EntityUtils {
 			double dz = box.maxZ - box.minZ;
 
 			// Minimum space required is (nx + px) blocks * (ny + py) blocks * (nz + pz) blocks
-			int nx = MathHelper.ceil(dx) / 2;
-			int px = MathHelper.ceil(dx) - nx;
-			int ny = MathHelper.ceil(dy) / 2;
-			int py = MathHelper.ceil(dy) - ny;
-			int nz = MathHelper.ceil(dz) / 2;
-			int pz = MathHelper.ceil(dz) - nz;
+			int nx = Mth.ceil(dx) / 2;
+			int px = Mth.ceil(dx) - nx;
+			int ny = Mth.ceil(dy) / 2;
+			int py = Mth.ceil(dy) - ny;
+			int nz = Mth.ceil(dz) / 2;
+			int pz = Mth.ceil(dz) - nz;
 
 			// Check all the blocks in and around the bounding box...
-			List<BlockPos> nearby = Streams.stream(BlockPos.getAllInBox(MathHelper.floor(box.minX) - 1,
-					MathHelper.floor(box.minY) - 1, MathHelper.floor(box.minZ) - 1,
-					MathHelper.floor(box.maxX) + 1, MathHelper.floor(box.maxY) + 1,
-					MathHelper.floor(box.maxZ) + 1)).collect(Collectors.toList());
+			List<BlockPos> nearby = Streams.stream(BlockPos.getAllInBox(Mth.floor(box.minX) - 1,
+					Mth.floor(box.minY) - 1, Mth.floor(box.minZ) - 1,
+					Mth.floor(box.maxX) + 1, Mth.floor(box.maxY) + 1,
+					Mth.floor(box.maxZ) + 1)).collect(Collectors.toList());
 
 			// ... but only return positions actually inside the box
 			List<BlockPos> possiblePositions = Streams.stream(cuboid).collect(Collectors.toList());
@@ -300,7 +300,7 @@ public final class EntityUtils {
 
 				BlockPos pos = nearby.remove(0);
 
-				if(world.collidesWithAnyBlock(new AxisAlignedBB(pos))){
+				if(world.collidesWithAnyBlock(new AABB(pos))){
 					Predicate<BlockPos> nearSolidBlock = b -> b.getX() >= pos.getX() - nx && b.getX() <= pos.getX() + px
 														   && b.getY() >= pos.getY() - ny && b.getY() <= pos.getY() + py
 														   && b.getZ() >= pos.getZ() - nz && b.getZ() <= pos.getZ() + pz;

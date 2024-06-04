@@ -11,16 +11,16 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -34,7 +34,7 @@ public class Mine extends SpellRay {
 	private static final Method getSilkTouchDrop;
 
 	static {
-		getSilkTouchDrop = ObfuscationReflectionHelper.findMethod(Block.class, "func_180643_i", ItemStack.class, IBlockState.class);
+		getSilkTouchDrop = ObfuscationReflectionHelper.findMethod(Block.class, "func_180643_i", ItemStack.class, BlockState.class);
 	}
 
 	public Mine(){
@@ -54,9 +54,9 @@ public class Mine extends SpellRay {
 		// Needs to be outside because it gets run on the client-side
 		if(caster instanceof Player){
 			if(caster.getHeldItemMainhand().getItem() instanceof ISpellCastingItem){
-				caster.swingArm(EnumHand.MAIN_HAND);
+				caster.swingArm(InteractionHand.MAIN_HAND);
 			}else if(caster.getHeldItemOffhand().getItem() instanceof ISpellCastingItem){
-				caster.swingArm(EnumHand.OFF_HAND);
+				caster.swingArm(InteractionHand.OFF_HAND);
 			}
 		}
 
@@ -66,7 +66,7 @@ public class Mine extends SpellRay {
 			// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation
 			if(!EntityUtils.canDamageBlocks(caster, world)) return false;
 
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			// The maximum harvest level as determined by the potency multiplier. The + 0.5f is so that
 			// weird float processing doesn't incorrectly round it down.
 			int harvestLevel = (int)((modifiers.get(SpellModifiers.POTENCY) - 1) / Constants.POTENCY_INCREASE_PER_TIER + 0.5f);
@@ -92,7 +92,7 @@ public class Mine extends SpellRay {
 
 					if(BlockUtils.isBlockUnbreakable(world, pos1)) continue;
 
-					IBlockState state1 = world.getBlockState(pos1);
+					BlockState state1 = world.getBlockState(pos1);
 
 					if(state1.getBlock().getHarvestLevel(state1) <= harvestLevel || harvestLevel >= 3){
 
@@ -143,7 +143,7 @@ public class Mine extends SpellRay {
 				.shaded(false).spawn(world);
 	}
 
-	private static ItemStack getSilkTouchDrop(IBlockState state){
+	private static ItemStack getSilkTouchDrop(BlockState state){
 
 		try {
 			return (ItemStack)getSilkTouchDrop.invoke(state.getBlock(), state);

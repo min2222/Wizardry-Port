@@ -9,7 +9,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -95,13 +95,13 @@ class Image {
 							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, width / 2 + BORDER, height / 2 + BORDER,
 							GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT, false, false);
 					DrawingUtils.drawTexturedFlippedRect(left + instance[1] + width / 2, top + instance[2] - BORDER,
-							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, MathHelper.ceil(width / 2f) + BORDER, height / 2 + BORDER,
+							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, Mth.ceil(width / 2f) + BORDER, height / 2 + BORDER,
 							GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT, true, false);
 					DrawingUtils.drawTexturedFlippedRect(left + instance[1] - BORDER, top + instance[2] + height / 2,
-							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, width / 2 + BORDER, MathHelper.ceil(height / 2f) + BORDER,
+							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, width / 2 + BORDER, Mth.ceil(height / 2f) + BORDER,
 							GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT, false, true);
 					DrawingUtils.drawTexturedFlippedRect(left + instance[1] + width / 2, top + instance[2] + height / 2,
-							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, MathHelper.ceil(width / 2f) + BORDER, MathHelper.ceil(height / 2f) + BORDER,
+							TEXTURE_INSET_X, GuiWizardHandbook.GUI_HEIGHT, Mth.ceil(width / 2f) + BORDER, Mth.ceil(height / 2f) + BORDER,
 							GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT, true, true);
 				}
 			}

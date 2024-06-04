@@ -16,9 +16,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -60,7 +60,7 @@ public class CurseOfSoulbinding extends SpellRay {
 				// Return false if soulbinding failed (e.g. if the target is already soulbound)
 				if(getSoulboundCreatures(data).add(target.getUniqueID())){
 					// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-					((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
+					((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
 				}else{
 					return false;
 				}

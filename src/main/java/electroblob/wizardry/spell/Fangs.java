@@ -6,14 +6,14 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityEvokerFangs;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -40,14 +40,14 @@ public class Fangs extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		if(!spawnFangs(world, caster.getPositionVector(), GeometryUtils.horizontalise(caster.getLookVec()), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!spawnFangs(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()).normalize(), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
@@ -86,18 +86,18 @@ public class Fangs extends Spell {
 
 				for(int i = 0; i < 5; i++){
 					float yaw = i * (float)Math.PI * 0.4f;
-					flag |= this.spawnFangsAt(world, caster, modifiers, yaw, 0, origin.add(MathHelper.cos(yaw) * 1.5, 0, MathHelper.sin(yaw) * 1.5));
+					flag |= this.spawnFangsAt(world, caster, modifiers, yaw, 0, origin.add(Mth.cos(yaw) * 1.5, 0, Mth.sin(yaw) * 1.5));
 				}
 
 				for(int k = 0; k < 8; k++){
 					float yaw = k * (float)Math.PI * 2f / 8f + ((float)Math.PI * 2f / 5f);
-					flag |= this.spawnFangsAt(world, caster, modifiers, yaw, 3, origin.add(MathHelper.cos(yaw) * 2.5, 0, MathHelper.sin(yaw) * 2.5));
+					flag |= this.spawnFangsAt(world, caster, modifiers, yaw, 3, origin.add(Mth.cos(yaw) * 2.5, 0, Mth.sin(yaw) * 2.5));
 				}
 
 			}else{
 
 				int count = (int)(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
-				float yaw = (float)MathHelper.atan2(direction.z, direction.x); // Yes, this is the right way round!
+				float yaw = (float) Mth.atan2(direction.z, direction.x); // Yes, this is the right way round!
 
 				for(int i = 0; i < count; i++){
 					Vec3 vec = origin.add(direction.scale((i + 1) * FANG_SPACING));

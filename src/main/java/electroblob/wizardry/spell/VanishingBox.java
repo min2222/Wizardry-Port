@@ -2,9 +2,9 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryEnderChest;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.level.Level;
 
 public class VanishingBox extends Spell {
@@ -16,7 +16,7 @@ public class VanishingBox extends Spell {
 	@Override public boolean requiresPacket(){ return false; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 

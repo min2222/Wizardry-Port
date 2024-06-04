@@ -4,12 +4,12 @@ import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 /**
  * A {@code VirtualSlot} represents a slot in an inventory other than the one that is currently open. Like regular slots,
- * they hold a single {@link net.minecraft.item.ItemStack}, but unlike regular slots, they are not drawn to the screen
+ * they hold a single {@link ItemStack}, but unlike regular slots, they are not drawn to the screen
  * and cannot be interacted with directly. A virtual slot is effectively a reference to a specific slot in some other
  * inventory that allows the details of that inventory to be abstracted away from the current container.
  * <p></p>

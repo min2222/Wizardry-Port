@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.core.BlockPos;
@@ -61,7 +61,7 @@ public class FrostRay extends SpellRay {
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.
 			}else{
 				// For frost ray the entity can move slightly, unlike freeze
-				((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue()));
 

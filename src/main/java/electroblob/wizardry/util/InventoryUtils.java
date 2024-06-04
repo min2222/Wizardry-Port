@@ -1,14 +1,14 @@
 package electroblob.wizardry.util;
 
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.level.Level;
@@ -72,19 +72,19 @@ public final class InventoryUtils {
 		return hotbar;
 	}
 
-	/** Returns which {@link EnumHandSide} the given {@link EnumHand} is on for the given entity. */
-	public static EnumHandSide getSideForHand(LivingEntity entity, EnumHand hand){
-		return hand == EnumHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
+	/** Returns which {@link EnumHandSide} the given {@link InteractionHand} is on for the given entity. */
+	public static EnumHandSide getSideForHand(LivingEntity entity, InteractionHand hand){
+		return hand == InteractionHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
 	}
 
-	/** Returns which {@link EnumHand} is on the given {@link EnumHandSide} for the given entity. */
-	public static EnumHand getHandForSide(LivingEntity entity, EnumHandSide side){
-		return side == entity.getPrimaryHand() ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+	/** Returns which {@link InteractionHand} is on the given {@link EnumHandSide} for the given entity. */
+	public static InteractionHand getHandForSide(LivingEntity entity, EnumHandSide side){
+		return side == entity.getPrimaryHand() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 	}
 
-	/** Returns the opposite {@link EnumHand} to the one given. */
-	public static EnumHand getOpposite(EnumHand hand){
-		return hand == EnumHand.OFF_HAND ? EnumHand.MAIN_HAND : EnumHand.OFF_HAND;
+	/** Returns the opposite {@link InteractionHand} to the one given. */
+	public static InteractionHand getOpposite(InteractionHand hand){
+		return hand == InteractionHand.OFF_HAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 	}
 
 	/**

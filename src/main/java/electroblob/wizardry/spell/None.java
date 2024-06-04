@@ -1,9 +1,9 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.level.Level;
 
 /**
@@ -23,7 +23,7 @@ public class None extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		return false;
 	}
 

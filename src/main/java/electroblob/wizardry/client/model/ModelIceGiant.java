@@ -3,9 +3,9 @@ package electroblob.wizardry.client.model;
 import electroblob.wizardry.entity.living.EntityIceGiant;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
@@ -269,12 +269,12 @@ public class ModelIceGiant extends ModelBase {
 	/** Fixes the Techne rotation order bug. [Courtesy of tprk77] */
 	private Vector3f ConvertEulerYzxToZyx(Vector3f eulerYzx){
 		// Create a matrix from YZX ordered Euler angles
-		float a = MathHelper.cos(eulerYzx.x);
-		float b = MathHelper.sin(eulerYzx.x);
-		float c = MathHelper.cos(eulerYzx.y);
-		float d = MathHelper.sin(eulerYzx.y);
-		float e = MathHelper.cos(eulerYzx.z);
-		float f = MathHelper.sin(eulerYzx.z);
+		float a = Mth.cos(eulerYzx.x);
+		float b = Mth.sin(eulerYzx.x);
+		float c = Mth.cos(eulerYzx.y);
+		float d = Mth.sin(eulerYzx.y);
+		float e = Mth.cos(eulerYzx.z);
+		float f = Mth.sin(eulerYzx.z);
 		Matrix4f matrix = new Matrix4f();
 		matrix.m00 = c * e;
 		matrix.m01 = b * d - a * c * f;
@@ -288,8 +288,8 @@ public class ModelIceGiant extends ModelBase {
 		matrix.m33 = 1.0F;
 		// Create ZYX ordered Euler angles from the matrix
 		Vector3f eulerZyx = new Vector3f();
-		eulerZyx.y = (float)Math.asin(MathHelper.clamp(-matrix.m20, -1, 1));
-		if(MathHelper.abs(matrix.m20) < 0.99999){
+		eulerZyx.y = (float)Math.asin(Mth.clamp(-matrix.m20, -1, 1));
+		if(Mth.abs(matrix.m20) < 0.99999){
 			eulerZyx.x = (float)Math.atan2(matrix.m21, matrix.m22);
 			eulerZyx.z = (float)Math.atan2(matrix.m10, matrix.m00);
 		}else{

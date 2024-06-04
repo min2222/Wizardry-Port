@@ -5,6 +5,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,9 +13,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -157,7 +157,7 @@ public abstract class SpellRay extends Spell {
 
 	// Finally everything in here is standardised and written in a form that's actually readable - it was long overdue!
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		Vec3 look = caster.getLookVec();
 		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
@@ -173,7 +173,7 @@ public abstract class SpellRay extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// IDEA: Add in an aiming error and trigger onMiss accordingly
 		Vec3 origin = new Vec3(caster.posX, caster.posY + caster.getEyeHeight() - Y_OFFSET, caster.posZ);
 		Vec3 targetPos = null;
@@ -185,9 +185,9 @@ public abstract class SpellRay extends Spell {
 
 			}else{
 
-				int x = MathHelper.floor(target.posX);
+				int x = Mth.floor(target.posX);
 				int y = (int)target.posY - 1; // -1 because we need the block under the target
-				int z = MathHelper.floor(target.posZ);
+				int z = Mth.floor(target.posZ);
 				BlockPos pos = new BlockPos(x, y, z);
 
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
@@ -252,7 +252,7 @@ public abstract class SpellRay extends Spell {
 	 *        the count parameter in onUsingItemTick and therefore it increases by 1 each tick.
 	 * @return True if the caster should swing their arm when casting this spell, false if not.
 	 */
-	protected boolean casterSwingsArm(Level world, LivingEntity caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	protected boolean casterSwingsArm(Level world, LivingEntity caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		return !this.isContinuous && this.action == EnumAction.NONE;
 	}
 

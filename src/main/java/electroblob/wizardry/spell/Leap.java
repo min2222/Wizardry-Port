@@ -4,7 +4,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class Leap extends Spell {
@@ -19,7 +19,7 @@ public class Leap extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
 

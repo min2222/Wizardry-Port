@@ -1,13 +1,13 @@
 package electroblob.wizardry.block;
 
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.block.Block;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 
@@ -23,7 +23,7 @@ public class BlockCrystalOre extends Block {
 	}
 
 	@Override
-	public int quantityDropped(IBlockState state, int fortune, Random random){
+	public int quantityDropped(BlockState state, int fortune, Random random){
 		// This now works the same way as vanilla ores
 		if(fortune > 0){
 			
@@ -39,17 +39,17 @@ public class BlockCrystalOre extends Block {
 	}
 
 	@Override
-	public Item getItemDropped(IBlockState state, Random random, int fortune){
+	public Item getItemDropped(BlockState state, Random random, int fortune){
 		return WizardryItems.magic_crystal;
 	}
 	
 	@Override
-	public int getExpDrop(IBlockState state, IBlockAccess world, BlockPos pos, int fortune){
+	public int getExpDrop(BlockState state, IBlockAccess world, BlockPos pos, int fortune){
 		
 		Random rand = world instanceof Level ? ((Level)world).rand : RANDOM;
 		
         if(this.getItemDropped(state, rand, fortune) != Item.getItemFromBlock(this)){
-            return MathHelper.getInt(rand, 1, 4);
+            return Mth.getInt(rand, 1, 4);
         }
         
         return 0;

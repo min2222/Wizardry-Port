@@ -11,9 +11,9 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -121,7 +121,7 @@ public class EntitySilverfishMinion extends EntitySilverfish implements ISummone
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

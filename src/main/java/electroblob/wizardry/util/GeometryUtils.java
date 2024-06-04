@@ -3,7 +3,7 @@ package electroblob.wizardry.util;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.math.Vec3i;
@@ -46,7 +46,7 @@ public final class GeometryUtils {
 	 * Returns a {@link Vec3} of the coordinates at the centre of the given bounding box (The one in {@code AxisAlignedBB}
 	 * itself is client-side only).
 	 */
-	public static Vec3 getCentre(AxisAlignedBB box){
+	public static Vec3 getCentre(AABB box){
 		return new Vec3(box.minX + (box.maxX - box.minX) * 0.5, box.minY + (box.maxY - box.minY) * 0.5, box.minZ + (box.maxZ - box.minZ) * 0.5);
 	}
 
@@ -113,7 +113,7 @@ public final class GeometryUtils {
 	 * @return The list of vertices, which will contain 8 elements. Using EnumFacing initials, the order is:
 	 * DNW, DNE, DSE, DSW, UNW, UNE, USE, USW. The returned coordinates are absolute (i.e. measured from the world origin).
 	 */
-	public static Vec3[] getVertices(AxisAlignedBB box){
+	public static Vec3[] getVertices(AABB box){
 		return new Vec3[]{
 				new Vec3(box.minX, box.minY, box.minZ),
 				new Vec3(box.maxX, box.minY, box.minZ),

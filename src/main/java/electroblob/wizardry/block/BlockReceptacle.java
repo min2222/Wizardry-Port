@@ -7,22 +7,22 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.tileentity.TileEntityReceptacle;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockTorch;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
@@ -34,11 +34,11 @@ import java.util.Random;
 
 public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
-	protected static final AxisAlignedBB STANDING_AABB = new AxisAlignedBB(4 / 16d, 0 / 16d, 4 / 16d, 12 / 16d, 8 / 16d, 12 / 16d);
-	protected static final AxisAlignedBB NORTH_WALL_AABB = new AxisAlignedBB(4 / 16d, 2 / 16d, 7 / 16d, 12 / 16d, 10 / 16d, 16 / 16d);
-	protected static final AxisAlignedBB SOUTH_WALL_AABB = new AxisAlignedBB(4 / 16d, 2 / 16d, 0 / 16d, 12 / 16d, 10 / 16d, 9 / 16d);
-	protected static final AxisAlignedBB WEST_WALL_AABB = new AxisAlignedBB(7 / 16d, 2 / 16d, 4 / 16d, 16 / 16d, 10 / 16d, 12 / 16d);
-	protected static final AxisAlignedBB EAST_WALL_AABB = new AxisAlignedBB(0 / 16d, 2 / 16d, 4 / 16d, 9 / 16d, 10 / 16d, 12 / 16d);
+	protected static final AABB STANDING_AABB = new AABB(4 / 16d, 0 / 16d, 4 / 16d, 12 / 16d, 8 / 16d, 12 / 16d);
+	protected static final AABB NORTH_WALL_AABB = new AABB(4 / 16d, 2 / 16d, 7 / 16d, 12 / 16d, 10 / 16d, 16 / 16d);
+	protected static final AABB SOUTH_WALL_AABB = new AABB(4 / 16d, 2 / 16d, 0 / 16d, 12 / 16d, 10 / 16d, 9 / 16d);
+	protected static final AABB WEST_WALL_AABB = new AABB(7 / 16d, 2 / 16d, 4 / 16d, 16 / 16d, 10 / 16d, 12 / 16d);
+	protected static final AABB EAST_WALL_AABB = new AABB(0 / 16d, 2 / 16d, 4 / 16d, 9 / 16d, 10 / 16d, 12 / 16d);
 
 	private static final double WALL_PARTICLE_OFFSET = 3 / 16d;
 
@@ -69,7 +69,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+	public AABB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
 		switch(state.getValue(FACING)){
 			case EAST:
 				return EAST_WALL_AABB;
@@ -85,12 +85,12 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+	public AABB getCollisionBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
 		return state.getBoundingBox(world, pos);
 	}
 
 	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos){
+	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -102,7 +102,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune){
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune){
 
 		super.getDrops(drops, world, pos, state, fortune);
 
@@ -125,7 +125,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	protected boolean checkForDrop(Level world, BlockPos pos, IBlockState state){
+	protected boolean checkForDrop(Level world, BlockPos pos, BlockState state){
 		if(state.getBlock() == this && this.canPlaceAt(world, pos, state.getValue(FACING))){
 			return true;
 		}
@@ -133,14 +133,14 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	protected boolean onNeighborChangeInternal(Level world, BlockPos pos, IBlockState state){
+	protected boolean onNeighborChangeInternal(Level world, BlockPos pos, BlockState state){
 		// This is so stupid, BlockTorch DUPLICATES the code that checks for valid placement in the super method instead
 		// of checking the existing methods...
 		return !this.checkForDrop(world, pos, state); // Literally all we need. None of the rubbish in super.
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
+	public BlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 
 		if(this.canPlaceAt(world, pos, facing)){
 			return this.getDefaultState().withProperty(FACING, facing);
@@ -160,7 +160,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	private boolean canPlaceAt(Level world, BlockPos pos, Direction facing){
 
 		BlockPos blockpos = pos.offset(facing.getOpposite());
-		IBlockState state = world.getBlockState(blockpos);
+		BlockState state = world.getBlockState(blockpos);
 		Block block = state.getBlock();
 		BlockFaceShape blockfaceshape = state.getBlockFaceShape(world, blockpos, facing);
 
@@ -174,26 +174,26 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	private boolean canPlaceOn(Level world, BlockPos pos){
-		IBlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		return state.getBlock().canPlaceTorchOnTop(state, world, pos);
 	}
 
 	// See BlockFlowerPot for these two (this class is essentially based on a flower pot)
 
 	@Override
-	public boolean removedByPlayer(IBlockState state, Level world, BlockPos pos, Player player, boolean willHarvest){
+	public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest){
 		if(willHarvest) return true; // If it will harvest, delay deletion of the block until after getDrops
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 
 	@Override
-	public void harvestBlock(Level world, Player player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool){
+	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
 		world.setBlockToAir(pos);
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, EnumHand hand, Direction facing, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -235,7 +235,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random rand){
+	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random rand){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -272,7 +272,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public void onBlockPlacedBy(Level world, BlockPos pos, IBlockState state, LivingEntity placer, ItemStack stack){
+	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		if(placer instanceof Player){
 			BlockPos centre = pos.offset(world.getBlockState(pos).getValue(FACING).getOpposite());
 			if(world.getBlockState(centre).getBlock() == WizardryBlocks.imbuement_altar
@@ -289,12 +289,12 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride(IBlockState state){
+	public boolean hasComparatorInputOverride(BlockState state){
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState state, Level world, BlockPos pos){
+	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 

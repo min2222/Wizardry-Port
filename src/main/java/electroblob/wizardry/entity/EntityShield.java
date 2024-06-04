@@ -8,9 +8,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 
 import java.lang.ref.WeakReference;
@@ -35,7 +35,7 @@ public class EntityShield extends Entity {
 		this.setPositionAndRotation(player.posX + player.getLookVec().x,
 				player.posY + 1 + player.getLookVec().y, player.posZ + player.getLookVec().z,
 				player.rotationYawHead, player.rotationPitch);
-		this.setEntityBoundingBox(new AxisAlignedBB(this.posX - 0.6f, this.posY - 0.7f, this.posZ - 0.6f,
+		this.setEntityBoundingBox(new AABB(this.posX - 0.6f, this.posY - 0.7f, this.posZ - 0.6f,
 				this.posX + 0.6f, this.posY + 0.7f, this.posZ + 0.6f));
 	}
 
@@ -82,7 +82,7 @@ public class EntityShield extends Entity {
 		return !this.isDead;
 	}
 
-	public AxisAlignedBB getCollisionBox(Entity par1Entity){
+	public AABB getCollisionBox(Entity par1Entity){
 		return par1Entity.getEntityBoundingBox();
 	}
 

@@ -3,7 +3,7 @@ package electroblob.wizardry.entity.construct;
 import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public class EntityArrowRain extends EntityScaledConstruct {
@@ -30,9 +30,9 @@ public class EntityArrowRain extends EntityScaledConstruct {
 
 			EntityConjuredArrow arrow = new EntityConjuredArrow(world, x, y, z);
 
-			arrow.motionX = MathHelper.cos((float)Math.toRadians(this.rotationYaw + 90));
+			arrow.motionX = Mth.cos((float)Math.toRadians(this.rotationYaw + 90));
 			arrow.motionY = -0.6;
-			arrow.motionZ = MathHelper.sin((float)Math.toRadians(this.rotationYaw + 90));
+			arrow.motionZ = Mth.sin((float)Math.toRadians(this.rotationYaw + 90));
 
 			arrow.shootingEntity = this.getCaster();
 			arrow.setDamage(7.0d * damageMultiplier);

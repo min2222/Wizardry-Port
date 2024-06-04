@@ -3,10 +3,10 @@ package electroblob.wizardry.potion;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemWizardArmour;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ISpecialArmor;
 

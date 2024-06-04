@@ -8,11 +8,11 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -90,7 +90,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(caster.onGround || !requiresFloor){
 			if(!spawnConstruct(world, caster.posX, caster.posY, caster.posZ, caster.onGround ? Direction.UP : null,
@@ -103,7 +103,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 			if(caster.onGround || !requiresFloor){

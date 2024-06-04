@@ -4,8 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.level.Level;
 
 public class PocketWorkbench extends Spell {
@@ -20,7 +20,7 @@ public class PocketWorkbench extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 			caster.openGui(Wizardry.instance, WizardryGuiHandler.PORTABLE_CRAFTING, world, (int)caster.posX,

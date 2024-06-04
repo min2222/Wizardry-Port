@@ -3,10 +3,9 @@ package electroblob.wizardry.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Random;
@@ -157,7 +156,7 @@ public final class DrawingUtils {
 	 */
 	public static int mix(int colour1, int colour2, float proportion){
 
-		proportion = MathHelper.clamp(proportion, 0, 1);
+		proportion = Mth.clamp(proportion, 0, 1);
 
 		int r1 = colour1 >> 16 & 255;
 		int g1 = colour1 >> 8 & 255;
@@ -281,7 +280,7 @@ public final class DrawingUtils {
 	 */
 	public static float smoothScaleFactor(int lifetime, int ticksExisted, float partialTicks, int startLength, int endLength){
 		float age = ticksExisted + partialTicks;
-		float s = MathHelper.clamp(age < startLength || lifetime < 0 ? age/startLength : (lifetime - age) / endLength, 0, 1);
+		float s = Mth.clamp(age < startLength || lifetime < 0 ? age/startLength : (lifetime - age) / endLength, 0, 1);
 		s = (float)Math.pow(s, 0.4); // Smooths the animation
 		return s;
 	}

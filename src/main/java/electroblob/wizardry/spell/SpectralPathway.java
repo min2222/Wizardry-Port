@@ -11,7 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class SpectralPathway extends Spell {
@@ -30,7 +30,7 @@ public class SpectralPathway extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		// Won't work if caster is airborne or if they are already on a bridge (prevents infinite bridges)
 		if(BlockUtils.getBlockEntityIsStandingOn(caster).getBlock() == Blocks.AIR

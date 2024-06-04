@@ -10,9 +10,9 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class FlamingWeapon extends Spell {
@@ -23,7 +23,7 @@ public class FlamingWeapon extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		// Won't work if the weapon already has the enchantment
 		if(WizardData.get(caster) != null

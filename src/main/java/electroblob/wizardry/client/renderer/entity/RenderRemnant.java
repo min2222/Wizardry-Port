@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +47,7 @@ public class RenderRemnant extends Render<EntityRemnant> {
 		}else if(entity.hurtTime > 0){
 			float f = (entity.hurtTime - partialTicks) / entity.maxHurtTime;
 			// Neat bit of maths borrowed from the camera tilt effect when hurt
-			f = MathHelper.sin(f * f * f * f * (float)Math.PI);
+			f = Mth.sin(f * f * f * f * (float)Math.PI);
 			expansion += f * 0.2f;
 		}
 

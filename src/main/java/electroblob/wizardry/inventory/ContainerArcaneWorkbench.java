@@ -13,15 +13,15 @@ import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
@@ -218,14 +218,14 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 	 * equal to {@code bookSlotCount}. */
 	public static int getBookSlotXOffset(int i, int bookSlotCount){
 		float angle = i * (2 * (float)Math.PI) / bookSlotCount;
-		return Math.round(SLOT_RADIUS * MathHelper.sin(angle));
+		return Math.round(SLOT_RADIUS * Mth.sin(angle));
 	}
 
 	/** Returns the y offset (relative to the central slot) of the ith book slot when the total number of book slots is
 	 * equal to {@code bookSlotCount}. */
 	public static int getBookSlotYOffset(int i, int bookSlotCount){
 		float angle = i * (2 * (float)Math.PI) / bookSlotCount;
-		return Math.round(SLOT_RADIUS * -MathHelper.cos(angle)); // -cos because +y is downwards
+		return Math.round(SLOT_RADIUS * -Mth.cos(angle)); // -cos because +y is downwards
 	}
 
 	// FIXME: Shift-clicking a stack of special upgrades when in the arcane workbench causes the whole stack to be

@@ -8,9 +8,9 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -104,7 +104,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 			double radius = (0.5 + rand.nextDouble() * 0.3) * width/2;
 			float angle = rand.nextFloat() * (float)Math.PI * 2;
 			ParticleBuilder.create(Type.SPARK)
-			.pos(this.posX + radius * MathHelper.cos(angle), this.posY + 0.1, this.posZ + radius * MathHelper.sin(angle))
+			.pos(this.posX + radius * Mth.cos(angle), this.posY + 0.1, this.posZ + radius * Mth.sin(angle))
 			.spawn(world);
 		}
 	}

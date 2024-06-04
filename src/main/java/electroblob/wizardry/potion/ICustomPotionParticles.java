@@ -1,7 +1,7 @@
 package electroblob.wizardry.potion;
 
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -47,7 +47,7 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 	public static void onLivingUpdateEvent(LivingUpdateEvent event){
 		if(event.getEntityLiving().world.isRemote){
 			// Behold the power of interfaces!
-			for(PotionEffect effect : event.getEntityLiving().getActivePotionEffects()){
+			for(MobEffectInstance effect : event.getEntityLiving().getActivePotionEffects()){
 
 				if(effect.getPotion() instanceof ICustomPotionParticles && effect.doesShowParticles()){
 

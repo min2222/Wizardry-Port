@@ -2,7 +2,7 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.NBTExtras;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,7 +11,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -65,9 +65,9 @@ public class TileEntityStatue extends TileEntity implements ITickable {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public AxisAlignedBB getRenderBoundingBox(){
+	public AABB getRenderBoundingBox(){
 
-		AxisAlignedBB bb = INFINITE_EXTENT_AABB;
+		AABB bb = INFINITE_EXTENT_AABB;
 		Block type = getBlockType();
 		// Allows the renderer to render the entity even when the bottom block is not visible.
 		// Was only done for position 1, now done for all positions so the breaking animation works properly.
@@ -78,7 +78,7 @@ public class TileEntityStatue extends TileEntity implements ITickable {
 
 		}else if(type != null){
 
-			AxisAlignedBB cbb = this.getWorld().getBlockState(pos).getBoundingBox(world, pos);
+			AABB cbb = this.getWorld().getBlockState(pos).getBoundingBox(world, pos);
 			if(cbb != null){
 				bb = cbb;
 			}

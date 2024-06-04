@@ -3,7 +3,7 @@ package electroblob.wizardry.util;
 import com.google.common.collect.Sets;
 import electroblob.wizardry.event.SpellCastEvent;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 

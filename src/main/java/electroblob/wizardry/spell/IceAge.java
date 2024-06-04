@@ -13,11 +13,11 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -35,13 +35,13 @@ public class IceAge extends SpellAreaEffect {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		freezeNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, modifiers);
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		freezeNearbyBlocks(world, caster.getPositionVector(), caster, modifiers);
 		return super.cast(world, caster, hand, ticksInUse, target, modifiers);
 	}
@@ -61,7 +61,7 @@ public class IceAge extends SpellAreaEffect {
 				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
 			}
 		}else if(target instanceof Player){
-			target.addPotionEffect(new PotionEffect(WizardryPotions.frost,
+			target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue()));
 		}

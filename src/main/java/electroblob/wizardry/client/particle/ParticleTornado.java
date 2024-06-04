@@ -1,9 +1,9 @@
 package electroblob.wizardry.client.particle;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.particle.ParticleDigging;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 
 //@SideOnly(Side.CLIENT)
@@ -17,11 +17,11 @@ public class ParticleTornado extends ParticleDigging {
 	private boolean fullBrightness = false;
 
 	public ParticleTornado(Level world, int maxAge, double originX, double originZ, double radius, double yPos,
-                           double velX, double velZ, IBlockState block){
+                           double velX, double velZ, BlockState block){
 		super(world, 0, 0, 0, 0, 0, 0, block);
 		this.angle = this.rand.nextFloat() * (float)Math.PI * 2;
-		double x = originX - MathHelper.cos(angle) * radius;
-		double z = originZ + radius * MathHelper.sin(angle);
+		double x = originX - Mth.cos(angle) * radius;
+		double z = originZ + radius * Mth.sin(angle);
 		this.radius = radius;
 		this.setPosition(x, yPos, z);
 		this.prevPosX = x;
@@ -65,8 +65,8 @@ public class ParticleTornado extends ParticleDigging {
 		// v = r times omega; therefore the normalised velocity vector needs to be r times the angle increment / 2 pi.
 		this.angle += omega;
 
-		this.motionZ = radius * omega * MathHelper.cos(angle);
-		this.motionX = radius * omega * MathHelper.sin(angle);
+		this.motionZ = radius * omega * Mth.cos(angle);
+		this.motionX = radius * omega * Mth.sin(angle);
 		this.move(motionX + velX, 0, motionZ + velZ);
 
 		if(this.particleAge > this.particleMaxAge / 2){

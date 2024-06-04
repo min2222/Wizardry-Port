@@ -6,13 +6,13 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -163,7 +163,7 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 
 					if(this.attackStep > 1){
 						// Proof, if it were at all needed, of the elegance and versatility of the spell system.
-						Spells.arc.cast(this.blaze.world, this.blaze, EnumHand.MAIN_HAND, 0, entitylivingbase, new SpellModifiers());
+						Spells.arc.cast(this.blaze.world, this.blaze, InteractionHand.MAIN_HAND, 0, entitylivingbase, new SpellModifiers());
 					}
 				}
 

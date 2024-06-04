@@ -11,8 +11,8 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -89,9 +89,9 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 		// Wall smashing
 		if(EntityUtils.canDamageBlocks(getCaster(), world) && collidedHorizontally){
-			AxisAlignedBB box = getEntityBoundingBox().offset(velX, 0, velZ);
-			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(MathHelper.floor(box.minX), MathHelper.floor(box.minY),
-					MathHelper.floor(box.minZ), MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ)));
+			AABB box = getEntityBoundingBox().offset(velX, 0, velZ);
+			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
+					Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ)));
 			smashBlocks(cuboid, true);
 		}
 
@@ -101,7 +101,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 			double particleX = this.posX + width * 0.7 * (rand.nextDouble() - 0.5);
 			double particleZ = this.posZ + width * 0.7 * (rand.nextDouble() - 0.5);
 
-			IBlockState block = world.getBlockState(new BlockPos(this).down());
+			BlockState block = world.getBlockState(new BlockPos(this).down());
 
 			if(block.getBlock() != Blocks.AIR){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
@@ -170,7 +170,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	@Override
 	public void move(MoverType type, double x, double y, double z){
 		super.move(type, x, y, z);
-		this.rotationPitch += Math.toDegrees(MathHelper.sqrt(x*x + y*y + z*z) / (width/2)); // That's how we roll
+		this.rotationPitch += Math.toDegrees(Mth.sqrt(x*x + y*y + z*z) / (width/2)); // That's how we roll
 	}
 
 	@Override
@@ -180,9 +180,9 @@ public class EntityBoulder extends EntityScaledConstruct {
 
 		// Floor smashing
 		if(EntityUtils.canDamageBlocks(getCaster(), world) && distance > 3){
-			AxisAlignedBB box = getEntityBoundingBox().offset(velX, motionY, velZ);
-			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(MathHelper.floor(box.minX), MathHelper.floor(box.minY),
-					MathHelper.floor(box.minZ), MathHelper.floor(box.maxX), MathHelper.floor(box.maxY), MathHelper.floor(box.maxZ)));
+			AABB box = getEntityBoundingBox().offset(velX, motionY, velZ);
+			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
+					Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ)));
 			if(smashBlocks(cuboid, distance > 8)) return;
 			hitsRemaining--;
 		}
@@ -195,7 +195,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				double particleX = this.posX - 1.5 + 3 * rand.nextDouble();
 				double particleZ = this.posZ - 1.5 + 3 * rand.nextDouble();
 				// Roundabout way of getting a block instance for the block the boulder is standing on (if any).
-				IBlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
+				BlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
 
 				if(block.getBlock() != Blocks.AIR){
 					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
@@ -219,7 +219,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(){
+	public AABB getCollisionBoundingBox(){
 		return this.getEntityBoundingBox();
 	}
 

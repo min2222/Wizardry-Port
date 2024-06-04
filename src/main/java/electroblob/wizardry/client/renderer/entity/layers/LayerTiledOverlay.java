@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 import java.util.function.Function;
@@ -109,11 +109,11 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 
 	protected static int getBlockBrightnessForEntity(Entity entity){
 
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX), 0,
-				MathHelper.floor(entity.posZ));
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(entity.posX), 0,
+				Mth.floor(entity.posZ));
 
 		if(entity.world.isBlockLoaded(pos)){
-			pos.setY(MathHelper.floor(entity.posY + (double)entity.getEyeHeight()));
+			pos.setY(Mth.floor(entity.posY + (double)entity.getEyeHeight()));
 			return entity.world.getCombinedLight(pos, 0);
 		}else{
 			return 0;

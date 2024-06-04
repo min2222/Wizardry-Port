@@ -18,6 +18,7 @@ import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
 import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.*;
 import electroblob.wizardry.util.*;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,12 +27,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -276,8 +276,8 @@ public class ItemArtefact extends Item {
 
 			SpellModifiers modifiers = new SpellModifiers();
 
-			if(((ISpellCastingItem)wand.getItem()).canCast(wand, spell, player, EnumHand.MAIN_HAND, 0, modifiers)){
-				((ISpellCastingItem)wand.getItem()).cast(wand, spell, player, EnumHand.MAIN_HAND, 0, modifiers);
+			if(((ISpellCastingItem)wand.getItem()).canCast(wand, spell, player, InteractionHand.MAIN_HAND, 0, modifiers)){
+				((ISpellCastingItem)wand.getItem()).cast(wand, spell, player, InteractionHand.MAIN_HAND, 0, modifiers);
 			}
 		});
 	}
@@ -373,8 +373,8 @@ public class ItemArtefact extends Item {
 							double angle1 = Math.acos(vec.dotProduct(velocity));
 							if(angle1 < Math.PI * 0.2f){
 								SpellModifiers modifiers = new SpellModifiers();
-								if(((ISpellCastingItem)wand.getItem()).canCast(wand, Spells.shield, player, EnumHand.MAIN_HAND, 0, modifiers)){
-									((ISpellCastingItem)wand.getItem()).cast(wand, Spells.shield, player, EnumHand.MAIN_HAND, 0, modifiers);
+								if(((ISpellCastingItem)wand.getItem()).canCast(wand, Spells.shield, player, InteractionHand.MAIN_HAND, 0, modifiers)){
+									((ISpellCastingItem)wand.getItem()).cast(wand, Spells.shield, player, InteractionHand.MAIN_HAND, 0, modifiers);
 								}
 								break;
 							}
@@ -389,7 +389,7 @@ public class ItemArtefact extends Item {
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
 						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.getPositionVector().subtract(player.getPositionVector())) > 0)){
-							player.addPotionEffect(new PotionEffect(WizardryPotions.ward, 50, 1));
+							player.addPotionEffect(new MobEffectInstance(WizardryPotions.ward, 50, 1));
 						}
 
 					}
@@ -676,8 +676,8 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_transience){
 
 					if(player.getHealth() <= 6 && player.world.rand.nextFloat() < 0.25f){
-						player.addPotionEffect(new PotionEffect(WizardryPotions.transience, 300));
-						player.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 300, 0, false, false));
+						player.addPotionEffect(new MobEffectInstance(WizardryPotions.transience, 300));
+						player.addPotionEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0, false, false));
 					}
 				}
 			}
@@ -703,7 +703,7 @@ public class ItemArtefact extends Item {
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.ICE){
-						event.getEntityLiving().addPotionEffect(new PotionEffect(WizardryPotions.frost, 200, 0));
+						event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_lightning_melee){
@@ -736,14 +736,14 @@ public class ItemArtefact extends Item {
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.NECROMANCY){
-						event.getEntityLiving().addPotionEffect(new PotionEffect(MobEffects.WITHER, 200, 0));
+						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_earth_melee){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.EARTH){
-						event.getEntityLiving().addPotionEffect(new PotionEffect(MobEffects.POISON, 200, 0));
+						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_shattering){
@@ -781,7 +781,7 @@ public class ItemArtefact extends Item {
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY))){
 
-						event.getEntityLiving().addPotionEffect(new PotionEffect(WizardryPotions.curse_of_soulbinding, 400));
+						event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, 400));
 						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUniqueID());
 					}
 
@@ -813,7 +813,7 @@ public class ItemArtefact extends Item {
 							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.EARTH))){
 
-						event.getEntityLiving().addPotionEffect(new PotionEffect(MobEffects.POISON, 200, 0));
+						event.getEntityLiving().addPotionEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_extraction){
@@ -905,7 +905,7 @@ public class ItemArtefact extends Item {
 
 			event.getDrops().remove(item);
 			// At this point the player probably has nothing in their hand, but if not just find a free space somewhere
-			if(event.getEntityPlayer().getHeldItemMainhand().isEmpty()) event.getEntityPlayer().setHeldItem(EnumHand.MAIN_HAND, item.getItem());
+			if(event.getEntityPlayer().getHeldItemMainhand().isEmpty()) event.getEntityPlayer().setHeldItem(InteractionHand.MAIN_HAND, item.getItem());
 			else event.getEntityPlayer().addItemStackToInventory(item.getItem()); // Always chooses hotbar slots first
 		}
 	}

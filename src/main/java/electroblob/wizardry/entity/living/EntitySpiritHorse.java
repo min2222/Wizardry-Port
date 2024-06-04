@@ -15,9 +15,9 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -93,7 +93,7 @@ public class EntitySpiritHorse extends EntityHorse {
 	}
 
 	@Override
-	public boolean processInteract(Player player, EnumHand hand){
+	public boolean processInteract(Player player, InteractionHand hand){
 
 		ItemStack itemstack = player.getHeldItem(hand);
 

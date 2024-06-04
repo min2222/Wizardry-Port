@@ -10,8 +10,8 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,7 +91,7 @@ public class ArcaneWorkbenchRecipe implements IRecipeWrapper {
 
 		List<ItemStack> crystalStacks = new ArrayList<>();
 
-		int count = MathHelper.ceil((float)mana / Constants.MANA_PER_CRYSTAL);
+		int count = Mth.ceil((float)mana / Constants.MANA_PER_CRYSTAL);
 		// A stack of crystals will almost certainly be enough mana, but you never know!
 		// Using ItemStack.EMPTY to avoid deprecated method; crystals' stack size is not stack-sensitive so it doesn't matter
 		if(count <= WizardryItems.magic_crystal.getItemStackLimit(ItemStack.EMPTY)){
@@ -100,13 +100,13 @@ public class ArcaneWorkbenchRecipe implements IRecipeWrapper {
 			}
 		}
 
-		count = MathHelper.ceil((float)mana / Constants.MANA_PER_SHARD);
+		count = Mth.ceil((float)mana / Constants.MANA_PER_SHARD);
 
 		if(count <= WizardryItems.crystal_shard.getItemStackLimit(ItemStack.EMPTY)){
 			crystalStacks.add(new ItemStack(WizardryItems.crystal_shard, count));
 		}
 
-		count = MathHelper.ceil((float)mana / Constants.GRAND_CRYSTAL_MANA);
+		count = Mth.ceil((float)mana / Constants.GRAND_CRYSTAL_MANA);
 
 		if(count <= WizardryItems.grand_crystal.getItemStackLimit(ItemStack.EMPTY)){
 			crystalStacks.add(new ItemStack(WizardryItems.grand_crystal, count));

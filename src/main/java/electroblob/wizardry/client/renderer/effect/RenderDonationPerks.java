@@ -11,10 +11,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -82,12 +82,12 @@ public class RenderDonationPerks {
 			double dz = z2 + (z1 - z2) * partialTicks;
 
 			float t = player.ticksExisted + partialTicks;
-			float hMoveFraction = MathHelper.clamp((float)(dx * dx + dz * dz) / 0.3f, 0, 1);
-			float vMoveFraction = MathHelper.clamp((float)(dy * dy) / 0.3f, 0, 1);
+			float hMoveFraction = Mth.clamp((float)(dx * dx + dz * dz) / 0.3f, 0, 1);
+			float vMoveFraction = Mth.clamp((float)(dy * dy) / 0.3f, 0, 1);
 
-			double x = event.getX() + ROTATION_RADIUS * MathHelper.sin(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dx;
-			double y = event.getY() + HEIGHT_FRACTION * player.height + BOBBING_DISTANCE * MathHelper.sin(t / BOBBING_PERIOD) * (1 - vMoveFraction) + FOLLOW_DISTANCE * dy;
-			double z = event.getZ() + ROTATION_RADIUS * MathHelper.cos(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dz;
+			double x = event.getX() + ROTATION_RADIUS * Mth.sin(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dx;
+			double y = event.getY() + HEIGHT_FRACTION * player.height + BOBBING_DISTANCE * Mth.sin(t / BOBBING_PERIOD) * (1 - vMoveFraction) + FOLLOW_DISTANCE * dy;
+			double z = event.getZ() + ROTATION_RADIUS * Mth.cos(t / ROTATION_PERIOD) * (1 - hMoveFraction) + FOLLOW_DISTANCE * dz;
 			GlStateManager.translate(x, y, z);
 
 			GlStateManager.scale(0.4, 0.4, 0.4);
@@ -164,7 +164,7 @@ public class RenderDonationPerks {
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(CUBE_TEXTURES[player.ticksExisted % CUBE_TEXTURES.length]);
 
-		Vec3[] vertices = GeometryUtils.getVertices(new AxisAlignedBB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
+		Vec3[] vertices = GeometryUtils.getVertices(new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

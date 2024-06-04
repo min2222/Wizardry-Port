@@ -12,6 +12,7 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +21,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -59,7 +59,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		this.height = 2 * radius;
 		this.width = 2 * radius;
 		// y-3 because it needs to be centred on the given position
-		this.setEntityBoundingBox(new AxisAlignedBB(posX - radius, posY - radius, posZ - radius,
+		this.setEntityBoundingBox(new AABB(posX - radius, posY - radius, posZ - radius,
 				posX + radius, posY + radius, posZ + radius));
 	}
 
@@ -69,7 +69,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(){
+	public AABB getCollisionBoundingBox(){
 		return super.getCollisionBoundingBox();
 	}
 
@@ -191,9 +191,9 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 							float brightness = rand.nextFloat();
 
 							double r = radius + 0.05;
-							double x = this.posX + r * MathHelper.cos(yaw1) * MathHelper.cos(pitch1);
-							double y = this.posY + r * MathHelper.sin(pitch1);
-							double z = this.posZ + r * MathHelper.sin(yaw1) * MathHelper.cos(pitch1);
+							double x = this.posX + r * Mth.cos(yaw1) * Mth.cos(pitch1);
+							double y = this.posY + r * Mth.sin(pitch1);
+							double z = this.posZ + r * Mth.sin(yaw1) * Mth.cos(pitch1);
 
 							ParticleBuilder.create(Type.DUST).pos(x, y, z).time(6 + rand.nextInt(6))
 							.face((float)(yaw1 * 180/Math.PI) + 90, (float)(pitch1 * 180/Math.PI)).scale(1.5f)
@@ -211,7 +211,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	/** Returns true if the given bounding box is completely inside this forcefield (the surface counts as outside). */
-	public boolean contains(AxisAlignedBB box){
+	public boolean contains(AABB box){
 		return Arrays.stream(GeometryUtils.getVertices(box)).allMatch(this::contains);
 	}
 
@@ -239,7 +239,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		if(dsquared > rsquared) return null;
 		// Now do pythagoras to find the other side of the triangle, which is the distance along the line from
 		// the closest point to the edge of the sphere, and go that far back towards the origin - and that's it!
-		return closestPoint.subtract(line.normalize().scale(MathHelper.sqrt(rsquared - dsquared)));
+		return closestPoint.subtract(line.normalize().scale(Mth.sqrt(rsquared - dsquared)));
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Nullable
-	private static EntityForcefield getSurroundingForcefield(Level world, AxisAlignedBB box, Vec3 vec){
+	private static EntityForcefield getSurroundingForcefield(Level world, AABB box, Vec3 vec){
 
 		double searchRadius = 20;
 
@@ -330,7 +330,7 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 		if(!event.isCancelable()) return; // We don't care about clicking empty space
 
 		// For some reason block bounding boxes are relative whereas entity bounding boxes are absolute
-		AxisAlignedBB box = event.getWorld().getBlockState(event.getPos()).getBoundingBox(event.getWorld(), event.getPos())
+		AABB box = event.getWorld().getBlockState(event.getPos()).getBoundingBox(event.getWorld(), event.getPos())
 				.offset(event.getPos().getX(), event.getPos().getY(), event.getPos().getZ());
 
 		if(event instanceof PlayerInteractEvent.EntityInteract){

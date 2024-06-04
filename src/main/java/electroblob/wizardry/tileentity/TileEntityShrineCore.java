@@ -14,6 +14,8 @@ import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,12 +23,10 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -39,7 +39,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 	private static final double ACTIVATION_RADIUS = 5;
 
 	private boolean activated = false;
-	private AxisAlignedBB containmentField;
+	private AABB containmentField;
 	private final UUID[] linkedWizards = new UUID[3];
 	private TileEntity linkedContainer;
 	private BlockPos linkedContainerPos; // Temporary stores the container position read from NBT until the world is set
@@ -52,7 +52,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 
 	private void initContainmentField(BlockPos pos){
 		float r = PotionContainment.getContainmentDistance(0);
-		this.containmentField = new AxisAlignedBB(-r, -r, -r, r, r, r).offset(GeometryUtils.getCentre(pos));
+		this.containmentField = new AABB(-r, -r, -r, r, r, r).offset(GeometryUtils.getCentre(pos));
 	}
 
 	public void linkContainer(TileEntity container){
@@ -90,8 +90,8 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 					EntityEvilWizard wizard = new EntityEvilWizard(world);
 
 					float angle = world.rand.nextFloat() * 2 * (float)Math.PI;
-					double x1 = this.pos.getX() + 0.5 + 5 * MathHelper.sin(angle);
-					double z1 = this.pos.getZ() + 0.5 + 5 * MathHelper.cos(angle);
+					double x1 = this.pos.getX() + 0.5 + 5 * Mth.sin(angle);
+					double z1 = this.pos.getZ() + 0.5 + 5 * Mth.cos(angle);
 					Integer y1 = BlockUtils.getNearestFloor(world, new BlockPos(x1, this.pos.getY(), z1), 8);
 					if(y1 == null){
 						// Fallback to the position of the shrine core if it failed to find a position (unlikely)
@@ -181,7 +181,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
 		for(LivingEntity entity : entities){
-			entity.addPotionEffect(new PotionEffect(WizardryPotions.containment, 219));
+			entity.addPotionEffect(new MobEffectInstance(WizardryPotions.containment, 219));
 			NBTExtras.storeTagSafely(entity.getEntityData(), PotionContainment.ENTITY_TAG, NBTUtil.createPosTag(this.pos));
 		}
 	}

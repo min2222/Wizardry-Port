@@ -3,7 +3,7 @@ package electroblob.wizardry.potion;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,19 +27,19 @@ public class PotionMagicEffect extends Potion {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc){
+	public void renderInventoryEffect(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc){
 		drawIcon(x + 6, y + 7, effect, mc);
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha){
+	public void renderHUDEffect(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc, float alpha){
 		net.minecraft.client.renderer.GlStateManager.color(1, 1, 1, alpha);
 		drawIcon(x + 3, y + 3, effect, mc);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	protected void drawIcon(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc){
+	protected void drawIcon(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc){
 		mc.renderEngine.bindTexture(texture);
 		electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 18, 18, 18, 18);
 	}

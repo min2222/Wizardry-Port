@@ -8,11 +8,11 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
@@ -52,7 +52,7 @@ public class SpellConjuration extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(conjureItem(caster, modifiers)){
 			
@@ -91,7 +91,7 @@ public class SpellConjuration extends Spell {
 		addItemExtras(caster, stack, modifiers);
 
 		if(caster.getHeldItemMainhand().isEmpty()){
-			caster.setHeldItem(EnumHand.MAIN_HAND, stack);
+			caster.setHeldItem(InteractionHand.MAIN_HAND, stack);
 		}else{
 			if(!caster.inventory.addItemStackToInventory(stack)) return false;
 		}

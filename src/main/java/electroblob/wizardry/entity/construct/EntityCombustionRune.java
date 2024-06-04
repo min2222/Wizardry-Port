@@ -5,7 +5,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -52,8 +52,8 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 		}else if(this.rand.nextInt(15) == 0){
 			double radius = 0.5 + rand.nextDouble() * 0.3;
 			float angle = rand.nextFloat() * (float)Math.PI * 2;
-			world.spawnParticle(ParticleTypes.FLAME, this.posX + radius * MathHelper.cos(angle), this.posY + 0.1,
-					this.posZ + radius * MathHelper.sin(angle), 0, 0, 0);
+			world.spawnParticle(ParticleTypes.FLAME, this.posX + radius * Mth.cos(angle), this.posY + 0.1,
+					this.posZ + radius * Mth.sin(angle), 0, 0, 0);
 		}
 	}
 

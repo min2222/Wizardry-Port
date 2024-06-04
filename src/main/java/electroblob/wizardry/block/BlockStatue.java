@@ -2,11 +2,11 @@ package electroblob.wizardry.block;
 
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.util.BlockUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -42,7 +42,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos){
+	public AABB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
 		// Not a good idea to call getBlockBoundsMinX() or whatever from in here, since this method changes those!
 		if(!this.isIce){
 
@@ -53,7 +53,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				if(statue.creature != null){
 
 					// Block bounds are set to match the width and height of the entity, clamped to within 1 block.
-					return new AxisAlignedBB((float)Math.max(0.5 - statue.creature.width / 2, 0), 0,
+					return new AABB((float)Math.max(0.5 - statue.creature.width / 2, 0), 0,
 							(float)Math.max(0.5 - statue.creature.width / 2, 0),
 							(float)Math.min(0.5 + statue.creature.width / 2, 1),
 							// This checks if the block is the top one and if so reduces its height so the top lines up
@@ -76,31 +76,31 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	// The number of these methods is quite simply ridiculous. This one seems to be for placement logic and block
 	// connections (fences, glass panes, etc.)...
 	@Override
-	public boolean isFullCube(IBlockState state){
+	public boolean isFullCube(BlockState state){
 		return false;
 	}
 
 	// ...this one isn't used much but has something to do with redstone...
 	@Override
-	public boolean isBlockNormalCube(IBlockState state){
+	public boolean isBlockNormalCube(BlockState state){
 		return false;
 	}
 
 	// ... this one is for most other game logic...
 	@Override
-	public boolean isNormalCube(IBlockState state){
+	public boolean isNormalCube(BlockState state){
 		return false;
 	}
 
 	// Forge version of the above method. I still need to override both though because vanilla uses the other one.
 	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos){
+	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
 		return false;
 	}
 
 	// ... and this one is for rendering.
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
+	public boolean isOpaqueCube(BlockState state){
 		return false;
 	}
 
@@ -110,12 +110,12 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state){
+	public EnumBlockRenderType getRenderType(BlockState state){
 		return this.isIce ? EnumBlockRenderType.MODEL : EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state){
+	public boolean hasTileEntity(BlockState state){
 		return true;
 	}
 
@@ -130,7 +130,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void breakBlock(Level world, BlockPos pos, IBlockState state){
+	public void breakBlock(Level world, BlockPos pos, BlockState state){
 
 		if(!world.isRemote){
 
@@ -171,10 +171,10 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	@SuppressWarnings("deprecation")
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-			Direction side){
+	public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos,
+                                        Direction side){
 
-		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+		BlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();
 
 		return this.isIce && block == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);

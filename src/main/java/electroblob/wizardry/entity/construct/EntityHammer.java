@@ -14,20 +14,20 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class EntityHammer extends EntityMagicConstruct {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(){
+	public AABB getCollisionBoundingBox(){
 		return this.getEntityBoundingBox();
 	}
 
@@ -174,7 +174,7 @@ public class EntityHammer extends EntityMagicConstruct {
 				double particleX = this.posX - 1.0d + 2 * rand.nextDouble();
 				double particleZ = this.posZ - 1.0d + 2 * rand.nextDouble();
 				// Roundabout way of getting a block instance for the block the hammer is standing on (if any).
-				IBlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
+				BlockState block = world.getBlockState(new BlockPos(this.posX, this.posY - 2, this.posZ));
 
 				if(block != null){
 					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.posY, particleZ,
@@ -200,7 +200,7 @@ public class EntityHammer extends EntityMagicConstruct {
 	}
 
 	@Override
-	public boolean processInitialInteract(Player player, EnumHand hand){
+	public boolean processInitialInteract(Player player, InteractionHand hand){
 
 		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
 				&& player.getHeldItemMainhand().isEmpty() && ticksExisted > 10){
@@ -213,7 +213,7 @@ public class EntityHammer extends EntityMagicConstruct {
 			hammer.setItemDamage(ticksExisted);
 			hammer.getTagCompound().setFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
 
-			player.setHeldItem(EnumHand.MAIN_HAND, hammer);
+			player.setHeldItem(InteractionHand.MAIN_HAND, hammer);
 			return true;
 
 		}else{

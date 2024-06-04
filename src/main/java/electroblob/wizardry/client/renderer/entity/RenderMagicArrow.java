@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
@@ -66,7 +66,7 @@ public class RenderMagicArrow extends Render<EntityMagicArrow> {
 		GlStateManager.enableRescaleNormal();
 		// f11 = (float)par1EntityArrow.arrowShake - par9;
 		if(f11 > 0.0F){
-			float f12 = -MathHelper.sin(f11 * 3.0F) * f11;
+			float f12 = -Mth.sin(f11 * 3.0F) * f11;
 			GlStateManager.rotate(f12, 0.0F, 0.0F, 1.0F);
 		}
 

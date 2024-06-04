@@ -9,9 +9,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -53,7 +53,7 @@ public class RenderWings {
 			GlStateManager.pushMatrix();
 
 			GlStateManager.translate(0.1, 0.4, -0.15);
-			GlStateManager.rotate(20 + 20 * MathHelper.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
+			GlStateManager.rotate(20 + 20 * Mth.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
@@ -78,7 +78,7 @@ public class RenderWings {
 			GlStateManager.pushMatrix();
 
 			GlStateManager.translate(-0.1, 0.4, -0.15);
-			GlStateManager.rotate(-200 - 20 * MathHelper.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
+			GlStateManager.rotate(-200 - 20 * Mth.sin((player.ticksExisted + event.getPartialRenderTick()) * 0.3f), 0, 1, 0);
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

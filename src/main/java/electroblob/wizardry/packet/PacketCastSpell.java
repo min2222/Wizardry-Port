@@ -5,8 +5,8 @@ import electroblob.wizardry.packet.PacketCastSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.Item;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -42,18 +42,18 @@ public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
 		/** SpellModifiers for the spell */
 		public SpellModifiers modifiers;
 		/** The hand that is holding the itemstack used to cast the spell. Defaults to MAIN_HAND. */
-		public EnumHand hand;
+		public InteractionHand hand;
 
 		// This constructor is required otherwise you'll get errors (used somewhere in fml through reflection)
 		public Message(){
 		}
 
-		public Message(int casterID, EnumHand hand, Spell spell, SpellModifiers modifiers){
+		public Message(int casterID, InteractionHand hand, Spell spell, SpellModifiers modifiers){
 
 			this.casterID = casterID;
 			this.spellID = spell.networkID();
 			this.modifiers = modifiers;
-			this.hand = hand == null ? EnumHand.MAIN_HAND : hand;
+			this.hand = hand == null ? InteractionHand.MAIN_HAND : hand;
 		}
 
 		@Override
@@ -64,7 +64,7 @@ public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
 			this.spellID = buf.readInt();
 			this.modifiers = new SpellModifiers();
 			this.modifiers.read(buf);
-			this.hand = buf.readBoolean() ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
+			this.hand = buf.readBoolean() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 		}
 
 		@Override
@@ -73,7 +73,7 @@ public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
 			buf.writeInt(casterID);
 			buf.writeInt(spellID);
 			this.modifiers.write(buf);
-			buf.writeBoolean(this.hand == EnumHand.OFF_HAND);
+			buf.writeBoolean(this.hand == InteractionHand.OFF_HAND);
 		}
 	}
 }

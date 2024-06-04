@@ -2,11 +2,11 @@ package electroblob.wizardry.util;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.*;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.*;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 
 import java.util.Collections;

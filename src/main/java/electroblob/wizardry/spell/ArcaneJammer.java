@@ -18,8 +18,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntitySpellcasterIllager;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -56,7 +56,7 @@ public class ArcaneJammer extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 			if(!world.isRemote){
-				((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.arcane_jammer,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.arcane_jammer,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + (int)((modifiers.get(SpellModifiers.POTENCY) - 1)
 								/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f)));
@@ -100,7 +100,7 @@ public class ArcaneJammer extends SpellRay {
 
 			// TODO: This currently doesn't play nicely with continuous or charge-up spells
 			if(event.getSource() == Source.WAND || event.getSource() == Source.SCROLL){
-				event.getCaster().setActiveHand(EnumHand.MAIN_HAND);
+				event.getCaster().setActiveHand(InteractionHand.MAIN_HAND);
 			}
 
 			// Because we're using a seed that should be consistent, we can do client-side stuff!

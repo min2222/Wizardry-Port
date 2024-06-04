@@ -4,11 +4,11 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tileentity.TileEntity;
@@ -39,13 +39,13 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	}
 
 	// See BlockTransportationStone for what all these do
-	@Override public boolean isFullCube(IBlockState state){ return false; }
-	@Override public boolean isBlockNormalCube(IBlockState state){ return false; }
-	@Override public boolean isNormalCube(IBlockState state){ return false; }
-	@Override public boolean isOpaqueCube(IBlockState state){ return false; }
+	@Override public boolean isFullCube(BlockState state){ return false; }
+	@Override public boolean isBlockNormalCube(BlockState state){ return false; }
+	@Override public boolean isNormalCube(BlockState state){ return false; }
+	@Override public boolean isOpaqueCube(BlockState state){ return false; }
 
 	@Override
-	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random random){
+	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random random){
 		
 		for(int i=0; i<2; i++){
 			ParticleBuilder.create(Type.DUST)
@@ -64,7 +64,7 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 //	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state){
+	public boolean hasTileEntity(BlockState state){
 		return true;
 	}
 
@@ -81,10 +81,10 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	@SuppressWarnings("deprecation")
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-			Direction side){
+	public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos,
+                                        Direction side){
 
-		IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+		BlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();
 
 		return block == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);

@@ -11,15 +11,15 @@ import electroblob.wizardry.spell.Transportation;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.Location;
 import electroblob.wizardry.util.ParticleBuilder;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
@@ -30,7 +30,7 @@ import java.util.Random;
 
 public class BlockTransportationStone extends Block {
 
-	private static final AxisAlignedBB AABB = new AxisAlignedBB(0.0625f * 5, 0, 0.0625f * 5, 0.0625f * 11, 0.0625f * 6,
+	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.0625f * 5, 0, 0.0625f * 5, 0.0625f * 11, 0.0625f * 6,
 			0.0625f * 11);
 
 	public BlockTransportationStone(Material material){
@@ -39,43 +39,43 @@ public class BlockTransportationStone extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public net.minecraft.world.phys.AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return AABB;
 	}
 
 	// The number of these methods is quite simply ridiculous. This one seems to be for placement logic and block
 	// connections (fences, glass panes, etc.)...
 	@Override
-	public boolean isFullCube(IBlockState state){
+	public boolean isFullCube(BlockState state){
 		return false;
 	}
 
 	// ...this one isn't used much but has something to do with redstone...
 	@Override
-	public boolean isBlockNormalCube(IBlockState state){
+	public boolean isBlockNormalCube(BlockState state){
 		return false;
 	}
 
 	// ... this one is for most other game logic...
 	@Override
-	public boolean isNormalCube(IBlockState state){
+	public boolean isNormalCube(BlockState state){
 		return false;
 	}
 
 	// ... and this one is for rendering.
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
+	public boolean isOpaqueCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, Direction side){
+	public boolean isSideSolid(BlockState base_state, IBlockAccess world, BlockPos pos, Direction side){
 		return side == Direction.DOWN;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
 
 		super.neighborChanged(state, world, pos, block, fromPos);
 
@@ -86,7 +86,7 @@ public class BlockTransportationStone extends Block {
 	}
 
 	@Override
-	public void updateTick(Level world, BlockPos pos, IBlockState state, Random random){
+	public void updateTick(Level world, BlockPos pos, BlockState state, Random random){
 
 		if(!world.isSideSolid(pos.down(), Direction.UP)){
 			this.dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
@@ -100,7 +100,7 @@ public class BlockTransportationStone extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, EnumHand hand,
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
 		ItemStack stack = player.getHeldItem(hand);

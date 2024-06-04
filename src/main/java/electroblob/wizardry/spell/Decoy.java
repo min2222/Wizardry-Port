@@ -7,7 +7,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class Decoy extends Spell {
@@ -24,7 +24,7 @@ public class Decoy extends Spell {
 	@Override public boolean canBeCastBy(EntityLiving npc, boolean override){ return true; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
 		// Uses the synchronised entity id to ensure it is consistent on client and server, but not always the same.
 		double splitSpeed = caster.getEntityId() % 2 == 0 ? 0.3 : -0.3;
@@ -35,7 +35,7 @@ public class Decoy extends Spell {
 	
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
 		double splitSpeed = world.rand.nextBoolean() ? 0.3 : -0.3;
 		spawnDecoy(world, caster, modifiers, splitSpeed);

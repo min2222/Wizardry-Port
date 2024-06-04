@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 /** Based on ModelEnderCrystal */
 public class ModelRemnant extends ModelBase {
@@ -27,7 +27,7 @@ public class ModelRemnant extends ModelBase {
 
 		GlStateManager.translate(0.0F, entity.height/2, 0.0F);
 
-		float s = expandFraction + MathHelper.sin(age * 0.1f) * 0.06f;
+		float s = expandFraction + Mth.sin(age * 0.1f) * 0.06f;
 
 		GlStateManager.scale(s, s, s);
 

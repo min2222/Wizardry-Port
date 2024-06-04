@@ -1,7 +1,7 @@
 package electroblob.wizardry.client.particle;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,7 +38,7 @@ public class ParticleCloud extends ParticleWizardry {
 		
 		// Fading
 		float fadeTime = this.particleMaxAge * 0.3f;
-		this.setAlphaF(MathHelper.clamp(Math.min(this.particleAge / fadeTime, (this.particleMaxAge - this.particleAge) / fadeTime), 0, 1));
+		this.setAlphaF(Mth.clamp(Math.min(this.particleAge / fadeTime, (this.particleMaxAge - this.particleAge) / fadeTime), 0, 1));
 
 	}
 	

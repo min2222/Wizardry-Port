@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 import org.lwjgl.opengl.GL11;
 
@@ -95,7 +95,7 @@ public class ParticleBuff extends ParticleWizardry {
 		float z = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
 
 		// Increases from 0 to 1 in steps of 0.125 evenly throughout the particle's lifetime
-		float f = 0.875f - 0.125f * MathHelper.floor((float)this.particleAge/(float)this.particleMaxAge * 8 - 0.000001f);
+		float f = 0.875f - 0.125f * Mth.floor((float)this.particleAge/(float)this.particleMaxAge * 8 - 0.000001f);
 		float g = f + 0.125f;
 		float hrepeat = 1;
 		float scale = 0.6f;

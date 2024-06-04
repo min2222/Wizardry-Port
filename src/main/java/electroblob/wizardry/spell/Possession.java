@@ -33,6 +33,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityPotion;
@@ -42,12 +43,11 @@ import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.entity.Entity;
@@ -331,7 +331,7 @@ public class Possession extends SpellRay {
 			victim.setPosition(player.posX, player.posY, player.posZ);
 			if(!player.world.isRemote) player.world.spawnEntity(victim);
 
-			for(PotionEffect effect : player.getActivePotionEffects()){
+			for(MobEffectInstance effect : player.getActivePotionEffects()){
 				if(effect.getPotion() instanceof PotionSlowTime) continue; // Don't transfer slow time
 				victim.addPotionEffect(effect);
 			}
@@ -454,7 +454,7 @@ public class Possession extends SpellRay {
 			entity.height = height;
 
 			double halfWidth = (double)width / 2.0D;
-			entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - halfWidth, entity.posY, entity.posZ - halfWidth, entity.posX + halfWidth, entity.posY + (double)entity.height, entity.posZ + halfWidth));
+			entity.setEntityBoundingBox(new AABB(entity.posX - halfWidth, entity.posY, entity.posZ - halfWidth, entity.posX + halfWidth, entity.posY + (double)entity.height, entity.posZ + halfWidth));
 		}
 	}
 

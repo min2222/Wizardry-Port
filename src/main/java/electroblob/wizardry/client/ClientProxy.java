@@ -49,7 +49,8 @@ import electroblob.wizardry.tileentity.*;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.WandHelper;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -70,15 +71,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ContainerMerchant;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipeList;
@@ -421,7 +421,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void spawnTornadoParticle(Level world, double x, double y, double z, double velX, double velZ, double radius, int maxAge,
-                                     IBlockState block, BlockPos pos){
+                                     BlockState block, BlockPos pos){
 		Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTornado(world, maxAge, x, z, radius, y, velX, velZ, block).setBlockPos(pos));// , world.rand.nextInt(6)));
 	}
 
@@ -576,26 +576,26 @@ public class ClientProxy extends CommonProxy {
 		for(int i = 0; i < 20; i++){
 			double radius = 1;
 			float angle = world.rand.nextFloat() * (float)Math.PI * 2;
-			double x = pos.getX() + 0.5 + radius * MathHelper.cos(angle);
+			double x = pos.getX() + 0.5 + radius * Mth.cos(angle);
 			double y = pos.getY() + world.rand.nextDouble() * 2;
-			double z = pos.getZ() + 0.5 + radius * MathHelper.sin(angle);
+			double z = pos.getZ() + 0.5 + radius * Mth.sin(angle);
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, 0.02, 0).clr(0.6f, 1, 0.6f)
 			.time(80 + world.rand.nextInt(10)).spawn(world);
 		}
 		for(int i = 0; i < 20; i++){
 			double radius = 1;
 			float angle = world.rand.nextFloat() * (float)Math.PI * 2;
-			double x = pos.getX() + 0.5 + radius * MathHelper.cos(angle);
+			double x = pos.getX() + 0.5 + radius * Mth.cos(angle);
 			double y = pos.getY() + world.rand.nextDouble() * 2;
-			double z = pos.getZ() + 0.5 + radius * MathHelper.sin(angle);
+			double z = pos.getZ() + 0.5 + radius * Mth.sin(angle);
 			world.spawnParticle(ParticleTypes.VILLAGER_HAPPY, x, y, z, 0, 0.02, 0);
 		}
 		for(int i = 0; i < 20; i++){
 			double radius = 1;
 			float angle = world.rand.nextFloat() * (float)Math.PI * 2;
-			double x = pos.getX() + 0.5 + radius * MathHelper.cos(angle);
+			double x = pos.getX() + 0.5 + radius * Mth.cos(angle);
 			double y = pos.getY() + world.rand.nextDouble() * 2;
-			double z = pos.getZ() + 0.5 + radius * MathHelper.sin(angle);
+			double z = pos.getZ() + 0.5 + radius * Mth.sin(angle);
 			world.spawnParticle(ParticleTypes.ENCHANTMENT_TABLE, x, y, z, 0, 0.02, 0);
 		}
 	}

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -43,7 +43,7 @@ public class LayerDisintegrateAnimation<T extends LivingEntity> extends LayerTil
 
 	@Override
 	public ResourceLocation getTexture(T entity, float partialTicks){
-		return TEXTURES[MathHelper.clamp(entity.ticksExisted - entity.getEntityData().getInteger(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
+		return TEXTURES[Mth.clamp(entity.ticksExisted - entity.getEntityData().getInteger(Disintegration.NBT_KEY), 0, ANIMATION_TICKS - 1)];
 	}
 
 	@Override

@@ -4,11 +4,11 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -35,7 +35,7 @@ public class ItemWizardHandbook extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		if (Wizardry.settings.loadHandbook) {
 			player.openGui(Wizardry.instance, WizardryGuiHandler.WIZARD_HANDBOOK, world, 0, 0, 0);

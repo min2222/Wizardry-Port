@@ -10,8 +10,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -70,7 +70,7 @@ public class EntityShadowWraith extends EntitySummonedCreature implements ISpell
 	}
 
 	@Override
-	public boolean isPotionApplicable(PotionEffect potion){
+	public boolean isPotionApplicable(MobEffectInstance potion){
 		return potion.getPotion() == MobEffects.WITHER ? false : super.isPotionApplicable(potion);
 	}
 

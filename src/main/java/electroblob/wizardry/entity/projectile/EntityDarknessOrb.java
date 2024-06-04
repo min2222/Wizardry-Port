@@ -10,7 +10,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 					damage);
 
 			if(target instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.WITHER, target))
-				((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.WITHER,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
 						Spells.darkness_orb.getProperty(Spell.EFFECT_DURATION).intValue(),
 						Spells.darkness_orb.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 

@@ -16,7 +16,7 @@ import net.minecraft.entity.projectile.EntityShulkerBullet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -36,14 +36,14 @@ public class ShulkerBullet extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!shoot(world, caster, caster.posX, caster.posY, caster.posZ, Direction.UP, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;

@@ -8,9 +8,9 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -106,7 +106,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 		attacker.setContinuousSpell(spell);
 		WizardryPacketHandler.net.sendToAllAround(
 				new PacketNPCCastSpell.Message(attacker.getEntityId(), target == null ? -1 : target.getEntityId(),
-						EnumHand.MAIN_HAND, spell, modifiers),
+						InteractionHand.MAIN_HAND, spell, modifiers),
 				// Particles are usually only visible from 16 blocks away, so 128 is more than far enough.
 				// TODO: Why is this one a 128 block radius, whilst the other one is all in dimension?
 				new TargetPoint(attacker.dimension, attacker.posX, attacker.posY, attacker.posZ, 128));
@@ -146,7 +146,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 							.post(new SpellCastEvent.Tick(Source.NPC, attacker.getContinuousSpell(), attacker,
 									attacker.getModifiers(), this.continuousSpellDuration - this.continuousSpellTimer))
 					// ...or the spell no longer succeeds...
-					|| !attacker.getContinuousSpell().cast(attacker.world, attacker, EnumHand.MAIN_HAND,
+					|| !attacker.getContinuousSpell().cast(attacker.world, attacker, InteractionHand.MAIN_HAND,
 							this.continuousSpellDuration - this.continuousSpellTimer, target, attacker.getModifiers())
 					// ...or the time has elapsed...
 					|| this.continuousSpellTimer == 0){
@@ -214,7 +214,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 		}
 
 		// This is only called when spell casting starts so ticksInUse is always zero
-		if(spell.cast(attacker.world, attacker, EnumHand.MAIN_HAND, 0, target, modifiers)){
+		if(spell.cast(attacker.world, attacker, InteractionHand.MAIN_HAND, 0, target, modifiers)){
 
 			if(spell.isContinuous){
 				// -1 because the spell has been cast once already!
@@ -232,7 +232,7 @@ public class EntityAIAttackSpell<T extends EntityLiving & ISpellCaster> extends 
 				if(spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
 					IMessage msg = new PacketNPCCastSpell.Message(attacker.getEntityId(), target.getEntityId(),
-							EnumHand.MAIN_HAND, spell, modifiers);
+							InteractionHand.MAIN_HAND, spell, modifiers);
 					WizardryPacketHandler.net.sendToDimension(msg, attacker.world.provider.getDimension());
 				}
 			}

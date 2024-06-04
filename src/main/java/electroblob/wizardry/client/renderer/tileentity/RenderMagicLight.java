@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -105,13 +105,13 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 				buffer.pos(0, 0, 0).tex(0, 0).color(255, 255, 255, 0).endVertex();
 				buffer.pos(0, 0, 0).tex(0, 1).color(255, 255, 255, 0).endVertex();
 
-				double x1 = scale * MathHelper.sin((tileentity.timer + 40 * j) * ((float)Math.PI / 180));
+				double x1 = scale * Mth.sin((tileentity.timer + 40 * j) * ((float)Math.PI / 180));
 				// double y1 = 0.7*MathHelper.cos((timerentity.timer - 40*j)*(Math.PI/180))*j/10;
-				double z1 = scale * MathHelper.cos((tileentity.timer + 40 * j) * ((float)Math.PI / 180));
+				double z1 = scale * Mth.cos((tileentity.timer + 40 * j) * ((float)Math.PI / 180));
 
-				double x2 = scale * MathHelper.sin((tileentity.timer + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+				double x2 = scale * Mth.sin((tileentity.timer + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 				// double y2 = 0.7*MathHelper.sin((timerentity.timer - 40*j)*(Math.PI/180))*j/10;
-				double z2 = scale * MathHelper.cos((tileentity.timer + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+				double z2 = scale * Mth.cos((tileentity.timer + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
 				buffer.pos(x1, 0, z1).tex(1, 0).color(0, 0, 0, 255).endVertex();
 				buffer.pos(x2, 0, z2).tex(1, 1).color(0, 0, 0, 255).endVertex();

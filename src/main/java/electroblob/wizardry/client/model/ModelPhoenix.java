@@ -3,7 +3,7 @@ package electroblob.wizardry.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class ModelPhoenix extends ModelBase {
 
@@ -107,11 +107,11 @@ public class ModelPhoenix extends ModelBase {
 		this.neck.rotateAngleX = f4 / (180F / (float)Math.PI);
 		this.neck.rotateAngleY = f3 / (180F / (float)Math.PI);
 		this.neck.rotateAngleZ = 0.0F;
-		this.body.rotateAngleX = 0.3f + MathHelper.cos(f2 * 0.1F) * 0.15F;
+		this.body.rotateAngleX = 0.3f + Mth.cos(f2 * 0.1F) * 0.15F;
 		this.body.rotateAngleY = 0.0F;
 		this.tail.rotateAngleX = this.body.rotateAngleX * 1.1f;
 		this.tailFeathers.rotateAngleX = this.body.rotateAngleX * 1.2f;
-		this.rightWing.rotateAngleY = MathHelper.cos(f2 * 0.3F) * (float)Math.PI * 0.15F;
+		this.rightWing.rotateAngleY = Mth.cos(f2 * 0.3F) * (float)Math.PI * 0.15F;
 		this.leftWing.rotateAngleY = -this.rightWing.rotateAngleY;
 
 		body.render(f5);

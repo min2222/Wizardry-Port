@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.GlStateManager.DestFactor;
 import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 
 /**
  * Layer used to render the mind control overlay on creatures with the mind control effect.
@@ -42,7 +42,7 @@ public class LayerMindControl extends LayerTiledOverlay<LivingEntity> {
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE);
 
-		PotionEffect effect = entity.getActivePotionEffect(WizardryPotions.mind_control);
+		MobEffectInstance effect = entity.getActivePotionEffect(WizardryPotions.mind_control);
 		if(effect != null){
 			GlStateManager.color(1, 1, 1, Math.min(1, (effect.getDuration() - partialTicks) / 20));
 		}

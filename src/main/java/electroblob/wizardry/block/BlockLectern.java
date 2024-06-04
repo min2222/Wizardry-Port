@@ -12,12 +12,12 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.core.BlockPos;
@@ -46,20 +46,20 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta){
+	public BlockState getStateFromMeta(int meta){
 		Direction enumfacing = Direction.byIndex(meta);
 		if(enumfacing.getAxis() == Direction.Axis.Y) enumfacing = Direction.NORTH;
 		return this.getDefaultState().withProperty(FACING, enumfacing);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state){
+	public int getMetaFromState(BlockState state){
 		return state.getValue(FACING).getIndex();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random rand){
+	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random rand){
 
 		Player entityplayer = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5,
 				pos.getZ() + 0.5, TileEntityLectern.BOOK_OPEN_DISTANCE, false);
@@ -71,47 +71,47 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
+	public boolean isOpaqueCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
+	public boolean isFullCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isFullBlock(IBlockState state){
+	public boolean isFullBlock(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state){
+	public boolean isNormalCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos){
+	public boolean canPlaceTorchOnTop(BlockState state, IBlockAccess world, BlockPos pos){
 		return false;
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, Direction face){
 		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
+	public BlockState getStateForPlacement(Level world, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rotation){
+	public BlockState withRotation(BlockState state, Rotation rotation){
 		return state.withProperty(FACING, rotation.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirror){
+	public BlockState withMirror(BlockState state, Mirror mirror){
 		return state.withRotation(mirror.toRotation(state.getValue(FACING)));
 	}
 
@@ -122,8 +122,8 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
-									Direction side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
+                                    Direction side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 

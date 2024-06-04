@@ -8,10 +8,10 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -64,7 +64,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 		this.setSize(0.98F, 0.98F);
 	}
 
-	public EntityLevitatingBlock(Level world, double x, double y, double z, IBlockState state){
+	public EntityLevitatingBlock(Level world, double x, double y, double z, BlockState state){
 		super(world, x, y, z, state);
 	}
 
@@ -145,7 +145,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					}else{
 
-						IBlockState iblockstate = this.world.getBlockState(blockpos1);
+						BlockState iblockstate = this.world.getBlockState(blockpos1);
 
 						if(this.world.isAirBlock(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ))){
 							if(!isConcreteInWater && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ)))){

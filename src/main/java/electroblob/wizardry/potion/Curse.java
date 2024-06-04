@@ -2,8 +2,8 @@ package electroblob.wizardry.potion;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,7 +22,7 @@ public class Curse extends PotionMagicEffect {
 	}
 
 	@Override
-	public boolean shouldRenderInvText(PotionEffect effect){
+	public boolean shouldRenderInvText(MobEffectInstance effect){
 		return false;
 	}
 	
@@ -35,7 +35,7 @@ public class Curse extends PotionMagicEffect {
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc){
+	public void renderInventoryEffect(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc){
 		
 		mc.renderEngine.bindTexture(BACKGROUND);
 		electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 140, 32, 256, 256);
@@ -62,7 +62,7 @@ public class Curse extends PotionMagicEffect {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha){
+	public void renderHUDEffect(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc, float alpha){
 		
 		net.minecraft.client.renderer.GlStateManager.color(1, 1, 1, 1);
 		mc.renderEngine.bindTexture(BACKGROUND);

@@ -4,11 +4,11 @@ import electroblob.wizardry.entity.projectile.EntitySparkBomb;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class ItemSparkBomb extends Item {
@@ -19,7 +19,7 @@ public class ItemSparkBomb extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 

@@ -7,9 +7,9 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -34,7 +34,7 @@ public class FontOfMana extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(target instanceof Player){ // Font of mana is only useful to players
-			target.addPotionEffect(new PotionEffect(WizardryPotions.font_of_mana,
+			target.addPotionEffect(new MobEffectInstance(WizardryPotions.font_of_mana,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)(getProperty(EFFECT_STRENGTH).intValue() + (modifiers.get(SpellModifiers.POTENCY) - 1) * 2)));
 		}

@@ -10,9 +10,9 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -32,7 +32,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 		float pitch = (GeometryUtils.getPitch(facing) - 90) * (float)Math.PI/180;
 		Vec3 min = this.getPositionVector().add(new Vec3(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
 		Vec3 max = this.getPositionVector().add(new Vec3(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
-		this.setEntityBoundingBox(new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z));
+		this.setEntityBoundingBox(new AABB(min.x, min.y, min.z, max.x, max.y, max.z));
 	}
 
 	public Direction getFacing(){
@@ -68,7 +68,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 					// Potion effect only gets added if the damage succeeded
 					// We DO want knockback here or the entity gets stuck on the spike, which is a bit of a cheat
 					if(((LivingEntity)entity).attackEntityFrom(source, Spells.ice_spikes.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
-						((LivingEntity)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+						((LivingEntity)entity).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 								Spells.ice_spikes.getProperty(Spell.EFFECT_DURATION).intValue(),
 								Spells.ice_spikes.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}

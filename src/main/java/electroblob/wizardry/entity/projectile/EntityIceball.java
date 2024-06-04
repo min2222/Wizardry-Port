@@ -13,7 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
 
@@ -40,7 +40,7 @@ public class EntityIceball extends EntityMagicProjectile {
 						damage);
 
 				if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit)){
-					((LivingEntity)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+					((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 							Spells.iceball.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.iceball.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}

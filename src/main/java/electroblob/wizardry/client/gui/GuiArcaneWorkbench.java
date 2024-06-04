@@ -29,10 +29,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -183,7 +183,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		if(!mouseHeld || getMaxScrollRows() == 0) scrolling = false;
 
 		if(scrolling){
-			scroll = MathHelper.clamp((float)(mouseY - SCROLL_BAR_TOP - SCROLL_HANDLE_HEIGHT/2 - guiTop)
+			scroll = Mth.clamp((float)(mouseY - SCROLL_BAR_TOP - SCROLL_HANDLE_HEIGHT/2 - guiTop)
 					/(SCROLL_BAR_HEIGHT - SCROLL_HANDLE_HEIGHT), 0, 1);
 			arcaneWorkbenchContainer.scrollTo((int)(getMaxScrollRows() * scroll + 0.5f));
 		}
@@ -463,7 +463,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 	}
 
 	private int getMaxScrollRows(){
-		return Math.max(0, MathHelper.ceil((float)arcaneWorkbenchContainer.getActiveBookshelfSlots().size()
+		return Math.max(0, Mth.ceil((float)arcaneWorkbenchContainer.getActiveBookshelfSlots().size()
 				/ ContainerArcaneWorkbench.BOOKSHELF_SLOTS_X) - ContainerArcaneWorkbench.BOOKSHELF_SLOTS_Y);
 	}
 
@@ -478,7 +478,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 			if(scrollDist > 0) this.scroll += 1f / getMaxScrollRows();
 			if(scrollDist < 0) this.scroll -= 1f / getMaxScrollRows();
 
-			scroll = MathHelper.clamp(scroll, 0, 1);
+			scroll = Mth.clamp(scroll, 0, 1);
 
 			arcaneWorkbenchContainer.scrollTo((int)(scroll * getMaxScrollRows() + 0.5f));
 		}
@@ -826,7 +826,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 		}
 
 		private float getAlpha(float partialTicks){
-			return (MathHelper.sin(0.2f * (mc.player.ticksExisted + partialTicks)) + 1) / 4 + 0.5f;
+			return (Mth.sin(0.2f * (mc.player.ticksExisted + partialTicks)) + 1) / 4 + 0.5f;
 		}
 
 		@Override

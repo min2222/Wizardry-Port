@@ -24,8 +24,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
@@ -470,7 +470,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 				return;
 			}
 
-			if(this.castCommandSpell.cast(player.world, player, EnumHand.MAIN_HAND, castCommandTick, this.castCommandModifiers)
+			if(this.castCommandSpell.cast(player.world, player, InteractionHand.MAIN_HAND, castCommandTick, this.castCommandModifiers)
 					&& this.castCommandTick == 0){
 				// On the first tick casting a continuous spell via commands, SpellCastEvent.Post is fired.
 				MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.COMMAND, castCommandSpell, player, castCommandModifiers));

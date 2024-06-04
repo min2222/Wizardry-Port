@@ -6,8 +6,8 @@ import net.minecraft.client.gui.toasts.IToast;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -29,8 +29,8 @@ public class HandbookToast implements IToast {
 
         boolean firstPart = delta < 1500L;
 
-        int a = firstPart ? MathHelper.floor(MathHelper.clamp((float)(1500L - delta) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864
-                          : MathHelper.floor(MathHelper.clamp((float)(delta - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 67108864;
+        int a = firstPart ? Mth.floor(Mth.clamp((float)(1500L - delta) / 300.0F, 0.0F, 1.0F) * 255.0F) << 24 | 67108864
+                          : Mth.floor(Mth.clamp((float)(delta - 1500L) / 300.0F, 0.0F, 1.0F) * 252.0F) << 24 | 67108864;
 
         String s = firstPart ? I18n.format("handbook.toast.title") : section.title;
 

@@ -4,17 +4,17 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityMagicLight;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 
@@ -29,14 +29,14 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos){
+	public AABB getCollisionBoundingBox(BlockState blockState, IBlockAccess worldIn, BlockPos pos){
 		// The other two bounding box methods in Block aren't nullable, so this is the
 		// only one that can return NULL_AABB.
 		return NULL_AABB;
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState state, Player player, EnumHand hand, Direction facing, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ){
 		// Let the player dispel any lights if they have the lantern charm, not just the permanent ones because that would be annoying!
 		if(player.getHeldItem(hand).getItem() instanceof ISpellCastingItem && ItemArtefact.isArtefactActive(player, WizardryItems.charm_light)){
 
@@ -66,7 +66,7 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state){
+	public boolean hasTileEntity(BlockState state){
 		return true;
 	}
 
@@ -76,17 +76,17 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
+	public boolean isOpaqueCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos){
+	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
 		return false;
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state){
+	public EnumBlockRenderType getRenderType(BlockState state){
 		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 }

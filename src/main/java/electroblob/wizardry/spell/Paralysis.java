@@ -8,11 +8,11 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -64,7 +64,7 @@ public class Paralysis extends SpellRay {
 			}
 
 			float durationMultiplier = target instanceof Player ? modifiers.get(PLAYER_EFFECT_DURATION_MULTIPLIER) : 1.0f;
-			((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.paralysis,
+			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.paralysis,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * durationMultiplier * modifiers.get(WizardryItems.duration_upgrade)), 0));
 		}
 		

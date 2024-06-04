@@ -7,13 +7,13 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -38,11 +38,11 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				// Calculates coordinates for the block to be moved. The radius increases with time. The +1.5 is to
 				// leave blocks in the centre untouched.
-				int x = this.posX < 0 ? (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * MathHelper.sin(angle) - 1)
-						: (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * MathHelper.sin(angle));
+				int x = this.posX < 0 ? (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle) - 1)
+						: (int)(this.posX + ((this.ticksExisted * speed) + 1.5) * Mth.sin(angle));
 				int y = (int)(this.posY - 0.5);
-				int z = this.posZ < 0 ? (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * MathHelper.cos(angle) - 1)
-						: (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * MathHelper.cos(angle));
+				int z = this.posZ < 0 ? (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle) - 1)
+						: (int)(this.posZ + ((this.ticksExisted * speed) + 1.5) * Mth.cos(angle));
 
 				BlockPos pos = new BlockPos(x, y, z);
 
@@ -81,7 +81,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 					target.attackEntityFrom(
 							MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.BLAST),
 							10 * this.damageMultiplier);
-					target.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 400, 1));
+					target.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, 400, 1));
 				}
 
 				// All targets are thrown, even those immune to the damage, so they don't fall into the ground.

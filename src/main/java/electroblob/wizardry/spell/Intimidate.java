@@ -7,13 +7,13 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -55,7 +55,7 @@ public class Intimidate extends SpellAreaEffect {
 			NBTTagCompound entityNBT = target.getEntityData();
 			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUniqueID());
 
-			target.addPotionEffect(new PotionEffect(WizardryPotions.fear,
+			target.addPotionEffect(new MobEffectInstance(WizardryPotions.fear,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}

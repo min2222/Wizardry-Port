@@ -6,7 +6,7 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Meteor;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.player.Player;
@@ -95,7 +95,7 @@ public class EntityMeteor extends EntityFallingBlock {
 	}
 
 	@Override
-	public IBlockState getBlock(){
+	public BlockState getBlock(){
 		return WizardryBlocks.meteor.getDefaultState(); // For some reason the superclass version returns null on the
 														// client
 	}

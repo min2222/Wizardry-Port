@@ -2,8 +2,8 @@ package electroblob.wizardry.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Simple extension of {@link Slot} which only accepts items from an array of item classes defined in the constructor.

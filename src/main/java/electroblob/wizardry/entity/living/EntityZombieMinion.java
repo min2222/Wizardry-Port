@@ -12,13 +12,13 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -123,7 +123,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

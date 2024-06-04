@@ -3,6 +3,7 @@ package electroblob.wizardry.entity.living;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.entity.EntityFlying;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,16 +12,15 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.EntityWitherSkeleton;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -139,11 +139,11 @@ public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements 
 
 	@Override
 	public void onSuccessfulAttack(LivingEntity target){
-		target.addPotionEffect(new PotionEffect(MobEffects.WITHER, 200));
+		target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER, 200));
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

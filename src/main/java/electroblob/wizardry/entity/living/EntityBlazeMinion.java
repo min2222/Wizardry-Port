@@ -9,9 +9,9 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
@@ -112,7 +112,7 @@ public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature 
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's 'stop as soon as you find true' method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

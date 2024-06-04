@@ -3,7 +3,7 @@ package electroblob.wizardry.worldgen;
 import com.google.common.math.Quantiles;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.BlockUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLog;
 import net.minecraft.core.BlockPos;
@@ -11,8 +11,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -87,7 +87,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 		}
 
 		// Get the median floor height (rather than the mean, that way cliffs should have no effect)
-		int medianFloorHeight = MathHelper.floor(Quantiles.median().compute(floorHeights));
+		int medianFloorHeight = Mth.floor(Quantiles.median().compute(floorHeights));
 
 		// Now we know the y level of the base of the structure, we can check for stuff in the way
 		// A structure is deemed to have stuff in the way if the floor level at any of the (x, z) positions it
@@ -164,7 +164,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 
 		// Finally, remove all the items that were dropped as a result of leaf decay
 
-		AxisAlignedBB box = new AxisAlignedBB(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, y, boundingBox.maxZ).grow(border);
+		AABB box = new AABB(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, y, boundingBox.maxZ).grow(border);
 
 		world.getEntitiesWithinAABB(EntityItem.class, box).forEach(Entity::setDead);
 

@@ -6,9 +6,9 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
@@ -62,7 +62,7 @@ public class EntitySmokeBomb extends EntityBomb {
 
 			for(LivingEntity target : targets){
 				if(target != this.getThrower()){
-					target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, 0));
+					target.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 				}
 			}
 

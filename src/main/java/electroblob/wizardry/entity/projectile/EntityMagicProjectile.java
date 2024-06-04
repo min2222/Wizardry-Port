@@ -6,13 +6,13 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.RayTracer;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -71,7 +71,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 		double dy = !this.hasNoGravity() ? target.posY + (double)(target.height / 3.0f) - this.posY
 				: target.posY + (double)(target.height / 2.0f) - this.posY;
 		double dz = target.posZ - caster.posZ;
-		double horizontalDistance = MathHelper.sqrt(dx * dx + dz * dz);
+		double horizontalDistance = Mth.sqrt(dx * dx + dz * dz);
 
 		if(horizontalDistance >= 1.0E-7D){
 			

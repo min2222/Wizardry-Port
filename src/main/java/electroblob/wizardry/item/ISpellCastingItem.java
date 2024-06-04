@@ -4,10 +4,11 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -153,11 +154,11 @@ public interface ISpellCastingItem {
 	 * @param modifiers The modifiers with which the spell is being cast.
 	 * @return True if the spell can be cast, false if not.
 	 */
-	boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
+	boolean canCast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers);
 
 	/**
 	 * Casts the given spell using the given item stack. <b>This method does not perform any checks</b>; these are done
-	 * in {@link ISpellCastingItem#canCast(ItemStack, Spell, Player, EnumHand, int, SpellModifiers)}. This method
+	 * in {@link ISpellCastingItem#canCast(ItemStack, Spell, Player, InteractionHand, int, SpellModifiers)}. This method
 	 * also performs any post-casting logic, such as mana costs and cooldowns. This method does not handle charge-up
 	 * times.
 	 * <p></p>
@@ -172,10 +173,10 @@ public interface ISpellCastingItem {
 	 *                    spells, this will be zero.
 	 * @param modifiers The modifiers with which the spell is being cast.
 	 * @return True if the spell succeeded, false if not. This is only really for the purpose of returning a result from
-	 * {@link net.minecraft.item.Item#onItemRightClick(Level, Player, EnumHand)} and similar methods; mana costs,
+	 * {@link Item#onItemRightClick(Level, Player, InteractionHand)} and similar methods; mana costs,
 	 * cooldowns and whatever else you might want to do post-spellcasting should be done within this method so that
 	 * external sources don't allow spells to be cast for free, for example.
 	 */
-	boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers);
+	boolean cast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers);
 	
 }

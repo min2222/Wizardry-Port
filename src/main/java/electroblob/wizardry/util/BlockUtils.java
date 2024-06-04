@@ -5,8 +5,11 @@ import electroblob.wizardry.Wizardry;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,8 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -63,9 +64,9 @@ public final class BlockUtils {
 	 * @return The resulting block state
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"}) // Don't complain to me about Mojang's code design...
-	public static IBlockState copyState(Block block, IBlockState source){
+	public static BlockState copyState(Block block, BlockState source){
 
-		IBlockState state = block.getDefaultState();
+		BlockState state = block.getDefaultState();
 
 		for(IProperty property : source.getPropertyKeys()){
 			// It ain't pretty but it works
@@ -136,12 +137,12 @@ public final class BlockUtils {
 
 	/**
 	 * Gets the blockstate of the block the specified entity is standing on. Uses
-	 * {@link MathHelper#floor(double)} because casting to int will not return the correct coordinate when x or z
+	 * {@link Mth#floor(double)} because casting to int will not return the correct coordinate when x or z
 	 * is negative.
 	 */
-	public static IBlockState getBlockEntityIsStandingOn(Entity entity){
-		BlockPos pos = new BlockPos(MathHelper.floor(entity.posX), (int)entity.posY - 1,
-				MathHelper.floor(entity.posZ));
+	public static BlockState getBlockEntityIsStandingOn(Entity entity){
+		BlockPos pos = new BlockPos(Mth.floor(entity.posX), (int)entity.posY - 1,
+				Mth.floor(entity.posZ));
 		return entity.world.getBlockState(pos);
 	}
 
@@ -164,11 +165,11 @@ public final class BlockUtils {
 
 		for(int i=-(int)radius; i<=radius; i++){
 
-			float r1 = MathHelper.sqrt(radius*radius - i*i);
+			float r1 = Mth.sqrt(radius*radius - i*i);
 
 			for(int j=-(int)r1; j<=r1; j++){
 
-				float r2 = MathHelper.sqrt(radius*radius - i*i - j*j);
+				float r2 = Mth.sqrt(radius*radius - i*i - j*j);
 
 				for(int k=-(int)r2; k<=r2; k++){
 					sphere.add(centre.add(i, j, k));
@@ -238,7 +239,7 @@ public final class BlockUtils {
 		if(ForgeEventFactory.onBlockPlace(placer, snapshot, Direction.UP).isCanceled()) return false;
 
 		if(placer instanceof Player && ForgeEventFactory.onPlayerBlockPlace(
-				(Player)placer, snapshot, Direction.UP, EnumHand.MAIN_HAND).isCanceled()){
+				(Player)placer, snapshot, Direction.UP, InteractionHand.MAIN_HAND).isCanceled()){
 			return false;
 		}
 
@@ -301,7 +302,7 @@ public final class BlockUtils {
 		}
 
 		// I think this is irrelevant in forge because it's only for vanilla entities, but bukkit might use it
-		IBlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		if(!state.getBlock().canEntityDestroy(state, world, pos, breaker)) return -1;
 		// Although the forge event only needs an EntityLivingBase, it seems it's not supposed to be for players
 		if(breaker instanceof EntityLiving && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
@@ -387,7 +388,7 @@ public final class BlockUtils {
 	 * @param state The block state to query
 	 * @return True if the given block state is a water source block, false otherwise.
 	 */
-	public static boolean isWaterSource(IBlockState state){
+	public static boolean isWaterSource(BlockState state){
 		return state.getMaterial() == Material.WATER && (state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) && state.getValue(BlockLiquid.LEVEL) == 0;
 	}
 
@@ -396,7 +397,7 @@ public final class BlockUtils {
 	 * @param state The block state to query
 	 * @return True if the given block state is a lava source block, false otherwise.
 	 */
-	public static boolean isLavaSource(IBlockState state){
+	public static boolean isLavaSource(BlockState state){
 		return state.getMaterial() == Material.LAVA && (state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA) && state.getValue(BlockLiquid.LEVEL) == 0;
 	}
 
@@ -410,7 +411,7 @@ public final class BlockUtils {
 	 */
 	public static boolean freeze(Level world, BlockPos pos, boolean freezeLava){
 
-		IBlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 
 		if(isWaterSource(state)){
@@ -619,7 +620,7 @@ public final class BlockUtils {
 
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
-		static SurfaceCriteria basedOn(Predicate<IBlockState> condition){
+		static SurfaceCriteria basedOn(Predicate<BlockState> condition){
 			return (world, pos, side) -> condition.test(world.getBlockState(pos)) && !condition.test(world.getBlockState(pos.offset(side)));
 		}
 

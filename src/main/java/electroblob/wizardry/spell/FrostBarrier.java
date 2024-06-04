@@ -10,12 +10,12 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -46,7 +46,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
 			if(!createBarriers(world, caster.getPositionVector(), caster.getLookVec(), caster, modifiers)) return false;
@@ -58,7 +58,7 @@ public class FrostBarrier extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(caster.onGround){
 			if(!createBarriers(world, caster.getPositionVector(), target.getPositionVector().subtract(caster.getPositionVector()),
@@ -123,7 +123,7 @@ public class FrostBarrier extends Spell {
 		barrier.setCaster(caster);
 		barrier.lifetime = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 		barrier.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-		barrier.setRotation((float)Math.toDegrees(MathHelper.atan2(-direction.x, direction.z)), barrier.rotationPitch);
+		barrier.setRotation((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.rotationPitch);
 		barrier.setSizeMultiplier(scale);
 		barrier.setDelay(1 + 3 * index); // Delay 0 seems to move it down 1 block, no idea why
 

@@ -7,7 +7,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
 
@@ -27,7 +27,7 @@ public class EntityEmber extends EntityMagicProjectile {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(){
+	public AABB getCollisionBoundingBox(){
 		return null;//this.getEntityBoundingBox();
 	}
 

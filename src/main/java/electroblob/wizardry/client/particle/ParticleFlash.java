@@ -2,7 +2,7 @@ package electroblob.wizardry.client.particle;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 /**
@@ -27,7 +27,7 @@ public class ParticleFlash extends ParticleWizardry {
 
 	@Override
     public void drawParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ){
-		float f4 = particleScale * MathHelper.sin(((float)this.particleAge + partialTicks - 1.0F)/particleMaxAge * (float)Math.PI);
+		float f4 = particleScale * Mth.sin(((float)this.particleAge + partialTicks - 1.0F)/particleMaxAge * (float)Math.PI);
         this.setAlphaF(0.6F - ((float)this.particleAge + partialTicks - 1.0F)/particleMaxAge * 0.5F);
         float f5 = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
         float f6 = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);

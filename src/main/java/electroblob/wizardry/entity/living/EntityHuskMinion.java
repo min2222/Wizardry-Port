@@ -1,12 +1,12 @@
 package electroblob.wizardry.entity.living;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class EntityHuskMinion extends EntityZombieMinion {
 
 		if(flag && this.getHeldItemMainhand().isEmpty() && target instanceof LivingEntity){
 			float f = this.world.getDifficultyForLocation(new BlockPos(this)).getAdditionalDifficulty();
-			((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.HUNGER, 140 * (int)f));
+			((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.HUNGER, 140 * (int)f));
 		}
 
 		return flag;

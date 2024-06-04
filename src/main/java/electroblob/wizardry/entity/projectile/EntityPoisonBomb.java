@@ -8,10 +8,10 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
@@ -43,7 +43,7 @@ public class EntityPoisonBomb extends EntityBomb {
 					damage);
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.POISON, entityHit))
-				((LivingEntity)entityHit).addPotionEffect(new PotionEffect(MobEffects.POISON,
+				((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(MobEffects.POISON,
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
@@ -83,7 +83,7 @@ public class EntityPoisonBomb extends EntityBomb {
 					target.attackEntityFrom(
 							MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.POISON),
 							Spells.poison_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
-					target.addPotionEffect(new PotionEffect(MobEffects.POISON,
+					target.addPotionEffect(new MobEffectInstance(MobEffects.POISON,
 							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
 							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}

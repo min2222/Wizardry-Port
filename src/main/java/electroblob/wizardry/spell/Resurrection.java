@@ -12,11 +12,11 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Mth;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,7 +46,7 @@ public class Resurrection extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		WizardData data = WizardData.get(caster);
 
@@ -113,14 +113,14 @@ public class Resurrection extends Spell {
 	}
 
 	public static int getRemainingWaitTime(int timeSinceDeath){
-		return Math.max(0, MathHelper.ceil((Spells.resurrection.getProperty(Resurrection.WAIT_TIME).floatValue() - timeSinceDeath) / 20));
+		return Math.max(0, Mth.ceil((Spells.resurrection.getProperty(Resurrection.WAIT_TIME).floatValue() - timeSinceDeath) / 20));
 	}
 
 	/** Helper method for detecting if a stack can be used to cast the resurrection spell. */
 	public static boolean canStackResurrect(ItemStack stack, Player player){
 		return stack.getItem() instanceof ISpellCastingItem
 				&& Arrays.asList(((ISpellCastingItem)stack.getItem()).getSpells(stack)).contains(Spells.resurrection)
-				&& ((ISpellCastingItem)stack.getItem()).canCast(stack, Spells.resurrection, player, EnumHand.MAIN_HAND, 0, new SpellModifiers());
+				&& ((ISpellCastingItem)stack.getItem()).canCast(stack, Spells.resurrection, player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 	}
 
 	@SubscribeEvent

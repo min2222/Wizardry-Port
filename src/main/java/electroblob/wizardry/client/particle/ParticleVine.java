@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -97,9 +97,9 @@ public class ParticleVine extends ParticleTargeted {
 
 			float colourVariation = 0.3f;
 
-			float r = MathHelper.clamp(particleRed + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
-			float g = MathHelper.clamp(particleGreen + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
-			float b = MathHelper.clamp(particleBlue + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
+			float r = Mth.clamp(particleRed + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
+			float g = Mth.clamp(particleGreen + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
+			float b = Mth.clamp(particleBlue + (random.nextFloat() - 0.5f) * colourVariation, 0, 1);
 
 			buffer.pos(0, 0, l).tex(u1, v1).color(r, g, b, particleAlpha).endVertex();
 			buffer.pos(w, 0, l).tex(u2, v1).color(r, g, b, particleAlpha).endVertex();

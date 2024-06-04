@@ -9,9 +9,9 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -190,8 +190,8 @@ public abstract class ParticleWizardry extends Particle {
 		this.speed = speed * 2 * Math.PI; // Converts rotations per tick into radians per tick for the trig functions
 		this.angle = this.rand.nextFloat() * (float)Math.PI * 2; // Random start angle
 		// Need to set the start position or the circle won't be centred on the correct position
-		this.posX = relativeX - radius * MathHelper.cos(angle);
-		this.posZ = relativeZ + radius * MathHelper.sin(angle);
+		this.posX = relativeX - radius * Mth.cos(angle);
+		this.posZ = relativeZ + radius * Mth.sin(angle);
 		// Set these to the correct values
 		this.relativeMotionX = motionX;
 		this.relativeMotionY = motionY;
@@ -350,11 +350,11 @@ public abstract class ParticleWizardry extends Particle {
 			
 			float degToRadFactor = 0.017453292f; // Conversion from degrees to radians
 			
-	        float rotationX = MathHelper.cos(yaw * degToRadFactor);
-	        float rotationZ = MathHelper.sin(yaw * degToRadFactor);
-	        float rotationY = MathHelper.cos(pitch * degToRadFactor);
-	        float rotationYZ = -rotationZ * MathHelper.sin(pitch * degToRadFactor);
-	        float rotationXY = rotationX * MathHelper.sin(pitch * degToRadFactor);
+	        float rotationX = Mth.cos(yaw * degToRadFactor);
+	        float rotationZ = Mth.sin(yaw * degToRadFactor);
+	        float rotationY = Mth.cos(pitch * degToRadFactor);
+	        float rotationYZ = -rotationZ * Mth.sin(pitch * degToRadFactor);
+	        float rotationXY = rotationX * Mth.sin(pitch * degToRadFactor);
 	        
 			drawParticle(buffer, viewer, partialTicks, rotationX, rotationY, rotationZ, rotationYZ, rotationXY);
 		}
@@ -416,8 +416,8 @@ public abstract class ParticleWizardry extends Particle {
 			if(radius > 0){
 				angle += speed;
 				// If the particle has spin, x/z relative position is used as centre and coords are changed each tick
-				x += radius * -MathHelper.cos(angle);
-				z += radius * MathHelper.sin(angle);
+				x += radius * -Mth.cos(angle);
+				z += radius * Mth.sin(angle);
 			}
 
 			this.setPosition(x, y, z);
@@ -497,21 +497,21 @@ public abstract class ParticleWizardry extends Particle {
 
 		if(this.canCollide){
 
-			List<AxisAlignedBB> list = this.world.getCollisionBoxes(null, this.getBoundingBox().expand(x, y, z));
+			List<AABB> list = this.world.getCollisionBoxes(null, this.getBoundingBox().expand(x, y, z));
 
-			for(AxisAlignedBB axisalignedbb : list){
+			for(AABB axisalignedbb : list){
 				y = axisalignedbb.calculateYOffset(this.getBoundingBox(), y);
 			}
 
 			this.setBoundingBox(this.getBoundingBox().offset(0.0D, y, 0.0D));
 
-			for(AxisAlignedBB axisalignedbb1 : list){
+			for(AABB axisalignedbb1 : list){
 				x = axisalignedbb1.calculateXOffset(this.getBoundingBox(), x);
 			}
 
 			this.setBoundingBox(this.getBoundingBox().offset(x, 0.0D, 0.0D));
 
-			for(AxisAlignedBB axisalignedbb2 : list){
+			for(AABB axisalignedbb2 : list){
 				z = axisalignedbb2.calculateZOffset(this.getBoundingBox(), z);
 			}
 

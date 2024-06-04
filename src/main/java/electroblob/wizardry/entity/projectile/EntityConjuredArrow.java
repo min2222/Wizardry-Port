@@ -2,7 +2,7 @@ package electroblob.wizardry.entity.projectile;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class EntityConjuredArrow extends EntityArrow {

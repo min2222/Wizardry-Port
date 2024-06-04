@@ -8,7 +8,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -39,7 +39,7 @@ public class Reversal extends SpellRay {
 		// Naturally, this spell won't work unless it has a living caster and target
 		if(caster != null && target instanceof LivingEntity){
 
-			List<PotionEffect> negativePotions = new ArrayList<>(caster.getActivePotionEffects());
+			List<MobEffectInstance> negativePotions = new ArrayList<>(caster.getActivePotionEffects());
 			negativePotions.removeIf(p -> !p.getPotion().isBadEffect());
 
 			if(!world.isRemote){

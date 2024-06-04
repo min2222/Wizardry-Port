@@ -23,11 +23,11 @@ import net.minecraft.client.renderer.GlStateManager.SourceFactor;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -254,8 +254,8 @@ public class GuiSpellDisplay {
 		if(!flipY && skin.getWidth() > xSpace){ // width/2 - 91 - 29 taken from GuiInGame line 547
 			float scale = xSpace / skin.getWidth();
 			GlStateManager.scale(scale, scale, 1);
-			x = MathHelper.ceil(x/scale);
-			y = MathHelper.ceil(y/scale);
+			x = Mth.ceil(x/scale);
+			y = Mth.ceil(y/scale);
 		}
 
 		Spell spell = ((ISpellCastingItem)wand.getItem()).getCurrentSpell(wand);

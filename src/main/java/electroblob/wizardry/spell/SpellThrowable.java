@@ -9,6 +9,8 @@ import electroblob.wizardry.util.IElementalDamage;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,9 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -79,11 +79,11 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	protected float calculateVelocity(SpellModifiers modifiers, float launchHeight){
 		float g = 0.03f;
 		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
-		return range / MathHelper.sqrt(2 * launchHeight/g);
+		return range / Mth.sqrt(2 * launchHeight/g);
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!world.isRemote){
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
@@ -100,7 +100,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
 
@@ -132,7 +132,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 		double dy = !throwable.hasNoGravity() ? target.posY + (double)(target.height / 3.0f) - throwable.posY
 				: target.posY + (double)(target.height / 2.0f) - throwable.posY;
 		double dz = target.posZ - caster.posZ;
-		double horizontalDistance = MathHelper.sqrt(dx * dx + dz * dz);
+		double horizontalDistance = Mth.sqrt(dx * dx + dz * dz);
 
 		if(horizontalDistance >= 1.0E-7D){
 

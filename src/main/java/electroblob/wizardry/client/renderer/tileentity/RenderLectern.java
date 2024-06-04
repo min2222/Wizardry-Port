@@ -7,7 +7,7 @@ import net.minecraft.client.model.ModelBook;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> {
 
@@ -26,7 +26,7 @@ public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> 
 		float spread = te.bookSpreadPrev + (te.bookSpread - te.bookSpreadPrev) * partialTicks;
 
 		GlStateManager.translate(0, 0.12, 0);
-		if(spread > 0.3) GlStateManager.translate(0, MathHelper.sin(time * 0.1F) * 0.01F, 0);
+		if(spread > 0.3) GlStateManager.translate(0, Mth.sin(time * 0.1F) * 0.01F, 0);
 
 		GlStateManager.rotate(112.5F, 0, 0, 1);
 
@@ -38,11 +38,11 @@ public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> 
 
 		float f3 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * partialTicks + 0.25F;
 		float f4 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * partialTicks + 0.75F;
-		f3 = (f3 - (float)MathHelper.fastFloor(f3)) * 1.6F - 0.3F;
-		f4 = (f4 - (float)MathHelper.fastFloor(f4)) * 1.6F - 0.3F;
+		f3 = (f3 - (float) Mth.fastFloor(f3)) * 1.6F - 0.3F;
+		f4 = (f4 - (float) Mth.fastFloor(f4)) * 1.6F - 0.3F;
 
-		f3 = MathHelper.clamp(f3, 0, 1);
-		f4 = MathHelper.clamp(f4, 0, 1);
+		f3 = Mth.clamp(f3, 0, 1);
+		f4 = Mth.clamp(f4, 0, 1);
 
 		GlStateManager.enableCull();
 		this.modelBook.render(null, time, f3, f4, spread, 0.0F, 0.0625F);

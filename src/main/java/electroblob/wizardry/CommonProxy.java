@@ -6,14 +6,14 @@ import electroblob.wizardry.item.ItemSpectralBow;
 import electroblob.wizardry.packet.*;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.Style;
@@ -74,7 +74,7 @@ public class CommonProxy {
 	}
 
 	public void spawnTornadoParticle(Level world, double x, double y, double z, double velX, double velZ, double radius,
-                                     int maxAge, IBlockState block, BlockPos pos){
+                                     int maxAge, BlockState block, BlockPos pos){
 	}
 
 	// SECTION Items

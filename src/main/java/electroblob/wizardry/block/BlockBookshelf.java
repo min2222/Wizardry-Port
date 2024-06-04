@@ -14,7 +14,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
@@ -74,34 +74,34 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face){
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, EnumFacing face){
 		return state.getValue(FACING).getAxis() == face.getAxis() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(Level world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
+	public BlockState getStateForPlacement(Level world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer){
 		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
 
 	// Why on earth are these two not in BlockHorizontal?
 
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rotation){
+	public BlockState withRotation(BlockState state, Rotation rotation){
 		return state.withProperty(FACING, rotation.rotate(state.getValue(FACING)));
 	}
 
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirror){
+	public BlockState withMirror(BlockState state, Mirror mirror){
 		return state.withRotation(mirror.toRotation(state.getValue(FACING)));
 	}
 
 	@Override
-	public void onBlockAdded(Level worldIn, BlockPos pos, IBlockState state){
+	public void onBlockAdded(Level worldIn, BlockPos pos, BlockState state){
 		super.onBlockAdded(worldIn, pos, state);
 	}
 
 	@Override
-	public void breakBlock(Level world, BlockPos pos, IBlockState block){
+	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
 		TileEntity tileentity = world.getTileEntity(pos);
 
@@ -113,19 +113,19 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta){
+	public BlockState getStateFromMeta(int meta){
 		EnumFacing enumfacing = EnumFacing.byIndex(meta);
 		if(enumfacing.getAxis() == EnumFacing.Axis.Y) enumfacing = EnumFacing.NORTH;
 		return this.getDefaultState().withProperty(FACING, enumfacing);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state){
+	public int getMetaFromState(BlockState state){
 		return state.getValue(FACING).getIndex();
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos){
+	public BlockState getExtendedState(BlockState state, IBlockAccess world, BlockPos pos){
 
 		IExtendedBlockState s = (IExtendedBlockState)super.getExtendedState(state, world, pos);
 
@@ -156,7 +156,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, EnumHand hand,
                                     EnumFacing side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
@@ -170,12 +170,12 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride(IBlockState state){
+	public boolean hasComparatorInputOverride(BlockState state){
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState state, Level world, BlockPos pos){
+	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
 
@@ -195,7 +195,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	}
 
 	@Override
-	public boolean eventReceived(IBlockState state, Level world, BlockPos pos, int id, int param){
+	public boolean eventReceived(BlockState state, Level world, BlockPos pos, int id, int param){
 		super.eventReceived(state, world, pos, id, param);
 		TileEntity tileentity = world.getTileEntity(pos);
 		return tileentity != null && tileentity.receiveClientEvent(id, param);
@@ -335,7 +335,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 		private Listener(){}
 
 		@Override
-		public void notifyBlockUpdate(Level world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags){
+		public void notifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState, int flags){
 
 			if(oldState == newState) return; // Probably won't happen but just in case
 

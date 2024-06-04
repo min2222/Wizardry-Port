@@ -13,8 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -73,7 +73,7 @@ public class GuiButtonResurrect extends GuiButton {
 				if(event.getButton() instanceof GuiButtonResurrect && timeSinceDeath >= 0){
 					// Cast resurrection on the client player and notify the server to do the same
 					// ISpellCastingItem#canCast already checked in Resurrection#canStackResurrect
-					((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, Minecraft.getMinecraft().player, EnumHand.MAIN_HAND, 0, new SpellModifiers());
+					((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, Minecraft.getMinecraft().player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.RESURRECT_BUTTON));
 
 				}else if(!Minecraft.getMinecraft().world.getGameRules().getBoolean("keepInventory")){

@@ -4,7 +4,7 @@ import electroblob.wizardry.item.IWorkbenchItem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * The central wand/armour/scroll slot in the arcane workbench GUI.

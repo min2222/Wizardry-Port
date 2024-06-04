@@ -14,7 +14,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
@@ -60,8 +60,8 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + rand.nextFloat());
 
-				double x = posX + radius * MathHelper.sin(angle);
-				double z = posZ + radius * MathHelper.cos(angle);
+				double x = posX + radius * Mth.sin(angle);
+				double z = posZ + radius * Mth.cos(angle);
 
 				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 

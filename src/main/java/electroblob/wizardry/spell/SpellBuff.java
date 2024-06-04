@@ -8,14 +8,14 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
 
 import java.util.Arrays;
@@ -114,7 +114,7 @@ public class SpellBuff extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Only return on the server side or the client probably won't spawn particles
 		if(!this.applyEffects(caster, modifiers) && !world.isRemote) return false;
 		if(world.isRemote) this.spawnParticles(world, caster, modifiers);
@@ -123,7 +123,7 @@ public class SpellBuff extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Wizards can only cast a buff spell if they don't already have its effects.
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
 		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;
@@ -137,7 +137,7 @@ public class SpellBuff extends Spell {
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		// Gets a 1x1x1 bounding box corresponding to the block in front of the dispenser
-		AxisAlignedBB boundingBox = new AxisAlignedBB(new BlockPos(x, y, z));
+		AABB boundingBox = new AABB(new BlockPos(x, y, z));
 		List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, boundingBox);
 		
 		float distance = -1;
@@ -173,7 +173,7 @@ public class SpellBuff extends Spell {
 		int bonusAmplifier = getBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
 		for(Potion potion : potionSet){
-			caster.addPotionEffect(new PotionEffect(potion, potion.isInstant() ? 1 :
+			caster.addPotionEffect(new MobEffectInstance(potion, potion.isInstant() ? 1 :
 					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)getProperty(getStrengthKey(potion)).floatValue() + bonusAmplifier,
 					false, true));

@@ -5,13 +5,13 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class LightningPulse extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.onGround){
 
@@ -53,7 +53,7 @@ public class LightningPulse extends Spell {
 						double dx = target.posX - caster.posX;
 						double dz = target.posZ - caster.posZ;
 						// Normalises the velocity.
-						double vectorLength = MathHelper.sqrt(dx * dx + dz * dz);
+						double vectorLength = Mth.sqrt(dx * dx + dz * dz);
 						dx /= vectorLength;
 						dz /= vectorLength;
 

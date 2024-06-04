@@ -3,18 +3,18 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.tileentity.TileEntityShrineCore;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
@@ -55,12 +55,12 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public int damageDropped(IBlockState state){
+	public int damageDropped(BlockState state){
 		return state.getValue(ELEMENT).ordinal(); // Ignore the NATURAL state here, it's unobtainable
 	}
 
 	@Override
-	public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos){
+	public MapColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
 		return map_colours.get(state.getProperties().get(ELEMENT));
 	}
 
@@ -80,7 +80,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public float getBlockHardness(IBlockState state, Level world, BlockPos pos){
+	public float getBlockHardness(BlockState state, Level world, BlockPos pos){
 		return state.getValue(NATURAL) ? -1 : super.getBlockHardness(state, world, pos);
 	}
 
@@ -90,7 +90,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state){
+	public boolean hasTileEntity(BlockState state){
 		return state.getValue(NATURAL); // Only naturally-generated pedestals have a (shrine core) tile entity
 	}
 
@@ -101,7 +101,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int metadata){
+	public BlockState getStateFromMeta(int metadata){
 		boolean natural = false;
 		if(metadata > ELEMENT.getAllowedValues().size()){
 			natural = true;
@@ -113,7 +113,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state){
+	public int getMetaFromState(BlockState state){
 		return state.getValue(ELEMENT).ordinal() + (state.getValue(NATURAL) ? ELEMENT.getAllowedValues().size() : 0);
 	}
 

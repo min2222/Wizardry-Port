@@ -7,10 +7,10 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.EnumPlantType;
@@ -24,7 +24,7 @@ import java.util.Random;
 @Mod.EventBusSubscriber
 public class BlockCrystalFlower extends BlockBush {
 
-	private static final AxisAlignedBB AABB = new AxisAlignedBB(0.5F - 0.2f, 0.0F, 0.5F - 0.2f, 0.5F + 0.2f,
+	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.5F - 0.2f, 0.0F, 0.5F - 0.2f, 0.5F + 0.2f,
 			0.2f * 3.0F, 0.5F + 0.2f);
 
 	public BlockCrystalFlower(Material par2Material){
@@ -35,12 +35,12 @@ public class BlockCrystalFlower extends BlockBush {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public net.minecraft.world.phys.AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return AABB;
 	}
 
 	@Override
-	public void randomDisplayTick(IBlockState state, Level world, BlockPos pos, Random random){
+	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random random){
 		if(world.isRemote && random.nextBoolean()){
 			ParticleBuilder.create(Type.SPARKLE)
 			.pos(pos.getX() + random.nextDouble(), pos.getY() + random.nextDouble() / 2 + 0.5, pos.getZ() + random.nextDouble()).vel(0, 0.01, 0)

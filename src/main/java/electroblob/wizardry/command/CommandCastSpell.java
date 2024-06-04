@@ -15,7 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
@@ -269,7 +269,7 @@ public class CommandCastSpell extends CommandBase {
 
 				}else{
 
-					if(spell.cast(caster.world, caster, EnumHand.MAIN_HAND, 0, modifiers)){
+					if(spell.cast(caster.world, caster, InteractionHand.MAIN_HAND, 0, modifiers)){
 
 						MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.COMMAND, spell, caster, modifiers));
 

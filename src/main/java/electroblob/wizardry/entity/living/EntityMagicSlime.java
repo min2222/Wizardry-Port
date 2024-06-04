@@ -2,16 +2,16 @@ package electroblob.wizardry.entity.living;
 
 import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
@@ -122,7 +122,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 				this.getRidingEntity().attackEntityFrom(DamageSource.MAGIC, 1);
 				if(this.getRidingEntity() != null){ // Some mobs force-dismount when attacked (normally when dying)
 					((LivingEntity)this.getRidingEntity())
-							.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20, 2));
+							.addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS, 20, 2));
 				}
 				this.playSound(WizardrySounds.ENTITY_MAGIC_SLIME_ATTACK, 1.0f, 1.0f);
 				this.squishAmount = 0.5F;
@@ -151,7 +151,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 	}
 
 	@Override
-	protected boolean processInteract(Player player, EnumHand hand){
+	protected boolean processInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
 		return this.interactDelegate(player, hand) || super.processInteract(player, hand);

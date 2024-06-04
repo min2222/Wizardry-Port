@@ -10,7 +10,7 @@ import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -8,7 +8,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -27,7 +27,7 @@ public class BlindingFlash extends SpellAreaEffect {
 
 		if(EntityUtils.isLiving(target)){
 			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
-			target.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, duration, 0));
+			target.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 		}
 
 		return true;

@@ -4,8 +4,8 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.level.Level;
 
@@ -27,7 +27,7 @@ public class EntityStrayMinion extends EntitySkeletonMinion {
 		EntityArrow entityarrow = super.getArrow(distanceFactor);
 
 		if(entityarrow instanceof EntityTippedArrow){
-			((EntityTippedArrow)entityarrow).addEffect(new PotionEffect(MobEffects.SLOWNESS, 600));
+			((EntityTippedArrow)entityarrow).addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600));
 		}
 
 		return entityarrow;

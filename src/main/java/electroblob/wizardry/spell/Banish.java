@@ -10,10 +10,10 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -65,8 +65,8 @@ public class Banish extends SpellRay {
 
 		float angle = world.rand.nextFloat() * (float)Math.PI * 2;
 
-		int x = MathHelper.floor(entity.posX + MathHelper.sin(angle) * radius);
-		int z = MathHelper.floor(entity.posZ - MathHelper.cos(angle) * radius);
+		int x = Mth.floor(entity.posX + Mth.sin(angle) * radius);
+		int z = Mth.floor(entity.posZ - Mth.cos(angle) * radius);
 		Integer y = BlockUtils.getNearestFloor(world,
 				new BlockPos(x, (int)entity.posY, z), (int)radius);
 

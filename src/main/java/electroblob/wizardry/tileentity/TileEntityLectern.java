@@ -2,13 +2,13 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
 
@@ -50,13 +50,13 @@ public class TileEntityLectern extends TileEntity implements ITickable {
 			this.bookSpread -= 0.1f;
 		}
 
-		this.bookSpread = MathHelper.clamp(this.bookSpread, 0.0f, 1.0f);
+		this.bookSpread = Mth.clamp(this.bookSpread, 0.0f, 1.0f);
 
 		this.ticksExisted++;
 
 		this.pageFlipPrev = this.pageFlip;
 		float f = (this.flipT - this.pageFlip) * 0.4f;
-		f = MathHelper.clamp(f, -0.2f, 0.2f);
+		f = Mth.clamp(f, -0.2f, 0.2f);
 		this.flipA += (f - this.flipA) * 0.9f;
 		this.pageFlip += this.flipA;
 

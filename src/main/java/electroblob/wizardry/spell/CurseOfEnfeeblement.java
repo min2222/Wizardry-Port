@@ -9,9 +9,9 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -28,7 +28,7 @@ public class CurseOfEnfeeblement extends SpellRay {
 
 		if(EntityUtils.isLiving(target)){
 			// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-			((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.curse_of_enfeeblement,
+			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.curse_of_enfeeblement,
 					Integer.MAX_VALUE, getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			// Reduce the target's health to its new max health if necessary
 			if(((LivingEntity)target).getHealth() > ((LivingEntity)target).getMaxHealth()){

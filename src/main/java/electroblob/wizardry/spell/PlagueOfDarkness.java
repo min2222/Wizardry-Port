@@ -7,13 +7,13 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -34,7 +34,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 		if(!MagicDamage.isEntityImmune(DamageType.WITHER, target)){
 			target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
-			target.addPotionEffect(new PotionEffect(MobEffects.WITHER,
+			target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
@@ -62,7 +62,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
 
-			IBlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
+			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,

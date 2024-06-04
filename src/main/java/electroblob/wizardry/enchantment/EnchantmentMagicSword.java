@@ -4,7 +4,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDamage;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 // This one is for imbued swords. The only reason this is separate is that the way vanilla is written allows me to hook
 // into the damage increase for melee weapons, meaning I don't have to use events - always handy!

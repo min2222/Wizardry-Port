@@ -6,11 +6,11 @@ import electroblob.wizardry.spell.Grapple;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -111,9 +111,9 @@ public abstract class ActionAnimation extends Animation {
 				Vec3 direction = target.subtract(player.getPositionEyes(partialTicks));
 				float yaw = player.prevRenderYawOffset + (player.renderYawOffset - player.prevRenderYawOffset) * partialTicks;
 
-				float pitch = (float)MathHelper.atan2(MathHelper.sqrt(direction.x*direction.x + direction.z*direction.z), direction.y);
+				float pitch = (float) Mth.atan2(Mth.sqrt(direction.x*direction.x + direction.z*direction.z), direction.y);
 				float x = pitch - (float)Math.PI * 0.9f;
-				float y = -(float)Math.toRadians(yaw) - (float)MathHelper.atan2(direction.x, direction.z);
+				float y = -(float)Math.toRadians(yaw) - (float) Mth.atan2(direction.x, direction.z);
 				y += (side == EnumHandSide.RIGHT ? -0.25f : 0.25f);
 				if(Math.abs(pitch) < 0.2f) y = arm.rotateAngleY;
 

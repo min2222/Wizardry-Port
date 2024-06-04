@@ -3,7 +3,7 @@ package electroblob.wizardry.inventory;
 import electroblob.wizardry.item.ItemSpellBook;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class SlotBookList extends SlotItemClassList {
 

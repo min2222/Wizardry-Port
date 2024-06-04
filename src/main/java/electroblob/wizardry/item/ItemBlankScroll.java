@@ -10,10 +10,10 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class ItemBlankScroll extends Item implements IWorkbenchItem {
 
@@ -56,7 +56,7 @@ public class ItemBlankScroll extends Item implements IWorkbenchItem {
 				
 				if(crystals.getStack().getCount() * manaPerItem > cost){
 					// Rounds up to the nearest whole crystal
-					crystals.decrStackSize(MathHelper.ceil((float)cost / manaPerItem));
+					crystals.decrStackSize(Mth.ceil((float)cost / manaPerItem));
 					centre.putStack(new ItemStack(WizardryItems.scroll, centre.getStack().getCount(), spell.metadata()));
 					return true;
 				}

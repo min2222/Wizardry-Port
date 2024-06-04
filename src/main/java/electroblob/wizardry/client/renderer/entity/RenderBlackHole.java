@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -72,21 +72,21 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 
 			int sliceAngle = 20 + a;
 
-			double x1 = radius * MathHelper.sin((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180f));
+			double x1 = radius * Mth.sin((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180f));
 			// double y1 = 0.7*MathHelper.cos((blackhole.timer - 40*j)*(Math.PI/180))*j/10;
-			double z1 = radius * MathHelper.cos((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180));
+			double z1 = radius * Mth.cos((entity.ticksExisted + 40 * j) * ((float)Math.PI / 180));
 
-			double x2 = radius * MathHelper.sin((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double x2 = radius * Mth.sin((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 			// double y2 = 0.7*MathHelper.sin((blackhole.timer - 40*j)*(Math.PI/180))*j/10;
-			double z2 = radius * MathHelper.cos((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
+			double z2 = radius * Mth.cos((entity.ticksExisted + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
-			double absoluteX = x1 * MathHelper.cos(31 * b);
-			double absoluteY = z1 * MathHelper.sin(31 * a) + x1 * MathHelper.cos(31 * a) * MathHelper.sin(31 * b);
-			double absoluteZ = z1 * MathHelper.cos(31 * a);
+			double absoluteX = x1 * Mth.cos(31 * b);
+			double absoluteY = z1 * Mth.sin(31 * a) + x1 * Mth.cos(31 * a) * Mth.sin(31 * b);
+			double absoluteZ = z1 * Mth.cos(31 * a);
 
-			double absoluteX2 = x2 * MathHelper.cos(31 * b);
-			double absoluteY2 = z2 * MathHelper.sin(31 * a) + x2 * MathHelper.cos(31 * a) * MathHelper.sin(31 * b);
-			double absoluteZ2 = z2 * MathHelper.cos(31 * a);
+			double absoluteX2 = x2 * Mth.cos(31 * b);
+			double absoluteY2 = z2 * Mth.sin(31 * a) + x2 * Mth.cos(31 * a) * Mth.sin(31 * b);
+			double absoluteZ2 = z2 * Mth.cos(31 * a);
 			/* buffer.begin(0, DefaultVertexFormats.POSITION_TEX);
 			 * 
 			 * tessellator.setColorOpaque(255, 255, 255); GL11.glPointSize(5);

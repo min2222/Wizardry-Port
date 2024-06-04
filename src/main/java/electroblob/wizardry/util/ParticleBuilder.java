@@ -3,10 +3,10 @@ package electroblob.wizardry.util;
 import electroblob.wizardry.Wizardry;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -258,9 +258,9 @@ public final class ParticleBuilder {
 	 */
 	public ParticleBuilder clr(float r, float g, float b){
 		if(!building) throw new IllegalStateException("Not building yet!");
-		this.r = MathHelper.clamp(r, 0, 1);
-		this.g = MathHelper.clamp(g, 0, 1);
-		this.b = MathHelper.clamp(b, 0, 1);
+		this.r = Mth.clamp(r, 0, 1);
+		this.g = Mth.clamp(g, 0, 1);
+		this.b = Mth.clamp(b, 0, 1);
 		return this;
 	}
 
@@ -312,9 +312,9 @@ public final class ParticleBuilder {
 	 */
 	public ParticleBuilder fade(float r, float g, float b){
 		if(!building) throw new IllegalStateException("Not building yet!");
-		this.fr = MathHelper.clamp(r, 0, 1);
-		this.fg = MathHelper.clamp(g, 0, 1);
-		this.fb = MathHelper.clamp(b, 0, 1);
+		this.fr = Mth.clamp(r, 0, 1);
+		this.fg = Mth.clamp(g, 0, 1);
+		this.fb = Mth.clamp(b, 0, 1);
 		return this;
 	}
 

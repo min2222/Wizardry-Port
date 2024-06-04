@@ -9,14 +9,14 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -159,7 +159,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 				if(vec3d != null){
 
-					double speed = MathHelper.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+					double speed = Mth.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
 
 					this.motionX = vec3d.x * speed;
 					this.motionY = vec3d.y * speed;

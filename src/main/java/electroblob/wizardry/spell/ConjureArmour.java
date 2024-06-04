@@ -8,8 +8,8 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.Map;

@@ -8,9 +8,9 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -33,7 +33,7 @@ public class MarkSacrifice extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
-			((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.mark_of_sacrifice,
+			((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.mark_of_sacrifice,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
@@ -60,7 +60,7 @@ public class MarkSacrifice extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		PotionEffect effect = event.getEntityLiving().getActivePotionEffect(WizardryPotions.mark_of_sacrifice);
+		MobEffectInstance effect = event.getEntityLiving().getActivePotionEffect(WizardryPotions.mark_of_sacrifice);
 
 		if(effect != null && event.getSource().isMagicDamage()){
 			event.setAmount(event.getAmount() * (1 + (1 + effect.getAmplifier()) * DAMAGE_INCREASE_PER_LEVEL));

@@ -7,15 +7,15 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -108,7 +108,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 			double d0 = this.posX + (this.interpTargetX - this.posX) / (double)this.newPosRotationIncrements;
 			double d1 = this.posY + (this.interpTargetY - this.posY) / (double)this.newPosRotationIncrements;
 			double d2 = this.posZ + (this.interpTargetZ - this.posZ) / (double)this.newPosRotationIncrements;
-			double d3 = MathHelper.wrapDegrees(this.interpTargetYaw - (double)this.rotationYaw);
+			double d3 = Mth.wrapDegrees(this.interpTargetYaw - (double)this.rotationYaw);
 			this.rotationYaw = (float)((double)this.rotationYaw + d3 / (double)this.newPosRotationIncrements);
 			this.rotationPitch = (float)((double)this.rotationPitch
 					+ (this.interpTargetPitch - (double)this.rotationPitch) / (double)this.newPosRotationIncrements);
@@ -271,7 +271,7 @@ public class EntityIceWraith extends EntityBlazeMinion {
 
 					if(this.attackStep > 1){
 						// Proof, if it were at all needed, of the elegance and versatility of the spell system.
-						Spells.ice_shard.cast(this.blaze.world, this.blaze, EnumHand.MAIN_HAND, 0, entitylivingbase,
+						Spells.ice_shard.cast(this.blaze.world, this.blaze, InteractionHand.MAIN_HAND, 0, entitylivingbase,
 								new SpellModifiers());
 					}
 				}

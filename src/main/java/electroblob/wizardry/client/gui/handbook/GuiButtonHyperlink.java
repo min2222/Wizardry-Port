@@ -8,7 +8,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -204,7 +204,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 
 				int c = GuiWizardHandbook.colours.get("new_section");
 				int d = GuiWizardHandbook.colours.get("hyperlink");
-				float f = (MathHelper.sin((Minecraft.getSystemTime() % PULSATION_PERIOD) / PULSATION_PERIOD * 2 * (float)Math.PI) + 1) / 2f;
+				float f = (Mth.sin((Minecraft.getSystemTime() % PULSATION_PERIOD) / PULSATION_PERIOD * 2 * (float)Math.PI) + 1) / 2f;
 
 				return DrawingUtils.mix(c, d, f);
 			}

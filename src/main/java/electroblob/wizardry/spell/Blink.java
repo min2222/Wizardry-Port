@@ -7,14 +7,14 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -27,7 +27,7 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		boolean teleportMount = caster.isRiding() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
 		boolean hitLiquids = teleportMount && caster.getRidingEntity() instanceof EntityBoat; // Boats teleport to the surface
@@ -75,7 +75,7 @@ public class Blink extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		float angle = (float)(Math.atan2(target.posZ - caster.posZ, target.posX - caster.posX)
@@ -83,8 +83,8 @@ public class Blink extends Spell {
 		double radius = caster.getDistance(target.posX, target.posY, target.posZ)
 				+ world.rand.nextDouble() * 3.0d;
 
-		int x = MathHelper.floor(target.posX + MathHelper.sin(angle) * radius);
-		int z = MathHelper.floor(target.posZ - MathHelper.cos(angle) * radius);
+		int x = Mth.floor(target.posX + Mth.sin(angle) * radius);
+		int z = Mth.floor(target.posZ - Mth.cos(angle) * radius);
 		Integer y = BlockUtils.getNearestFloor(world, new BlockPos(caster), (int)radius);
 
 		// It's worth noting that on the client side, the cast() method only gets called if the server side

@@ -8,11 +8,11 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.AllyDesignationSystem.FriendlyFire;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -1536,7 +1536,7 @@ public final class Settings {
 	 * @param block The block state to search for
 	 * @return True if the given array contains an entry that matches the given block, false if not.
 	 */
-	public static boolean containsMetaBlock(Pair<ResourceLocation, Short>[] array, IBlockState block){
+	public static boolean containsMetaBlock(Pair<ResourceLocation, Short>[] array, BlockState block){
 		return containsMetaThing(array, block.getBlock().getRegistryName(), (short)block.getBlock().getMetaFromState(block));
 	}
 

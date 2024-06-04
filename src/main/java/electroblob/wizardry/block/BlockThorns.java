@@ -12,17 +12,18 @@ import net.minecraft.block.BlockDoublePlant.EnumBlockHalf;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
@@ -50,22 +51,22 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return FULL_BLOCK_AABB;
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta){
+	public BlockState getStateFromMeta(int meta){
 		return this.getDefaultState().withProperty(HALF, meta == 0 ? EnumBlockHalf.LOWER : EnumBlockHalf.UPPER);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state){
+	public int getMetaFromState(BlockState state){
 		return state.getValue(HALF).ordinal();
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos){
+	public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos){
 
 		if(state.getValue(HALF) == EnumBlockHalf.UPPER) pos = pos.down();
 		// Copied from BlockFlowerPot on authority of the Forge docs, which say it needs to be here
@@ -89,12 +90,12 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	@Override
-	public void onBlockPlacedBy(Level world, BlockPos pos, IBlockState state, LivingEntity placer, ItemStack stack){
+	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		world.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
 	}
 
 	@Override
-	public void breakBlock(Level world, BlockPos pos, IBlockState state){
+	public void breakBlock(Level world, BlockPos pos, BlockState state){
 		super.breakBlock(world, pos, state);
 		if(state.getValue(HALF) == EnumBlockHalf.LOWER){
 			if(world.getBlockState(pos.up()).getBlock() == this){
@@ -107,23 +108,23 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 		}
 	}
 
-	public boolean canBlockStay(Level worldIn, BlockPos pos, IBlockState state){
+	public boolean canBlockStay(Level worldIn, BlockPos pos, BlockState state){
 		if(state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER){
 			return worldIn.getBlockState(pos.down()).getBlock() == this;
 		}else{
-			IBlockState iblockstate = worldIn.getBlockState(pos.up());
+			BlockState iblockstate = worldIn.getBlockState(pos.up());
 			return iblockstate.getBlock() == this && this.canSustainBush(worldIn.getBlockState(pos.down()));
 		}
 	}
 
 	@Override
-	public void onEntityCollision(Level world, BlockPos pos, IBlockState state, Entity entity){
+	public void onEntityCollision(Level world, BlockPos pos, BlockState state, Entity entity){
 		if(applyThornDamage(world, pos, state, entity)){
 			entity.setInWeb(); // Needs to be called client-side for players (and besides, all of this is common code)
 		}
 	}
 
-	private static boolean applyThornDamage(Level world, BlockPos pos, IBlockState state, Entity target){
+	private static boolean applyThornDamage(Level world, BlockPos pos, BlockState state, Entity target){
 
 		DamageSource source = DamageSource.CACTUS;
 		float damage = Spells.forest_of_thorns.getProperty(Spell.DAMAGE).floatValue();
@@ -161,14 +162,14 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean hasTileEntity(IBlockState state){
+	public boolean hasTileEntity(BlockState state){
 		return state.getValue(HALF) == EnumBlockHalf.LOWER;
 	}
 
 	@Override public boolean isReplaceable(IBlockAccess world, BlockPos pos){ return false; }
-	@Override protected boolean canSustainBush(IBlockState state){ return state.isNormalCube(); }
-	@Override public Item getItemDropped(IBlockState state, Random rand, int fortune){ return Items.AIR; }
-	@Override public boolean canSilkHarvest(Level world, BlockPos pos, IBlockState state, Player player){ return false; }
+	@Override protected boolean canSustainBush(BlockState state){ return state.isNormalCube(); }
+	@Override public Item getItemDropped(BlockState state, Random rand, int fortune){ return Items.AIR; }
+	@Override public boolean canSilkHarvest(Level world, BlockPos pos, BlockState state, Player player){ return false; }
 
 	@SubscribeEvent
 	public static void onLeftClickBlockEvent(PlayerInteractEvent.LeftClickBlock event){

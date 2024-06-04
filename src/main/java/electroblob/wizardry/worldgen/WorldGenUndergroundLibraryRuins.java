@@ -6,7 +6,7 @@ import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegra
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.util.BlockUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStoneBrick;
 import net.minecraft.block.BlockStoneSlab;

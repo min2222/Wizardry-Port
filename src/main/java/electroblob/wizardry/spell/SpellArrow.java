@@ -10,11 +10,11 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.level.Level;
 
@@ -83,12 +83,12 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			// Arrows have gravity 0.05
 			float g = 0.05f;
 			// Assume horizontal projection
-			return range / MathHelper.sqrt(2 * launchHeight/g);
+			return range / Mth.sqrt(2 * launchHeight/g);
 		}
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
 		if(!world.isRemote){
 			// Creates a projectile from the supplied factory
@@ -108,7 +108,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		
 		if(target != null){
 

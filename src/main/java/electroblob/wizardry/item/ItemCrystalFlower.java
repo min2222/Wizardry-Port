@@ -8,7 +8,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
@@ -19,7 +19,7 @@ public class ItemCrystalFlower extends ItemBlock {
 	}
 
 	@Override
-	public EnumActionResult onItemUseFirst(Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, EnumHand hand){
+	public EnumActionResult onItemUseFirst(Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, InteractionHand hand){
 
 		if(world.getTileEntity(pos) instanceof TileEntityFlowerPot){
 

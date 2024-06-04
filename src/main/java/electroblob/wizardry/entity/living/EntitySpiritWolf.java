@@ -10,9 +10,9 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -97,7 +97,7 @@ public class EntitySpiritWolf extends EntityWolf {
 	}
 
 	@Override
-	public boolean processInteract(Player player, EnumHand hand){
+	public boolean processInteract(Player player, InteractionHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 

@@ -14,11 +14,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -123,7 +123,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -176,7 +176,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean canCast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers){
 		// Even neater!
 		if(castingTick == 0){
 			return !MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Pre(Source.SCROLL, spell, caster, modifiers));
@@ -186,7 +186,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean cast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers){
 
 		Level world = caster.world;
 

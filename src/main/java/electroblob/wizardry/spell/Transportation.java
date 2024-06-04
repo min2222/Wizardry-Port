@@ -18,8 +18,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -53,7 +53,7 @@ public class Transportation extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		WizardData data = WizardData.get(caster);
 		// Fixes the sound not playing in first person.
@@ -157,7 +157,7 @@ public class Transportation extends Spell {
 
 		if(BlockTransportationStone.testForCircle(world, destination)){
 			this.playSound(world, player, 0, -1, modifiers);
-			player.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 150, 0));
+			player.addPotionEffect(new MobEffectInstance(MobEffects.NAUSEA, 150, 0));
 			data.setVariable(COUNTDOWN_KEY, getProperty(TELEPORT_COUNTDOWN).intValue());
 			return true;
 		}else{
@@ -194,7 +194,7 @@ public class Transportation extends Spell {
 					player.startRiding(mount);
 				}
 
-				player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 50, 0));
+				player.addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0));
 				IMessage msg = new PacketTransportation.Message(destination.pos, teleportMount ? null : player);
 				WizardryPacketHandler.net.sendToDimension(msg, player.world.provider.getDimension());
 			}

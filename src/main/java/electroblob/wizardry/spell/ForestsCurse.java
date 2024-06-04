@@ -8,10 +8,10 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -38,9 +38,9 @@ public class ForestsCurse extends SpellAreaEffect {
 			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 			int amplifier = (int)(getProperty(EFFECT_STRENGTH).floatValue() + bonusAmplifier);
 
-			target.addPotionEffect(new PotionEffect(MobEffects.POISON, duration, amplifier));
-			target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, duration, amplifier));
-			target.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, duration, amplifier));
+			target.addPotionEffect(new MobEffectInstance(MobEffects.POISON, duration, amplifier));
+			target.addPotionEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, amplifier));
+			target.addPotionEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, amplifier));
 		}
 
 		return true;

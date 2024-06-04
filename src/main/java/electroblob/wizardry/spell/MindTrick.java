@@ -9,12 +9,12 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -40,13 +40,13 @@ public class MindTrick extends SpellRay {
 
 				if(target instanceof Player){
 
-					((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.NAUSEA,
+					((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.NAUSEA,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 
 				}else if(target instanceof EntityLiving){
 
 					((EntityLiving)target).setAttackTarget(null);
-					((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.mind_trick,
+					((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.mind_trick,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 				}
 				

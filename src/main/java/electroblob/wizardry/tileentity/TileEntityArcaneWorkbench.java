@@ -10,11 +10,11 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.WandHelper;
-import net.minecraft.block.Block;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -22,7 +22,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -249,13 +249,13 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public AxisAlignedBB getRenderBoundingBox(){
-		AxisAlignedBB bb = INFINITE_EXTENT_AABB;
+	public AABB getRenderBoundingBox(){
+		AABB bb = INFINITE_EXTENT_AABB;
 		Block type = getBlockType();
 		if(type == WizardryBlocks.arcane_workbench){
-			bb = new AxisAlignedBB(pos, pos.add(1, 1, 1));
+			bb = new AABB(pos, pos.add(1, 1, 1));
 		}else if(type != null){
-			AxisAlignedBB cbb = this.getWorld().getBlockState(pos).getBoundingBox(world, pos);
+			AABB cbb = this.getWorld().getBlockState(pos).getBoundingBox(world, pos);
 			if(cbb != null){
 				bb = cbb;
 			}

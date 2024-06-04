@@ -2,7 +2,7 @@ package electroblob.wizardry.enchantment;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 // This one is for everything other than imbued swords.
 public class EnchantmentTimed extends Enchantment implements Imbuement {

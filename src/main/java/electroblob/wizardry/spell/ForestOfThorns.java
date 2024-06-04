@@ -14,8 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
@@ -34,14 +34,14 @@ public class ForestOfThorns extends Spell {
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser){ return true; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
@@ -66,7 +66,7 @@ public class ForestOfThorns extends Spell {
 
 				for(int z = -(int)radius; z <= radius; z++){
 
-					double distance = MathHelper.sqrt(x*x + z*z);
+					double distance = Mth.sqrt(x*x + z*z);
 
 					if(distance > radius || distance < radius - 1.5) continue;
 

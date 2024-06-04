@@ -3,7 +3,7 @@ package electroblob.wizardry.util;
 import electroblob.wizardry.entity.ICustomHitbox;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -135,7 +135,7 @@ public final class RayTracer {
 		float borderSize = 1 + aimAssist;
 
 		// The AxisAlignedBB constructor accepts min/max coords in either order.
-		AxisAlignedBB searchVolume = new AxisAlignedBB(origin.x, origin.y, origin.z, endpoint.x, endpoint.y, endpoint.z)
+		AABB searchVolume = new AABB(origin.x, origin.y, origin.z, endpoint.x, endpoint.y, endpoint.z)
 				.grow(borderSize, borderSize, borderSize);
 
 		// Gets all of the entities in the bounding box that could be collided with.
@@ -154,7 +154,7 @@ public final class RayTracer {
 		// Search variables
 		Entity closestHitEntity = null;
 		Vec3 closestHitPosition = endpoint;
-		AxisAlignedBB entityBounds;
+		AABB entityBounds;
 		Vec3 intercept = null;
 
 		// Iterates through all the entities

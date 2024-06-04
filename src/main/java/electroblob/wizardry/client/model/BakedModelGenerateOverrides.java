@@ -2,7 +2,7 @@ package electroblob.wizardry.client.model;
 
 import com.google.common.collect.ImmutableMap;
 import electroblob.wizardry.Wizardry;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -71,7 +71,7 @@ public class BakedModelGenerateOverrides implements IBakedModel {
 	// Delegate everything else
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable Direction side, long rand){
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, long rand){
 		return delegate.getQuads(state, side, rand);
 	}
 
@@ -101,7 +101,7 @@ public class BakedModelGenerateOverrides implements IBakedModel {
 	}
 
 	@Override
-	public boolean isAmbientOcclusion(IBlockState state){
+	public boolean isAmbientOcclusion(BlockState state){
 		return delegate.isAmbientOcclusion(state);
 	}
 

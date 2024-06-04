@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -42,7 +42,7 @@ public class Freeze extends SpellRay {
 				if(!world.isRemote && caster instanceof Player) ((Player)caster).sendStatusMessage(
 						new TextComponentTranslation("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				((LivingEntity)target).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue()));
 			}

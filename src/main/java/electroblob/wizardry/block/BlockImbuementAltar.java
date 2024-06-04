@@ -3,23 +3,23 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 
@@ -29,7 +29,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 
 	public static final PropertyBool ACTIVE = PropertyBool.create("active");
 
-	private static final AxisAlignedBB AABB = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0);
+	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0);
 
 	public BlockImbuementAltar(){
 		super(Material.ROCK);
@@ -46,17 +46,17 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public IBlockState getStateFromMeta(int meta){
+	public BlockState getStateFromMeta(int meta){
 		return this.getDefaultState().withProperty(ACTIVE, meta == 1);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state){
+	public int getMetaFromState(BlockState state){
 		return state.getValue(ACTIVE) ? 1 : 0;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public net.minecraft.world.phys.AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return AABB;
 	}
 
@@ -66,12 +66,12 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos){
+	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
 		return false;
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state){
+	public EnumBlockRenderType getRenderType(BlockState state){
 		return EnumBlockRenderType.MODEL;
 	}
 
@@ -81,27 +81,27 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
+	public boolean isOpaqueCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
+	public boolean isFullCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, Direction face){
 		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos){
+	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos){
 		return state.getValue(ACTIVE) ? super.getLightValue(state, world, pos) : 0;
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
 
 		boolean shouldBeActive = Arrays.stream(Direction.HORIZONTALS)
 				.allMatch(s -> world.getBlockState(pos.offset(s)).getBlock() == WizardryBlocks.receptacle
@@ -130,7 +130,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, IBlockState block, Player player, EnumHand hand,
+	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
 		TileEntity tileEntity = world.getTileEntity(pos);
@@ -165,7 +165,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public void breakBlock(Level world, BlockPos pos, IBlockState block){
+	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
         TileEntity tileentity = world.getTileEntity(pos);
 

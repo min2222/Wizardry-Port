@@ -3,7 +3,7 @@ package electroblob.wizardry.entity.construct;
 import electroblob.wizardry.entity.projectile.EntityIceShard;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 public class EntityHailstorm extends EntityScaledConstruct {
@@ -31,9 +31,9 @@ public class EntityHailstorm extends EntityScaledConstruct {
 			EntityIceShard iceshard = new EntityIceShard(world);
 			iceshard.setPosition(x, y, z);
 
-			iceshard.motionX = MathHelper.cos((float)Math.toRadians(this.rotationYaw + 90));
+			iceshard.motionX = Mth.cos((float)Math.toRadians(this.rotationYaw + 90));
 			iceshard.motionY = -0.6;
-			iceshard.motionZ = MathHelper.sin((float)Math.toRadians(this.rotationYaw + 90));
+			iceshard.motionZ = Mth.sin((float)Math.toRadians(this.rotationYaw + 90));
 
 			iceshard.setCaster(this.getCaster());
 			iceshard.damageMultiplier = this.damageMultiplier;

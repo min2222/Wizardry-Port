@@ -5,14 +5,14 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
 
@@ -20,49 +20,49 @@ import javax.annotation.Nullable;
 
 public class BlockPermafrost extends BlockDryFrostedIce {
 
-	protected static final AxisAlignedBB BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 0, 1);
-	protected static final AxisAlignedBB SELECTION_BOUNDING_BOX = new AxisAlignedBB(0, 0, 0, 1, 0.125, 1);
+	protected static final AABB BOUNDING_BOX = new AABB(0, 0, 0, 1, 0, 1);
+	protected static final AABB SELECTION_BOUNDING_BOX = new AABB(0, 0, 0, 1, 0.125, 1);
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+	public AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
 		return BOUNDING_BOX;
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, Level worldIn, BlockPos pos){
+	public AABB getSelectedBoundingBox(BlockState state, Level worldIn, BlockPos pos){
 		return SELECTION_BOUNDING_BOX;
 	}
 
 	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos){
+	public AABB getCollisionBoundingBox(BlockState blockState, IBlockAccess worldIn, BlockPos pos){
 		return super.getCollisionBoundingBox(blockState, worldIn, pos);
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
+	public boolean isFullCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state){
+	public boolean isNormalCube(BlockState state){
 		return false;
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, Direction face){
+	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, Direction face){
 		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	@Override
-	public void onEntityCollision(Level world, BlockPos pos, IBlockState state, Entity entity){
+	public void onEntityCollision(Level world, BlockPos pos, BlockState state, Entity entity){
 
 		if(EntityUtils.isLiving(entity) && entity.ticksExisted % 30 == 0){
 			// Can't make it player damage unless we make this block a tile entity, but there will be too many for that
 			entity.attackEntityFrom(DamageSource.MAGIC, Spells.permafrost.getProperty(Spell.DAMAGE).floatValue());
 			int duration = Spells.permafrost.getProperty(Spell.EFFECT_DURATION).intValue();
 			int amplifier = Spells.permafrost.getProperty(Spell.EFFECT_STRENGTH).intValue();
-			((LivingEntity)entity).addPotionEffect(new PotionEffect(WizardryPotions.frost, duration, amplifier));
+			((LivingEntity)entity).addPotionEffect(new MobEffectInstance(WizardryPotions.frost, duration, amplifier));
 		}
 
 		// EntityLivingBase's slipperiness code doesn't get the block below it properly so slipperiness only works for

@@ -4,7 +4,7 @@ import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.UUID;

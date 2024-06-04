@@ -2,7 +2,7 @@ package electroblob.wizardry.worldgen;
 
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.util.BlockUtils;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockWoodSlab;
 import net.minecraft.world.level.block.Blocks;

@@ -2,14 +2,14 @@ package electroblob.wizardry.block;
 
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.registry.WizardryTabs;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.core.BlockPos;
@@ -44,12 +44,12 @@ public class BlockRunestone extends Block {
 	}
 	
 	@Override
-	public int damageDropped(IBlockState state){
+	public int damageDropped(BlockState state){
         return state.getValue(ELEMENT).ordinal();
     }
 
 	@Override
-	public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos){
+	public MapColor getMapColor(BlockState state, IBlockAccess world, BlockPos pos){
 		return map_colours.get(state.getProperties().get(ELEMENT));
 	}
 	
@@ -68,14 +68,14 @@ public class BlockRunestone extends Block {
 	}
 
 	@Override
-    public IBlockState getStateFromMeta(int metadata){
+    public BlockState getStateFromMeta(int metadata){
 		Element element = Element.values()[metadata];
 		if(!ELEMENT.getAllowedValues().contains(element)) return this.getDefaultState();
         return this.getDefaultState().withProperty(ELEMENT, element);
     }
 
     @Override
-    public int getMetaFromState(IBlockState state){
+    public int getMetaFromState(BlockState state){
         return state.getValue(ELEMENT).ordinal();
     }
 

@@ -6,16 +6,16 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Flamecatcher;
 import electroblob.wizardry.util.InventoryUtils;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -128,7 +128,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 

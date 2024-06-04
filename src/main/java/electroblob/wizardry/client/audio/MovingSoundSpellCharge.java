@@ -2,7 +2,7 @@ package electroblob.wizardry.client.audio;
 
 import electroblob.wizardry.item.ISpellCastingItem;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 

@@ -19,6 +19,7 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,10 +30,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -211,7 +211,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	public void onArmorTick(Level world, Player player, ItemStack itemStack){
 		if(armorType == EntityEquipmentSlot.HEAD && player.ticksExisted % 20 == 0
 				&& isWearingFullSet(player, element, ArmourClass.BATTLEMAGE) && doAllArmourPiecesHaveMana(player)){
-			player.addPotionEffect(new PotionEffect(WizardryPotions.ward, 219, 0, true, false));
+			player.addPotionEffect(new MobEffectInstance(WizardryPotions.ward, 219, 0, true, false));
 		}
 	}
 

@@ -8,8 +8,8 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -38,7 +38,7 @@ public class EntityIceShard extends EntityMagicArrow {
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-			entityHit.addPotionEffect(new PotionEffect(WizardryPotions.frost,
+			entityHit.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 					Spells.ice_shard.getProperty(Spell.EFFECT_DURATION).intValue(),
 					Spells.ice_shard.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 

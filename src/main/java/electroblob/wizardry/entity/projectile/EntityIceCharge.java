@@ -11,10 +11,10 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
@@ -49,7 +49,7 @@ public class EntityIceCharge extends EntityBomb {
 					damage);
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-				((LivingEntity)entityHit).addPotionEffect(new PotionEffect(WizardryPotions.frost,
+				((LivingEntity)entityHit).addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
 						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
@@ -82,7 +82,7 @@ public class EntityIceCharge extends EntityBomb {
 			for(LivingEntity target : targets){
 				if(target != entityHit && target != this.getThrower()){
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-						target.addPotionEffect(new PotionEffect(WizardryPotions.frost,
+						target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
 								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}

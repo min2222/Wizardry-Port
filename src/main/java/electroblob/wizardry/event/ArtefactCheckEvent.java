@@ -2,13 +2,14 @@ package electroblob.wizardry.event;
 
 import electroblob.wizardry.item.ItemArtefact;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * ArtefactCheckEvent is fired when a check happens for an ItemArtefact using {@link electroblob.wizardry.item.ItemArtefact#isArtefactActive(Player, net.minecraft.item.Item)}
+ * ArtefactCheckEvent is fired when a check happens for an ItemArtefact using {@link electroblob.wizardry.item.ItemArtefact#isArtefactActive(Player, Item)}
  * <i>Fired on both sides.</i><br>
  * <br>
  * This event is {@link Cancelable}. <br>

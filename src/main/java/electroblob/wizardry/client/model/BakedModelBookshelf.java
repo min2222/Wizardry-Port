@@ -1,7 +1,7 @@
 package electroblob.wizardry.client.model;
 
 import electroblob.wizardry.block.BlockBookshelf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -25,7 +25,7 @@ public class BakedModelBookshelf implements IBakedModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable Direction side, long rand){
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, long rand){
 
 		IBakedModel fallback = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel();
 		if(state == null) return fallback.getQuads(null, side, rand);

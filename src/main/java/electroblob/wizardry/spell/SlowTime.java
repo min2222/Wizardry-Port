@@ -6,7 +6,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
@@ -22,7 +22,7 @@ public class SlowTime extends SpellBuff {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster.world.isRemote){
 			Wizardry.proxy.loadShader(caster, SHADER);

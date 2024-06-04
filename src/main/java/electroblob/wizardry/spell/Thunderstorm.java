@@ -6,12 +6,12 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.EnumHand;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -39,12 +39,12 @@ public class Thunderstorm extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		return doCasting(world, caster, modifiers);
 	}
 	
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		return doCasting(world, caster, modifiers);
 	}
 	
@@ -61,8 +61,8 @@ public class Thunderstorm extends Spell {
 						* (1 - CENTRE_RADIUS_FRACTION) * modifiers.get(WizardryItems.blast_upgrade);
 				float angle = world.rand.nextFloat() * (float)Math.PI * 2;
 
-				double x = caster.posX + radius * MathHelper.cos(angle);
-				double z = caster.posZ + radius * MathHelper.sin(angle);
+				double x = caster.posX + radius * Mth.cos(angle);
+				double z = caster.posZ + radius * Mth.sin(angle);
 				Integer y = BlockUtils.getNearestFloor(world, new BlockPos(x, caster.posY, z), (int)maxRadius);
 
 				if(y != null){

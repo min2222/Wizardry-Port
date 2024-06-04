@@ -9,15 +9,15 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.Direction;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -69,7 +69,7 @@ public class RayOfPurification extends SpellRay {
 				EntityUtils.attackEntityWithoutKnockback(target,
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.RADIANT), damage);
 				// Blindness
-				((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.BLINDNESS,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.BLINDNESS,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade))));
 			}
 		}
@@ -93,11 +93,11 @@ public class RayOfPurification extends SpellRay {
 		if(caster != null){
 			ParticleBuilder.create(Type.BEAM).entity(caster).pos(origin.subtract(caster.getPositionVector()))
 					.length(distance).clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f)
-					.scale(MathHelper.sin(caster.ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
+					.scale(Mth.sin(caster.ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}else{
 			ParticleBuilder.create(Type.BEAM).pos(origin).target(origin.add(direction.scale(distance)))
 					.clr(1, 0.6f + 0.3f * world.rand.nextFloat(), 0.2f)
-					.scale(MathHelper.sin(Wizardry.proxy.getThePlayer().ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
+					.scale(Mth.sin(Wizardry.proxy.getThePlayer().ticksExisted * 0.2f) * 0.1f + 1.4f).spawn(world);
 		}
 	}
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
@@ -85,7 +85,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 	
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		RayTraceResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
@@ -124,7 +124,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);

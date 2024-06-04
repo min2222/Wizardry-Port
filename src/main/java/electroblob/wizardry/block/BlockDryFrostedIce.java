@@ -3,9 +3,9 @@ package electroblob.wizardry.block;
 import net.minecraft.block.BlockFrostedIce;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.level.Level;
 
 import java.util.Random;
@@ -21,7 +21,7 @@ public class BlockDryFrostedIce extends BlockFrostedIce {
 	}
 
 	@Override
-	public Material getMaterial(IBlockState state){
+	public Material getMaterial(BlockState state){
 		return Material.ICE; // For goodness sake
 	}
 
@@ -31,11 +31,11 @@ public class BlockDryFrostedIce extends BlockFrostedIce {
 	}
 
 	@Override
-	public void updateTick(Level worldIn, BlockPos pos, IBlockState state, Random rand){
+	public void updateTick(Level worldIn, BlockPos pos, BlockState state, Random rand){
 		if(rand.nextInt(3) == 0){
 			this.slightlyMelt(worldIn, pos, state, rand, true);
 		}else{
-			worldIn.scheduleUpdate(pos, this, MathHelper.getInt(rand, 20, 40));
+			worldIn.scheduleUpdate(pos, this, Mth.getInt(rand, 20, 40));
 		}
 	}
 }

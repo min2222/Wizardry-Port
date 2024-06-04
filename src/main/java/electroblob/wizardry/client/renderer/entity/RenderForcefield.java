@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 public class RenderForcefield extends Render<EntityForcefield> {
@@ -38,7 +38,7 @@ public class RenderForcefield extends Render<EntityForcefield> {
 		float latStep = (float)Math.PI/20;
 		float longStep = (float)Math.PI/20;
 
-		float pulse = MathHelper.sin((entity.ticksExisted + partialTicks)/10f);
+		float pulse = Mth.sin((entity.ticksExisted + partialTicks)/10f);
 
 		float r = 0.35f, g = 0.55f + 0.05f * pulse, b = 1;
 
@@ -99,15 +99,15 @@ public class RenderForcefield extends Render<EntityForcefield> {
 
 				float latitude = goingUp ? -theta : theta;
 
-				float hRadius = radius * MathHelper.cos(latitude);
-				float vy = radius * MathHelper.sin(latitude);
-				float vx = hRadius * MathHelper.sin(longitude);
-				float vz = hRadius * MathHelper.cos(longitude);
+				float hRadius = radius * Mth.cos(latitude);
+				float vy = radius * Mth.sin(latitude);
+				float vx = hRadius * Mth.sin(longitude);
+				float vz = hRadius * Mth.cos(longitude);
 
 				buffer.pos(vx, vy, vz).color(r, g, b, a).endVertex();
 
-				vx = hRadius * MathHelper.sin(longitude + longStep);
-				vz = hRadius * MathHelper.cos(longitude + longStep);
+				vx = hRadius * Mth.sin(longitude + longStep);
+				vz = hRadius * Mth.cos(longitude + longStep);
 
 				buffer.pos(vx, vy, vz).color(r, g, b, a).endVertex();
 			}

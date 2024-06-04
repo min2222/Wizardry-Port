@@ -19,8 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -214,7 +214,7 @@ public class PlayerAnimator {
 		if(player.isHandActive() && player.getActiveHand() == event.getHand() && SpellActions.getSpellActions().contains(action)){
 			// Minecraft's item renderer helpfully doesn't have a default case for the usage action so it doesn't do any
 			// transformations at all (which is VERY ANNOYING!) - the following lines are from ItemRenderer#transformSideFirstPerson
-			int i = (player.getPrimaryHand() == EnumHandSide.RIGHT) == (event.getHand() == EnumHand.MAIN_HAND) ? 1 : -1;
+			int i = (player.getPrimaryHand() == EnumHandSide.RIGHT) == (event.getHand() == InteractionHand.MAIN_HAND) ? 1 : -1;
 			GlStateManager.translate((float)i * 0.56F, -0.52F + event.getEquipProgress() * -0.6F, -0.72F);
 		}
 

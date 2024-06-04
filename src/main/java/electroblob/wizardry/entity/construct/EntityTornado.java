@@ -15,7 +15,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -138,7 +138,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 					pos1 = new BlockPos(pos1.getX(), blockY, pos1.getZ());
 
-					IBlockState block = this.world.getBlockState(pos1);
+					BlockState block = this.world.getBlockState(pos1);
 
 					// If the block it found was air or something it can't pick up, it makes a best guess based on the biome
 					if(!canTornadoPickUpBitsOf(block)){
@@ -173,7 +173,7 @@ public class EntityTornado extends EntityScaledConstruct {
 		}
 	}
 
-	private static boolean canTornadoPickUpBitsOf(IBlockState block){
+	private static boolean canTornadoPickUpBitsOf(BlockState block){
 		Material material = block.getMaterial();
 		return material == Material.CRAFTED_SNOW || material == Material.GROUND || material == Material.GRASS
 				|| material == Material.LAVA || material == Material.SAND || material == Material.SNOW

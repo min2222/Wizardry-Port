@@ -15,10 +15,10 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -97,7 +97,7 @@ public class ItemFrostAxe extends ItemAxe implements IConjuredItem {
 	@Override
 	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-			target.addPotionEffect(new PotionEffect(WizardryPotions.frost, 160, 1));
+			target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 160, 1));
 		return false;
 	}
 

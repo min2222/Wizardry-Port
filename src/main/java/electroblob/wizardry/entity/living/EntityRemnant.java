@@ -8,6 +8,8 @@ import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -19,9 +21,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
@@ -274,7 +274,7 @@ public class EntityRemnant extends EntityMob {
 				double d2 = this.posZ - EntityRemnant.this.posZ;
 				double d3 = d0 * d0 + d1 * d1 + d2 * d2;
 
-				d3 = MathHelper.sqrt(d3);
+				d3 = Mth.sqrt(d3);
 
 				if(d3 < EntityRemnant.this.getEntityBoundingBox().getAverageEdgeLength()){
 
@@ -290,11 +290,11 @@ public class EntityRemnant extends EntityMob {
 					EntityRemnant.this.motionZ += d2 / d3 * 0.05D * this.speed;
 
 					if(EntityRemnant.this.getAttackTarget() == null){
-						EntityRemnant.this.rotationYaw = -((float)MathHelper.atan2(EntityRemnant.this.motionX, EntityRemnant.this.motionZ)) * (180F / (float)Math.PI);
+						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(EntityRemnant.this.motionX, EntityRemnant.this.motionZ)) * (180F / (float)Math.PI);
 					}else{
 						double d4 = EntityRemnant.this.getAttackTarget().posX - EntityRemnant.this.posX;
 						double d5 = EntityRemnant.this.getAttackTarget().posZ - EntityRemnant.this.posZ;
-						EntityRemnant.this.rotationYaw = -((float)MathHelper.atan2(d4, d5)) * (180F / (float)Math.PI);
+						EntityRemnant.this.rotationYaw = -((float) Mth.atan2(d4, d5)) * (180F / (float)Math.PI);
 					}
 
 					EntityRemnant.this.renderYawOffset = EntityRemnant.this.rotationYaw;

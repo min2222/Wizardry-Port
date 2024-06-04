@@ -10,8 +10,8 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 				// All entities are slowed, even the caster (except those immune to frost effects)
 				if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-					target.addPotionEffect(new PotionEffect(WizardryPotions.frost, 20, 0));
+					target.addPotionEffect(new MobEffectInstance(WizardryPotions.frost, 20, 0));
 			}
 			
 		}else{

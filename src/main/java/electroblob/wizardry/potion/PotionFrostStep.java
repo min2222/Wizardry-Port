@@ -9,14 +9,14 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.enchantment.EnchantmentFrostWalker;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -96,15 +96,15 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 				if(pos2.distanceSqToCenter(living.posX, living.posY, living.posZ) <= (double)(f * f)){
 
 					pos1.setPos(pos2.getX(), pos2.getY() + 1, pos2.getZ());
-					IBlockState state1 = world.getBlockState(pos1);
+					BlockState state1 = world.getBlockState(pos1);
 
 					if(state1.getMaterial() == Material.AIR){
 
-						IBlockState state2 = world.getBlockState(pos2);
+						BlockState state2 = world.getBlockState(pos2);
 
 						if(BlockUtils.isLavaSource(state2) && world.mayPlace(WizardryBlocks.obsidian_crust, pos2, false, Direction.DOWN, null)){
 							world.setBlockState(pos2, WizardryBlocks.obsidian_crust.getDefaultState());
-							world.scheduleUpdate(pos2.toImmutable(), WizardryBlocks.obsidian_crust, MathHelper.getInt(living.getRNG(), 60, 120));
+							world.scheduleUpdate(pos2.toImmutable(), WizardryBlocks.obsidian_crust, Mth.getInt(living.getRNG(), 60, 120));
 						}
 					}
 				}

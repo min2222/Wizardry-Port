@@ -16,7 +16,7 @@ import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemSpectralArrow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;

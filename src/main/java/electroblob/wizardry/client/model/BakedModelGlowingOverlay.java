@@ -1,6 +1,6 @@
 package electroblob.wizardry.client.model;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -90,7 +90,7 @@ public class BakedModelGlowingOverlay implements IBakedModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable Direction side, long rand){
+	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, long rand){
 		if(state == null) return delegate.getQuads(state, side, rand);
 		return transformQuads(delegate.getQuads(state, side, rand), suffix);
 		//return CACHE.getUnchecked(new CacheKey(delegate, suffix, state instanceof IExtendedBlockState ? ((IExtendedBlockState) state).getClean() : state, side));
@@ -180,7 +180,7 @@ public class BakedModelGlowingOverlay implements IBakedModel {
 	}
 
 	@Override
-	public boolean isAmbientOcclusion(IBlockState state){
+	public boolean isAmbientOcclusion(BlockState state){
 		return delegate.isAmbientOcclusion(state);
 	}
 

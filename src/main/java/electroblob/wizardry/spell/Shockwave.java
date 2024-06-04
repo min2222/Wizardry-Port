@@ -10,8 +10,8 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -100,7 +100,7 @@ public class Shockwave extends SpellAreaEffect {
 			particleX = origin.x - 1.0d + 2 * world.rand.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.rand.nextDouble();
 
-			IBlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
+			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,

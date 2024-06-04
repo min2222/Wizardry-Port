@@ -12,7 +12,7 @@ import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -71,7 +71,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 
 	@Override
-	public EnumActionResult applyPlayerInteraction(Player player, Vec3 vec, EnumHand hand){
+	public EnumActionResult applyPlayerInteraction(Player player, Vec3 vec, InteractionHand hand){
 
 		// Permanent constructs can now be dispelled by sneak-right-clicking
 		if(lifetime == -1 && getCaster() == player && player.isSneaking() && player.getHeldItem(hand).getItem() instanceof ISpellCastingItem){

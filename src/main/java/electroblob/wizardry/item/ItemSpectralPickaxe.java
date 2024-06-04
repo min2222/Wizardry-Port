@@ -2,13 +2,13 @@ package electroblob.wizardry.item;
 
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -68,13 +68,13 @@ public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 	}
 
 	@Override
-	public float getDestroySpeed(ItemStack stack, IBlockState state){
+	public float getDestroySpeed(ItemStack stack, BlockState state){
 		float speed = super.getDestroySpeed(stack, state);
 		return speed > 1 ? speed * IConjuredItem.getDamageMultiplier(stack) : speed;
 	}
 
 	@Override
-	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable Player player, @Nullable IBlockState blockState){
+	public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable Player player, @Nullable BlockState blockState){
 		// Reuses the standard bonus amplifier calculation from SpellBuff to increase the mining level at advanced and master tier
 		return super.getHarvestLevel(stack, toolClass, player, blockState) + (int)((IConjuredItem.getDamageMultiplier(stack) - 1) / 0.4);
 	}

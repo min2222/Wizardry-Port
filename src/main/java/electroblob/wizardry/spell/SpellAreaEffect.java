@@ -6,13 +6,13 @@ import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.Direction;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -103,7 +103,7 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		boolean result = findAndAffectEntities(world, caster.getPositionVector(),
 				caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -111,7 +111,7 @@ public abstract class SpellAreaEffect extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		boolean result = findAndAffectEntities(world, caster.getPositionVector(), caster, ticksInUse, modifiers);
 		if(result) this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return result;
@@ -183,7 +183,7 @@ public abstract class SpellAreaEffect extends Spell {
 			double r = (1 + world.rand.nextDouble() * (radius - 1));
 			float angle = world.rand.nextFloat() * (float)Math.PI * 2f;
 			
-			spawnParticle(world, origin.x + r * MathHelper.cos(angle), origin.y, origin.z + r * MathHelper.sin(angle));
+			spawnParticle(world, origin.x + r * Mth.cos(angle), origin.y, origin.z + r * Mth.sin(angle));
 		}
 	}
 	

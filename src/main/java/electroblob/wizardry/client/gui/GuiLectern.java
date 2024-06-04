@@ -24,13 +24,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.play.client.CPacketCloseWindow;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -123,7 +123,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 	}
 
 	private int getPageCount(){
-		return MathHelper.ceil((float)matchingSpells.size() / SPELL_BUTTON_COUNT);
+		return Mth.ceil((float)matchingSpells.size() / SPELL_BUTTON_COUNT);
 	}
 
 	private Spell getSpellForButton(GuiButtonSpell button){

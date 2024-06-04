@@ -17,7 +17,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.Level;
 
@@ -85,7 +85,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	@Override public boolean canBeCastBy(TileEntityDispenser dispenser) { return true; }
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(!this.spawnMinions(world, caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -93,7 +93,7 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 	}
 
 	@Override
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
 		if(!this.spawnMinions(world, caster, modifiers)) return false;

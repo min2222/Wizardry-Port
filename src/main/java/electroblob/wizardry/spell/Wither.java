@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -39,7 +39,7 @@ public class Wither extends SpellRay {
 			}else{
 				target.attackEntityFrom(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
-				((LivingEntity)target).addPotionEffect(new PotionEffect(MobEffects.WITHER,
+				((LivingEntity)target).addPotionEffect(new MobEffectInstance(MobEffects.WITHER,
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			}

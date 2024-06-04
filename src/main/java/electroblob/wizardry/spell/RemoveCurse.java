@@ -4,8 +4,8 @@ import electroblob.wizardry.potion.Curse;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class RemoveCurse extends SpellBuff {
 
 			boolean flag = false;
 
-			for(PotionEffect effect : new ArrayList<>(caster.getActivePotionEffects())){ // Get outta here, CMEs
+			for(MobEffectInstance effect : new ArrayList<>(caster.getActivePotionEffects())){ // Get outta here, CMEs
 				// The PotionEffect version (as opposed to Potion) does not call cleanup callbacks
 				if(effect.getPotion() instanceof Curse){
 					caster.removePotionEffect(effect.getPotion());

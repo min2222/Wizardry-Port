@@ -3,7 +3,7 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.event.SpellBindEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 

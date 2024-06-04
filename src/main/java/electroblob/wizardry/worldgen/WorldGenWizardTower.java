@@ -9,7 +9,7 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStainedHardenedClay;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -37,7 +37,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 	private static final String WIZARD_DATA_BLOCK_TAG = "wizard";
 	private static final String EVIL_WIZARD_DATA_BLOCK_TAG = "evil_wizard";
 
-	private final Map<BiomeDictionary.Type, IBlockState> specialWallBlocks;
+	private final Map<BiomeDictionary.Type, BlockState> specialWallBlocks;
 
 	public WorldGenWizardTower(){
 		// These are initialised here because it's a convenient point after the blocks are registered
@@ -78,7 +78,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 		final EnumDyeColor colour = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
 		final Biome biome = world.getBiome(origin);
 
-		final IBlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
+		final BlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
 				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.getDefaultState());
 
 		final float mossiness = getBiomeMossiness(biome);

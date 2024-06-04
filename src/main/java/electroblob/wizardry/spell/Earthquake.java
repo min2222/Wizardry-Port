@@ -7,8 +7,8 @@
  import electroblob.wizardry.util.BlockUtils;
  import electroblob.wizardry.util.EntityUtils;
  import electroblob.wizardry.util.SpellModifiers;
- import net.minecraft.block.Block;
- import net.minecraft.block.state.IBlockState;
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.core.Direction;
  import net.minecraft.core.particles.ParticleTypes;
  import net.minecraft.world.entity.LivingEntity;
@@ -52,7 +52,7 @@
 				particleX = x - 1.0d + 2 * world.rand.nextDouble();
 				particleZ = z - 1.0d + 2 * world.rand.nextDouble();
 
-				IBlockState block = BlockUtils.getBlockEntityIsStandingOn(caster);
+				BlockState block = BlockUtils.getBlockEntityIsStandingOn(caster);
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, y,
 						particleZ, particleX - x, 0, particleZ - z, Block.getStateId(block));
 			}

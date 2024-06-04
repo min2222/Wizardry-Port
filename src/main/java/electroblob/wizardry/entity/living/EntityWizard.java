@@ -18,21 +18,21 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.village.MerchantRecipe;
@@ -359,7 +359,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 					this.updateRecipes = false;
 				}
 
-				this.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 200, 0));
+				this.addPotionEffect(new MobEffectInstance(MobEffects.REGENERATION, 200, 0));
 			}
 		}
 
@@ -367,7 +367,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	}
 
 	@Override
-	public boolean processInteract(Player player, EnumHand hand){
+	public boolean processInteract(Player player, InteractionHand hand){
 
 		ItemStack stack = player.getHeldItem(hand);
 
@@ -617,7 +617,7 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 		// ((tier.ordinal() + 1) * 16 + rand.nextInt(6)) gives a 'value' for the item being bought
 		// This is then divided by the value of the currency item to give a price
 		// The absolute maximum stack size that can result from this calculation (with value = 1) is 64.
-		return new ItemStack(item, MathHelper.clamp((8 + tier.ordinal() * 16 + rand.nextInt(9)) / value, 1, 64), meta);
+		return new ItemStack(item, Mth.clamp((8 + tier.ordinal() * 16 + rand.nextInt(9)) / value, 1, 64), meta);
 	}
 
 	private ItemStack getRandomItemOfTier(Tier tier){

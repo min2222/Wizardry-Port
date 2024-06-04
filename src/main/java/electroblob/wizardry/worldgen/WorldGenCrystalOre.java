@@ -3,7 +3,7 @@ package electroblob.wizardry.worldgen;
 import com.google.common.primitives.Ints;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryBlocks;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -39,7 +39,7 @@ public class WorldGenCrystalOre implements IWorldGenerator {
 	 * @param minY An int for the minimum Y-Coordinate height at which this block may spawn
 	 * @param maxY An int for the maximum Y-Coordinate height at which this block may spawn
 	 **/
-	public void addOreSpawn(IBlockState state, Level world, Random random, int blockXPos, int blockZPos, int maxX,
+	public void addOreSpawn(BlockState state, Level world, Random random, int blockXPos, int blockZPos, int maxX,
                             int maxZ, int maxVeinSize, int chancesToSpawn, int minY, int maxY){
 		// int maxPossY = minY + (maxY - 1);
 		assert maxY > minY : "The maximum Y must be greater than the Minimum Y";

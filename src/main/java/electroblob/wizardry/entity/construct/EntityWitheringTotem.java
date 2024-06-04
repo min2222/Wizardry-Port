@@ -12,14 +12,14 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.init.MobEffects;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.core.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -80,8 +80,8 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 				float angle = ((float)Math.PI * 2)/PERIMETER_PARTICLE_DENSITY * (i + rand.nextFloat());
 
-				double x = posX + radius * MathHelper.sin(angle);
-				double z = posZ + radius * MathHelper.cos(angle);
+				double x = posX + radius * Mth.sin(angle);
+				double z = posZ + radius * Mth.cos(angle);
 
 				Integer y = BlockUtils.getNearestSurface(world, new BlockPos(x, posY, z), Direction.UP, 5, true, SurfaceCriteria.COLLIDABLE);
 
@@ -147,7 +147,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 			if(EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 					getCaster(), DamageType.MAGIC), damage)){
-				target.addPotionEffect(new PotionEffect(MobEffects.WITHER, Spells.withering_totem.getProperty(Spell.EFFECT_DURATION).intValue(),
+				target.addPotionEffect(new MobEffectInstance(MobEffects.WITHER, Spells.withering_totem.getProperty(Spell.EFFECT_DURATION).intValue(),
 						Spells.withering_totem.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 			}
 		}

@@ -7,9 +7,9 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,9 +33,9 @@ public class SixthSense extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		caster.addPotionEffect(new PotionEffect(WizardryPotions.sixth_sense,
+		caster.addPotionEffect(new MobEffectInstance(WizardryPotions.sixth_sense,
 				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 				(int)((modifiers.get(WizardryItems.range_upgrade) - 1f) / Constants.RANGE_INCREASE_PER_LEVEL)));
 

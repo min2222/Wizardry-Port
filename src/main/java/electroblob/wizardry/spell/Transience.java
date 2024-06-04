@@ -5,12 +5,12 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -36,7 +36,7 @@ public class Transience extends Spell {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		if(world.isRemote){
 			Wizardry.proxy.loadShader(caster, SHADER);
@@ -49,8 +49,8 @@ public class Transience extends Spell {
 
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
-				caster.addPotionEffect(new PotionEffect(WizardryPotions.transience, duration, 0));
-				caster.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, duration, 0, false, false));
+				caster.addPotionEffect(new MobEffectInstance(WizardryPotions.transience, duration, 0));
+				caster.addPotionEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, 0, false, false));
 
 				this.playSound(world, caster, ticksInUse, duration, modifiers);
 			}

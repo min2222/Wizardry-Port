@@ -21,9 +21,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.ITextComponent;
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
  * that the constructor for an individual spell has no parameters, but you may prefer to pass in the parameters when the
  * spell is registered, so all the mana costs etc. are in one place like a sort of sandbox.
  * <p></p>
- * - Implement the {@link Spell#cast(Level, Player, EnumHand, int, SpellModifiers)} method, in which you should
+ * - Implement the {@link Spell#cast(Level, Player, InteractionHand, int, SpellModifiers)} method, in which you should
  * execute the code that makes the spell work, and return true or false depending on whether the spell succeeded and
  * therefore whether mana should be used up.
  * <p></p>
@@ -390,7 +390,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded and mana should be used up, false if not.
 	 */
-	public abstract boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers);
+	public abstract boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers);
 
 	/**
 	 * Casts the spell, but with an EntityLiving as the caster. Each subclass can optionally override this method and
@@ -423,7 +423,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 *        {@code new SpellModifiers()}.
 	 * @return True if the spell succeeded, false if not. Returns false by default.
 	 */
-	public boolean cast(Level world, EntityLiving caster, EnumHand hand, int ticksInUse, LivingEntity target,
+	public boolean cast(Level world, EntityLiving caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 		return false;
 	}
@@ -493,7 +493,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/**
 	 * Whether the given entity can cast this spell. If you have overridden
-	 * {@link Spell#cast(Level, EntityLiving, EnumHand, int, LivingEntity, SpellModifiers)}, you should override
+	 * {@link Spell#cast(Level, EntityLiving, InteractionHand, int, LivingEntity, SpellModifiers)}, you should override
 	 * this to return true (either always or under certain circumstances), or alternatively assign an NPC selector via
 	 * {@link Spell#npcSelector(BiPredicate)} (recommended for general spell classes).
 	 * @param npc The entity to query.

@@ -23,15 +23,15 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
@@ -274,7 +274,7 @@ public final class WizardryEventHandler {
 				if(event.getEntityLiving().isPotionActive(WizardryPotions.ice_shroud)
 						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving())
 						&& !(attacker instanceof FakePlayer)) // Fake players cause problems
-					attacker.addPotionEffect(new PotionEffect(WizardryPotions.frost,
+					attacker.addPotionEffect(new MobEffectInstance(WizardryPotions.frost,
 							Spells.ice_shroud.getProperty(Spell.EFFECT_DURATION).intValue(),
 							Spells.ice_shroud.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
@@ -303,7 +303,7 @@ public final class WizardryEventHandler {
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
 		// Ward
-		PotionEffect effect = event.getEntityLiving().getActivePotionEffect(WizardryPotions.ward);
+		MobEffectInstance effect = event.getEntityLiving().getActivePotionEffect(WizardryPotions.ward);
 
 		if(effect != null && event.getSource().isMagicDamage()){
 			event.setAmount(event.getAmount() * Math.max(0, 1 - 0.2f * (1 + effect.getAmplifier()))); // Resistance is 20%
@@ -327,7 +327,7 @@ public final class WizardryEventHandler {
 						attacker.getHeldItemMainhand());
 				// Frost lasts for longer because it doesn't do any actual damage
 				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-					event.getEntityLiving().addPotionEffect(new PotionEffect(WizardryPotions.frost, level * 200, 0));
+					event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
 			}
 		}
 
@@ -339,7 +339,7 @@ public final class WizardryEventHandler {
 					.getInteger(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntityLiving()))
-				event.getEntityLiving().addPotionEffect(new PotionEffect(WizardryPotions.frost, level * 150, 0));
+				event.getEntityLiving().addPotionEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
 		}
 
 		// Damage scaling
@@ -371,7 +371,7 @@ public final class WizardryEventHandler {
 					if(!MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(SpellCastEvent.Source.NPC, spell, event.getEntityLiving(),
 							modifiers, count))){
 
-						spell.cast(event.getEntity().world, (EntityLiving)event.getEntity(), EnumHand.MAIN_HAND, count,
+						spell.cast(event.getEntity().world, (EntityLiving)event.getEntity(), InteractionHand.MAIN_HAND, count,
 								// TODO: This implementation of modifiers relies on them being accessible client-side.
 								// 		 Right now that doesn't matter because NPCs don't use modifiers, but they might in future
 								((EntityLiving)event.getEntity()).getAttackTarget(), modifiers);

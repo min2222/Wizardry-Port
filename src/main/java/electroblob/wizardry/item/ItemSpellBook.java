@@ -11,11 +11,11 @@ import electroblob.wizardry.spell.Spell;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -59,7 +59,7 @@ public class ItemSpellBook extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> onItemRightClick(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getHeldItem(hand);
 		player.openGui(Wizardry.instance, WizardryGuiHandler.SPELL_BOOK, world, 0, 0, 0);
 		return InteractionResultHolder.newResult(EnumActionResult.SUCCESS, stack);

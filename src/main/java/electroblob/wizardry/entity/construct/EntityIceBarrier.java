@@ -7,9 +7,9 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 
@@ -32,11 +32,11 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	@Override
 	public void setRotation(float yaw, float pitch){
 		super.setRotation(yaw, pitch);
-		float a = MathHelper.cos((float)Math.toRadians(rotationYaw));
-		float b = MathHelper.sin((float)Math.toRadians(rotationYaw));
+		float a = Mth.cos((float)Math.toRadians(rotationYaw));
+		float b = Mth.sin((float)Math.toRadians(rotationYaw));
 		double x = width/2 * a + THICKNESS/2 * b;
 		double z = width/2 * b + THICKNESS/2 * a;
-		setEntityBoundingBox(new AxisAlignedBB(this.posX - x, this.posY, this.posZ - z, this.posX + x, this.posY + height, this.posZ + z));
+		setEntityBoundingBox(new AABB(this.posX - x, this.posY, this.posZ - z, this.posX + x, this.posY + height, this.posZ + z));
 	}
 
 	@Override
