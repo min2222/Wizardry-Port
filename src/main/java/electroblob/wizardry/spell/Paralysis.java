@@ -76,7 +76,7 @@ public class Paralysis extends SpellRay {
 		
 		if(world.isClientSide){
 			
-			if(world.getBlockState(pos).getMaterial().isSolid()){
+			if(level.getBlockState(pos).getMaterial().isSolid()){
 				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).clr(0.4f, 0.8f, 1).spawn(world);
 			}

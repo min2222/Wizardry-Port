@@ -963,7 +963,7 @@ public final class WizardryItems {
 //				World world = source.getWorld();
 //				EnumFacing direction = source.getBlockState().getValue(BlockDispenser.FACING);
 //				BlockPos pos = source.getBlockPos().offset(direction);
-//				TileEntity tileEntity = world.getTileEntity(pos);
+//				TileEntity tileEntity = level.getTileEntity(pos);
 //
 //				if(tileEntity instanceof TileEntityReceptacle && ((TileEntityReceptacle)tileEntity).getElement() == null){
 //					((TileEntityReceptacle)tileEntity).setElement(Element.values()[stack.getMetadata()]);

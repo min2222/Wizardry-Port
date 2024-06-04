@@ -395,7 +395,7 @@ public final class WizardryEventHandler {
 			if(event.getEntity().getClass().getCanonicalName().contains("lycanitesmobs"))
 			{
 				ServerLevel world = (ServerLevel)event.getEntity().getEntityWorld();
-				LootTable table =  world.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
+				LootTable table =  level.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
 
 				LootContext ctx = new LootContext.Builder(world).withPlayer(player).build();
 				List<ItemStack> stacks = table.generateLootForPools(world.rand, ctx);

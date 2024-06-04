@@ -156,7 +156,7 @@ public abstract class EntityMagicProjectile extends EntityThrowable implements I
 	public void readSpawnData(ByteBuf data){
 		int id = data.readInt();
 		if(id == -1) return;
-		Entity entity = this.world.getEntityByID(id);
+		Entity entity = this.level.getEntityByID(id);
 		if(entity instanceof LivingEntity) this.thrower = (LivingEntity)entity;
 		this.ignoreEntity = this.thrower;
 	}

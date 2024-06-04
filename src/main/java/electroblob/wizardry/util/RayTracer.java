@@ -139,7 +139,7 @@ public final class RayTracer {
 				.grow(borderSize, borderSize, borderSize);
 
 		// Gets all of the entities in the bounding box that could be collided with.
-		List<Entity> entities = world.getEntitiesWithinAABB(entityType, searchVolume);
+		List<Entity> entities = level.getEntitiesWithinAABB(entityType, searchVolume);
 		// Applies the given filter to remove entities that should be ignored.
 		entities.removeIf(filter);
 

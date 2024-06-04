@@ -120,10 +120,10 @@ public class Grapple extends Spell {
 		if(extending){
 			// Extension
 			if(world.isClientSide){
-				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
+				// level.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 				ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
 						.target(origin.add(direction.scale(ticksInUse * extensionSpeed))).tvel(direction.scale(extensionSpeed))
-						.seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
+						.seed(level.getTotalWorldTime() - ticksInUse).spawn(world);
 			}
 
 		}else{
@@ -149,7 +149,7 @@ public class Grapple extends Spell {
 
 					if(world.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
-								.target(target).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
+								.target(target).seed(level.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
 
 					if(retractTime == 1){ // Just hit
@@ -180,7 +180,7 @@ public class Grapple extends Spell {
 
 					if(world.isClientSide){
 						ParticleBuilder.create(Type.VINE).entity(caster).pos(0, caster.getEyeHeight() - SpellRay.Y_OFFSET, 0)
-								.target(entity).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
+								.target(entity).seed(level.getTotalWorldTime() - ticksInUse).spawn(world);
 					}
 
 					if(retractTime == 1){ // Just hit
@@ -263,9 +263,9 @@ public class Grapple extends Spell {
 		}
 
 		if(world.isClientSide){
-			// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
+			// level.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
 			ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).tvel(vec.scale(extensionSpeed))
-					.seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
+					.seed(level.getTotalWorldTime() - ticksInUse).spawn(world);
 		}
 
 		return true;
@@ -325,8 +325,8 @@ public class Grapple extends Spell {
 			}
 
 			if(world.isClientSide){
-				// world.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
-				ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).seed(world.getTotalWorldTime() - ticksInUse).spawn(world);
+				// level.getTotalWorldTime() - ticksInUse generates a constant but unique seed each time the spell is cast
+				ParticleBuilder.create(Type.VINE).pos(origin).target(hookPosition).seed(level.getTotalWorldTime() - ticksInUse).spawn(world);
 			}
 
 			return true;
@@ -401,7 +401,7 @@ public class Grapple extends Spell {
 
 		// Non-solid blocks (or if the result is null) count as misses
 		if(result == null || result.typeOfHit == HitResult.Type.BLOCK
-				&& !world.getBlockState(result.getBlockPos()).getMaterial().isSolid()){
+				&& !level.getBlockState(result.getBlockPos()).getMaterial().isSolid()){
 			return new HitResult(HitResult.Type.MISS, endpoint, Direction.DOWN, new BlockPos(endpoint));
 		// Immovable entities count as misses too, but the endpoint is the hit vector instead
 		}else if(result.entityHit != null && !result.entityHit.canBePushed()){

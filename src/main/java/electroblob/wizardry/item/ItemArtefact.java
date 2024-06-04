@@ -385,7 +385,7 @@ public class ItemArtefact extends Item {
 
 					if(!level.isClientSide && player.tickCount % 40 == 0){
 
-						List<EntityIceBarrier> barriers = world.getEntitiesWithinAABB(EntityIceBarrier.class, player.getBoundingBox().grow(1.5));
+						List<EntityIceBarrier> barriers = level.getEntitiesWithinAABB(EntityIceBarrier.class, player.getBoundingBox().grow(1.5));
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
 						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.position().subtract(player.position())) > 0)){
@@ -421,7 +421,7 @@ public class ItemArtefact extends Item {
 
 				float potency = modifiers.get(SpellModifiers.POTENCY);
 				float cooldown = modifiers.get(WizardryItems.cooldown_upgrade);
-				Biome biome = player.world.getBiome(player.getPosition());
+				Biome biome = player.level.getBiome(player.getPosition());
 
 				if(artefact == WizardryItems.ring_battlemage){
 
@@ -464,7 +464,7 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.ring_full_moon){
 
 					if(event.getSpell().getElement() == Element.EARTH && !player.world.isDaytime()
-							&& player.world.provider.getMoonPhase(player.world.getWorldTime()) == 0){
+							&& player.world.provider.getMoonPhase(player.level.getWorldTime()) == 0){
 						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
 					}
 
@@ -616,7 +616,7 @@ public class ItemArtefact extends Item {
 
 					if(!event.getSource().isUnblockable()){
 
-						List<EntityFireRing> fireRings = player.world.getEntitiesWithinAABB(EntityFireRing.class, player.getBoundingBox());
+						List<EntityFireRing> fireRings = player.level.getEntitiesWithinAABB(EntityFireRing.class, player.getBoundingBox());
 
 						for(EntityFireRing fireRing : fireRings){
 							if(fireRing.getCaster() instanceof Player && (fireRing.getCaster() == player

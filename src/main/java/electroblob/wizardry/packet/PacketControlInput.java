@@ -106,7 +106,7 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 
 				case CANCEL_RESURRECT:
 
-					if(player.world.getGameRules().getBoolean("keepInventory")) break; // Shouldn't even receive this
+					if(player.level.getGameRules().getBoolean("keepInventory")) break; // Shouldn't even receive this
 
 					if(player.isDead){
 

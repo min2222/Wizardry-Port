@@ -53,11 +53,11 @@ public class SpellEmitterData extends WorldSavedData {
 	/** Returns the spell emitter data for this world, or creates a new instance if it doesn't exist yet. */
 	public static SpellEmitterData get(Level world){
 
-		SpellEmitterData instance = (SpellEmitterData)world.getPerWorldStorage().getOrLoadData(SpellEmitterData.class, NAME);
+		SpellEmitterData instance = (SpellEmitterData)level.getPerWorldStorage().getOrLoadData(SpellEmitterData.class, NAME);
 
 		if(instance == null){
 			instance = new SpellEmitterData();
-			world.getPerWorldStorage().setData(NAME, instance);
+			level.getPerWorldStorage().setData(NAME, instance);
 		}else if(instance.emitters.isEmpty() && instance.emitterTags != null){
 			instance.loadEmitters(world);
 		}

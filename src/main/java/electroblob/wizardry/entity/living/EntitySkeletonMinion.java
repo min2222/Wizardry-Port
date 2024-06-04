@@ -85,7 +85,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 
 		// Halloween pumpkin heads! Why not?
 		if(this.getItemStackFromSlot(EquipmentSlot.HEAD).isEmpty()){
-			Calendar calendar = this.world.getCurrentDate();
+			Calendar calendar = this.level.getCurrentDate();
 
 			if(calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.random.nextFloat() < 0.25F){
 				this.setItemStackToSlot(EquipmentSlot.HEAD,
@@ -177,7 +177,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != Difficulty.PEACEFUL;
+		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

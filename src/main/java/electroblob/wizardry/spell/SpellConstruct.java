@@ -167,7 +167,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 			// very simple. The trade-off is that we have to create the entity before the spell fails, but unless
 			// world.addFreshEntity(...) is called, its scope is limited to this method so it should be fine.
 			// Needs to be last in case addConstructExtras modifies the bounding box
-			if(!allowOverlap && !world.getEntitiesWithinAABB(construct.getClass(), construct.getBoundingBox()).isEmpty()) return false;
+			if(!allowOverlap && !level.getEntitiesWithinAABB(construct.getClass(), construct.getBoundingBox()).isEmpty()) return false;
 			// Spawns the construct in the world
 			world.addFreshEntity(construct);
 		}

@@ -53,7 +53,7 @@ public class SpeedTime extends Spell {
 
 		// Hold onto your hats ladies and gentlemen, this effect scales with potency modifiers! Speeeeeeeeed!
 		if(Wizardry.settings.worldTimeManipulation){
-			world.setWorldTime(world.getWorldTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
+			world.setWorldTime(level.getWorldTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
 			flag = true;
 		}
 
@@ -92,9 +92,9 @@ public class SpeedTime extends Spell {
 
 			for(BlockPos pos : sphere){
 
-				if(world.getBlockState(pos).getBlock().getTickRandomly()){
+				if(level.getBlockState(pos).getBlock().getTickRandomly()){
 					for(int i = 0; i < potencyLevel; i++){
-						world.getBlockState(pos).getBlock().randomTick(world, pos, world.getBlockState(pos), world.rand);
+						level.getBlockState(pos).getBlock().randomTick(world, pos, level.getBlockState(pos), world.rand);
 						flag = true;
 					}
 				}

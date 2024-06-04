@@ -66,7 +66,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
 									Direction side, float hitX, float hitY, float hitZ){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;
@@ -79,7 +79,7 @@ public class BlockArcaneWorkbench extends BlockContainer {
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 		
-        BlockEntity tileentity = world.getTileEntity(pos);
+        BlockEntity tileentity = level.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityArcaneWorkbench){
             InventoryHelper.dropInventoryItems(world, pos, (TileEntityArcaneWorkbench)tileentity);

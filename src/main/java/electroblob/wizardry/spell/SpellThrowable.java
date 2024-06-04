@@ -107,8 +107,8 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 			if(!world.isClientSide){
 				float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 				T projectile = projectileFactory.apply(world, caster);
-				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
-						: EntityUtils.getDefaultAimingError(world.getDifficulty());
+				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(level.getDifficulty())
+						: EntityUtils.getDefaultAimingError(level.getDifficulty());
 				aim(projectile, caster, target, velocity, aimingError);
 				addProjectileExtras(projectile, caster, modifiers);
 				world.addFreshEntity(projectile);

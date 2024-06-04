@@ -70,7 +70,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 
 		if(state.getValue(HALF) == EnumBlockHalf.UPPER) pos = pos.down();
 		// Copied from BlockFlowerPot on authority of the Forge docs, which say it needs to be here
-		BlockEntity tileentity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : world.getTileEntity(pos);
+		BlockEntity tileentity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : level.getTileEntity(pos);
 
 		if(tileentity instanceof TileEntityThorns){
 			return state.withProperty(AGE, ((TileEntityThorns)tileentity).getAge());
@@ -98,11 +98,11 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	public void breakBlock(Level world, BlockPos pos, BlockState state){
 		super.breakBlock(world, pos, state);
 		if(state.getValue(HALF) == EnumBlockHalf.LOWER){
-			if(world.getBlockState(pos.up()).getBlock() == this){
+			if(level.getBlockState(pos.up()).getBlock() == this){
 				world.destroyBlock(pos.up(), false);
 			}
 		}else{
-			if(world.getBlockState(pos.down()).getBlock() == this){
+			if(level.getBlockState(pos.down()).getBlock() == this){
 				world.destroyBlock(pos.down(), false);
 			}
 		}
@@ -129,7 +129,7 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 		DamageSource source = DamageSource.CACTUS;
 		float damage = Spells.forest_of_thorns.getProperty(Spell.DAMAGE).floatValue();
 
-		BlockEntity tileentity = world.getTileEntity(state.getValue(HALF) == EnumBlockHalf.UPPER ? pos.down() : pos);
+		BlockEntity tileentity = level.getTileEntity(state.getValue(HALF) == EnumBlockHalf.UPPER ? pos.down() : pos);
 
 		if(tileentity instanceof TileEntityThorns){
 

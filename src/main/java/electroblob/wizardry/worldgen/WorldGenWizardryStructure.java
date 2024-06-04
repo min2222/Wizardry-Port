@@ -140,7 +140,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, Level world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider){
 
-		if(!world.getWorldInfo().isMapFeaturesEnabled()) return;
+		if(!level.getWorldInfo().isMapFeaturesEnabled()) return;
 
 		// Don't need to worry about overflows because they'll just wrap around, which is fine for this purpose
 		random.setSeed(random.nextLong() + getRandomSeedModifier());
@@ -151,8 +151,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 			ResourceLocation structureFile = getStructureFile(random);
 
-			Template template = world.getSaveHandler().getStructureTemplateManager().getTemplate(
-					world.getMinecraftServer(), structureFile);
+			Template template = level.getSaveHandler().getStructureTemplateManager().getTemplate(
+					level.getMinecraftServer(), structureFile);
 
 			BlockPos size = template.getSize();
 
@@ -227,7 +227,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 			this.world = world;
 
-			this.structureData = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
+			this.structureData = (MapGenStructureData)level.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
 
 			// This has to be cleared or worlds will interfere with each other!
 			// Vanilla doesn't have to do this because each world has a separate ChunkGenerator which stores MapGenBase
@@ -237,7 +237,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 			if(this.structureData == null){
 
 				this.structureData = new MapGenStructureData(this.getStructureName());
-				world.getPerWorldStorage().setData(this.getStructureName(), this.structureData);
+				level.getPerWorldStorage().setData(this.getStructureName(), this.structureData);
 
 			}else{
 
@@ -320,7 +320,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 						// TESTME: Is this the same as Forge's per-chunk seeds? (see caller of generate())
 						int k1 = j + i1;
 						int l1 = k + j1;
-						this.random.setSeed((long)(k1 ^ l1) ^ world.getSeed());
+						this.random.setSeed((long)(k1 ^ l1) ^ level.getSeed());
 						this.random.nextInt();
 
 						if(this.canGenerate(this.random, world, k1, l1) && (!findUnexplored || !world.isChunkGeneratedAt(k1, l1))){

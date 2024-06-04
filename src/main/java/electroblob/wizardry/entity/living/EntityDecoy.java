@@ -115,7 +115,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 //		super.readSpawnData(data);
 //		if(!data.isReadable()) return;
 //		this.setCasterReference(
-//				new WeakReference<EntityLivingBase>((EntityLivingBase)this.world.getEntityByID(data.readInt())));
+//				new WeakReference<EntityLivingBase>((EntityLivingBase)this.level.getEntityByID(data.readInt())));
 //	}
 
 }

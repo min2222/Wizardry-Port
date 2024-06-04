@@ -109,7 +109,7 @@ public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
 		super.tick();
 		// Undoes the despawning on peaceful behaviour. I don't think there's anything in super.tick that sets
 		// isDead other than that, but it's better to do a quick sanity check just to be sure.
-		if(this.isDead && world.getDifficulty() == Difficulty.PEACEFUL && this.getHealth() > 0) this.isDead = false;
+		if(this.isDead && level.getDifficulty() == Difficulty.PEACEFUL && this.getHealth() > 0) this.isDead = false;
 		// Bursts instantly rather than doing the falling over animation.
 		if(this.getHealth() <= 0) this.discard();
 

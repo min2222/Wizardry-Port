@@ -65,7 +65,7 @@ public class Telekinesis extends SpellRay {
 		
 		if(caster instanceof Player){
 			
-			BlockState blockstate = world.getBlockState(pos);
+			BlockState blockstate = level.getBlockState(pos);
 	
 			if(blockstate.getBlock().onBlockActivated(world, pos, blockstate, (Player)caster, InteractionHand.MAIN_HAND,
 					side, 0, 0, 0)){

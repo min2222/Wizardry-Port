@@ -129,7 +129,7 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 		if(id == -1){
 			setCaster(null);
 		}else{
-			Entity entity = world.getEntityByID(id);
+			Entity entity = level.getEntityByID(id);
 			if(entity instanceof LivingEntity){
 				setCaster((LivingEntity)entity);
 			}else{

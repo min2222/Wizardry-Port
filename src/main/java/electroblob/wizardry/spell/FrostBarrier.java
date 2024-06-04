@@ -127,7 +127,7 @@ public class FrostBarrier extends Spell {
 		barrier.setSizeMultiplier(scale);
 		barrier.setDelay(1 + 3 * index); // Delay 0 seems to move it down 1 block, no idea why
 
-		if(!world.getEntitiesWithinAABB(barrier.getClass(), barrier.getBoundingBox().offset(0, yOffset, 0)).isEmpty()) return null;
+		if(!level.getEntitiesWithinAABB(barrier.getClass(), barrier.getBoundingBox().offset(0, yOffset, 0)).isEmpty()) return null;
 
 		return barrier;
 	}

@@ -66,7 +66,7 @@ public class Mine extends SpellRay {
 			// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation
 			if(!EntityUtils.canDamageBlocks(caster, world)) return false;
 
-			BlockState state = world.getBlockState(pos);
+			BlockState state = level.getBlockState(pos);
 			// The maximum harvest level as determined by the potency multiplier. The + 0.5f is so that
 			// weird float processing doesn't incorrectly round it down.
 			int harvestLevel = (int)((modifiers.get(SpellModifiers.POTENCY) - 1) / Constants.POTENCY_INCREASE_PER_TIER + 0.5f);
@@ -92,7 +92,7 @@ public class Mine extends SpellRay {
 
 					if(BlockUtils.isBlockUnbreakable(world, pos1)) continue;
 
-					BlockState state1 = world.getBlockState(pos1);
+					BlockState state1 = level.getBlockState(pos1);
 
 					if(state1.getBlock().getHarvestLevel(state1) <= harvestLevel || harvestLevel >= 3){
 

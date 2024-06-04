@@ -30,7 +30,7 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 		BlockPos blockHit = new BlockPos(x, y, z);
 		if(side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) blockHit = blockHit.offset(side);
 
-		if(world.getBlockState(blockHit).isNormalCube()) return false;
+		if(level.getBlockState(blockHit).isNormalCube()) return false;
 
 		Vec3 origin = new Vec3(x, y, z);
 

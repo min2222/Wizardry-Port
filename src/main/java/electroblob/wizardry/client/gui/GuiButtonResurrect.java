@@ -76,7 +76,7 @@ public class GuiButtonResurrect extends GuiButton {
 					((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, Minecraft.getMinecraft().player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.RESURRECT_BUTTON));
 
-				}else if(!Minecraft.getMinecraft().world.getGameRules().getBoolean("keepInventory")){
+				}else if(!Minecraft.getMinecraft().level.getGameRules().getBoolean("keepInventory")){
 					// Any other button drops the wand (N.B. this should be inside the stack != null check or it'll send
 					// packets unnecessarily and generate incorrect warnings
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.CANCEL_RESURRECT));

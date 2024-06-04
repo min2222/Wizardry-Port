@@ -123,9 +123,9 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 
 		int seconds = 0;
 
-		if(this.world.getDifficulty() == Difficulty.NORMAL){
+		if(this.level.getDifficulty() == Difficulty.NORMAL){
 			seconds = 7;
-		}else if(this.world.getDifficulty() == Difficulty.HARD){
+		}else if(this.level.getDifficulty() == Difficulty.HARD){
 			seconds = 15;
 		}
 
@@ -168,7 +168,7 @@ public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCre
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != Difficulty.PEACEFUL;
+		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

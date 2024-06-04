@@ -34,19 +34,19 @@ public class InvokeWeather extends Spell {
 				
 				if(world.isRaining()){
 					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".sun"), true);
-					world.getWorldInfo().setCleanWeatherTime(standardWeatherTime);
-					world.getWorldInfo().setRainTime(0);
-					world.getWorldInfo().setThunderTime(0);
-					world.getWorldInfo().setRaining(false);
-					world.getWorldInfo().setThundering(false);
+					level.getWorldInfo().setCleanWeatherTime(standardWeatherTime);
+					level.getWorldInfo().setRainTime(0);
+					level.getWorldInfo().setThunderTime(0);
+					level.getWorldInfo().setRaining(false);
+					level.getWorldInfo().setThundering(false);
 				}else{
 					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".rain"), true);
-					world.getWorldInfo().setCleanWeatherTime(0);
-					world.getWorldInfo().setRainTime(standardWeatherTime);
-					world.getWorldInfo().setThunderTime(standardWeatherTime);
-					world.getWorldInfo().setRaining(true);
+					level.getWorldInfo().setCleanWeatherTime(0);
+					level.getWorldInfo().setRainTime(standardWeatherTime);
+					level.getWorldInfo().setThunderTime(standardWeatherTime);
+					level.getWorldInfo().setRaining(true);
 					// Thunderstorm is guaranteed if the caster has a bottled thundercloud charm equipped
-					world.getWorldInfo().setThundering(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_storm)
+					level.getWorldInfo().setThundering(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_storm)
 							|| world.random.nextFloat() < getProperty(THUNDERSTORM_CHANCE).floatValue());
 				}
 			}

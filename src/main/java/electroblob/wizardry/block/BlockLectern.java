@@ -61,7 +61,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	@OnlyIn(Dist.CLIENT)
 	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random rand){
 
-		Player entityplayer = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5,
+		Player entityplayer = level.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5,
 				pos.getZ() + 0.5, TileEntityLectern.BOOK_OPEN_DISTANCE, false);
 
 		if(entityplayer != null){
@@ -125,7 +125,7 @@ public class BlockLectern extends BlockHorizontal implements ITileEntityProvider
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;

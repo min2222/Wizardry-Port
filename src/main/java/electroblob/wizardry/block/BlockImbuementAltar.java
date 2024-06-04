@@ -104,26 +104,26 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
 
 		boolean shouldBeActive = Arrays.stream(Direction.HORIZONTALS)
-				.allMatch(s -> world.getBlockState(pos.relative(s)).getBlock() == WizardryBlocks.receptacle
-							&& world.getBlockState(pos.relative(s)).getValue(BlockReceptacle.FACING) == s);
+				.allMatch(s -> level.getBlockState(pos.relative(s)).getBlock() == WizardryBlocks.receptacle
+							&& level.getBlockState(pos.relative(s)).getValue(BlockReceptacle.FACING) == s);
 
-		if(world.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
+		if(level.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
 
 			// Get contents of altar before replacing it
-			BlockEntity te = world.getTileEntity(pos);
+			BlockEntity te = level.getTileEntity(pos);
 			ItemStack stack = ItemStack.EMPTY;
 			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getItem();
 
-			world.setBlockAndUpdate(pos, world.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
+			world.setBlockAndUpdate(pos, level.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
 
 			// Copy over contents of altar from before to new tile entity
-			te = world.getTileEntity(pos);
+			te = level.getTileEntity(pos);
 			if(te instanceof TileEntityImbuementAltar) ((TileEntityImbuementAltar)te).setStack(stack);
 
 			world.checkLight(pos);
 		}
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 		if(tileEntity instanceof TileEntityImbuementAltar){
 			((TileEntityImbuementAltar)tileEntity).checkRecipe();
 		}
@@ -133,7 +133,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
                                     Direction side, float hitX, float hitY, float hitZ){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(!(tileEntity instanceof TileEntityImbuementAltar) || player.isShiftKeyDown()){
 			return false;
@@ -167,7 +167,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
-        BlockEntity tileentity = world.getTileEntity(pos);
+        BlockEntity tileentity = level.getTileEntity(pos);
 
         if(tileentity instanceof TileEntityImbuementAltar){
             InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), ((TileEntityImbuementAltar)tileentity).getItem());

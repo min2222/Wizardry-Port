@@ -76,7 +76,7 @@ public class EntityEmber extends EntityMagicProjectile {
 			this.motionZ *= 0.5;
 		}
 
-		world.getEntitiesInAABBexcluding(thrower, this.getBoundingBox(), e -> e instanceof LivingEntity)
+		level.getEntitiesInAABBexcluding(thrower, this.getBoundingBox(), e -> e instanceof LivingEntity)
 				.stream().filter(e -> !(e instanceof LivingEntity) || ((LivingEntity)e).getHealth() > 0)
 				.forEach(e -> e.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
 

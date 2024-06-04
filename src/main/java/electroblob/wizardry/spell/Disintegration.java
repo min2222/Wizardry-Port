@@ -86,7 +86,7 @@ public class Disintegration extends SpellRay {
 				world.spawnParticle(ParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);
 			}
 			
-			if(world.getBlockState(pos).getMaterial().isSolid()){
+			if(level.getBlockState(pos).getMaterial().isSolid()){
 				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).clr(1, 0.2f, 0).spawn(world);
 			}

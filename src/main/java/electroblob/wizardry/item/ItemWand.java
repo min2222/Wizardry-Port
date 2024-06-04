@@ -240,7 +240,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
-		if(!level.isClientSide && !this.isManaFull(stack) && world.getTotalWorldTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
+		if(!level.isClientSide && !this.isManaFull(stack) && level.getTotalWorldTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
 			this.rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
 		}

@@ -61,7 +61,7 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 
 	@Override
 	public boolean addDestroyEffects(Level world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager){
-		if(world.getBlockState(pos).getBlock() == this) return true; // No break particles!
+		if(level.getBlockState(pos).getBlock() == this) return true; // No break particles!
 		else return super.addDestroyEffects(world, pos, manager);
 	}
 

@@ -257,7 +257,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		}
 
 		BlockPos blockpos = new BlockPos(this.blockX, this.blockY, this.blockZ);
-		BlockState iblockstate = this.world.getBlockState(blockpos);
+		BlockState iblockstate = this.level.getBlockState(blockpos);
 
 		if(iblockstate.getMaterial() != Material.AIR){
 			AABB axisalignedbb = iblockstate.getCollisionBoundingBox(this.world, blockpos);
@@ -302,7 +302,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			// overwrites the block hit with an entity
 
 			Entity entity = null;
-			List<?> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox()
+			List<?> list = this.level.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox()
 					.expand(this.motionX, this.motionY, this.motionZ).grow(1.0D, 1.0D, 1.0D));
 			double d0 = 0.0D;
 			int i;
@@ -406,7 +406,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 					this.blockX = raytraceresult.getBlockPos().getX();
 					this.blockY = raytraceresult.getBlockPos().getY();
 					this.blockZ = raytraceresult.getBlockPos().getZ();
-					this.stuckInBlock = this.world.getBlockState(raytraceresult.getBlockPos());
+					this.stuckInBlock = this.level.getBlockState(raytraceresult.getBlockPos());
 					this.motionX = (double)((float)(raytraceresult.hitVec.x - this.getX()));
 					this.motionY = (double)((float)(raytraceresult.hitVec.y - this.getY()));
 					this.motionZ = (double)((float)(raytraceresult.hitVec.z - this.getZ()));
@@ -595,7 +595,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	@Override
 	public void readSpawnData(ByteBuf buffer){
 		if(buffer.isReadable()) this.caster = new WeakReference<>(
-				(LivingEntity)this.world.getEntityByID(buffer.readInt()));
+				(LivingEntity)this.level.getEntityByID(buffer.readInt()));
 	}
 
 	// Miscellaneous overrides

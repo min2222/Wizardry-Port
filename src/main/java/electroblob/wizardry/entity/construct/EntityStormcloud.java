@@ -46,7 +46,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 		boolean stormcloudRingActive = getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.ring_stormcloud);
 
-		List<LivingEntity> targets = world.getEntitiesWithinAABB(LivingEntity.class,
+		List<LivingEntity> targets = level.getEntitiesWithinAABB(LivingEntity.class,
 				this.getBoundingBox().expand(0, -10, 0));
 
 		targets.removeIf(t -> !this.isValidTarget(t));

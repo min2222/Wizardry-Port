@@ -114,7 +114,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 //							&& !world.isBlockNormalCube(pos.up(), false)){
 
 							EntityFallingBlock fallingBlock = new EntityLevitatingBlock(world, pos.getX() + 0.5,
-									pos.getY() + 0.5, pos.getZ() + 0.5, world.getBlockState(pos));
+									pos.getY() + 0.5, pos.getZ() + 0.5, level.getBlockState(pos));
 //							fallingBlock.noClip = true;
 							fallingBlock.fallTime = 1; // Prevent it from trying to delete the block itself
 							world.addFreshEntity(fallingBlock);

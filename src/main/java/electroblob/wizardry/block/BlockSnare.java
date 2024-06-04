@@ -57,9 +57,9 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 
 		if(entity instanceof LivingEntity){
 
-			if(world.getTileEntity(pos) instanceof TileEntityPlayerSave){
+			if(level.getTileEntity(pos) instanceof TileEntityPlayerSave){
 
-				TileEntityPlayerSave tileentity = (TileEntityPlayerSave)world.getTileEntity(pos);
+				TileEntityPlayerSave tileentity = (TileEntityPlayerSave)level.getTileEntity(pos);
 
 				if(AllyDesignationSystem.isValidTarget(tileentity.getCaster(), entity)){
 

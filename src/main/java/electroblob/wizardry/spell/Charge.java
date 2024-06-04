@@ -79,7 +79,7 @@ public class Charge extends Spell {
 				}
 			}
 
-			List<LivingEntity> collided = player.world.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(EXTRA_HIT_MARGIN));
+			List<LivingEntity> collided = player.level.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(EXTRA_HIT_MARGIN));
 
 			collided.remove(player);
 

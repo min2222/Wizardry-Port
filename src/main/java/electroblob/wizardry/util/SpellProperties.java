@@ -278,9 +278,9 @@ public final class SpellProperties {
 
 	public static void loadWorldSpecificSpellProperties(Level world){
 
-		Wizardry.logger.info("Loading custom spell properties for world {}", world.getWorldInfo().getWorldName());
+		Wizardry.logger.info("Loading custom spell properties for world {}", level.getWorldInfo().getWorldName());
 
-		File spellJSONDir = new File(new File(world.getSaveHandler().getWorldDirectory(), "data"), "spells");
+		File spellJSONDir = new File(new File(level.getSaveHandler().getWorldDirectory(), "data"), "spells");
 
 		if(spellJSONDir.mkdirs()) return; // If it just got created it can't possibly have anything inside
 

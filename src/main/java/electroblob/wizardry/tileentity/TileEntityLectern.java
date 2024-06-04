@@ -34,7 +34,7 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 
 		this.bookSpreadPrev = this.bookSpread;
 
-		Player entityplayer = this.world.getClosestPlayer(this.pos.getX() + 0.5, this.pos.getY() + 0.5,
+		Player entityplayer = this.level.getClosestPlayer(this.pos.getX() + 0.5, this.pos.getY() + 0.5,
 				this.pos.getZ() + 0.5, BOOK_OPEN_DISTANCE, false);
 
 		if(entityplayer != null){
@@ -64,7 +64,7 @@ public class TileEntityLectern extends BlockEntity implements ITickable {
 
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
-		this.world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+		this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 	}
 
 	@Override

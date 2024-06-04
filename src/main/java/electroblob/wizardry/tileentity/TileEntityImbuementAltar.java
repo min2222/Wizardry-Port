@@ -67,7 +67,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 			return; // Don't sync if nothing changed
 		}
 
-		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3); // Sync
+		world.notifyBlockUpdate(pos, level.getBlockState(pos), level.getBlockState(pos), 3); // Sync
 	}
 
 	public ItemStack getStack(){
@@ -77,7 +77,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 	@Override
 	public void update(){
 
-		if(lastUserUUID != null && lastUser == null) lastUser = world.getPlayerEntityByUUID(lastUserUUID);
+		if(lastUserUUID != null && lastUser == null) lastUser = level.getPlayerEntityByUUID(lastUserUUID);
 
 		if(imbuementTimer > 0){
 
@@ -161,7 +161,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			BlockEntity tileEntity = world.getTileEntity(pos.relative(side));
+			BlockEntity tileEntity = level.getTileEntity(pos.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				elements[side.getHorizontalIndex()] = ((TileEntityReceptacle)tileEntity).getElement();
@@ -178,7 +178,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 		for(Direction side : Direction.HORIZONTALS){
 
-			BlockEntity tileEntity = world.getTileEntity(pos.relative(side));
+			BlockEntity tileEntity = level.getTileEntity(pos.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				((TileEntityReceptacle)tileEntity).setElement(null);
@@ -276,7 +276,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 					// The probabilities are a little complicated but work out quite nicely at 57% chance with 4 of the
 					// same element of spectral dust
 					Element element = receptacleElements[world.random.nextInt(receptacleElements.length)];
-					LootTable table = world.getLootTableManager().getLootTableFromLocation(
+					LootTable table = level.getLootTableManager().getLootTableFromLocation(
 							WizardryLoot.RUINED_SPELL_BOOK_LOOT_TABLES[element.ordinal() - 1]);
 					LootContext context = new LootContext.Builder((ServerLevel)world).withPlayer(lastUser)
 							.withLuck(lastUser == null ? 0 : lastUser.getLuck()).build();

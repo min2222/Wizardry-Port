@@ -52,7 +52,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
 		if(!this.doNotSync)
-			this.world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+			this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 		// When a player gets near, generate the books so they can actually see them (if it was generated naturally)
 		if(lootTable != null && natural){
-			Player player = world.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+			Player player = level.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 					LOOT_GEN_DISTANCE, false);
 			if(player != null){
 				natural = false; // It's a normal bookshelf now (unlikely to matter but you never know)
@@ -135,7 +135,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	@Override
 	public void fillWithLoot(@Nullable Player player){
-		if(world != null && world.getLootTableManager() != null) super.fillWithLoot(player); // IntelliJ is wrong, it can be null
+		if(world != null && level.getLootTableManager() != null) super.fillWithLoot(player); // IntelliJ is wrong, it can be null
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	@Override
 	public boolean isUsableByPlayer(Player player){
-		return world.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
+		return level.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
 	}
 
 	@Override

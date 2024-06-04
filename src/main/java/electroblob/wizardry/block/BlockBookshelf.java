@@ -103,7 +103,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public void breakBlock(Level world, BlockPos pos, BlockState block){
 
-		BlockEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = level.getTileEntity(pos);
 
 		if(tileentity instanceof TileEntityBookshelf){
 			InventoryHelper.dropInventoryItems(world, pos, (TileEntityBookshelf)tileentity);
@@ -129,9 +129,9 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 		IExtendedBlockState s = (IExtendedBlockState)super.getExtendedState(state, world, pos);
 
-		if(world.getTileEntity(pos) instanceof TileEntityBookshelf){
+		if(level.getTileEntity(pos) instanceof TileEntityBookshelf){
 
-			TileEntityBookshelf tileentity = ((TileEntityBookshelf)world.getTileEntity(pos));
+			TileEntityBookshelf tileentity = ((TileEntityBookshelf)level.getTileEntity(pos));
 
 			for(int i = 0; i < tileentity.getSizeInventory(); i++){
 
@@ -159,7 +159,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, EnumHand hand,
                                     EnumFacing side, float hitX, float hitY, float hitZ){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity == null || player.isShiftKeyDown()){
 			return false;
@@ -177,7 +177,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityBookshelf){
 
@@ -197,7 +197,7 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 	@Override
 	public boolean eventReceived(BlockState state, Level world, BlockPos pos, int id, int param){
 		super.eventReceived(state, world, pos, id, param);
-		BlockEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = level.getTileEntity(pos);
 		return tileentity != null && tileentity.receiveClientEvent(id, param);
 	}
 
@@ -305,8 +305,8 @@ public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvid
 
 					BlockPos pos = centre.add(x, y, z);
 
-					if(Settings.containsMetaBlock(Wizardry.settings.bookshelfBlocks, world.getBlockState(pos))){
-						BlockEntity te = world.getTileEntity(pos);
+					if(Settings.containsMetaBlock(Wizardry.settings.bookshelfBlocks, level.getBlockState(pos))){
+						BlockEntity te = level.getTileEntity(pos);
 						if(te instanceof IInventory && !ArrayUtils.contains(exclude, te)) bookshelves.add((IInventory)te);
 					}
 

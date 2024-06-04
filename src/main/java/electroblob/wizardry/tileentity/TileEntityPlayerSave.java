@@ -23,7 +23,7 @@ public class TileEntityPlayerSave extends BlockEntity {
 
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
-		this.world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+		this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 	}
 
 	@Override

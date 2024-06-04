@@ -62,7 +62,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 		this.move(MoverType.SELF, velX, motionY, velZ);
 
 		// Entity damage
-		List<LivingEntity> collided = world.getEntitiesWithinAABB(LivingEntity.class, this.getBoundingBox());
+		List<LivingEntity> collided = level.getEntitiesWithinAABB(LivingEntity.class, this.getBoundingBox());
 
 		float damage = Spells.boulder.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 		float knockback = Spells.boulder.getProperty(Boulder.KNOCKBACK_STRENGTH).floatValue();
@@ -101,7 +101,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 			double particleX = this.getX() + width * 0.7 * (random.nextDouble() - 0.5);
 			double particleZ = this.getZ() + width * 0.7 * (random.nextDouble() - 0.5);
 
-			BlockState block = world.getBlockState(this.blockPosition().down());
+			BlockState block = level.getBlockState(this.blockPosition().down());
 
 			if(block.getBlock() != Blocks.AIR){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
@@ -120,7 +120,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	 */
 	private boolean smashBlocks(List<BlockPos> blocks, boolean breakIfTooHard){
 
-		if(blocks.removeIf(p -> world.getBlockState(p).getBlock().getExplosionResistance(world, p, this, null) > 3
+		if(blocks.removeIf(p -> level.getBlockState(p).getBlock().getExplosionResistance(world, p, this, null) > 3
 				|| (!level.isClientSide && !BlockUtils.canBreakBlock(getCaster(), world, p)))){
 			// If any of the blocks were not breakable, the boulder is smashed
 			if(breakIfTooHard){
@@ -195,7 +195,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 				double particleX = this.getX() - 1.5 + 3 * random.nextDouble();
 				double particleZ = this.getZ() - 1.5 + 3 * random.nextDouble();
 				// Roundabout way of getting a block instance for the block the boulder is standing on (if any).
-				BlockState block = world.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
+				BlockState block = level.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block.getBlock() != Blocks.AIR){
 					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,

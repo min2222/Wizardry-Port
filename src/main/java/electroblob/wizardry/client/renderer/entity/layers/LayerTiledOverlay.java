@@ -114,7 +114,7 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 
 		if(entity.world.isBlockLoaded(pos)){
 			pos.setY(Mth.floor(entity.getY() + (double)entity.getEyeHeight()));
-			return entity.world.getCombinedLight(pos, 0);
+			return entity.level.getCombinedLight(pos, 0);
 		}else{
 			return 0;
 		}

@@ -40,10 +40,10 @@ public class Light extends Spell {
 
 				if(!world.isClientSide){
 					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
-					if(world.getTileEntity(pos) instanceof TileEntityTimer){
+					if(level.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
 								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
-						((TileEntityTimer)world.getTileEntity(pos)).setLifetime(lifetime);
+						((TileEntityTimer)level.getTileEntity(pos)).setLifetime(lifetime);
 					}
 				}
 
@@ -61,10 +61,10 @@ public class Light extends Spell {
 			if(world.isEmptyBlock(pos)){
 				if(!world.isClientSide){
 					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
-					if(world.getTileEntity(pos) instanceof TileEntityTimer){
+					if(level.getTileEntity(pos) instanceof TileEntityTimer){
 						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
 								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
-						((TileEntityTimer)world.getTileEntity(pos)).setLifetime(lifetime);
+						((TileEntityTimer)level.getTileEntity(pos)).setLifetime(lifetime);
 					}
 				}
 

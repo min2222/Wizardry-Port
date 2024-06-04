@@ -84,7 +84,7 @@ public class ForestOfThorns extends Spell {
 
 					((BlockThorns)WizardryBlocks.thorns).placeAt(world, pos, 3);
 
-					BlockEntity tileentity = world.getTileEntity(pos);
+					BlockEntity tileentity = level.getTileEntity(pos);
 
 					if(tileentity instanceof TileEntityThorns){
 

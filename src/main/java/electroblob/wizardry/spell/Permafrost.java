@@ -82,7 +82,7 @@ public class Permafrost extends SpellRay {
 
 	private boolean tryToPlaceIce(Level world, BlockPos pos, LivingEntity caster, int duration){
 
-		if(world.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
+		if(level.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
 			if(BlockUtils.canPlaceBlock(caster, world, pos)){
 				world.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
 				world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.permafrost, duration);

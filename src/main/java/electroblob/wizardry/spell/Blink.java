@@ -105,12 +105,12 @@ public class Blink extends Spell {
 
 			// This means stuff like snow layers is ignored, meaning when on snow-covered ground the caster does
 			// not teleport 1 block above the ground.
-			if(!world.getBlockState(new BlockPos(x, y, z)).getMaterial().blocksMovement()){
+			if(!level.getBlockState(new BlockPos(x, y, z)).getMaterial().blocksMovement()){
 				y--;
 			}
 
-			if(world.getBlockState(new BlockPos(x, y + 1, z)).getMaterial().blocksMovement()
-					|| world.getBlockState(new BlockPos(x, y + 2, z)).getMaterial().blocksMovement()){
+			if(level.getBlockState(new BlockPos(x, y + 1, z)).getMaterial().blocksMovement()
+					|| level.getBlockState(new BlockPos(x, y + 2, z)).getMaterial().blocksMovement()){
 				return false;
 			}
 

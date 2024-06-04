@@ -76,7 +76,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
 		final EnumDyeColor colour = EnumDyeColor.values()[random.nextInt(EnumDyeColor.values().length)];
-		final Biome biome = world.getBiome(origin);
+		final Biome biome = level.getBiome(origin);
 
 		final BlockState wallMaterial = specialWallBlocks.keySet().stream().filter(t -> BiomeDictionary.hasType(biome, t))
 				.findFirst().map(specialWallBlocks::get).orElse(Blocks.COBBLESTONE.defaultBlockState());
@@ -116,7 +116,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 
 				EntityWizard wizard = new EntityWizard(world);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+				wizard.onInitialSpawn(level.getDifficultyForLocation(origin), null);
 				wizard.setTowerBlocks(blocksPlaced);
 				world.addFreshEntity(wizard);
 
@@ -125,7 +125,7 @@ public class WorldGenWizardTower extends WorldGenSurfaceStructure {
 				EntityEvilWizard wizard = new EntityEvilWizard(world);
 				wizard.setLocationAndAngles(vec.x, vec.y, vec.z, 0, 0);
 				wizard.hasStructure = true; // Stops it despawning
-				wizard.onInitialSpawn(world.getDifficultyForLocation(origin), null);
+				wizard.onInitialSpawn(level.getDifficultyForLocation(origin), null);
 				world.addFreshEntity(wizard);
 
 			}else{

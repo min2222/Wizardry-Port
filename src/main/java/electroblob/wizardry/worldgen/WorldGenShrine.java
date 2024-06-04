@@ -68,8 +68,8 @@ public class WorldGenShrine extends WorldGenSurfaceStructure {
 				world.setBlockAndUpdate(entry.getKey(), WizardryBlocks.runestone_pedestal.defaultBlockState()
 						.withProperty(BlockPedestal.ELEMENT, element).withProperty(BlockPedestal.NATURAL, true));
 
-				BlockEntity core = world.getTileEntity(entry.getKey());
-				BlockEntity container = world.getTileEntity(entry.getKey().up());
+				BlockEntity core = level.getTileEntity(entry.getKey());
+				BlockEntity container = level.getTileEntity(entry.getKey().up());
 
 				if(container != null){
 

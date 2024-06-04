@@ -71,7 +71,7 @@ public class EntityTornado extends EntityScaledConstruct {
 
 			pos = new BlockPos(pos.getX(), y, pos.getZ());
 
-			if(this.world.getBlockState(pos).getMaterial() == Material.LAVA){
+			if(this.level.getBlockState(pos).getMaterial() == Material.LAVA){
 				// Fire tornado!
 				this.setSecondsOnFire(5);
 			}
@@ -138,11 +138,11 @@ public class EntityTornado extends EntityScaledConstruct {
 
 					pos1 = new BlockPos(pos1.getX(), blockY, pos1.getZ());
 
-					BlockState block = this.world.getBlockState(pos1);
+					BlockState block = this.level.getBlockState(pos1);
 
 					// If the block it found was air or something it can't pick up, it makes a best guess based on the biome
 					if(!canTornadoPickUpBitsOf(block)){
-						block = world.getBiome(pos1).topBlock;
+						block = level.getBiome(pos1).topBlock;
 					}
 
 					Wizardry.proxy.spawnTornadoParticle(world, this.getX(), this.getY() + yPos, this.getZ(), this.velX, this.velZ,

@@ -134,13 +134,13 @@ public class GreaterTelekinesis extends SpellRay {
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.canDamageBlocks(caster, world) && !BlockUtils.isBlockUnbreakable(world, pos)
-				&& world.getBlockState(pos).getMaterial().isSolid()
-				&& (world.getTileEntity(pos) == null || !world.getTileEntity(pos).getTileData().hasUniqueId(ArcaneLock.NBT_KEY))){
+				&& level.getBlockState(pos).getMaterial().isSolid()
+				&& (level.getTileEntity(pos) == null || !level.getTileEntity(pos).getTileData().hasUniqueId(ArcaneLock.NBT_KEY))){
 			
 			if(!world.isClientSide){
 
 				EntityLevitatingBlock block = new EntityLevitatingBlock(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-						world.getBlockState(pos));
+						level.getBlockState(pos));
 
 				block.fallTime = 1;
 				block.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);

@@ -432,7 +432,7 @@ public class ClientProxy extends CommonProxy {
 	public void handleCastSpellPacket(PacketCastSpell.Message message){
 
 		Level world = Minecraft.getMinecraft().world;
-		Entity caster = world.getEntityByID(message.casterID);
+		Entity caster = level.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
 		if(caster instanceof Player){
@@ -479,7 +479,7 @@ public class ClientProxy extends CommonProxy {
 	public void handleCastContinuousSpellPacket(PacketCastContinuousSpell.Message message){
 
 		Level world = Minecraft.getMinecraft().world;
-		Entity caster = world.getEntityByID(message.casterID);
+		Entity caster = level.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
 		if(caster instanceof Player){
@@ -502,8 +502,8 @@ public class ClientProxy extends CommonProxy {
 	public void handleNPCCastSpellPacket(PacketNPCCastSpell.Message message){
 
 		Level world = Minecraft.getMinecraft().world;
-		Entity caster = world.getEntityByID(message.casterID);
-		Entity target = message.targetID == -1 ? null : world.getEntityByID(message.targetID);
+		Entity caster = level.getEntityByID(message.casterID);
+		Entity target = message.targetID == -1 ? null : level.getEntityByID(message.targetID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
 		if(caster instanceof Mob){
@@ -534,7 +534,7 @@ public class ClientProxy extends CommonProxy {
 
 		Level world = Minecraft.getMinecraft().world;
 
-		if(world.getTileEntity(message.pos) instanceof DispenserBlockEntity){ // Should always be true
+		if(level.getTileEntity(message.pos) instanceof DispenserBlockEntity){ // Should always be true
 
 			Spell spell = Spell.byNetworkID(message.spellID);
 
@@ -545,7 +545,7 @@ public class ClientProxy extends CommonProxy {
 
 			if(spell.isContinuous || spell instanceof None){
 
-				DispenserCastingData data = DispenserCastingData.get((DispenserBlockEntity)world.getTileEntity(message.pos));
+				DispenserCastingData data = DispenserCastingData.get((DispenserBlockEntity)level.getTileEntity(message.pos));
 
 				if(spell.isContinuous){
 					data.startCasting(spell, message.x, message.y, message.z, message.duration, message.modifiers);
@@ -566,7 +566,7 @@ public class ClientProxy extends CommonProxy {
 		Level world = Minecraft.getMinecraft().world;
 		BlockPos pos = message.destination;
 
-		Entity entity = world.getEntityByID(message.dismountEntityID);
+		Entity entity = level.getEntityByID(message.dismountEntityID);
 		if(message.dismountEntityID != -1 && entity != null) entity.dismountRidingEntity();
 
 		// Moved from when the packet is sent to when it is received; fixes the sound not playing in first person.
@@ -615,7 +615,7 @@ public class ClientProxy extends CommonProxy {
 			if(message.selectedMinionID == -1){
 				data.selectedMinion = null;
 			}else{
-				Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.selectedMinionID);
+				Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.selectedMinionID);
 
 				if(entity instanceof ISummonedCreature){
 					data.selectedMinion = new WeakReference<>((ISummonedCreature)entity);
@@ -669,7 +669,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void handleResurrectionPacket(PacketResurrection.Message message){
-		Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.playerID);
+		Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.playerID);
 		if(entity instanceof Player){
 			((Resurrection)Spells.resurrection).resurrect((Player)entity);
 			if(entity == Minecraft.getMinecraft().player){
@@ -683,7 +683,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handlePossessionPacket(PacketPossession.Message message){
 
-		Entity entity = Minecraft.getMinecraft().world.getEntityByID(message.playerID);
+		Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.playerID);
 
 		if(entity instanceof Player){
 
@@ -692,7 +692,7 @@ public class ClientProxy extends CommonProxy {
 			if(message.targetID == -1){
 				((Possession)Spells.possession).endPossession(player);
 			}else{
-				Entity target = Minecraft.getMinecraft().world.getEntityByID(message.targetID);
+				Entity target = Minecraft.getMinecraft().level.getEntityByID(message.targetID);
 				if(target instanceof Mob){
 					((Possession)Spells.possession).possess(player, (Mob)target, message.duration);
 					player.sendStatusMessage(Component.translatable("spell." + Spells.possession.getRegistryName()
@@ -706,7 +706,7 @@ public class ClientProxy extends CommonProxy {
 
 	public void handleConquerShrinePacket(PacketConquerShrine.Message message){
 
-		BlockEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(new BlockPos(message.x, message.y, message.z));
+		BlockEntity tileEntity = Minecraft.getMinecraft().level.getTileEntity(new BlockPos(message.x, message.y, message.z));
 
 		if(tileEntity instanceof TileEntityShrineCore){
 			((TileEntityShrineCore)tileEntity).conquer();

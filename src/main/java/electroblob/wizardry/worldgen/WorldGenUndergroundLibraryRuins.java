@@ -57,7 +57,7 @@ public class WorldGenUndergroundLibraryRuins extends WorldGenUndergroundStructur
 	@Override
 	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
-		final Biome biome = world.getBiome(origin);
+		final Biome biome = level.getBiome(origin);
 		final float stoneBrickChance = random.nextFloat();
 		final float mossiness = 0.6f; // Underground is a mossier place!
 		final BlockPlanks.EnumType woodType = BlockUtils.getBiomeWoodVariant(biome);

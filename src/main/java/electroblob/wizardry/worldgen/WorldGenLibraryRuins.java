@@ -42,7 +42,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 	public boolean canGenerate(Random random, Level world, int chunkX, int chunkZ){
 		return ArrayUtils.contains(Wizardry.settings.libraryDimensions, world.provider.getDimension())
 				// +8 for the anti-cascading offset, and +8 for the middle of the generated area makes +16 in total
-				&& BiomeDictionary.getTypes(world.getBiome(new BlockPos(chunkX * 16 + 16, 0, chunkZ * 16 + 16)))
+				&& BiomeDictionary.getTypes(level.getBiome(new BlockPos(chunkX * 16 + 16, 0, chunkZ * 16 + 16)))
 				.stream().anyMatch(BIOME_TYPES::contains)
 				&& Wizardry.settings.libraryRarity > 0 && random.nextInt(Wizardry.settings.libraryRarity) == 0;
 	}
@@ -55,7 +55,7 @@ public class WorldGenLibraryRuins extends WorldGenSurfaceStructure {
 	@Override
 	public void spawnStructure(Random random, Level world, BlockPos origin, Template template, PlacementSettings settings, ResourceLocation structureFile){
 
-		final Biome biome = world.getBiome(origin);
+		final Biome biome = level.getBiome(origin);
 		final float stoneBrickChance = random.nextFloat();
 		final float mossiness = 0.4f;
 		final BlockPlanks.EnumType woodType = BlockUtils.getBiomeWoodVariant(biome);

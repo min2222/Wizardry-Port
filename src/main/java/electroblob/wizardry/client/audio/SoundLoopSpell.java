@@ -79,7 +79,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 									   double x, double y, double z, float sndVolume, float sndPitch){
 			super(start, loop, end, spell, x, y, z, sndVolume, sndPitch);
 
-			BlockEntity tileentity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileentity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileentity instanceof DispenserBlockEntity) this.source = (DispenserBlockEntity)tileentity;
 			else throw new NullPointerException(String.format("Playing continuous spell sound: no dispenser found at %s, %s, %s", x, y, z));

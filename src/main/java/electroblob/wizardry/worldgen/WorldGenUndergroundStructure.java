@@ -44,7 +44,7 @@ public abstract class WorldGenUndergroundStructure extends WorldGenWizardryStruc
 		for(BlockPos pos : BlockPos.getAllInBox(origin, corner)){
 
 			// Assume the bottom layer of the structure to be the floor
-			if(pos.getY() == origin.getY() && !world.getBlockState(pos).getMaterial().isSolid()){
+			if(pos.getY() == origin.getY() && !level.getBlockState(pos).getMaterial().isSolid()){
 				return null; // Can't generate with space underneath
 			}
 

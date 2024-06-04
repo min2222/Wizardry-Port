@@ -136,7 +136,7 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 	public static void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event){
 		// Hide the block outline for magic light blocks unless the player can dispel them
 		if(event.getTarget().typeOfHit == HitResult.Type.BLOCK
-				&& event.getPlayer().world.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
+				&& event.getPlayer().level.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
 
 			if((!(event.getPlayer().getMainHandItem().getItem() instanceof ISpellCastingItem)
 					&& !(event.getPlayer().getItemInHandOffhand().getItem() instanceof ISpellCastingItem))

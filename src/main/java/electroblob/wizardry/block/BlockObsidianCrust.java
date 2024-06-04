@@ -36,7 +36,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 	@Override
 	public void updateTick(Level world, BlockPos pos, BlockState state, Random random){
-		if((random.nextInt(3) == 0 || this.countNeighbors(world, pos) < 4) && world.getLightFromNeighbors(pos) > 11 - state.getValue(AGE) - state.getLightOpacity()){
+		if((random.nextInt(3) == 0 || this.countNeighbors(world, pos) < 4) && level.getLightFromNeighbors(pos) > 11 - state.getValue(AGE) - state.getLightOpacity()){
 			this.slightlyMelt(world, pos, state, random, true);
 		}else{
 			world.scheduleUpdate(pos, this, Mth.getInt(random, 20, 40));
@@ -59,7 +59,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 		int i = 0;
 
 		for(Direction enumfacing : Direction.values()){
-			if(world.getBlockState(pos.relative(enumfacing)).getBlock() == this){
+			if(level.getBlockState(pos.relative(enumfacing)).getBlock() == this){
 				++i;
 
 				if(i >= 4){
@@ -89,7 +89,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 				for(Direction enumfacing : Direction.values()){
 
 					BlockPos blockpos = pos.relative(enumfacing);
-					BlockState iblockstate = world.getBlockState(blockpos);
+					BlockState iblockstate = level.getBlockState(blockpos);
 
 					if(iblockstate.getBlock() == this){
 						this.slightlyMelt(world, blockpos, iblockstate, random, false);

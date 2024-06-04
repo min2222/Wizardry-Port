@@ -133,7 +133,7 @@ public final class GeometryUtils {
 	 * DNW, DNE, DSE, DSW, UNW, UNE, USE, USW. The returned coordinates are absolute (i.e. measured from the world origin).
 	 */
 	public static Vec3[] getVertices(Level world, BlockPos pos){
-		return getVertices(world.getBlockState(pos).getBoundingBox(world, pos).offset(pos.getX(), pos.getY(), pos.getZ()));
+		return getVertices(level.getBlockState(pos).getBoundingBox(world, pos).offset(pos.getX(), pos.getY(), pos.getZ()));
 	}
 
 	/**

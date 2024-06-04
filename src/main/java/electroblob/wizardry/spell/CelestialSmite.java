@@ -46,7 +46,7 @@ public class CelestialSmite extends SpellRay {
 
 		if(world.isClientSide){
 
-			ParticleBuilder.create(Type.BEAM).pos(hit.x, world.getActualHeight(), hit.z).target(hit).scale(8)
+			ParticleBuilder.create(Type.BEAM).pos(hit.x, level.getActualHeight(), hit.z).target(hit).scale(8)
 			.clr(0xffbf00).time(10).spawn(world);
 			ParticleBuilder.create(Type.SPHERE).pos(hit).scale(4).clr(0xfff098).spawn(world);
 

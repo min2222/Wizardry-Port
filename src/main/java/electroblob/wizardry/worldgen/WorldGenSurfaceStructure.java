@@ -53,9 +53,9 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 		BlockPos origin = new BlockPos((chunkX << 4) + random.nextInt(16) + 8 - size.getX()/2, 0, (chunkZ << 4) + random.nextInt(16) + 8 - size.getZ()/2);
 
 		// Estimate a starting height for searching for the floor
-		BlockPos centre = world.getTopSolidOrLiquidBlock(new BlockPos(origin.add(size.getX()/2, 0, size.getZ()/2)));
+		BlockPos centre = level.getTopSolidOrLiquidBlock(new BlockPos(origin.add(size.getX()/2, 0, size.getZ()/2)));
 		// Check if we're at the top of the world, and if so just randomise the y pos (accounts for 'cavern' dimensions)
-		if(centre.getY() >= world.getActualHeight()) centre = new BlockPos(centre.getX(), random.nextInt(world.getActualHeight()), centre.getZ());
+		if(centre.getY() >= level.getActualHeight()) centre = new BlockPos(centre.getX(), random.nextInt(level.getActualHeight()), centre.getZ());
 
 		Integer startingHeight = BlockUtils.getNearestSurface(world, centre, Direction.UP, 32, true,
 				BlockUtils.SurfaceCriteria.COLLIDABLE_IGNORING_TREES);
@@ -65,7 +65,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 		if(Wizardry.settings.fastWorldgen){
 			BlockPos result = origin.up(startingHeight);
 			// Fast worldgen only checks the central position for water, which isn't perfect but it is faster
-			return world.getBlockState(new BlockPos(centre.getX(), startingHeight + 1, centre.getZ())).getMaterial().isLiquid() ? null : result;
+			return level.getBlockState(new BlockPos(centre.getX(), startingHeight + 1, centre.getZ())).getMaterial().isLiquid() ? null : result;
 		}
 
 		int[] floorHeights = new int[size.getX() * size.getZ()];
@@ -82,7 +82,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 			floorHeights[i] = floor == null ? 0 : floor; // Very unlikely that floor is null
 			// ^ That method gets the top solid block. Most non-solid blocks are ok to have around the structure,
 			// with the exception of liquids, so if there are too many the position is deemed unsuitable.
-			if(world.getBlockState(pos.up(floorHeights[i])).getMaterial().isLiquid()) liquidCount++;
+			if(level.getBlockState(pos.up(floorHeights[i])).getMaterial().isLiquid()) liquidCount++;
 			if(liquidCount > floorHeights.length * MAX_LIQUID_FRACTION) return null;
 		}
 
@@ -115,7 +115,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 
 		// Remove all the logs
 
-		while(changed && y < world.getHeight()){ // I do hope the trees don't reach the world height...
+		while(changed && y < level.getHeight()){ // I do hope the trees don't reach the world height...
 
 			// Always checks at least the first layer above the bounding box in case the structure cut the rest off
 			if(y > boundingBox.maxY + 1) changed = false;
@@ -125,8 +125,8 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 
 					BlockPos pos = new BlockPos(x, y, z);
 
-					Block block = world.getBlockState(pos).getBlock();
-					Block below = world.getBlockState(pos.down()).getBlock();
+					Block block = level.getBlockState(pos).getBlock();
+					Block below = level.getBlockState(pos.down()).getBlock();
 
 					if(block instanceof BlockLog){
 						if(below != Blocks.GRASS && below != Blocks.DIRT && !BlockUtils.isTreeBlock(world, pos.down())){
@@ -153,20 +153,20 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 					// Skip blocks that haven't been generated yet
 					// If you think about it, there can't possibly be floating trees in unloaded chunks anyway
 					if(!world.isBlockLoaded(pos)) continue;
-					if(world.getBlockState(pos).getBlock() instanceof BlockLeaves) leaves.add(pos);
+					if(level.getBlockState(pos).getBlock() instanceof BlockLeaves) leaves.add(pos);
 				}
 			}
 		}
 
 		for(int i=0; i<16; i++){
-			leaves.forEach(p -> world.getBlockState(p).getBlock().updateTick(world, p, world.getBlockState(p), random));
+			leaves.forEach(p -> level.getBlockState(p).getBlock().updateTick(world, p, level.getBlockState(p), random));
 		}
 
 		// Finally, remove all the items that were dropped as a result of leaf decay
 
 		AABB box = new AABB(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, y, boundingBox.maxZ).grow(border);
 
-		world.getEntitiesWithinAABB(ItemEntity.class, box).forEach(Entity::setDead);
+		level.getEntitiesWithinAABB(ItemEntity.class, box).forEach(Entity::setDead);
 
 	}
 

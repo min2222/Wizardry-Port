@@ -34,8 +34,8 @@ public class Snare extends SpellRay {
 		if(side == Direction.UP && world.isSideSolid(pos, Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos.up())){
 			if(!world.isClientSide){
 				world.setBlockAndUpdate(pos.up(), WizardryBlocks.snare.defaultBlockState());
-				((TileEntityPlayerSave)world.getTileEntity(pos.up())).setCaster(caster);
-				((TileEntityPlayerSave)world.getTileEntity(pos.up())).sync();
+				((TileEntityPlayerSave)level.getTileEntity(pos.up())).setCaster(caster);
+				((TileEntityPlayerSave)level.getTileEntity(pos.up())).sync();
 			}
 			return true;
 		}

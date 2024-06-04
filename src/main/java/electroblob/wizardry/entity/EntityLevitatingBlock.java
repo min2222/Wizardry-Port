@@ -106,7 +106,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					BlockPos blockpos = this.blockPosition();
 
-					if(this.world.getBlockState(blockpos).getBlock() == block){
+					if(this.level.getBlockState(blockpos).getBlock() == block){
 						this.world.setBlockToAir(blockpos);
 					}else if(!this.level.isClientSide){
 						this.discard();
@@ -124,14 +124,14 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					BlockPos blockpos1 = this.blockPosition();
 					boolean isConcrete = getBlock().getBlock() == Blocks.CONCRETE_POWDER;
-					boolean isConcreteInWater = isConcrete && this.world.getBlockState(blockpos1).getMaterial() == Material.WATER;
+					boolean isConcreteInWater = isConcrete && this.level.getBlockState(blockpos1).getMaterial() == Material.WATER;
 					double d0 = this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ;
 
 					if(isConcrete && d0 > 1.0D){
 
 						HitResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevgetX(), this.prevgetY(), this.prevgetZ()), new Vec3(this.getX(), this.getY(), this.getZ()), true);
 
-						if(raytraceresult != null && this.world.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
+						if(raytraceresult != null && this.level.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
 							isConcreteInWater = true;
 						}
@@ -145,10 +145,10 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 					}else{
 
-						BlockState iblockstate = this.world.getBlockState(blockpos1);
+						BlockState iblockstate = this.level.getBlockState(blockpos1);
 
 						if(this.world.isEmptyBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
-							if(!isConcreteInWater && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
+							if(!isConcreteInWater && BlockFalling.canFallThrough(this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
 								this.onGround = false;
 								return;
 							}
@@ -165,7 +165,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 								this.discard(); // Moved inside the above if statement
 
 								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
-										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down())))
+										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.level.getBlockState(blockpos1.down())))
 										&& this.world.setBlockAndUpdate(blockpos1, getBlock(), 3)){
 
 									if(block instanceof BlockFalling){
@@ -174,7 +174,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 									if(this.tileEntityData != null && block.hasTileEntity(getBlock())){
 
-										BlockEntity tileentity = this.world.getTileEntity(blockpos1);
+										BlockEntity tileentity = this.level.getTileEntity(blockpos1);
 
 										if(tileentity != null){
 
@@ -214,7 +214,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 		if(velocitySquared >= 0.2){
 
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox());
+			List<Entity> list = this.level.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox());
 
 			for(Entity entity : list){
 

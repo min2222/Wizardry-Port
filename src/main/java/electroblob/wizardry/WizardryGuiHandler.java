@@ -31,7 +31,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		if(id == ARCANE_WORKBENCH){
 
-			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityArcaneWorkbench){
 				return new ContainerArcaneWorkbench(player.inventory, (TileEntityArcaneWorkbench)tileEntity);
@@ -42,7 +42,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == BOOKSHELF){
 
-			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityBookshelf){
 				return new ContainerBookshelf(player.inventory, (TileEntityBookshelf)tileEntity);
@@ -57,7 +57,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		if(id == ARCANE_WORKBENCH){
 
-			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityArcaneWorkbench){
 				return new electroblob.wizardry.client.gui.GuiArcaneWorkbench(player.inventory,
@@ -82,7 +82,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == BOOKSHELF){
 
-			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityBookshelf){
 				return new electroblob.wizardry.client.gui.GuiBookshelf(player.inventory,
@@ -91,7 +91,7 @@ public class WizardryGuiHandler implements IGuiHandler {
 
 		}else if(id == LECTERN){
 
-			BlockEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileEntity = level.getTileEntity(new BlockPos(x, y, z));
 
 			if(tileEntity instanceof TileEntityLectern){
 				return new electroblob.wizardry.client.gui.GuiLectern((TileEntityLectern)tileEntity);

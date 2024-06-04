@@ -156,7 +156,7 @@ public class EntityZombieMinion extends EntityZombie implements ISummonedCreatur
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != Difficulty.PEACEFUL;
+		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

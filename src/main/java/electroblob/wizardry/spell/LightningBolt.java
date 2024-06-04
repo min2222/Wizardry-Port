@@ -53,8 +53,8 @@ public class LightningBolt extends SpellRay {
 			if(!world.isClientSide){
 				// Temporarily disable the fire tick gamerule if player block damage is disabled
 				// Bit of a hack but it works fine!
-				boolean doFireTick = world.getGameRules().getBoolean("doFireTick");
-				if(doFireTick && !Wizardry.settings.playerBlockDamage) world.getGameRules().setOrCreateGameRule("doFireTick", "false");
+				boolean doFireTick = level.getGameRules().getBoolean("doFireTick");
+				if(doFireTick && !Wizardry.settings.playerBlockDamage) level.getGameRules().setOrCreateGameRule("doFireTick", "false");
 
 				EntityLightningBolt lightning = new EntityLightningBolt(world, pos.getX(), pos.getY(), pos.getZ(), false);
 				if(caster != null) lightning.getEntityData().setUniqueId(SUMMONER_NBT_KEY, caster.getUniqueID());
@@ -62,7 +62,7 @@ public class LightningBolt extends SpellRay {
 				world.addWeatherEffect(lightning);
 
 				// Reset doFireTick to true if it was true before
-				if(doFireTick && !Wizardry.settings.playerBlockDamage) world.getGameRules().setOrCreateGameRule("doFireTick", "true");
+				if(doFireTick && !Wizardry.settings.playerBlockDamage) level.getGameRules().setOrCreateGameRule("doFireTick", "true");
 			}
 
 			return true;

@@ -67,11 +67,11 @@ public class Divination extends Spell {
 		List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.getPosition(), range);
 
 		sphere.removeIf(b -> {
-			Block block = world.getBlockState(b).getBlock();
+			Block block = level.getBlockState(b).getBlock();
 			return !(block instanceof BlockOre
 								|| block instanceof BlockRedstoneOre
 								|| block instanceof BlockCrystalOre
-								|| Settings.containsMetaBlock(Wizardry.settings.divinationOreWhitelist, world.getBlockState(b)));
+								|| Settings.containsMetaBlock(Wizardry.settings.divinationOreWhitelist, level.getBlockState(b)));
 		});
 
 		Strength strength = Strength.NOTHING;
@@ -131,13 +131,13 @@ public class Divination extends Spell {
 
 	protected static float calculateWeight(Level world, Player caster, BlockPos pos, double range, SpellModifiers modifiers){
 
-		Block block = world.getBlockState(pos).getBlock();
+		Block block = level.getBlockState(pos).getBlock();
 		// On a non-sorcery wand, the value of the ore has no effect on its weight
 		float weightModifier = modifiers.get(SpellModifiers.POTENCY) - 1;
 
 		// xp is a decent way of determining the 'value' of a block
 		// There is a degree of randomness associated with it though...
-		float xp = block.getExpDrop(world.getBlockState(pos), world, pos, 0);
+		float xp = block.getExpDrop(level.getBlockState(pos), world, pos, 0);
 		// For some reason smelting gives a lot less than mining, hence the multiplying by 4
 		if(xp == 0) xp = 4 * FurnaceRecipes.instance().getSmeltingExperience(new ItemStack(block));
 

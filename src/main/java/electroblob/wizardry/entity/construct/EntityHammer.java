@@ -142,7 +142,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			if(spin) this.setRotation(this.rotationYaw, this.rotationPitch + 15);
 
-			List<Entity> collided = world.getEntitiesInAABBexcluding(this, this.getCollisionBoundingBox(), e -> e instanceof LivingEntity);
+			List<Entity> collided = level.getEntitiesInAABBexcluding(this, this.getCollisionBoundingBox(), e -> e instanceof LivingEntity);
 
 			float damage = Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
@@ -174,7 +174,7 @@ public class EntityHammer extends EntityMagicConstruct {
 				double particleX = this.getX() - 1.0d + 2 * random.nextDouble();
 				double particleZ = this.getZ() - 1.0d + 2 * random.nextDouble();
 				// Roundabout way of getting a block instance for the block the hammer is standing on (if any).
-				BlockState block = world.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
+				BlockState block = level.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block != null){
 					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,

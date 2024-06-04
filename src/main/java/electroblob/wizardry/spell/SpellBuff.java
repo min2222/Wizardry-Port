@@ -138,7 +138,7 @@ public class SpellBuff extends Spell {
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		// Gets a 1x1x1 bounding box corresponding to the block in front of the dispenser
 		AABB boundingBox = new AABB(new BlockPos(x, y, z));
-		List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, boundingBox);
+		List<LivingEntity> entities = level.getEntitiesWithinAABB(LivingEntity.class, boundingBox);
 		
 		float distance = -1;
 		LivingEntity nearestEntity = null;

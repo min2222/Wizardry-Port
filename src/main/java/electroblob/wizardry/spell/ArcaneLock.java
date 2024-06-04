@@ -61,21 +61,21 @@ public class ArcaneLock extends SpellRay {
 
 	private boolean toggleLock(Level world, BlockPos pos, Player player){
 
-		BlockEntity tileentity = world.getTileEntity(pos);
+		BlockEntity tileentity = level.getTileEntity(pos);
 
 		if(tileentity != null){
 
 			if(tileentity.getTileData().hasUniqueId(NBT_KEY)){
 				// Unlocking
-				if(world.getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(NBT_KEY)) == player){
+				if(level.getPlayerEntityByUUID(tileentity.getTileData().getUniqueId(NBT_KEY)) == player){
 					NBTExtras.removeUniqueId(tileentity.getTileData(), NBT_KEY);
-					world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+					world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 					return true;
 				}
 			}else{
 				// Locking
 				tileentity.getTileData().setUniqueId(NBT_KEY, player.getUniqueID());
-				world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+				world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 				return true;
 			}
 		}
@@ -136,7 +136,7 @@ public class ArcaneLock extends SpellRay {
 
 		if(!(breaker instanceof Player) || !canBypassLocks((Player)breaker)){
 
-			BlockEntity tileentity = world.getTileEntity(pos);
+			BlockEntity tileentity = level.getTileEntity(pos);
 
 			// Prevents arcane-locked containers from being broken
 			// Need to check if it has the unique id first because if it is absent getUniqueId will return the nil UUID
@@ -156,7 +156,7 @@ public class ArcaneLock extends SpellRay {
 	private static boolean canBypassLocks(Player player){
 		if(!player.isCreative()) return false;
 		if(Wizardry.settings.creativeBypassesArcaneLock) return true;
-		MinecraftServer server = player.world.getMinecraftServer();
+		MinecraftServer server = player.level.getMinecraftServer();
 		return server != null && EntityUtils.isPlayerOp(player, server);
 	}
 

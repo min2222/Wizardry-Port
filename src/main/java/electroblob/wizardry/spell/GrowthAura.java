@@ -40,7 +40,7 @@ public class GrowthAura extends Spell {
 
 		for(BlockPos pos : sphere){
 
-			BlockState state = world.getBlockState(pos);
+			BlockState state = level.getBlockState(pos);
 
 			if(state.getBlock() instanceof IGrowable){
 
@@ -54,7 +54,7 @@ public class GrowthAura extends Spell {
 								int i = 0;
 								while(plant.canGrow(world, pos, state, false) && i++ < FULL_GROWTH_TIMEOUT){
 									plant.grow(world, world.rand, pos, state);
-									state = world.getBlockState(pos); // Update the state with the new one
+									state = level.getBlockState(pos); // Update the state with the new one
 									plant = (IGrowable)state.getBlock(); // Update the block with the new one
 								}
 							}else{

@@ -570,7 +570,7 @@ public class GuiSpellDisplay {
 			int y1 = flipY && mirrorY ? y + spellIconInsetY : y - spellIconInsetY - SPELL_ICON_SIZE;
 
 			if(jammed){
-				random.setSeed(Minecraft.getMinecraft().world.getTotalWorldTime() / 2);
+				random.setSeed(Minecraft.getMinecraft().level.getTotalWorldTime() / 2);
 				DrawingUtils.drawGlitchRect(random, x1, y1, 0, 0, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, false, false);
 			}else{
 				DrawingUtils.drawTexturedRect(x1, y1, 0, 0, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE);

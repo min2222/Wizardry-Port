@@ -74,7 +74,7 @@ public class RenderArcaneLock {
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 				}
 
-				Vec3[] vertices = GeometryUtils.getVertices(world.getBlockState(tileentity.getPos()).getBoundingBox(world, tileentity.getPos()).grow(0.05).offset(tileentity.getPos()));
+				Vec3[] vertices = GeometryUtils.getVertices(level.getBlockState(tileentity.getPos()).getBoundingBox(world, tileentity.getPos()).grow(0.05).offset(tileentity.getPos()));
 
 				drawFace(buffer, vertices[0], vertices[1], vertices[3], vertices[2], 0, 0, 1, 1); // Bottom
 				drawFace(buffer, vertices[6], vertices[7], vertices[2], vertices[3], 0, 0, 1, 1); // South

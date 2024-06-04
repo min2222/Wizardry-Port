@@ -385,7 +385,7 @@ public final class ParticleBuilder {
 	 * specified within its constructor (this is normally chosen at random).
 	 * <p></p>
 	 * <i>Pro tip: to get a particle to stay the same while a continuous spell is in use (but change between casts),
-	 * use {@code .seed(world.getTotalWorldTime() - ticksInUse)}.</i>
+	 * use {@code .seed(level.getTotalWorldTime() - ticksInUse)}.</i>
 	 * <p></p>
 	 * <b>Affects:</b> All particle types
 	 * @param seed The seed to set

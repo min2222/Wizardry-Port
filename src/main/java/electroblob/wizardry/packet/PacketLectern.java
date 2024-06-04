@@ -25,7 +25,7 @@ public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMe
 
 			player.getServerWorld().addScheduledTask(() -> {
 
-				BlockEntity tileentity = player.world.getTileEntity(message.pos);
+				BlockEntity tileentity = player.level.getTileEntity(message.pos);
 
 				if(tileentity instanceof TileEntityLectern){
 

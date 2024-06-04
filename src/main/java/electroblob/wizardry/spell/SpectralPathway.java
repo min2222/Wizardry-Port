@@ -70,8 +70,8 @@ public class SpectralPathway extends Spell {
 	private boolean placePathwayBlockIfPossible(Level world, BlockPos pos, float durationMultiplier){
 		if(BlockUtils.canBlockBeReplaced(world, pos, true)){
 			world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
-			if(world.getTileEntity(pos) instanceof TileEntityTimer){
-				((TileEntityTimer)world.getTileEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
+			if(level.getTileEntity(pos) instanceof TileEntityTimer){
+				((TileEntityTimer)level.getTileEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
 			}
 			return true;
 		}

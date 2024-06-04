@@ -107,7 +107,7 @@ public final class EntityUtils {
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinRadius(double radius, double x, double y, double z, Level world, Class<T> entityType){
 		AABB aabb = new AABB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
-		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
+		List<T> entityList = level.getEntitiesWithinAABB(entityType, aabb);
 		for(int i = 0; i < entityList.size(); i++){
 			if(entityList.get(i).getDistance(x, y, z) > radius){
 				entityList.remove(i);
@@ -146,7 +146,7 @@ public final class EntityUtils {
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinCylinder(double radius, double x, double y, double z, double height, Level world, Class<T> entityType) {
 		AABB aabb = new AABB(x - radius, y, z - radius, x + radius, y + height, z + radius);
-		List<T> entityList = world.getEntitiesWithinAABB(entityType, aabb);
+		List<T> entityList = level.getEntitiesWithinAABB(entityType, aabb);
 		for(T entity : entityList) {
 			if (entity.getDistance(x, entity.getY(), z) > radius) {
 				entityList.remove(entity);

@@ -192,7 +192,7 @@ public abstract class SpellRay extends Spell {
 
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
 				// the block is not air and (optionally) not a liquid.
-				if(!world.isEmptyBlock(pos) && (!world.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
+				if(!world.isEmptyBlock(pos) && (!level.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
 					targetPos = new Vec3(x + 0.5, y + 1, z + 0.5);
 				}
 			}

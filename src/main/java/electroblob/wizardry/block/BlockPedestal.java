@@ -86,7 +86,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
 
 	@Override
 	public float getExplosionResistance(Level world, BlockPos pos, @Nullable Entity exploder, Explosion explosion){
-		return world.getBlockState(pos).getValue(NATURAL) ? 6000000.0F : super.getExplosionResistance(world, pos, exploder, explosion);
+		return level.getBlockState(pos).getValue(NATURAL) ? 6000000.0F : super.getExplosionResistance(world, pos, exploder, explosion);
 	}
 
 	@Override

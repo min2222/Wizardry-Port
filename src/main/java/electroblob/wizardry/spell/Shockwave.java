@@ -100,7 +100,7 @@ public class Shockwave extends SpellAreaEffect {
 			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 
-			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
+			BlockState block = level.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
 				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,

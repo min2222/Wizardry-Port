@@ -96,11 +96,11 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 				if(pos2.distanceSqToCenter(living.getX(), living.getY(), living.getZ()) <= (double)(f * f)){
 
 					pos1.setPos(pos2.getX(), pos2.getY() + 1, pos2.getZ());
-					BlockState state1 = world.getBlockState(pos1);
+					BlockState state1 = level.getBlockState(pos1);
 
 					if(state1.getMaterial() == Material.AIR){
 
-						BlockState state2 = world.getBlockState(pos2);
+						BlockState state2 = level.getBlockState(pos2);
 
 						if(BlockUtils.isLavaSource(state2) && world.mayPlace(WizardryBlocks.obsidian_crust, pos2, false, Direction.DOWN, null)){
 							world.setBlockAndUpdate(pos2, WizardryBlocks.obsidian_crust.defaultBlockState());

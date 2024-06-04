@@ -127,8 +127,8 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 				// Creates a projectile from the supplied factory
 				T projectile = projectileFactory.apply(world);
 				// Sets the necessary parameters
-				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
-						: EntityUtils.getDefaultAimingError(world.getDifficulty());
+				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(level.getDifficulty())
+						: EntityUtils.getDefaultAimingError(level.getDifficulty());
 				projectile.aim(caster, target, calculateVelocity(projectile, modifiers, caster.getEyeHeight()
 						- (float)EntityMagicProjectile.LAUNCH_Y_OFFSET), aimingError);
 				projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);

@@ -63,14 +63,14 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	public void update(){
 
 		if(this.linkedContainer == null && this.linkedContainerPos != null){
-			this.linkContainer(world.getTileEntity(this.linkedContainerPos));
+			this.linkContainer(level.getTileEntity(this.linkedContainerPos));
 		}
 
 		double x = this.pos.getX() + 0.5;
 		double y = this.pos.getY() + 0.5;
 		double z = this.pos.getZ() + 0.5;
 
-		if(!activated && world.getClosestPlayer(x, y, z, ACTIVATION_RADIUS, false) != null){
+		if(!activated && level.getClosestPlayer(x, y, z, ACTIVATION_RADIUS, false) != null){
 
 			this.activated = true;
 
@@ -101,8 +101,8 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 					}
 
 					wizard.setLocationAndAngles(x1, y1 + 0.5, z1, 0, 0);
-					wizard.setElement(world.getBlockState(pos).getValue(BlockPedestal.ELEMENT));
-					wizard.onInitialSpawn(world.getDifficultyForLocation(pos), null);
+					wizard.setElement(level.getBlockState(pos).getValue(BlockPedestal.ELEMENT));
+					wizard.onInitialSpawn(level.getDifficultyForLocation(pos), null);
 					wizard.hasStructure = true;
 
 					world.addFreshEntity(wizard);
@@ -116,7 +116,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 			containNearbyTargets();
 		}
 
-		if(activated && world.getTotalWorldTime() % 20L == 0) containNearbyTargets();
+		if(activated && level.getTotalWorldTime() % 20L == 0) containNearbyTargets();
 
 		if(activated && areWizardsDead() && !level.isClientSide){
 			conquer();
@@ -144,9 +144,9 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 			WizardryPacketHandler.net.sendToAllAround(new PacketConquerShrine.Message(this.pos),
 					new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), x, y, z, 64));
 
-			if(world.getBlockState(pos).getBlock() == WizardryBlocks.runestone_pedestal){
+			if(level.getBlockState(pos).getBlock() == WizardryBlocks.runestone_pedestal){
 				world.setBlockAndUpdate(pos, WizardryBlocks.runestone_pedestal.defaultBlockState()
-						.withProperty(BlockPedestal.ELEMENT, world.getBlockState(pos).getValue(BlockPedestal.ELEMENT)));
+						.withProperty(BlockPedestal.ELEMENT, level.getBlockState(pos).getValue(BlockPedestal.ELEMENT)));
 			}else{
 				Wizardry.logger.warn("What's going on?! A shrine core is being conquered but the block at its position is not a runestone pedestal!");
 			}
@@ -157,7 +157,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 		if(!level.isClientSide){
 			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getTileData(), ArcaneLock.NBT_KEY);
 		}else{
-			BlockEntity tileEntity = world.getTileEntity(this.pos.up());
+			BlockEntity tileEntity = level.getTileEntity(this.pos.up());
 			if(tileEntity != null){ // Bit of a dirty fix but it's only visual, so meh
 				NBTExtras.removeUniqueId(tileEntity.getTileData(), ArcaneLock.NBT_KEY);
 			}
@@ -177,7 +177,7 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 	private void containNearbyTargets(){
 
-		List<LivingEntity> entities = world.getEntitiesWithinAABB(LivingEntity.class, containmentField,
+		List<LivingEntity> entities = level.getEntitiesWithinAABB(LivingEntity.class, containmentField,
 				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
 		for(LivingEntity entity : entities){

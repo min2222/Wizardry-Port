@@ -111,13 +111,13 @@ public class BlockCrystalFlowerPot extends Block {
 
 	@Override
 	public boolean canPlaceBlockAt(Level world, BlockPos pos){
-		BlockState downState = world.getBlockState(pos.down());
+		BlockState downState = level.getBlockState(pos.down());
 		return super.canPlaceBlockAt(world, pos) && (downState.isTopSolid() || downState.getBlockFaceShape(world, pos.down(), Direction.UP) == BlockFaceShape.SOLID);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
-		BlockState downState = world.getBlockState(pos.down());
+		BlockState downState = level.getBlockState(pos.down());
 		if(!downState.isTopSolid() && downState.getBlockFaceShape(world, pos.down(), Direction.UP) != BlockFaceShape.SOLID){
 			this.dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);

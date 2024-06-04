@@ -214,7 +214,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	 * {@link SpellMinion#MINION_COUNT}.
 	 */
 	protected void addMinionExtras(T minion, BlockPos pos, @Nullable LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
-		minion.onInitialSpawn(minion.world.getDifficultyForLocation(pos), null);
+		minion.onInitialSpawn(minion.level.getDifficultyForLocation(pos), null);
 	}
 
 }

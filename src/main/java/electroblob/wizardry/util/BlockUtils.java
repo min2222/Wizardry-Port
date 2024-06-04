@@ -84,12 +84,12 @@ public final class BlockUtils {
 	 */
 	public static int getLightLevel(Level world, BlockPos pos){
 
-		int i = world.getLightFromNeighbors(pos);
+		int i = level.getLightFromNeighbors(pos);
 
         if(world.isThundering()){
-            int j = world.getSkylightSubtracted();
+            int j = level.getSkylightSubtracted();
             world.setSkylightSubtracted(10);
-            i = world.getLightFromNeighbors(pos);
+            i = level.getLightFromNeighbors(pos);
             world.setSkylightSubtracted(j);
         }
 
@@ -99,7 +99,7 @@ public final class BlockUtils {
 	/**
 	 * Returns whether the block at the given position can be replaced by another one (works as if a block is being
 	 * placed by a player). True for air, vines, tall grass and snow layers but not for flowers, signs etc.
-	 * This is a shortcut for <code>world.getBlockState(pos).getMaterial().isReplaceable()</code>, with a few extra bits.
+	 * This is a shortcut for <code>level.getBlockState(pos).getMaterial().isReplaceable()</code>, with a few extra bits.
 	 *
 	 * @param world The world the block is in.
 	 * @param pos The position of the block.
@@ -108,8 +108,8 @@ public final class BlockUtils {
 	 * @see BlockUtils#canBlockBeReplaced(Level, BlockPos)
 	 */
 	public static boolean canBlockBeReplaced(Level world, BlockPos pos, boolean excludeLiquids){
-		return (world.isEmptyBlock(new BlockPos(pos)) || world.getBlockState(pos).getMaterial().isReplaceable())
-				&& (!excludeLiquids || !world.getBlockState(pos).getMaterial().isLiquid());
+		return (world.isEmptyBlock(new BlockPos(pos)) || level.getBlockState(pos).getMaterial().isReplaceable())
+				&& (!excludeLiquids || !level.getBlockState(pos).getMaterial().isLiquid());
 	}
 
 	/**
@@ -128,10 +128,10 @@ public final class BlockUtils {
 	/**
 	 * Returns whether the block at the given coordinates is unbreakable in survival mode. In vanilla this is true for
 	 * bedrock and end portal frame, for example. This is a shortcut for:<p></p>
-	 * {@code world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f}
+	 * {@code level.getBlockState(pos).getBlockHardness(world, pos) == -1.0f}
 	 */
 	public static boolean isBlockUnbreakable(Level world, BlockPos pos){
-		return !world.isEmptyBlock(new BlockPos(pos)) && world.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
+		return !world.isEmptyBlock(new BlockPos(pos)) && level.getBlockState(pos).getBlockHardness(world, pos) == -1.0f;
 	}
 
 	/**
@@ -142,7 +142,7 @@ public final class BlockUtils {
 	public static BlockState getBlockEntityIsStandingOn(Entity entity){
 		BlockPos pos = new BlockPos(Mth.floor(entity.getX()), (int)entity.getY() - 1,
 				Mth.floor(entity.getZ()));
-		return entity.world.getBlockState(pos);
+		return entity.level.getBlockState(pos);
 	}
 
 	/**
@@ -301,7 +301,7 @@ public final class BlockUtils {
 		}
 
 		// I think this is irrelevant in forge because it's only for vanilla entities, but bukkit might use it
-		BlockState state = world.getBlockState(pos);
+		BlockState state = level.getBlockState(pos);
 		if(!state.getBlock().canEntityDestroy(state, world, pos, breaker)) return -1;
 		// Although the forge event only needs an EntityLivingBase, it seems it's not supposed to be for players
 		if(breaker instanceof Mob && ForgeEventFactory.onEntityDestroyBlock((LivingEntity)breaker, pos, state)) return -1;
@@ -334,10 +334,10 @@ public final class BlockUtils {
 	 * @return True if the given block is a tree block, false if not.
 	 */
 	public static boolean isTreeBlock(Level world, BlockPos pos){
-		Block block = world.getBlockState(pos).getBlock();
+		Block block = level.getBlockState(pos).getBlock();
 		return block instanceof BlockLog || block instanceof BlockCactus
-				|| block.isLeaves(world.getBlockState(pos), world, pos) || block.isFoliage(world, pos)
-				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, world.getBlockState(pos));
+				|| block.isLeaves(level.getBlockState(pos), world, pos) || block.isFoliage(world, pos)
+				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, level.getBlockState(pos));
 	}
 
 	/**
@@ -368,12 +368,12 @@ public final class BlockUtils {
 	 */
 	public static BlockPos getConnectedChest(Level world, BlockPos pos){
 
-		Block block = world.getBlockState(pos).getBlock();
+		Block block = level.getBlockState(pos).getBlock();
 
 		if(block instanceof BlockChest){
 			for(Direction enumfacing : Direction.Plane.HORIZONTAL){
 				BlockPos pos1 = pos.relative(enumfacing);
-				if(world.getBlockState(pos1).getBlock() == block){
+				if(level.getBlockState(pos1).getBlock() == block){
 					return pos1;
 				}
 			}
@@ -410,7 +410,7 @@ public final class BlockUtils {
 	 */
 	public static boolean freeze(Level world, BlockPos pos, boolean freezeLava){
 
-		BlockState state = world.getBlockState(pos);
+		BlockState state = level.getBlockState(pos);
 		Block block = state.getBlock();
 
 		if(isWaterSource(state)){
@@ -620,7 +620,7 @@ public final class BlockUtils {
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
 		static SurfaceCriteria basedOn(Predicate<BlockState> condition){
-			return (world, pos, side) -> condition.test(world.getBlockState(pos)) && !condition.test(world.getBlockState(pos.relative(side)));
+			return (world, pos, side) -> condition.test(level.getBlockState(pos)) && !condition.test(level.getBlockState(pos.relative(side)));
 		}
 
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through and
@@ -629,12 +629,12 @@ public final class BlockUtils {
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side and
 		 * a block that is replaceable. This means the surface can be built on. */
-		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.isSideSolid(pos, side) && world.getBlockState(pos.relative(side)).getBlock().isReplaceable(world, pos.relative(side));
+		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.isSideSolid(pos, side) && level.getBlockState(pos.relative(side)).getBlock().isReplaceable(world, pos.relative(side));
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side
 		 * or a liquid, and an air block. Used for freezing water and placing snow. */
 		// Was getNearestFloorLevelB
-		SurfaceCriteria SOLID_LIQUID_TO_AIR = (world, pos, side) -> (world.getBlockState(pos).getMaterial().isLiquid()
+		SurfaceCriteria SOLID_LIQUID_TO_AIR = (world, pos, side) -> (level.getBlockState(pos).getMaterial().isLiquid()
 				|| world.isSideSolid(pos, side) && world.isEmptyBlock(pos.relative(side)));
 
 		/** Surface criterion which defines a surface as the boundary between any non-air block and an air block.
@@ -645,7 +645,7 @@ public final class BlockUtils {
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through, and
 		 * a block that can be moved through or a tree block (log or leaves). Used for structure generation. */
 		SurfaceCriteria COLLIDABLE_IGNORING_TREES = basedOn((world, pos) ->
-				world.getBlockState(pos).getMaterial().blocksMovement() && !isTreeBlock(world, pos));
+				level.getBlockState(pos).getMaterial().blocksMovement() && !isTreeBlock(world, pos));
 
 	}
 

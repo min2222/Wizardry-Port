@@ -80,7 +80,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 
 		if(!level.isClientSide){
 
-			for(Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().grow(2))){
+			for(Entity entity : level.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().grow(2))){
 
 				if(entity instanceof EntityMagicConstruct) continue;
 

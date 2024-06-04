@@ -74,7 +74,7 @@ public class WallOfFrost extends SpellRay {
 			}
 
 			if(origin.squareDistanceTo(pos.getX(), pos.getY(), pos.getZ()) > MINIMUM_PLACEMENT_RANGE * MINIMUM_PLACEMENT_RANGE
-					&& world.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && world.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
+					&& level.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && level.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
 
 				pos = pos.relative(side);
 				

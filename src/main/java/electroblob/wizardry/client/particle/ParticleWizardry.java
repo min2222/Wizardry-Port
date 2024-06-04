@@ -497,7 +497,7 @@ public abstract class ParticleWizardry extends Particle {
 
 		if(this.canCollide){
 
-			List<AABB> list = this.world.getCollisionBoxes(null, this.getBoundingBox().expand(x, y, z));
+			List<AABB> list = this.level.getCollisionBoxes(null, this.getBoundingBox().expand(x, y, z));
 
 			for(AABB axisalignedbb : list){
 				y = axisalignedbb.calculateYOffset(this.getBoundingBox(), y);

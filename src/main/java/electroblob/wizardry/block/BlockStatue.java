@@ -46,9 +46,9 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		// Not a good idea to call getBlockBoundsMinX() or whatever from in here, since this method changes those!
 		if(!this.isIce){
 
-			if(world.getTileEntity(pos) instanceof TileEntityStatue){
+			if(level.getTileEntity(pos) instanceof TileEntityStatue){
 
-				TileEntityStatue statue = (TileEntityStatue)world.getTileEntity(pos);
+				TileEntityStatue statue = (TileEntityStatue)level.getTileEntity(pos);
 
 				if(statue.creature != null){
 
@@ -134,7 +134,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 
 		if(!level.isClientSide){
 
-			TileEntityStatue tileentity = (TileEntityStatue)world.getTileEntity(pos);
+			TileEntityStatue tileentity = (TileEntityStatue)level.getTileEntity(pos);
 
 			if(tileentity != null){
 				if(tileentity.parts == 2){
@@ -203,9 +203,9 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		if((target.getBbHeight() < 1.2 || target.isChild()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
 			
 			world.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(world.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos)).setCreatureAndPart(target, 1, 1);
-				((TileEntityStatue)world.getTileEntity(pos)).setLifetime(duration);
+			if(level.getTileEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 1);
+				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 			
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
@@ -217,14 +217,14 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up())){
 			
 			world.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(world.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos)).setCreatureAndPart(target, 1, 2);
-				((TileEntityStatue)world.getTileEntity(pos)).setLifetime(duration);
+			if(level.getTileEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 2);
+				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 
 			world.setBlockAndUpdate(pos.up(), this.defaultBlockState());
-			if(world.getTileEntity(pos.up()) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 2);
+			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 2);
 			}
 
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
@@ -236,19 +236,19 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up()) && BlockUtils.canPlaceBlock(caster, world, pos.up(2))){
 			
 			world.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(world.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos)).setCreatureAndPart(target, 1, 3);
-				((TileEntityStatue)world.getTileEntity(pos)).setLifetime(duration);
+			if(level.getTileEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 3);
+				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 
 			world.setBlockAndUpdate(pos.up(), this.defaultBlockState());
-			if(world.getTileEntity(pos.up()) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 3);
+			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 3);
 			}
 
 			world.setBlockAndUpdate(pos.up(2), this.defaultBlockState());
-			if(world.getTileEntity(pos.up(2)) instanceof TileEntityStatue){
-				((TileEntityStatue)world.getTileEntity(pos.up(2))).setCreatureAndPart(target, 3, 3);
+			if(level.getTileEntity(pos.up(2)) instanceof TileEntityStatue){
+				((TileEntityStatue)level.getTileEntity(pos.up(2))).setCreatureAndPart(target, 3, 3);
 			}
 
 			target.getEntityData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);

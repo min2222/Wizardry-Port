@@ -164,7 +164,7 @@ public class EntityIceGiant extends EntityIronGolem implements ISummonedCreature
 
 	@Override
 	public boolean getCanSpawnHere(){
-		return this.world.getDifficulty() != Difficulty.PEACEFUL;
+		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

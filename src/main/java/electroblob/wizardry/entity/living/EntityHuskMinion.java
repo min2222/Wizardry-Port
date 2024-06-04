@@ -33,7 +33,7 @@ public class EntityHuskMinion extends EntityZombieMinion {
 		boolean flag = super.attackEntityAsMob(target);
 
 		if(flag && this.getMainHandItem().isEmpty() && target instanceof LivingEntity){
-			float f = this.world.getDifficultyForLocation(this.blockPosition()).getAdditionalDifficulty();
+			float f = this.level.getDifficultyForLocation(this.blockPosition()).getAdditionalDifficulty();
 			((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.HUNGER, 140 * (int)f));
 		}
 

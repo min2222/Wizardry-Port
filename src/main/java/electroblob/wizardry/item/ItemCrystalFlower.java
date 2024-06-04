@@ -21,9 +21,9 @@ public class ItemCrystalFlower extends ItemBlock {
 	@Override
 	public InteractionResult onItemUseFirst(Player player, Level world, BlockPos pos, Direction side, float hitX, float hitY, float hitZ, InteractionHand hand){
 
-		if(world.getTileEntity(pos) instanceof TileEntityFlowerPot){
+		if(level.getTileEntity(pos) instanceof TileEntityFlowerPot){
 
-			TileEntityFlowerPot tileEntity = (TileEntityFlowerPot)world.getTileEntity(pos);
+			TileEntityFlowerPot tileEntity = (TileEntityFlowerPot)level.getTileEntity(pos);
 
 			if(tileEntity.getFlowerPotItem() == null || tileEntity.getFlowerPotItem() == Items.AIR){
 				player.addStat(StatList.FLOWER_POTTED);

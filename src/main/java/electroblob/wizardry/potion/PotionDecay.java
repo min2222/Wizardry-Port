@@ -51,7 +51,7 @@ public class PotionDecay extends PotionMagicEffect {
 		if(target.tickCount % Constants.DECAY_SPREAD_INTERVAL == 0 && !target.level.isClientSide
 				&& target.isPotionActive(WizardryPotions.decay) && target.onGround){
 
-			List<Entity> entities = target.world.getEntitiesWithinAABBExcludingEntity(target,
+			List<Entity> entities = target.level.getEntitiesWithinAABBExcludingEntity(target,
 					target.getBoundingBox());
 			
 			for(Entity entity : entities){

@@ -80,7 +80,7 @@ public class BlockTransportationStone extends Block {
 		super.neighborChanged(state, world, pos, block, fromPos);
 
 		if(!world.isSideSolid(pos.down(), Direction.UP, false)){
-			this.dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
+			this.dropBlockAsItem(world, pos, level.getBlockState(pos), 0);
 			world.setBlockToAir(pos);
 		}
 	}
@@ -89,7 +89,7 @@ public class BlockTransportationStone extends Block {
 	public void updateTick(Level world, BlockPos pos, BlockState state, Random random){
 
 		if(!world.isSideSolid(pos.down(), Direction.UP)){
-			this.dropBlockAsItem(world, pos, world.getBlockState(pos), 0);
+			this.dropBlockAsItem(world, pos, level.getBlockState(pos), 0);
 			world.setBlockToAir(pos);
 		}
 	}
@@ -177,13 +177,13 @@ public class BlockTransportationStone extends Block {
 	/** Returns whether the specified location is surrounded by a complete circle of 8 transportation stones. */
 	public static boolean testForCircle(Level world, BlockPos pos){
 
-		if(world.getBlockState(pos).getMaterial().blocksMovement() || world.getBlockState(pos.up()).getMaterial()
+		if(level.getBlockState(pos).getMaterial().blocksMovement() || level.getBlockState(pos.up()).getMaterial()
 				.blocksMovement()) return false;
 
 		for(int x = -1; x <= 1; x++){
 			for(int z = -1; z <= 1; z++){
 				if(x == 0 && z == 0) continue;
-				if(world.getBlockState(pos.add(x, 0, z)).getBlock() != WizardryBlocks.transportation_stone){
+				if(level.getBlockState(pos.add(x, 0, z)).getBlock() != WizardryBlocks.transportation_stone){
 					return false;
 				}
 			}
@@ -219,7 +219,7 @@ public class BlockTransportationStone extends Block {
 		for(int x = -1; x <= 1; x++){
 			for(int z = -1; z <= 1; z++){
 				if(x == 0 && z == 0) continue;
-				if(world.getBlockState(pos.add(x, 0, z)).getBlock() == WizardryBlocks.transportation_stone) n++;
+				if(level.getBlockState(pos.add(x, 0, z)).getBlock() == WizardryBlocks.transportation_stone) n++;
 			}
 		}
 

@@ -92,7 +92,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle && ((TileEntityReceptacle)tileEntity).getElement() != null){
 			return super.getLightValue(state, world, pos); // Return super to use float value from constructor
@@ -106,7 +106,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 
 		super.getDrops(drops, world, pos, state, fortune);
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 			Element element = ((TileEntityReceptacle)tileEntity).getElement();
@@ -118,7 +118,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	public boolean canPlaceBlockOnSide(Level world, BlockPos pos, Direction side){
 
 		if(side != Direction.UP && side != Direction.DOWN
-				&& world.getBlockState(pos.relative(side.getOpposite())).getBlock() instanceof BlockImbuementAltar){
+				&& level.getBlockState(pos.relative(side.getOpposite())).getBlock() instanceof BlockImbuementAltar){
 			return true;
 		}
 		return super.canPlaceBlockOnSide(world, pos, side);
@@ -160,7 +160,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	private boolean canPlaceAt(Level world, BlockPos pos, Direction facing){
 
 		BlockPos blockpos = pos.relative(facing.getOpposite());
-		BlockState state = world.getBlockState(blockpos);
+		BlockState state = level.getBlockState(blockpos);
 		Block block = state.getBlock();
 		BlockFaceShape blockfaceshape = state.getBlockFaceShape(world, blockpos, facing);
 
@@ -174,7 +174,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	}
 
 	private boolean canPlaceOn(Level world, BlockPos pos){
-		BlockState state = world.getBlockState(pos);
+		BlockState state = level.getBlockState(pos);
 		return state.getBlock().canPlaceTorchOnTop(state, world, pos);
 	}
 
@@ -195,7 +195,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public boolean onBlockActivated(Level world, BlockPos pos, BlockState state, Player player, InteractionHand hand, Direction facing, float hitX, float hitY, float hitZ){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		ItemStack stack = player.getItemInHand(hand);
 
@@ -237,7 +237,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random rand){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 
@@ -274,9 +274,9 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		if(placer instanceof Player){
-			BlockPos centre = pos.relative(world.getBlockState(pos).getValue(FACING).getOpposite());
-			if(world.getBlockState(centre).getBlock() == WizardryBlocks.imbuement_altar
-					&& Arrays.stream(Direction.HORIZONTALS).allMatch(f -> world.getBlockState(centre.offset(f)).getBlock() == WizardryBlocks.receptacle)){
+			BlockPos centre = pos.relative(level.getBlockState(pos).getValue(FACING).getOpposite());
+			if(level.getBlockState(centre).getBlock() == WizardryBlocks.imbuement_altar
+					&& Arrays.stream(Direction.HORIZONTALS).allMatch(f -> level.getBlockState(centre.offset(f)).getBlock() == WizardryBlocks.receptacle)){
 				WizardryAdvancementTriggers.restore_imbuement_altar.triggerFor((Player)placer);
 			}
 		}
@@ -296,7 +296,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public int getComparatorInputOverride(BlockState state, Level world, BlockPos pos){
 
-		BlockEntity tileEntity = world.getTileEntity(pos);
+		BlockEntity tileEntity = level.getTileEntity(pos);
 
 		if(tileEntity instanceof TileEntityReceptacle){
 			Element element = ((TileEntityReceptacle)tileEntity).getElement();

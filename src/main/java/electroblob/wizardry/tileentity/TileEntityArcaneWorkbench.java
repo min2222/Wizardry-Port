@@ -53,7 +53,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
-		if(!doNotSync) this.world.markAndNotifyBlock(pos, null, world.getBlockState(pos), world.getBlockState(pos), 3);
+		if(!doNotSync) this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
 		if(stack.getItem() instanceof IManaStoringItem && !this.level.isClientSide && !((IManaStoringItem)stack.getItem()).isManaFull(stack)
-				&& this.world.getTotalWorldTime() % electroblob.wizardry.constants.Constants.CONDENSER_TICK_INTERVAL == 0){
+				&& this.level.getTotalWorldTime() % electroblob.wizardry.constants.Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
 			((IManaStoringItem)stack.getItem()).rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
 		}
@@ -149,7 +149,7 @@ public class TileEntityArcaneWorkbench extends BlockEntity implements IInventory
 
 	@Override
 	public boolean isUsableByPlayer(Player player){
-		return world.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
+		return level.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
 	}
 
 	@Override

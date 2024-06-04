@@ -530,7 +530,7 @@ public class Possession extends SpellRay {
 				if(!player.capabilities.isCreativeMode){
 					// TODO: Make this a proper DamageSource?
 					DamageSafetyChecker.attackEntitySafely(player, DamageSource.OUT_OF_WORLD, event.getAmount() / 2,
-							DamageSource.OUT_OF_WORLD.getDamageType());
+							DamageSource.OUT_OF_level.getDamageType());
 				}
 
 				if(player.getHealth() <= Spells.possession.getProperty(CRITICAL_HEALTH).floatValue()){
@@ -612,7 +612,7 @@ public class Possession extends SpellRay {
 						IProjectile projectile = factory.apply(possessor.world);
 						Vec3 look = possessor.getLookVec();
 						((Entity)projectile).setPosition(possessor.getX() + look.x, possessor.getY() + possessor.getEyeHeight() + look.y, possessor.getZ() + look.z);
-						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.world.getDifficulty()));
+						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.level.getDifficulty()));
 
 						if(projectile instanceof EntityMagicProjectile) ((EntityMagicProjectile)projectile).setCaster(possessor);
 						else if(projectile instanceof EntityMagicArrow) ((EntityMagicArrow)projectile).setCaster(possessor);
