@@ -25,7 +25,7 @@ displayName="Electroblob's Wizardry" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+#logoFile="logo.png" #optional
 # A text field displayed in the mod UI
 #credits="\nDesigned, coded and textured by Electroblob.\nDiscord Moderators: FavouriteDragon, WinDanesz\nCode contributed by: Corail31, 12foo, Shadows-of-Fire, Tora-B, Avatair, Aeronica, UltraHex, Azim-Palmer, raoulvdberge, rafasoares, xinyuan-liu, SettingDust, Aralu115, WinDanesz, ZettaSword.\nTranslators: Alsentar (Spanish), MadWrist (Mexican Spanish), VilagVil, kellixon, bigenergy, MugGod2 & DrHesperus (Russian), Hahdrim & Crowller (French), lorrampi (Brazilian Portuguese), ZHENGLOC, dragon-evol, Hokorizero, TUsama & Determancer (Chinese - Simplified), shejery, rewi_wire, 방통 & red1854th (Korean), Trozuu & Olej (Polish), BirdyDragon & Lemopav (German), chesterccj305 (Chinese - Traditional), Bombadil (Hungarian).\nSound Effects: OhhWowProductions, fredzed, deleted_user_3277771, DiscoveryME, OGSoundFX, leosalom, juskiddink" #optional
 # A text field displayed in the mod UI
