@@ -202,7 +202,7 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		// Short mobs such as spiders and pigs
 		if((target.getBbHeight() < 1.2 || target.isChild()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
 			
-			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			level.setBlockAndUpdate(pos, this.defaultBlockState());
 			if(level.getTileEntity(pos) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 1);
 				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
@@ -216,13 +216,13 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		else if(target.getBbHeight() < 2.5 && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up())
 				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up())){
 			
-			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			level.setBlockAndUpdate(pos, this.defaultBlockState());
 			if(level.getTileEntity(pos) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 2);
 				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 
-			world.setBlockAndUpdate(pos.up(), this.defaultBlockState());
+			level.setBlockAndUpdate(pos.up(), this.defaultBlockState());
 			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 2);
 			}
@@ -235,18 +235,18 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		else if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canBlockBeReplaced(world, pos.up(2))
 				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up()) && BlockUtils.canPlaceBlock(caster, world, pos.up(2))){
 			
-			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			level.setBlockAndUpdate(pos, this.defaultBlockState());
 			if(level.getTileEntity(pos) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 3);
 				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
 			}
 
-			world.setBlockAndUpdate(pos.up(), this.defaultBlockState());
+			level.setBlockAndUpdate(pos.up(), this.defaultBlockState());
 			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 3);
 			}
 
-			world.setBlockAndUpdate(pos.up(2), this.defaultBlockState());
+			level.setBlockAndUpdate(pos.up(2), this.defaultBlockState());
 			if(level.getTileEntity(pos.up(2)) instanceof TileEntityStatue){
 				((TileEntityStatue)level.getTileEntity(pos.up(2))).setCreatureAndPart(target, 3, 3);
 			}

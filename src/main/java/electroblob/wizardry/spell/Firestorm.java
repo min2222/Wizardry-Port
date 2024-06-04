@@ -102,7 +102,7 @@ public class Firestorm extends SpellAreaEffect {
 						// Randomised with weighting so that the nearer the block the more likely it is to be set alight.
 						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
-							world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+							level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 						}
 					}
 				}

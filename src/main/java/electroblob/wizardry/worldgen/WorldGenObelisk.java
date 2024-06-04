@@ -75,7 +75,7 @@ public class WorldGenObelisk extends WorldGenSurfaceStructure {
 
 				BlockPos pos = entry.getKey();
 
-				world.setBlockAndUpdate(pos, Blocks.MOB_SPAWNER.defaultBlockState());
+				level.setBlockAndUpdate(pos, Blocks.MOB_SPAWNER.defaultBlockState());
 
 				if(level.getTileEntity(pos) instanceof TileEntityMobSpawner){
 

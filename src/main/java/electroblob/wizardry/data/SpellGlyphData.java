@@ -98,7 +98,7 @@ public class SpellGlyphData extends WorldSavedData {
 		if(instance.randomNames.size() < Spell.getTotalSpellCount()
 				|| instance.randomDescriptions.size() < Spell.getTotalSpellCount()){
 			instance.generateGlyphNames(world);
-			world.setData(NAME, instance);
+			level.setData(NAME, instance);
 		}
 
 		return instance;

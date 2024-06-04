@@ -51,7 +51,7 @@ public class Ignite extends SpellRay {
 		if(world.isEmptyBlock(pos)){
 			
 			if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
-				world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+				level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 			}
 			
 			return true;

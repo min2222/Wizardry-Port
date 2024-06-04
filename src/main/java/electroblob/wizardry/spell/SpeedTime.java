@@ -53,7 +53,7 @@ public class SpeedTime extends Spell {
 
 		// Hold onto your hats ladies and gentlemen, this effect scales with potency modifiers! Speeeeeeeeed!
 		if(Wizardry.settings.worldTimeManipulation){
-			world.setWorldTime(level.getWorldTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
+			level.setWorldTime(level.getWorldTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
 			flag = true;
 		}
 

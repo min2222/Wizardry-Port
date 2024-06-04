@@ -88,9 +88,9 @@ public final class BlockUtils {
 
         if(world.isThundering()){
             int j = level.getSkylightSubtracted();
-            world.setSkylightSubtracted(10);
+            level.setSkylightSubtracted(10);
             i = level.getLightFromNeighbors(pos);
-            world.setSkylightSubtracted(j);
+            level.setSkylightSubtracted(j);
         }
 
         return i;
@@ -414,13 +414,13 @@ public final class BlockUtils {
 		Block block = state.getBlock();
 
 		if(isWaterSource(state)){
-			world.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		}else if(freezeLava && isLavaSource(state)){
-			world.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+			level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
 		}else if(freezeLava && (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)){
-			world.setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
+			level.setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
 		}else if(canBlockBeReplaced(world, pos.up()) && Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos.up())){
-			world.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
+			level.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
 		}else{
 			return false;
 		}

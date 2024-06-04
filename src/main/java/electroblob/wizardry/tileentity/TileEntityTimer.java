@@ -31,7 +31,7 @@ public class TileEntityTimer extends BlockEntity implements ITickable {
 				// destroyBlock breaks the block as if broken by a player, with sound and particles.
 				this.world.destroyBlock(pos, false);
 			}else{
-				this.world.setBlockToAir(pos);
+				this.level.setBlockToAir(pos);
 			}
 		}
 	}

@@ -85,13 +85,13 @@ public class BlockThorns extends BlockBush implements ITileEntityProvider {
 	}
 
 	public void placeAt(Level world, BlockPos lowerPos, int flags){
-		world.setBlockAndUpdate(lowerPos, this.defaultBlockState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 0), flags);
-		world.setBlockAndUpdate(lowerPos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(AGE, 0), flags);
+		level.setBlockAndUpdate(lowerPos, this.defaultBlockState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 0), flags);
+		level.setBlockAndUpdate(lowerPos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(AGE, 0), flags);
 	}
 
 	@Override
 	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		world.setBlockAndUpdate(pos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
+		level.setBlockAndUpdate(pos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
 	}
 
 	@Override

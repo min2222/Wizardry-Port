@@ -53,7 +53,7 @@ public class WorldGenCrystalFlower implements IWorldGenerator {
 				if(world.isBlockLoaded(pos) && world.isEmptyBlock(pos) && (!world.provider.isNether() || j1 < 127)
 						&& state.getBlock().canPlaceBlockOnSide(world, pos, Direction.UP)){
 
-					world.setBlockAndUpdate(pos, state, 2);
+					level.setBlockAndUpdate(pos, state, 2);
 				}
 			}
 		}

@@ -81,7 +81,7 @@ public class BlockTransportationStone extends Block {
 
 		if(!world.isSideSolid(pos.down(), Direction.UP, false)){
 			this.dropBlockAsItem(world, pos, level.getBlockState(pos), 0);
-			world.setBlockToAir(pos);
+			level.setBlockToAir(pos);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class BlockTransportationStone extends Block {
 
 		if(!world.isSideSolid(pos.down(), Direction.UP)){
 			this.dropBlockAsItem(world, pos, level.getBlockState(pos), 0);
-			world.setBlockToAir(pos);
+			level.setBlockToAir(pos);
 		}
 	}
 

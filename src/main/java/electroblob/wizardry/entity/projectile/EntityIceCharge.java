@@ -106,11 +106,11 @@ public class EntityIceCharge extends EntityBomb {
 						// Randomised with weighting so that the nearer the block the more likely it is to be snowed.
 						if(random.nextInt((int)dist * 2 + 1) < 1 && dist < 2){
 							if(level.getBlockState(pos.down()).getBlock() == Blocks.WATER){
-								world.setBlockAndUpdate(pos.down(), Blocks.ICE.defaultBlockState());
+								level.setBlockAndUpdate(pos.down(), Blocks.ICE.defaultBlockState());
 							}else{
 								// Don't need to check whether the block at pos can be replaced since getNearestFloorLevelB
 								// only ever returns floors with air above them.
-								world.setBlockAndUpdate(pos, Blocks.SNOW_LAYER.defaultBlockState());
+								level.setBlockAndUpdate(pos, Blocks.SNOW_LAYER.defaultBlockState());
 							}
 						}
 					}

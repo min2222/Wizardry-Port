@@ -90,7 +90,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 				// Remember that canPlaceBlock should ALWAYS be the last thing that gets checked, or it risks other mods
 				// thinking the block was placed even when a later condition prevents it, which may have side-effects
 				if(this.world.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(thrower, world, pos)){
-					this.world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+					this.level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 				}
 			}
 

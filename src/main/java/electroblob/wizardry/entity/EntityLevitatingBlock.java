@@ -107,7 +107,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 					BlockPos blockpos = this.blockPosition();
 
 					if(this.level.getBlockState(blockpos).getBlock() == block){
-						this.world.setBlockToAir(blockpos);
+						this.level.setBlockToAir(blockpos);
 					}else if(!this.level.isClientSide){
 						this.discard();
 						return;
@@ -166,7 +166,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
 										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.level.getBlockState(blockpos1.down())))
-										&& this.world.setBlockAndUpdate(blockpos1, getBlock(), 3)){
+										&& this.level.setBlockAndUpdate(blockpos1, getBlock(), 3)){
 
 									if(block instanceof BlockFalling){
 										((BlockFalling)block).onEndFalling(this.world, blockpos1, getBlock(), iblockstate);

@@ -130,7 +130,7 @@ public abstract class WorldGenSurfaceStructure extends WorldGenWizardryStructure
 
 					if(block instanceof BlockLog){
 						if(below != Blocks.GRASS && below != Blocks.DIRT && !BlockUtils.isTreeBlock(world, pos.down())){
-							world.setBlockToAir(pos);
+							level.setBlockToAir(pos);
 							changed = true;
 						}
 					}

@@ -37,7 +37,7 @@ public class ConjureBlock extends SpellRay {
 
 			if(!world.isClientSide){
 				// Dispelling of blocks
-				world.setBlockToAir(pos);
+				level.setBlockToAir(pos);
 			}else{
 				ParticleBuilder.create(Type.FLASH).pos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).scale(3)
 				.clr(0.75f, 1, 0.85f).spawn(world);
@@ -57,7 +57,7 @@ public class ConjureBlock extends SpellRay {
 
 			if(!world.isClientSide){
 				
-				world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
+				level.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
 				
 				if(level.getTileEntity(pos) instanceof TileEntityTimer){
 					((TileEntityTimer)level.getTileEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()

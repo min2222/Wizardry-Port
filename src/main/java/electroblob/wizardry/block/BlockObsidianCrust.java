@@ -77,7 +77,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 
 		if(i < 3){
 
-			world.setBlockAndUpdate(pos, state.withProperty(AGE, i + 1), 2);
+			level.setBlockAndUpdate(pos, state.withProperty(AGE, i + 1), 2);
 			world.scheduleUpdate(pos, this, Mth.getInt(random, 20, 40));
 
 		}else{
@@ -100,7 +100,7 @@ public class BlockObsidianCrust extends BlockObsidian {
 	}
 
 	protected void melt(Level world, BlockPos pos){
-		world.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
+		level.setBlockAndUpdate(pos, Blocks.LAVA.defaultBlockState());
 		world.neighborChanged(pos, Blocks.LAVA, pos);
 	}
 

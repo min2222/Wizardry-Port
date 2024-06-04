@@ -114,7 +114,7 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 			ItemStack stack = ItemStack.EMPTY;
 			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getItem();
 
-			world.setBlockAndUpdate(pos, level.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
+			level.setBlockAndUpdate(pos, level.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
 
 			// Copy over contents of altar from before to new tile entity
 			te = level.getTileEntity(pos);

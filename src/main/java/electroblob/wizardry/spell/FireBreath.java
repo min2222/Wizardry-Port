@@ -72,7 +72,7 @@ public class FireBreath extends SpellRay {
 		pos = pos.relative(side);
 
 		if(world.isEmptyBlock(pos)){
-			if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)) world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+			if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)) level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 			return true;
 		}
 		

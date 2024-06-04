@@ -84,7 +84,7 @@ public class BlockSnare extends Block implements ITileEntityProvider {
 	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos){
 		super.neighborChanged(state, world, pos, block, fromPos);
 		if(!world.isSideSolid(pos.down(), Direction.UP, false)){
-			world.setBlockToAir(pos);
+			level.setBlockToAir(pos);
 		}
 	}
 

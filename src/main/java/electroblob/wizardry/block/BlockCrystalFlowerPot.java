@@ -71,7 +71,7 @@ public class BlockCrystalFlowerPot extends Block {
 			player.dropItem(stack, false);
 		}
 
-		world.setBlockAndUpdate(pos, Blocks.FLOWER_POT.defaultBlockState());
+		level.setBlockAndUpdate(pos, Blocks.FLOWER_POT.defaultBlockState());
 
 		return true;
 	}
@@ -120,7 +120,7 @@ public class BlockCrystalFlowerPot extends Block {
 		BlockState downState = level.getBlockState(pos.down());
 		if(!downState.isTopSolid() && downState.getBlockFaceShape(world, pos.down(), Direction.UP) != BlockFaceShape.SOLID){
 			this.dropBlockAsItem(world, pos, state, 0);
-			world.setBlockToAir(pos);
+			level.setBlockToAir(pos);
 		}
 	}
 
@@ -143,7 +143,7 @@ public class BlockCrystalFlowerPot extends Block {
 	@Override
 	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
-		world.setBlockToAir(pos);
+		level.setBlockToAir(pos);
 	}
 
 }

@@ -84,7 +84,7 @@ public class Permafrost extends SpellRay {
 
 		if(level.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
 			if(BlockUtils.canPlaceBlock(caster, world, pos)){
-				world.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
+				level.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
 				world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.permafrost, duration);
 				return true;
 			}

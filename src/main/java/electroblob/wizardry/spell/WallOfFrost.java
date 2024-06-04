@@ -81,7 +81,7 @@ public class WallOfFrost extends SpellRay {
 				int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
 				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-					world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
+					level.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
 					world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
 				}
 
@@ -90,7 +90,7 @@ public class WallOfFrost extends SpellRay {
 					pos = pos.relative(side);
 
 					if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-						world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
+						level.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
 						world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
 					}
 				}

@@ -147,7 +147,7 @@ public class GreaterTelekinesis extends SpellRay {
 				block.setCaster(caster);
 
 				world.addFreshEntity(block);
-				world.setBlockToAir(pos);
+				level.setBlockToAir(pos);
 			}
 				
 			return true;

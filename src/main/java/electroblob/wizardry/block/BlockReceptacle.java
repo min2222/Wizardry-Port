@@ -189,7 +189,7 @@ public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
 	@Override
 	public void harvestBlock(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack tool){
 		super.harvestBlock(world, player, pos, state, te, tool);
-		world.setBlockToAir(pos);
+		level.setBlockToAir(pos);
 	}
 
 	@Override

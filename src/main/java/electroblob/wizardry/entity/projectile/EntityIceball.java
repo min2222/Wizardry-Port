@@ -51,7 +51,7 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				if(rayTrace.sideHit == Direction.UP && !level.isClientSide && world.isSideSolid(pos, Direction.UP)
 						&& BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canPlaceBlock(thrower, world, pos)){
-					world.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
+					level.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
 				}
 			}
 
