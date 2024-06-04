@@ -2,7 +2,7 @@ package electroblob.wizardry.potion;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryPotions;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.common.Mod;
@@ -27,7 +27,7 @@ public class CurseEnfeeblement extends Curse {
 		super(isBadEffect, liquiidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_enfeeblement.png"));
 		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
 		this.setPotionName("potion." + Wizardry.MODID + ":curse_of_enfeeblement");
-		this.registerPotionAttributeModifier(SharedMonsterAttributes.MAX_HEALTH,
+		this.registerPotionAttributeModifier(Attributes.MAX_HEALTH,
 				"2e8c378e-3d51-4ba1-b02c-591b5d968a05", -0.2, 1);
 	}
 

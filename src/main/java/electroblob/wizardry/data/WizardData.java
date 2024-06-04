@@ -19,10 +19,10 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
@@ -543,14 +543,14 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 	/** Sends a packet to this player's client to synchronise necessary information. Only called server side. */
 	public void sync(){
-		if(this.player instanceof EntityPlayerMP){
+		if(this.player instanceof ServerPlayer){
 			int id = -1;
 			if(this.selectedMinion != null && this.selectedMinion.get() instanceof Entity)
 				id = ((Entity)this.selectedMinion.get()).getEntityId();
 			long seed = player.world.rand.nextLong();
 			this.synchronisedRandom.setSeed(seed);
 			IMessage msg = new PacketPlayerSync.Message(seed, this.spellsDiscovered, id, this.spellData);
-			WizardryPacketHandler.net.sendTo(msg, (EntityPlayerMP)this.player);
+			WizardryPacketHandler.net.sendTo(msg, (ServerPlayer)this.player);
 		}
 	}
 
@@ -641,7 +641,7 @@ public class WizardData implements INBTSerializable<NBTTagCompound> {
 
 	@SubscribeEvent
 	public static void onEntityJoinWorld(EntityJoinWorldEvent event){
-		if(!event.getEntity().world.isRemote && event.getEntity() instanceof EntityPlayerMP){
+		if(!event.getEntity().world.isRemote && event.getEntity() instanceof ServerPlayer){
 			// Synchronises wizard data after loading.
 			WizardData data = WizardData.get((Player)event.getEntity());
 			if(data != null) data.sync();

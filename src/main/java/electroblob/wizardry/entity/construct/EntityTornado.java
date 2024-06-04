@@ -15,6 +15,8 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.Material;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,8 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
@@ -115,8 +115,8 @@ public class EntityTornado extends EntityScaledConstruct {
 					target.motionZ = dz;
 
 					// Player motion is handled on that player's client so needs packets
-					if(target instanceof EntityPlayerMP){
-						((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+					if(target instanceof ServerPlayer){
+						((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 					}
 				}
 			}
@@ -182,14 +182,14 @@ public class EntityTornado extends EntityScaledConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		velX = nbttagcompound.getDouble("velX");
 		velZ = nbttagcompound.getDouble("velZ");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		nbttagcompound.setDouble("velX", velX);
 		nbttagcompound.setDouble("velZ", velZ);

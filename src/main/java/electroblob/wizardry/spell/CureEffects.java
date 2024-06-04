@@ -3,7 +3,7 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;

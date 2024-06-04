@@ -9,7 +9,7 @@ import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 
@@ -65,7 +65,7 @@ public class WizardryContainerTrigger implements ICriterionTrigger<WizardryConta
 		return new WizardryContainerTrigger.Instance(this.id, ItemPredicate.deserialize(json.get("item")));
 	}
 
-	public void trigger(EntityPlayerMP player, ItemStack stack){
+	public void trigger(ServerPlayer player, ItemStack stack){
 
 		WizardryContainerTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 

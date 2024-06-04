@@ -12,7 +12,7 @@ import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityVex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
@@ -109,13 +109,13 @@ public class EntityVexMinion extends EntityVex implements ISummonedCreature {
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
 	}

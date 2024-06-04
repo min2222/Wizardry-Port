@@ -2,7 +2,7 @@ package electroblob.wizardry.packet;
 
 import electroblob.wizardry.item.ISpellCastingItem;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -17,7 +17,7 @@ public class PacketSpellQuickAccess implements IMessageHandler<PacketSpellQuickA
 		// Just to make sure that the side is correct
 		if(ctx.side.isServer()){
 
-			final EntityPlayerMP player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.getServerHandler().player;
 
 			player.getServerWorld().addScheduledTask(() -> {
 

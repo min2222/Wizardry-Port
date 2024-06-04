@@ -1,7 +1,7 @@
 package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.constants.Element;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -32,22 +32,22 @@ public class TileEntityReceptacle extends TileEntity {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound){
+	public CompoundTag writeToNBT(CompoundTag compound){
 		super.writeToNBT(compound);
 		compound.setInteger("Element", element == null ? -1 : element.ordinal());
 		return compound;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound){
+	public void readFromNBT(CompoundTag compound){
 		super.readFromNBT(compound);
 		int i = compound.getInteger("Element");
 		element = i == -1 ? null : Element.values()[i];
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Nullable

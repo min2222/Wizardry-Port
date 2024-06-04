@@ -14,7 +14,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.Mth;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -56,7 +56,7 @@ public class Resurrection extends Spell {
 			// Potency reduces the time you have to wait to resurrect an ally
 			int waitTime = (int)(getProperty(WAIT_TIME).floatValue() / modifiers.get(SpellModifiers.POTENCY));
 
-			EntityPlayerMP nearestDeadAlly = caster.getServer().getPlayerList().getPlayers().stream()
+			ServerPlayer nearestDeadAlly = caster.getServer().getPlayerList().getPlayers().stream()
 					.filter(p -> !p.isEntityAlive() && p.deathTime > waitTime && (data.isPlayerAlly(p) || caster == p)
 							&& p.getDistanceSq(caster) < radius * radius)
 					.min(Comparator.comparingDouble(caster::getDistanceSq))

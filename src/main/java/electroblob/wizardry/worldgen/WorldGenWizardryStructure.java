@@ -6,9 +6,9 @@ import electroblob.wizardry.util.NBTExtras;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -208,7 +208,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 			structureMap.put(ChunkPos.asLong(origin.getX() >> 4, origin.getZ() >> 4), settings.getBoundingBox());
 
-			NBTTagCompound tag = new NBTTagCompound();
+			CompoundTag tag = new CompoundTag();
 			tag.setInteger("ChunkX", chunkX);
 			tag.setInteger("ChunkZ", chunkZ);
 			NBTExtras.storeTagSafely(tag, "BB", settings.getBoundingBox().toNBTTagIntArray());
@@ -241,7 +241,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 			}else{
 
-				NBTTagCompound nbt = this.structureData.getTagCompound();
+				CompoundTag nbt = this.structureData.getTagCompound();
 
 				for(String s : nbt.getKeySet()){
 
@@ -249,7 +249,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 					if(nbtbase.getId() == Constants.NBT.TAG_COMPOUND){
 
-						NBTTagCompound entry = (NBTTagCompound)nbtbase;
+						CompoundTag entry = (CompoundTag)nbtbase;
 
 						if(entry.hasKey("ChunkX") && entry.hasKey("ChunkZ") && entry.hasKey("BB")){
 
@@ -341,8 +341,8 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event){
-		if(event.player instanceof EntityPlayerMP && event.player.ticksExisted % 20 == 0){
-			WizardryAdvancementTriggers.visit_structure.trigger((EntityPlayerMP)event.player);
+		if(event.player instanceof ServerPlayer && event.player.ticksExisted % 20 == 0){
+			WizardryAdvancementTriggers.visit_structure.trigger((ServerPlayer)event.player);
 		}
 	}
 

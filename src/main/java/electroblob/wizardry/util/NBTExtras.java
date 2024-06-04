@@ -1,8 +1,8 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.*;
@@ -50,7 +50,7 @@ public final class NBTExtras {
 		NBTTagList tagList = new NBTTagList();
 
 		for(Map.Entry<K, V> entry : map.entrySet()){
-			NBTTagCompound mapping = new NBTTagCompound();
+			CompoundTag mapping = new CompoundTag();
 			NBTExtras.storeTagSafely(mapping, keyTagName, keyFunction.apply(entry.getKey()));
 			NBTExtras.storeTagSafely(mapping, valueTagName, valueFunction.apply(entry.getValue()));
 			tagList.appendTag(mapping);
@@ -94,7 +94,7 @@ public final class NBTExtras {
 		Map<K, V> map = new HashMap<>();
 
 		for(int i = 0; i < tagList.tagCount(); i++){
-			NBTTagCompound mapping = tagList.getCompoundTagAt(i);
+			CompoundTag mapping = tagList.getCompoundTagAt(i);
 			NBTBase keyTag = mapping.getTag(keyTagName);
 			NBTBase valueTag = mapping.getTag(valueTagName);
 			K key = null;
@@ -195,27 +195,27 @@ public final class NBTExtras {
 	 * Removes the UUID with the given key from the given NBT tag, if any. Why this doesn't exist in vanilla I have
 	 * no idea.
 	 * <p></p>
-	 * <i>Usage note: this method complements {@link NBTTagCompound#setUniqueId(String, UUID)} and
-	 * {@link NBTTagCompound#getUniqueId(String)}, which store UUIDs by appending "Most" and "Least" to the given
+	 * <i>Usage note: this method complements {@link CompoundTag#setUniqueId(String, UUID)} and
+	 * {@link CompoundTag#getUniqueId(String)}, which store UUIDs by appending "Most" and "Least" to the given
 	 * key to store the most and least significant UUID bits respectively. It will not work for the UUID methods in
 	 * {@link net.minecraft.nbt.NBTUtil}, which store the long values under "M" and "L" in their own compound tag.</i>
 	 */
-	public static void removeUniqueId(NBTTagCompound tag, String key){
+	public static void removeUniqueId(CompoundTag tag, String key){
 		tag.removeTag(key + "Most");
 		tag.removeTag(key + "Least");
 	}
 
 	/**
 	 * Stores the given NBT tag inside the given NBT tag compound using the given key. Under normal circumstances, this
-	 * is equivalent to {@link NBTTagCompound#setTag(String, NBTBase)}, but this method performs safety checks to
+	 * is equivalent to {@link CompoundTag#setTag(String, NBTBase)}, but this method performs safety checks to
 	 * prevent circular references. If storing the given tag would cause a circular reference, the tag is not stored
 	 * and an error is printed to the console.
-	 * @param compound The {@link NBTTagCompound} in which to store the tag.
+	 * @param compound The {@link CompoundTag} in which to store the tag.
 	 * @param key The key to store the tag under.
 	 * @param tag The tag to store.
 	 */
 	// This is a catch-all fix for issue #299.
-	public static void storeTagSafely(NBTTagCompound compound, String key, NBTBase tag){
+	public static void storeTagSafely(CompoundTag compound, String key, NBTBase tag){
 
 		if(compound == tag || deepContains(tag, compound)){
 			Wizardry.logger.error("Cannot store tag of type {} under key '{}' as it would result in a circular reference! Please report this (including your full log) to wizardry's issue tracker.",
@@ -234,10 +234,10 @@ public final class NBTExtras {
 	 */
 	public static boolean deepContains(NBTBase toSearch, NBTBase searchFor){
 
-		if(toSearch instanceof NBTTagCompound){
+		if(toSearch instanceof CompoundTag){
 
-			for(String subKey : ((NBTTagCompound)toSearch).getKeySet()){
-				NBTBase subTag = ((NBTTagCompound)toSearch).getTag(subKey);
+			for(String subKey : ((CompoundTag)toSearch).getKeySet()){
+				NBTBase subTag = ((CompoundTag)toSearch).getTag(subKey);
 				if(subTag == searchFor || deepContains(subTag, searchFor)) return true;
 			}
 

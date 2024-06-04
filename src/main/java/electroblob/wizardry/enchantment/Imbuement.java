@@ -10,13 +10,13 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -65,7 +65,7 @@ public interface Imbuement {
 			// Check all enchantments of the item
 			Iterator<NBTBase> enchantmentIt = enchantmentList.iterator();
 			while(enchantmentIt.hasNext()){
-				NBTTagCompound enchantmentTag = (NBTTagCompound) enchantmentIt.next();
+				CompoundTag enchantmentTag = (CompoundTag) enchantmentIt.next();
 				Enchantment enchantment = Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"));
 				// If the item contains a magic weapon enchantment, remove it from the item
 				if(enchantment instanceof Imbuement){
@@ -92,7 +92,7 @@ public interface Imbuement {
 					NBTTagList enchantmentList = ItemEnchantedBook.getEnchantments(slotStack);
 					// Removes all imbuements
 					if(Iterables.removeIf(enchantmentList, tag -> {
-						NBTTagCompound enchantmentTag = (NBTTagCompound) tag;
+						CompoundTag enchantmentTag = (CompoundTag) tag;
 						return Enchantment.getEnchantmentByID(enchantmentTag.getShort("id"))
 								instanceof Imbuement;
 					})){

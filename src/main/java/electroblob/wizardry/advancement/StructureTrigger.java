@@ -9,7 +9,7 @@ import electroblob.wizardry.worldgen.WorldGenWizardryStructure;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.JsonUtils;
@@ -66,7 +66,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		return new StructureTrigger.Instance(this.id, JsonUtils.getString(json, "structure_type"));
 	}
 
-	public void trigger(EntityPlayerMP player){
+	public void trigger(ServerPlayer player){
 
 		StructureTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 

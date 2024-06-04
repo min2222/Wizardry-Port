@@ -14,13 +14,13 @@ import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
@@ -187,7 +187,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound){
+	public CompoundTag writeToNBT(CompoundTag compound){
 
 		compound.setBoolean("activated", this.activated);
 		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NBTUtil.createPosTag(linkedContainer.getPos()));
@@ -202,7 +202,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound){
+	public void readFromNBT(CompoundTag compound){
 
 		this.activated = compound.getBoolean("activated");
 		this.linkedContainerPos = NBTUtil.getPosFromTag(compound.getCompoundTag("linkedContainerPos"));
@@ -210,7 +210,7 @@ public class TileEntityShrineCore extends TileEntity implements ITickable {
 		NBTTagList tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
 		int i = 0;
 		for(NBTBase tag : tagList){
-			if(tag instanceof NBTTagCompound) linkedWizards[i++] = NBTUtil.getUUIDFromTag((NBTTagCompound)tag);
+			if(tag instanceof CompoundTag) linkedWizards[i++] = NBTUtil.getUUIDFromTag((CompoundTag)tag);
 			else Wizardry.logger.warn("Unexpected tag type in NBT tag list of compound tags!");
 		}
 

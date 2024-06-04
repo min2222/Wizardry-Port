@@ -8,7 +8,7 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
@@ -119,10 +119,10 @@ public class SpellEmitter implements ITickable {
 
 	// INBTSerializable is annoying, it doesn't allow you to have final fields
 
-	/** Returns a new {@link NBTTagCompound} representing this {@code SpellEmitter}. */
-	public NBTTagCompound toNBT(){
+	/** Returns a new {@link CompoundTag} representing this {@code SpellEmitter}. */
+	public CompoundTag toNBT(){
 
-		NBTTagCompound nbt = new NBTTagCompound();
+		CompoundTag nbt = new CompoundTag();
 
 		nbt.setInteger("spell", spell.metadata());
 		nbt.setDouble("x", x);
@@ -136,8 +136,8 @@ public class SpellEmitter implements ITickable {
 		return nbt;
 	}
 
-	/** Creates a new {@code SpellEmitter} from the given {@link NBTTagCompound} and returns it. */
-	public static SpellEmitter fromNBT(Level world, NBTTagCompound nbt){
+	/** Creates a new {@code SpellEmitter} from the given {@link CompoundTag} and returns it. */
+	public static SpellEmitter fromNBT(Level world, CompoundTag nbt){
 
 		Spell spell = Spell.byMetadata(nbt.getInteger("spell"));
 		double x = nbt.getDouble("x");

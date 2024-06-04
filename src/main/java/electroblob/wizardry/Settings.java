@@ -8,9 +8,9 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.AllyDesignationSystem.FriendlyFire;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * has an effect if the local game is the host, i.e. a dedicated server, a LAN host or a singleplayer world. Examples
  * include worldgen, mob drops and commands.
  * <li>Synchronised settings. These settings affect both client-side AND server-side code, and are synchronised with
- * each client on login via {@link Settings#sync(EntityPlayerMP)}. Changing these locally only has an effect if the
+ * each client on login via {@link Settings#sync(ServerPlayer)}. Changing these locally only has an effect if the
  * local game is the host, i.e. a dedicated server, a LAN host or a singleplayer world. Examples include discovery mode
  * and crafting recipes. <i> Note that as far as users are concerned, there is no difference in behaviour between
  * server-only and synchronised settings.</i>
@@ -553,7 +553,7 @@ public final class Settings {
 	}
 
 	/** Sends a packet to the specified player's client containing all the <b>synchronised</b> settings. */
-	public void sync(EntityPlayerMP player){
+	public void sync(ServerPlayer player){
 		Wizardry.logger.info("Synchronising config settings for " + player.getName());
 		IMessage message = new PacketSyncSettings.Message(this);
 		WizardryPacketHandler.net.sendTo(message, player);

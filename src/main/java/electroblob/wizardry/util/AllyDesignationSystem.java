@@ -6,7 +6,7 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.MindControl;
 import net.minecraft.entity.*;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.FakePlayer;
@@ -151,7 +151,7 @@ public final class AllyDesignationSystem {
 		// Tests whether the target is a creature that was mind controlled by the attacker
 		if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 
-			NBTTagCompound entityNBT = target.getEntityData();
+			CompoundTag entityNBT = target.getEntityData();
 
 			if(entityNBT != null && entityNBT.hasUniqueId(MindControl.NBT_KEY)){
 				if(attacker == EntityUtils.getEntityByUUID(target.world,
@@ -183,7 +183,7 @@ public final class AllyDesignationSystem {
 
 			}else if(target instanceof EntityLiving && ((LivingEntity)target).isPotionActive(WizardryPotions.mind_control)){
 				// Tests whether the target is a creature that was mind controlled by an ally of the attacker
-				NBTTagCompound entityNBT = target.getEntityData();
+				CompoundTag entityNBT = target.getEntityData();
 
 				if(entityNBT != null && entityNBT.hasKey(MindControl.NBT_KEY)){
 

@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -39,16 +39,16 @@ public class ItemArcaneTome extends Item {
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
+	public Rarity getRarity(ItemStack stack){
 		switch(this.getDamage(stack)){
 		case 1:
-			return EnumRarity.UNCOMMON;
+			return Rarity.UNCOMMON;
 		case 2:
-			return EnumRarity.RARE;
+			return Rarity.RARE;
 		case 3:
-			return EnumRarity.EPIC;
+			return Rarity.EPIC;
 		}
-		return EnumRarity.COMMON;
+		return Rarity.COMMON;
 	}
 
 	@OnlyIn(Dist.CLIENT)

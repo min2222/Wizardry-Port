@@ -7,11 +7,11 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.MobEffects;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
@@ -90,8 +90,8 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 				target.motionZ = motionZ;
 
 				// Player motion is handled on that player's client so needs packets
-				if(target instanceof EntityPlayerMP){
-					((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+				if(target instanceof ServerPlayer){
+					((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 				}
 			}
 		}

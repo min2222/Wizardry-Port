@@ -2,10 +2,10 @@ package electroblob.wizardry.entity.construct;
 
 import electroblob.wizardry.entity.ICustomHitbox;
 import electroblob.wizardry.registry.WizardrySounds;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.phys.AABB;
@@ -95,8 +95,8 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 					double velocity = 0.25 * Math.signum(perpendicularDist);
 					entity.addVelocity(velocity * look.x, 0, velocity * look.z);
 					// Player motion is handled on that player's client so needs packets
-					if(entity instanceof EntityPlayerMP){
-						((EntityPlayerMP)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+					if(entity instanceof ServerPlayer){
+						((ServerPlayer)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
 					}
 				}
 			}
@@ -121,13 +121,13 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 //	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt){
+	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		delay = nbt.getInteger("delay");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt){
+	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setInteger("delay", delay);
 	}

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.phys.Vec3;
@@ -52,7 +52,7 @@ public class Intimidate extends SpellAreaEffect {
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
-			NBTTagCompound entityNBT = target.getEntityData();
+			CompoundTag entityNBT = target.getEntityData();
 			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUniqueID());
 
 			target.addPotionEffect(new MobEffectInstance(WizardryPotions.fear,
@@ -123,7 +123,7 @@ public class Intimidate extends SpellAreaEffect {
 		if(event.getEntity().ticksExisted % 50 == 0 && event.getEntityLiving().isPotionActive(WizardryPotions.fear)
 				&& event.getEntityLiving() instanceof EntityCreature){
 
-			NBTTagCompound entityNBT = event.getEntityLiving().getEntityData();
+			CompoundTag entityNBT = event.getEntityLiving().getEntityData();
 			EntityCreature creature = (EntityCreature)event.getEntityLiving();
 
 			if(entityNBT != null && entityNBT.hasUniqueId(NBT_KEY)){

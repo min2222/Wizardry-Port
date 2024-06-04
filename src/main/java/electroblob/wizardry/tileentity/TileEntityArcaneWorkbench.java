@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -200,13 +200,13 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 
 		super.readFromNBT(tagCompound);
 
 		NBTTagList tagList = tagCompound.getTagList("Inventory", NBT.TAG_COMPOUND);
 		for(int i = 0; i < tagList.tagCount(); i++){
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			CompoundTag tag = tagList.getCompoundTagAt(i);
 			byte slot = tag.getByte("Slot");
 			if(slot >= 0 && slot < getSizeInventory()){
 				setInventorySlotContents(slot, new ItemStack(tag));
@@ -215,14 +215,14 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 
 		super.writeToNBT(tagCompound);
 
 		NBTTagList itemList = new NBTTagList();
 		for(int i = 0; i < getSizeInventory(); i++){
 			ItemStack stack = getStackInSlot(i);
-			NBTTagCompound tag = new NBTTagCompound();
+			CompoundTag tag = new CompoundTag();
 			tag.setByte("Slot", (byte)i);
 			stack.writeToNBT(tag);
 			itemList.appendTag(tag);
@@ -233,8 +233,8 @@ public class TileEntityArcaneWorkbench extends TileEntity implements IInventory,
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override

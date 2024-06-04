@@ -9,7 +9,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -56,7 +56,7 @@ public class CommandViewAllies extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] arguments) throws CommandException{
 
-		EntityPlayerMP player = null;
+		ServerPlayer player = null;
 
 		try{
 			player = getCommandSenderAsPlayer(sender);

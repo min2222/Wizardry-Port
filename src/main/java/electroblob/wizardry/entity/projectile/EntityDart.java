@@ -7,7 +7,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.init.MobEffects;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.level.Level;
 

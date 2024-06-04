@@ -10,8 +10,8 @@ import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 /**
  * This class implements a generic custom advancement trigger that can be fired from any point in
@@ -73,8 +73,8 @@ public class CustomAdvancementTrigger implements ICriterionTrigger<CustomAdvance
     public void triggerFor(Player player) {
         // Fire our dummy criterion manually on all advancements of the player, thereby granting
         // the ones that match it.
-        if (player instanceof EntityPlayerMP) {
-            final PlayerAdvancements advances = ((EntityPlayerMP) player).getAdvancements();
+        if (player instanceof ServerPlayer) {
+            final PlayerAdvancements advances = ((ServerPlayer) player).getAdvancements();
             listeners.get(advances).forEach((listener) -> listener.grantCriterion(advances));
         }
     }

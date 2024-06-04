@@ -14,6 +14,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
@@ -24,7 +25,6 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.AABB;
@@ -208,7 +208,7 @@ public class EntityHammer extends EntityMagicConstruct {
 			this.setDead();
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
-			if(!hammer.hasTagCompound()) hammer.setTagCompound(new NBTTagCompound());
+			if(!hammer.hasTagCompound()) hammer.setTagCompound(new CompoundTag());
 			hammer.getTagCompound().setInteger(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
 			hammer.setItemDamage(ticksExisted);
 			hammer.getTagCompound().setFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
@@ -222,14 +222,14 @@ public class EntityHammer extends EntityMagicConstruct {
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		nbttagcompound.setByte("Time", (byte)this.fallTime);
 		nbttagcompound.setBoolean("Spin", spin);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		this.fallTime = nbttagcompound.getByte("Time") & 255;
 		this.spin = nbttagcompound.getBoolean("Spin");

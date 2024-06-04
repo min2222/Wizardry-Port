@@ -12,11 +12,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -69,8 +69,8 @@ public class EntityRemnant extends EntityMob {
 	@Override
 	protected void applyEntityAttributes(){
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(16);
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4);
+		this.getEntityAttribute(Attributes.MAX_HEALTH).setBaseValue(16);
+		this.getEntityAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(4);
 	}
 
 	@Nullable
@@ -187,14 +187,14 @@ public class EntityRemnant extends EntityMob {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbt){
+	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.setElement(Element.values()[nbt.getInteger("Element")]);
 		if(nbt.hasKey("BoundOrigin")) boundOrigin = NBTUtil.getPosFromTag(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbt){
+	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setInteger("Element", this.getElement().ordinal());
 		if(boundOrigin != null) nbt.setTag("BoundOrigin", NBTUtil.createPosTag(boundOrigin));

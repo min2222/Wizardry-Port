@@ -4,10 +4,10 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Shield;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.AABB;
@@ -92,12 +92,12 @@ public class EntityShield extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 
 	}
 

@@ -5,22 +5,22 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.entity.EntityFlying;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemBow;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
@@ -73,7 +73,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	@Override
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata){
 		// Can't call super, so the code from the next level up (EntityLiving) had to be copied as well.
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE)
+		this.getEntityAttribute(Attributes.FOLLOW_RANGE)
 				.applyModifier(new AttributeModifier("Random spawn bonus", this.rand.nextGaussian() * 0.05D, EntityUtils.Operations.MULTIPLY_FLAT));
 
 		if(this.rand.nextFloat() < 0.05F){
@@ -150,13 +150,13 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
 	}

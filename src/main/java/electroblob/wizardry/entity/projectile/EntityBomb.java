@@ -1,7 +1,7 @@
 package electroblob.wizardry.entity.projectile;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
 /**
@@ -33,13 +33,13 @@ public abstract class EntityBomb extends EntityMagicProjectile {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		blastMultiplier = nbttagcompound.getFloat("blastMultiplier");
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		nbttagcompound.setFloat("blastMultiplier", blastMultiplier);
 	}

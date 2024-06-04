@@ -11,6 +11,7 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
@@ -18,7 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -96,7 +96,7 @@ public class Mine extends SpellRay {
 
 					if(state1.getBlock().getHarvestLevel(state1) <= harvestLevel || harvestLevel >= 3){
 
-						if(caster instanceof EntityPlayerMP){ // Everything in here is server-side only so this is fine
+						if(caster instanceof ServerPlayer){ // Everything in here is server-side only so this is fine
 
 							boolean silkTouch = state1.getBlock().canSilkHarvest(world, pos1, state1, (Player)caster)
 									&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_silk_touch);

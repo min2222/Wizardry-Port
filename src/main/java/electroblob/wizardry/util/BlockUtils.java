@@ -14,7 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.init.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction;
@@ -317,8 +317,8 @@ public final class BlockUtils {
 
 		int xp = 0;
 
-		if(breaker instanceof EntityPlayerMP){
-			xp = ForgeHooks.onBlockBreakEvent(world, ((EntityPlayerMP)breaker).interactionManager.getGameType(), (EntityPlayerMP)breaker, pos);
+		if(breaker instanceof ServerPlayer){
+			xp = ForgeHooks.onBlockBreakEvent(world, ((ServerPlayer)breaker).interactionManager.getGameType(), (ServerPlayer)breaker, pos);
 		}
 
 		return xp;

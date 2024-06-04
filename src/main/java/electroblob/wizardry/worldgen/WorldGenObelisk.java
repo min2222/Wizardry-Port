@@ -6,9 +6,9 @@ import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.EntityRemnant;
 import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegration;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.Mirror;
@@ -85,10 +85,10 @@ public class WorldGenObelisk extends WorldGenSurfaceStructure {
 					remant.setElement(element);
 					remant.setBoundOrigin(pos);
 
-					NBTTagCompound entityTag = new NBTTagCompound();
+					CompoundTag entityTag = new CompoundTag();
 					entityTag.setString("id", REMNANT_ID.toString());
 					remant.writeEntityToNBT(entityTag);
-					NBTTagCompound nbt = new NBTTagCompound();
+					CompoundTag nbt = new CompoundTag();
 					nbt.setTag("Entity", entityTag);
 
 					spawnerLogic.setNextSpawnData(new WeightedSpawnerEntity(nbt));

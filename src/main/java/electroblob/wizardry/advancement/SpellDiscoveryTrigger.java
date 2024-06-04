@@ -11,7 +11,7 @@ import electroblob.wizardry.spell.Spell;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JsonUtils;
 
@@ -71,7 +71,7 @@ public class SpellDiscoveryTrigger implements ICriterionTrigger<SpellDiscoveryTr
 		return new SpellDiscoveryTrigger.Instance(this.id, SpellPredicate.deserialize(json.get("spell")), source);
 	}
 
-	public void trigger(EntityPlayerMP player, Spell spell, DiscoverSpellEvent.Source source){
+	public void trigger(ServerPlayer player, Spell spell, DiscoverSpellEvent.Source source){
 
 		SpellDiscoveryTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 

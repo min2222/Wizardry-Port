@@ -6,11 +6,11 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Meteor;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -117,14 +117,14 @@ public class EntityMeteor extends EntityFallingBlock {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	public void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		blastMultiplier = nbttagcompound.getFloat("blastMultiplier");
 		damageBlocks = nbttagcompound.getBoolean("damageBlocks");
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		nbttagcompound.setFloat("blastMultiplier", blastMultiplier);
 		nbttagcompound.setBoolean("damageBlocks", damageBlocks);

@@ -4,11 +4,11 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.util.NBTExtras;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 public class TileEntityBookshelf extends TileEntityLockableLoot implements ITickable {
 
 	/** NBT key for the boolean flag specifying if this bookshelf was generated naturally as part of a structure or not.
-	 * This flag is set via {@link TileEntityBookshelf#markAsNatural(NBTTagCompound)}. */
+	 * This flag is set via {@link TileEntityBookshelf#markAsNatural(CompoundTag)}. */
 	private static final String NATURAL_NBT_KEY = "NaturallyGenerated";
 	/** When a non-spectating player comes within this distance of a naturally-generated bookshelf, it will automatically
 	 * generate its loot if a loot table was set. This means the bookshelves do not incorrectly appear empty before a
@@ -127,7 +127,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	/** Sets the {@value NATURAL_NBT_KEY} flag to true in the given NBT tag compound, <b>if</b> the compound belongs to
 	 * a bookshelf tile entity (more specifically, if it has an "id" tag matching the bookshelf TE's registry name). */
-	public static void markAsNatural(NBTTagCompound nbt){
+	public static void markAsNatural(CompoundTag nbt){
 		if(nbt != null && nbt.getString("id").equals(TileEntity.getKey(TileEntityBookshelf.class).toString())){
 			nbt.setBoolean(NATURAL_NBT_KEY, true);
 		}
@@ -179,7 +179,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
+	public void readFromNBT(CompoundTag nbt){
 
 		super.readFromNBT(nbt);
 
@@ -190,7 +190,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 			NBTTagList tagList = nbt.getTagList("Inventory", NBT.TAG_COMPOUND);
 
 			for(int i = 0; i < tagList.tagCount(); i++){
-				NBTTagCompound tag = tagList.getCompoundTagAt(i);
+				CompoundTag tag = tagList.getCompoundTagAt(i);
 				byte slot = tag.getByte("Slot");
 				if(slot >= 0 && slot < getSizeInventory()){
 					setInventorySlotContents(slot, new ItemStack(tag));
@@ -202,7 +202,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
+	public CompoundTag writeToNBT(CompoundTag nbt){
 
 		super.writeToNBT(nbt);
 
@@ -215,7 +215,7 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 			for(int i = 0; i < getSizeInventory(); i++){
 				ItemStack stack = getStackInSlot(i);
-				NBTTagCompound tag = new NBTTagCompound();
+				CompoundTag tag = new CompoundTag();
 				tag.setByte("Slot", (byte)i);
 				stack.writeToNBT(tag);
 				itemList.appendTag(tag);
@@ -230,8 +230,8 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override

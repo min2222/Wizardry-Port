@@ -7,8 +7,8 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -66,7 +66,7 @@ public class SpellEmitterData extends WorldSavedData {
 	}
 
 	/** Sends the active spell emitters for this world to the specified player's client. */
-	public void sync(EntityPlayerMP player){
+	public void sync(ServerPlayer player){
 		PacketEmitterData.Message msg = new PacketEmitterData.Message(emitters);
 		WizardryPacketHandler.net.sendTo(msg, player);
 		Wizardry.logger.info("Synchronising spell emitters for " + player.getName());
@@ -79,18 +79,18 @@ public class SpellEmitterData extends WorldSavedData {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
+	public void readFromNBT(CompoundTag nbt){
 		emitterTags = nbt.getTagList("emitters", Constants.NBT.TAG_COMPOUND);
 	}
 
 	private void loadEmitters(Level world){
 		emitters.clear();
-		emitters.addAll(NBTExtras.NBTToList(emitterTags, (NBTTagCompound t) -> SpellEmitter.fromNBT(world, t)));
+		emitters.addAll(NBTExtras.NBTToList(emitterTags, (CompoundTag t) -> SpellEmitter.fromNBT(world, t)));
 		emitterTags = null; // Now we know it's loaded
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound){
+	public CompoundTag writeToNBT(CompoundTag compound){
 		NBTExtras.storeTagSafely(compound, "emitters", NBTExtras.listToNBT(emitters, SpellEmitter::toNBT));
 		return compound;
 	}
@@ -120,8 +120,8 @@ public class SpellEmitterData extends WorldSavedData {
 	@SubscribeEvent
 	public static void onPlayerChangedDimensionEvent(PlayerEvent.PlayerChangedDimensionEvent event){
 		// Needs to be done here as well as PlayerLoggedInEvent because SpellEmitterData is dimension-specific
-		if(event.player instanceof EntityPlayerMP){
-			SpellEmitterData.get(event.player.world).sync((EntityPlayerMP)event.player);
+		if(event.player instanceof ServerPlayer){
+			SpellEmitterData.get(event.player.world).sync((ServerPlayer)event.player);
 		}
 	}
 

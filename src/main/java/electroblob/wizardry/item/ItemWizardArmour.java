@@ -23,8 +23,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -76,8 +76,8 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 		// only grant armor if the equipment has mana
 		if (slot == this.armorType && !((ItemWizardArmour) stack.getItem()).isManaEmpty(stack)) {
-			multimap.put(SharedMonsterAttributes.ARMOR.getName(), new AttributeModifier(ARMOR_MODIFIERS[slot.getIndex()], "Armor modifier", this.damageReduceAmount, 0));
-			multimap.put(SharedMonsterAttributes.ARMOR_TOUGHNESS.getName(), new AttributeModifier(ARMOR_MODIFIERS[slot.getIndex()], "Armor toughness", this.toughness, 0));
+			multimap.put(Attributes.ARMOR.getName(), new AttributeModifier(ARMOR_MODIFIERS[slot.getIndex()], "Armor modifier", this.damageReduceAmount, 0));
+			multimap.put(Attributes.ARMOR_TOUGHNESS.getName(), new AttributeModifier(ARMOR_MODIFIERS[slot.getIndex()], "Armor toughness", this.toughness, 0));
 		}
 
 		return multimap;
@@ -366,7 +366,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 	@SubscribeEvent
 	public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event){
 
-		IAttributeInstance movementSpeed = event.getEntityLiving().getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED);
+		IAttributeInstance movementSpeed = event.getEntityLiving().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
 
 		if(isWearingFullSet(event.getEntityLiving(), null, ArmourClass.WARLOCK) && doAllArmourPiecesHaveMana(event.getEntityLiving())){
 			// Only apply the modifier once (can't just check this is the helmet since it might not be the last piece equipped)
@@ -473,7 +473,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 			if(armourPieces == 0) return;
 
 			// Repeat the calculation from EntityAIFindNearestPlayer, but ignoring wizard armour
-			IAttributeInstance attribute = event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE);
+			IAttributeInstance attribute = event.getEntityLiving().getEntityAttribute(Attributes.FOLLOW_RANGE);
 			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
 			if(event.getTarget().isSneaking()) followRange *= 0.8;
 			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();

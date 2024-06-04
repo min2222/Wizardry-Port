@@ -8,7 +8,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,13 +37,13 @@ public interface IConjuredItem {
 
 	/** Helper method for setting the duration multiplier (via NBT) for conjured items. */
 	static void setDurationMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+		if(!stack.hasTagCompound()) stack.setTagCompound(new CompoundTag());
 		stack.getTagCompound().setFloat(DURATION_MULTIPLIER_KEY, multiplier);
 	}
 
 	/** Helper method for setting the damage multiplier (via NBT) for conjured items. */
 	static void setDamageMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+		if(!stack.hasTagCompound()) stack.setTagCompound(new CompoundTag());
 		stack.getTagCompound().setFloat(DAMAGE_MULTIPLIER, multiplier);
 	}
 

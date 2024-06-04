@@ -5,7 +5,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.tileentity.TileEntityLectern;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -21,7 +21,7 @@ public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMe
 		// Just to make sure that the side is correct
 		if(ctx.side.isServer()){
 
-			final EntityPlayerMP player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.getServerHandler().player;
 
 			player.getServerWorld().addScheduledTask(() -> {
 

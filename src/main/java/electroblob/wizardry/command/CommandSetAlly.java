@@ -4,8 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.command.*;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -58,7 +58,7 @@ public class CommandSetAlly extends CommandBase {
 			throw new WrongUsageException("commands." + Wizardry.MODID + ":ally.usage", Wizardry.settings.allyCommandName);
 		}else{
 
-			EntityPlayerMP allyOf = null;
+			ServerPlayer allyOf = null;
 
 			try{
 				allyOf = getCommandSenderAsPlayer(sender);
@@ -69,7 +69,7 @@ public class CommandSetAlly extends CommandBase {
 
 			boolean executeAsOtherPlayer = false;
 
-			EntityPlayerMP ally = getPlayer(server, sender, arguments[0]);
+			ServerPlayer ally = getPlayer(server, sender, arguments[0]);
 			// Don't want to catch the exception here, because the first player argument is always required.
 
 			if(arguments.length > 1){

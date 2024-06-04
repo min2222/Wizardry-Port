@@ -10,11 +10,11 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -78,8 +78,8 @@ public class Shockwave extends SpellAreaEffect {
 			target.motionZ = velocityFactor * dz;
 
 			// Player motion is handled on that player's client so needs packets
-			if(target instanceof EntityPlayerMP){
-				((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+			if(target instanceof ServerPlayer){
+				((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 			}
 		}
 

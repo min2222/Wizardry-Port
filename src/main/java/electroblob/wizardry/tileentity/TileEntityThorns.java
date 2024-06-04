@@ -1,7 +1,7 @@
 package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.block.BlockThorns;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ITickable;
 
 public class TileEntityThorns extends TileEntityPlayerSave implements ITickable {
@@ -40,7 +40,7 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
 		ticksExisted = tagCompound.getInteger("timer");
 		lifetime = tagCompound.getInteger("maxTimer"); // Left as maxTimer for backwards compatibility
@@ -49,7 +49,7 @@ public class TileEntityThorns extends TileEntityPlayerSave implements ITickable 
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
 		tagCompound.setInteger("timer", ticksExisted);
 		tagCompound.setInteger("maxTimer", lifetime);

@@ -6,13 +6,13 @@ import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
@@ -38,8 +38,8 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
-		return EnumRarity.RARE;
+	public Rarity getRarity(ItemStack stack){
+		return Rarity.RARE;
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class ItemPurifyingElixir extends Item {
 
 		world.playSound(entity.posX, entity.posY, entity.posZ, WizardrySounds.ITEM_PURIFYING_ELIXIR_DRINK, SoundCategory.PLAYERS, 1, 1, false);
 
-		if(entity instanceof EntityPlayerMP){
-			EntityPlayerMP entityplayermp = (EntityPlayerMP)entity;
+		if(entity instanceof ServerPlayer){
+			ServerPlayer entityplayermp = (ServerPlayer)entity;
 			CriteriaTriggers.CONSUME_ITEM.trigger(entityplayermp, stack);
 		}
 

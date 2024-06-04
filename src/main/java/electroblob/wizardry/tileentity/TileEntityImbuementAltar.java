@@ -9,11 +9,11 @@ import electroblob.wizardry.registry.*;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.server.level.ServerLevel;
@@ -98,8 +98,8 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 					consumeReceptacleContents();
 					imbuementTimer = 0;
 					displayElement = null;
-					if(lastUser instanceof EntityPlayerMP){
-						WizardryAdvancementTriggers.imbuement_altar.trigger((EntityPlayerMP)lastUser, this.stack);
+					if(lastUser instanceof ServerPlayer){
+						WizardryAdvancementTriggers.imbuement_altar.trigger((ServerPlayer)lastUser, this.stack);
 					}
 				}
 
@@ -187,9 +187,9 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
+	public CompoundTag writeToNBT(CompoundTag nbt){
 		super.writeToNBT(nbt);
-		NBTTagCompound itemTag = new NBTTagCompound();
+		CompoundTag itemTag = new CompoundTag();
 		stack.writeToNBT(itemTag);
 		nbt.setTag("item", itemTag);
 		nbt.setInteger("imbuementTimer", imbuementTimer);
@@ -198,17 +198,17 @@ public class TileEntityImbuementAltar extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
+	public void readFromNBT(CompoundTag nbt){
 		super.readFromNBT(nbt);
-		NBTTagCompound itemTag = nbt.getCompoundTag("item");
+		CompoundTag itemTag = nbt.getCompoundTag("item");
 		this.stack = new ItemStack(itemTag);
 		this.imbuementTimer = nbt.getInteger("imbuementTimer");
 		this.lastUserUUID = nbt.getUniqueId("lastUser");
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Nullable

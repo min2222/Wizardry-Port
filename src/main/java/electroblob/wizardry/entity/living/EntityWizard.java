@@ -20,12 +20,13 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -159,8 +160,8 @@ public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISp
 	@Override
 	protected void applyEntityAttributes(){
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30);
+		this.getEntityAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.5);
+		this.getEntityAttribute(Attributes.MAX_HEALTH).setBaseValue(30);
 	}
 
 	private int getHealCooldown(){

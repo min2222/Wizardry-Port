@@ -16,10 +16,11 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -142,7 +143,7 @@ public class MindControl extends SpellRay {
 		// no longer lasts until the creature dies; instead it is a potion effect which continues to
 		// set the target until it wears off.
 		List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(
-				target.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue(),
+				target.getEntityAttribute(Attributes.FOLLOW_RANGE).getAttributeValue(),
 				target.posX, target.posY, target.posZ, world);
 
 		possibleTargets.remove(target);
@@ -172,7 +173,7 @@ public class MindControl extends SpellRay {
 		
 		if(entity.isPotionActive(WizardryPotions.mind_control) && MindControl.canControl(entity)){
 
-			NBTTagCompound entityNBT = entity.getEntityData();
+			CompoundTag entityNBT = entity.getEntityData();
 
 			if(entityNBT != null && entityNBT.hasUniqueId(MindControl.NBT_KEY)){
 

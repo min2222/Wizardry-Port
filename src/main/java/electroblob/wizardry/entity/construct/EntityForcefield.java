@@ -12,14 +12,14 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -164,8 +164,8 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 
 					if(!world.isRemote){
 						// Player motion is handled on that player's client so needs packets
-						if(target instanceof EntityPlayerMP){
-							((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+						if(target instanceof ServerPlayer){
+							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 						}
 
 						if (this.ticksExisted % 5 == 0) {
@@ -255,13 +255,13 @@ public class EntityForcefield extends EntityMagicConstruct implements ICustomHit
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt){
+	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setFloat("radius", radius);
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt){
+	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		radius = nbt.getFloat("radius");
 	}

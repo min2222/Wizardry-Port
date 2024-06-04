@@ -11,7 +11,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.command.*;
 import net.minecraft.core.Direction;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.server.MinecraftServer;
@@ -78,7 +78,7 @@ public class CommandCastSpell extends CommandBase {
 
 			int i = 0;
 
-			EntityPlayerMP caster = null;
+			ServerPlayer caster = null;
 			Vec3 origin = null;
 			Direction direction = null;
 
@@ -113,7 +113,7 @@ public class CommandCastSpell extends CommandBase {
 				try{
 					// If the second argument is a player and is not the player that gave the command, the spell is cast
 					// as the given player rather than the command sender, and there is a different chat readout.
-					EntityPlayerMP entityplayermp = getPlayer(server, sender, arguments[i++]);
+					ServerPlayer entityplayermp = getPlayer(server, sender, arguments[i++]);
 					if(caster != entityplayermp){
 						castAsOtherPlayer = true;
 						caster = entityplayermp;

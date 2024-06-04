@@ -9,9 +9,9 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public final class WandHelper {
 	 */
 	public static void setSpells(ItemStack wand, Spell[] spells){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		int[] spellIDs = new int[spells.length];
 
@@ -186,7 +186,7 @@ public final class WandHelper {
 	
 	private static int getNextSpellIndex(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new NBTTagCompound());
+		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
 		
 		int numberOfSpells = getSpells(wand).length;
 		int spellIndex = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
@@ -204,7 +204,7 @@ public final class WandHelper {
 	
 	private static int getPreviousSpellIndex(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new NBTTagCompound());
+		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
 		
 		int numberOfSpells = getSpells(wand).length;
 		int spellIndex = wand.getTagCompound().getInteger(SELECTED_SPELL_KEY);
@@ -241,7 +241,7 @@ public final class WandHelper {
 	 * Unlike {@link WandHelper#setCurrentCooldown(ItemStack, int)}, this will <b>not</b> set the max cooldowns. */
 	public static void setCooldowns(ItemStack wand, int[] cooldowns){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		wand.getTagCompound().setIntArray(COOLDOWN_ARRAY_KEY, cooldowns);
 	}
@@ -265,7 +265,7 @@ public final class WandHelper {
 	/** Returns the given wand's cooldown for the currently selected spell, or 0 if the wand has no cooldown data. */
 	public static int getCurrentCooldown(ItemStack wand){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound(new NBTTagCompound());
+		if(wand.getTagCompound() == null) wand.setTagCompound(new CompoundTag());
 
 		int[] cooldowns = getCooldowns(wand);
 
@@ -305,7 +305,7 @@ public final class WandHelper {
 	/** Sets the given wand's cooldown for the currently selected spell. Will also set the maximum cooldown. */
 	public static void setCurrentCooldown(ItemStack wand, int cooldown){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		int[] cooldowns = getCooldowns(wand);
 
@@ -352,7 +352,7 @@ public final class WandHelper {
 	/** Sets the given wand's cooldown array. The array can be anywhere between 5 and 8 (inclusive) in length. */
 	public static void setMaxCooldowns(ItemStack wand, int[] cooldowns){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		wand.getTagCompound().setIntArray(MAX_COOLDOWN_ARRAY_KEY, cooldowns);
 	}
@@ -411,12 +411,12 @@ public final class WandHelper {
 	 */
 	public static void applyUpgrade(ItemStack wand, Item upgrade){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		if(!wand.getTagCompound().hasKey(UPGRADES_KEY))
-			NBTExtras.storeTagSafely(wand.getTagCompound(), UPGRADES_KEY, new NBTTagCompound());
+			NBTExtras.storeTagSafely(wand.getTagCompound(), UPGRADES_KEY, new CompoundTag());
 
-		NBTTagCompound upgrades = wand.getTagCompound().getCompoundTag(UPGRADES_KEY);
+		CompoundTag upgrades = wand.getTagCompound().getCompoundTag(UPGRADES_KEY);
 
 		String key = upgradeMap.get(upgrade);
 
@@ -481,7 +481,7 @@ public final class WandHelper {
 	/** Sets the given wand's progression to the given value. */
 	public static void setProgression(ItemStack wand, int progression){
 
-		if(wand.getTagCompound() == null) wand.setTagCompound((new NBTTagCompound()));
+		if(wand.getTagCompound() == null) wand.setTagCompound((new CompoundTag()));
 
 		wand.getTagCompound().setInteger(PROGRESSION_KEY, progression);
 	}

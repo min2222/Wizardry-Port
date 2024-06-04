@@ -18,19 +18,19 @@ import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
 import electroblob.wizardry.registry.*;
 import electroblob.wizardry.spell.*;
 import electroblob.wizardry.util.*;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.init.MobEffects;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
@@ -110,13 +110,13 @@ public class ItemArtefact extends Item {
 	// to a potentially already-long tooltip whereas rarity provides a compact, neat way of displaying it that everyone is
 	// reasonably familiar with. Secondly, rarity makes more sense for an artefact, since it's something you find rather
 	// than upgrade to, and artefacts are not tied to tiers of wand/spell/whatever - they can be used whenever.
-	private final EnumRarity rarity;
+	private final Rarity rarity;
 	private final Type type;
 
 	/** False if this artefact has been disabled in the config, true otherwise. */
 	private boolean enabled = true;
 
-	public ItemArtefact(EnumRarity rarity, Type type){
+	public ItemArtefact(Rarity rarity, Type type){
 		setMaxStackSize(1);
 		setCreativeTab(WizardryTabs.GEAR);
 		this.rarity = rarity;
@@ -131,7 +131,7 @@ public class ItemArtefact extends Item {
 	public boolean isEnabled() { return enabled; }
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
+	public Rarity getRarity(ItemStack stack){
 		return rarity;
 	}
 
@@ -141,7 +141,7 @@ public class ItemArtefact extends Item {
 
 	@Override
 	public boolean hasEffect(ItemStack stack){
-		return rarity == EnumRarity.EPIC;
+		return rarity == Rarity.EPIC;
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class ItemArtefact extends Item {
 
 	@Nullable
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt){
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt){
 		return WizardryBaublesIntegration.enabled() ? new WizardryBaublesIntegration.ArtefactBaubleProvider(type) : null;
 	}
 
@@ -556,7 +556,7 @@ public class ItemArtefact extends Item {
 		// No point doing this every tick, every 2.5 seconds should be enough
 		if(entity.ticksExisted % 50 == 0 && entity.isPotionActive(WizardryPotions.mind_control)){
 
-			NBTTagCompound entityNBT = entity.getEntityData();
+			CompoundTag entityNBT = entity.getEntityData();
 
 			if(entityNBT.hasUniqueId(MindControl.NBT_KEY)){
 

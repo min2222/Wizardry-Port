@@ -11,6 +11,7 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
@@ -18,8 +19,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.ParticleTypes;
@@ -53,14 +53,14 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		randomiser = nbttagcompound.getIntArray("randomiser");
 		randomiser2 = nbttagcompound.getIntArray("randomiser2");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		nbttagcompound.setIntArray("randomiser", randomiser);
 		nbttagcompound.setIntArray("randomiser2", randomiser2);
@@ -163,8 +163,8 @@ public class EntityBlackHole extends EntityScaledConstruct {
 						}
 
 						// Player motion is handled on that player's client so needs packets
-						if(target instanceof EntityPlayerMP){
-							((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+						if(target instanceof ServerPlayer){
+							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 						}
 					}
 

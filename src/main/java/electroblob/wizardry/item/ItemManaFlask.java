@@ -12,7 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
@@ -30,15 +30,15 @@ public class ItemManaFlask extends Item {
 
 	public enum Size {
 
-		SMALL(75, 25, EnumRarity.COMMON),
-		MEDIUM(350, 40, EnumRarity.COMMON),
-		LARGE(1400, 60, EnumRarity.RARE);
+		SMALL(75, 25, Rarity.COMMON),
+		MEDIUM(350, 40, Rarity.COMMON),
+		LARGE(1400, 60, Rarity.RARE);
 
 		public int capacity;
 		public int useDuration;
-		public EnumRarity rarity;
+		public Rarity rarity;
 
-		Size(int capacity, int useDuration, EnumRarity rarity){
+		Size(int capacity, int useDuration, Rarity rarity){
 			this.capacity = capacity;
 			this.useDuration = useDuration;
 			this.rarity = rarity;
@@ -55,7 +55,7 @@ public class ItemManaFlask extends Item {
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
+	public Rarity getRarity(ItemStack stack){
 		return size.rarity;
 	}
 

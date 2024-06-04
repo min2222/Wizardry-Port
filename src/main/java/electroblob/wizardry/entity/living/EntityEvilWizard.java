@@ -16,12 +16,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.datasync.DataParameter;
@@ -142,8 +143,8 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	@Override
 	protected void applyEntityAttributes(){
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30);
+		this.getEntityAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+		this.getEntityAttribute(Attributes.MAX_HEALTH).setBaseValue(30);
 	}
 
 	private int getHealCooldown(){
@@ -282,7 +283,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbt){
+	public void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		Element element = this.getElement();
 		nbt.setInteger("element", element == null ? 0 : element.ordinal());
@@ -293,7 +294,7 @@ public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntity
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbt){
+	public void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.setElement(Element.values()[nbt.getInteger("element")]);
 		this.textureIndex = nbt.getInteger("skin");

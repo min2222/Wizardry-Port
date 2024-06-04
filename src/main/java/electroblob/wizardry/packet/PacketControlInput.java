@@ -11,7 +11,7 @@ import electroblob.wizardry.spell.Resurrection;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,7 +28,7 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 		// Just to make sure that the side is correct
 		if(ctx.side.isServer()){
 
-			final EntityPlayerMP player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.getServerHandler().player;
 
 			player.getServerWorld().addScheduledTask(() -> {
 

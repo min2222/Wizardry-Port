@@ -2,10 +2,10 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.NBTExtras;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +18,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TileEntityStatue extends TileEntity implements ITickable {
 
 	public EntityLiving creature;
-	private NBTTagCompound entityCompound;
+	private CompoundTag entityCompound;
 	private ResourceLocation entityName;
 	private float entityYawHead;
 	private float entityYawOffset;
@@ -130,7 +130,7 @@ public class TileEntityStatue extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
 		position = tagCompound.getInteger("position");
 		parts = tagCompound.getInteger("parts");
@@ -144,11 +144,11 @@ public class TileEntityStatue extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
 		tagCompound.setInteger("position", position);
 		tagCompound.setInteger("parts", parts);
-		entityCompound = new NBTTagCompound();
+		entityCompound = new CompoundTag();
 		if(creature != null){
 			creature.writeToNBT(entityCompound);
 			tagCompound.setString("entityName", EntityList.getKey(creature).toString());
@@ -164,20 +164,20 @@ public class TileEntityStatue extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket(){
-		NBTTagCompound tag = new NBTTagCompound();
+		CompoundTag tag = new CompoundTag();
 		writeToNBT(tag);
 		return new SPacketUpdateTileEntity(pos, 1, tag);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		NBTTagCompound tag = pkt.getNbtCompound();
+		CompoundTag tag = pkt.getNbtCompound();
 		readFromNBT(tag);
 	}
 }

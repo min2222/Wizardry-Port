@@ -8,6 +8,7 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
@@ -20,7 +21,6 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
@@ -178,7 +178,7 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 
 										if(tileentity != null){
 
-											NBTTagCompound nbttagcompound = tileentity.writeToNBT(new NBTTagCompound());
+											CompoundTag nbttagcompound = tileentity.writeToNBT(new CompoundTag());
 
 											for(String s : this.tileEntityData.getKeySet()){
 												NBTBase nbtbase = this.tileEntityData.getTag(s);
@@ -260,14 +260,14 @@ public class EntityLevitatingBlock extends EntityFallingBlock implements IEntity
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 		super.readEntityFromNBT(nbttagcompound);
 		casterUUID = nbttagcompound.getUniqueId("casterUUID");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
 		if(this.getCaster() != null){
 			nbttagcompound.setUniqueId("casterUUID", this.getCaster().getUniqueID());

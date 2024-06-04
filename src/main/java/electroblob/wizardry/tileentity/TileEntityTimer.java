@@ -1,7 +1,7 @@
 package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.block.BlockVanishingCobweb;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -45,14 +45,14 @@ public class TileEntityTimer extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
 		timer = tagCompound.getInteger("timer");
 		maxTimer = tagCompound.getInteger("maxTimer");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
 		tagCompound.setInteger("timer", timer);
 		tagCompound.setInteger("maxTimer", maxTimer);
@@ -60,20 +60,20 @@ public class TileEntityTimer extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket(){
-		NBTTagCompound tag = new NBTTagCompound();
+		CompoundTag tag = new CompoundTag();
 		writeToNBT(tag);
 		return new SPacketUpdateTileEntity(pos, 1, tag);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		NBTTagCompound tag = pkt.getNbtCompound();
+		CompoundTag tag = pkt.getNbtCompound();
 		readFromNBT(tag);
 	}
 

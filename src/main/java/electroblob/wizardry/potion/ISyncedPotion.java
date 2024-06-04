@@ -2,7 +2,7 @@ package electroblob.wizardry.potion;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.play.server.SPacketEntityEffect;
 import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -44,7 +44,7 @@ public interface ISyncedPotion {
 						.filter(p -> p.getDistanceSq(event.getEntityLiving()) < SYNC_RADIUS * SYNC_RADIUS)
 						// Apparently unchecked casting in a lambda expression doesn't generate a warning. Who knew?
 						// (We know this cast is safe though)
-						.forEach(p -> ((EntityPlayerMP)p).connection.sendPacket(new SPacketEntityEffect(
+						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketEntityEffect(
 								event.getEntity().getEntityId(), event.getPotionEffect())));
 			}
 		}
@@ -68,7 +68,7 @@ public interface ISyncedPotion {
 			if(!host.world.isRemote){
 				host.world.playerEntities.stream()
 						.filter(p -> p.getDistanceSq(host) < SYNC_RADIUS * SYNC_RADIUS)
-						.forEach(p -> ((EntityPlayerMP)p).connection.sendPacket(new SPacketRemoveEntityEffect(
+						.forEach(p -> ((ServerPlayer)p).connection.sendPacket(new SPacketRemoveEntityEffect(
 								host.getEntityId(), effect.getPotion())));
 			}
 		}

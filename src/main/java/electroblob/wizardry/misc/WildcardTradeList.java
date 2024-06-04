@@ -1,8 +1,8 @@
 package electroblob.wizardry.misc;
 
 import electroblob.wizardry.util.InventoryUtils;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.village.MerchantRecipe;
@@ -22,7 +22,7 @@ public class WildcardTradeList extends MerchantRecipeList {
 		super();
 	}
 	
-	public WildcardTradeList(NBTTagCompound tag){
+	public WildcardTradeList(CompoundTag tag){
 		super(tag);
 	}
 

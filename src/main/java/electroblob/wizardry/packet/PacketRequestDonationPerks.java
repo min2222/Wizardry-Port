@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.misc.DonationPerksHandler;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -19,7 +19,7 @@ public class PacketRequestDonationPerks implements IMessageHandler<PacketRequest
 		// Just to make sure that the side is correct
 		if(ctx.side.isServer()){
 
-			final EntityPlayerMP player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.getServerHandler().player;
 
 			// The UUID key set itself is immutable so we can safely access it from the networking thread
 			if(DonationPerksHandler.isDonor(player)){

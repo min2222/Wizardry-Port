@@ -18,7 +18,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.SoundEvent;
@@ -107,8 +107,8 @@ public class GreaterTelekinesis extends SpellRay {
 			}
 			
 			// Player motion is handled on that player's client so needs packets
-			if(target instanceof EntityPlayerMP){
-				((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+			if(target instanceof ServerPlayer){
+				((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 			}
 			
 			if(world.isRemote){

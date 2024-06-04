@@ -4,7 +4,7 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -68,21 +68,21 @@ public class TileEntityLectern extends TileEntity implements ITickable {
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound){
+	public CompoundTag writeToNBT(CompoundTag compound){
 		super.writeToNBT(compound); // Confusingly, this method both writes to the supplied compound and returns it
 		compound.setInteger("spell", currentSpell.metadata());
 		return compound;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound compound){
+	public void readFromNBT(CompoundTag compound){
 		super.readFromNBT(compound);
 		currentSpell = Spell.byMetadata(compound.getInteger("spell"));
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override

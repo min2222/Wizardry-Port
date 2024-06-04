@@ -10,7 +10,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
  * @since Wizardry 4.2
  * @author Electroblob
  */
-public abstract class BlockCastingData<T extends TileEntity> implements INBTSerializable<NBTTagCompound> {
+public abstract class BlockCastingData<T extends TileEntity> implements INBTSerializable<CompoundTag> {
 
 	/** The tile entity this BlockCastingData instance belongs to. */
 	protected final T tileEntity;
@@ -136,9 +136,9 @@ public abstract class BlockCastingData<T extends TileEntity> implements INBTSeri
 	protected abstract boolean shouldContinueCasting();
 
 	@Override
-	public NBTTagCompound serializeNBT(){
+	public CompoundTag serializeNBT(){
 
-		NBTTagCompound nbt = new NBTTagCompound();
+		CompoundTag nbt = new CompoundTag();
 
 		nbt.setInteger("spell", spell.metadata());
 		nbt.setInteger("castingTick", castingTick);
@@ -148,7 +148,7 @@ public abstract class BlockCastingData<T extends TileEntity> implements INBTSeri
 	}
 
 	@Override
-	public void deserializeNBT(NBTTagCompound nbt){
+	public void deserializeNBT(CompoundTag nbt){
 
 		if(nbt != null){
 

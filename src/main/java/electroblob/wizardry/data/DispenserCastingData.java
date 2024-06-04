@@ -10,7 +10,7 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.resources.ResourceLocation;
@@ -184,7 +184,7 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 	 * DispenserCastingData go hand-in-hand; secondly, it's too short to be worth a separate file; and thirdly (and most 
 	 * importantly) it allows me to access DISPENSER_CASTING_CAPABILITY while keeping it private.
 	 */
-	public static class Provider implements ICapabilitySerializable<NBTTagCompound> {
+	public static class Provider implements ICapabilitySerializable<CompoundTag> {
 
 		private final DispenserCastingData data;
 
@@ -208,12 +208,12 @@ public class DispenserCastingData extends BlockCastingData<TileEntityDispenser> 
 		}
 
 		@Override
-		public NBTTagCompound serializeNBT(){
+		public CompoundTag serializeNBT(){
 			return data.serializeNBT();
 		}
 
 		@Override
-		public void deserializeNBT(NBTTagCompound nbt){
+		public void deserializeNBT(CompoundTag nbt){
 			data.deserializeNBT(nbt);
 		}
 

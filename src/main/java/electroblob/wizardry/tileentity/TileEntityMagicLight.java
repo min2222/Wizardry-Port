@@ -1,6 +1,6 @@
 package electroblob.wizardry.tileentity;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 
 // TODO: Remove this class entirely, it can just be a TileEntityTimer (see RenderImbuementAltar for a better solution)
 // Either that or use a FastTESR
@@ -44,14 +44,14 @@ public class TileEntityMagicLight extends TileEntityTimer {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
 		randomiser = tagCompound.getIntArray("randomiser");
 		randomiser2 = tagCompound.getIntArray("randomiser2");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 		super.writeToNBT(tagCompound);
 		tagCompound.setIntArray("randomiser", randomiser);
 		tagCompound.setIntArray("randomiser2", randomiser2);

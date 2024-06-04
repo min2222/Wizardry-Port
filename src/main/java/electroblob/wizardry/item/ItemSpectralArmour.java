@@ -5,7 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -32,8 +32,8 @@ public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
 
 	// Overridden to stop the enchantment trick making the name turn blue.
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
-		return EnumRarity.COMMON;
+	public Rarity getRarity(ItemStack stack){
+		return Rarity.COMMON;
 	}
 
 	@Override

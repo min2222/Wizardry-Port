@@ -5,8 +5,8 @@ import electroblob.wizardry.packet.PacketGlyphData;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.storage.WorldSavedData;
@@ -105,7 +105,7 @@ public class SpellGlyphData extends WorldSavedData {
 	}
 
 	/** Sends the random spell names for this world to the specified player's client. */
-	public void sync(EntityPlayerMP player){
+	public void sync(ServerPlayer player){
 
 		List<String> names = new ArrayList<>();
 		List<String> descriptions = new ArrayList<>();
@@ -143,7 +143,7 @@ public class SpellGlyphData extends WorldSavedData {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
+	public void readFromNBT(CompoundTag nbt){
 
 		this.randomNames = new HashMap<>();
 		this.randomDescriptions = new HashMap<>();
@@ -151,21 +151,21 @@ public class SpellGlyphData extends WorldSavedData {
 		NBTTagList tagList = nbt.getTagList("spellGlyphData", NBT.TAG_COMPOUND);
 
 		for(int i = 0; i < tagList.tagCount(); i++){
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			CompoundTag tag = tagList.getCompoundTagAt(i);
 			randomNames.put(Spell.byMetadata(tag.getInteger("spell")), tag.getString("name"));
 			randomDescriptions.put(Spell.byMetadata(tag.getInteger("spell")), tag.getString("description"));
 		}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
+	public CompoundTag writeToNBT(CompoundTag nbt){
 
 		NBTTagList tagList = new NBTTagList();
 
 		for(Spell spell : Spell.getAllSpells()){
 			// Much like the enchantments tag for items, this stores a list of spell-id-to-name tag pairs
 			// The description is now also included; there's no point in making a second compound tag!
-			NBTTagCompound tag = new NBTTagCompound();
+			CompoundTag tag = new CompoundTag();
 			tag.setInteger("spell", spell.metadata());
 			tag.setString("name", this.randomNames.get(spell));
 			tag.setString("description", this.randomDescriptions.get(spell));

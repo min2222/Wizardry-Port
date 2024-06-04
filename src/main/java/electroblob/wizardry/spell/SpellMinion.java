@@ -12,8 +12,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -172,11 +172,11 @@ public class SpellMinion<T extends EntityLiving & ISummonedCreature> extends Spe
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
-				IAttributeInstance attribute = minion.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+				IAttributeInstance attribute = minion.getEntityAttribute(Attributes.ATTACK_DAMAGE);
 				if(attribute != null) attribute.applyModifier( // Apparently some things don't have an attack damage
 						new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				// This is only used for artefacts, but it's a nice example of custom spell modifiers
-				minion.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(
+				minion.getEntityAttribute(Attributes.MAX_HEALTH).applyModifier(
 						new AttributeModifier(HEALTH_MODIFIER, modifiers.get(HEALTH_MODIFIER) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				minion.setHealth(minion.getMaxHealth()); // Need to set this because we may have just modified the value
 

@@ -15,10 +15,10 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNodeType;
@@ -70,7 +70,7 @@ public class Clairvoyance extends Spell {
 							return 0;
 						}
 					};
-					arbitraryZombie.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE)
+					arbitraryZombie.getEntityAttribute(Attributes.FOLLOW_RANGE)
 							.setBaseValue(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
 					arbitraryZombie.setPosition(caster.posX, caster.posY, caster.posZ);
 					arbitraryZombie.setPathPriority(PathNodeType.WATER, 0.0F);
@@ -91,9 +91,9 @@ public class Clairvoyance extends Spell {
 
 							this.playSound(world, caster, ticksInUse, -1, modifiers);
 
-							if(!world.isRemote && caster instanceof EntityPlayerMP){
+							if(!world.isRemote && caster instanceof ServerPlayer){
 								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.duration_upgrade)),
-										(EntityPlayerMP)caster);
+										(ServerPlayer)caster);
 							}
 
 							return true;

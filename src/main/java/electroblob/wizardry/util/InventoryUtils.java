@@ -1,5 +1,6 @@
 package electroblob.wizardry.util;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,7 +9,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.EntityEquipmentSlot.Type;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.level.Level;
@@ -123,7 +123,7 @@ public final class InventoryUtils {
 	 */
 	public static ItemStack copyWithMeta(ItemStack toCopy, int newMetadata){
 		ItemStack copy = new ItemStack(toCopy.getItem(), toCopy.getCount(), newMetadata);
-		NBTTagCompound compound = toCopy.getTagCompound();
+		CompoundTag compound = toCopy.getTagCompound();
 		if(compound != null) copy.setTagCompound(compound.copy());
 		return copy;
 	}

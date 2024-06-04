@@ -18,18 +18,18 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.EnumAction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.Style;
@@ -254,9 +254,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 			// This check doesn't affect the damage output, but it does stop a blank line from appearing in the tooltip.
 			if(level > 0 && !this.isManaEmpty(stack)){
-				multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(),
+				multimap.put(Attributes.ATTACK_DAMAGE.getName(),
 						new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Melee upgrade modifier", 2 * level, 0));
-				multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Melee upgrade modifier", -2.4000000953674316D, 0));
+				multimap.put(Attributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Melee upgrade modifier", -2.4000000953674316D, 0));
 			}
 		}
 
@@ -875,7 +875,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	public void onClearButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		ItemStack stack = centre.getStack();
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey(WandHelper.SPELL_ARRAY_KEY)) {
-			NBTTagCompound nbt = stack.getTagCompound();
+			CompoundTag nbt = stack.getTagCompound();
 			int[] spells = nbt.getIntArray(WandHelper.SPELL_ARRAY_KEY);
 			int expectedSlotCount = BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack,
 					WizardryItems.attunement_upgrade);

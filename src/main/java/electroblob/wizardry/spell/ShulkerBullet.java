@@ -7,13 +7,13 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.world.InteractionHand;
@@ -83,11 +83,11 @@ public class ShulkerBullet extends Spell {
 				bullet.setLocationAndAngles(x, y, z, bullet.rotationYaw, bullet.rotationPitch);
 
 				// Where there's a will there's a way...
-				NBTTagCompound nbt = new NBTTagCompound();
+				CompoundTag nbt = new CompoundTag();
 				bullet.writeToNBT(nbt);
 				nbt.setInteger("Dir", direction.getIndex());
 				BlockPos pos = new BlockPos(target);
-				NBTTagCompound targetTag = NBTUtil.createUUIDTag(target.getUniqueID());
+				CompoundTag targetTag = NBTUtil.createUUIDTag(target.getUniqueID());
 				targetTag.setInteger("X", pos.getX());
 				targetTag.setInteger("Y", pos.getY());
 				targetTag.setInteger("Z", pos.getZ());

@@ -28,18 +28,19 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBow;
@@ -103,9 +104,9 @@ public class Possession extends SpellRay {
 	static {
 
 		INHERITED_ATTRIBUTES = ImmutableMap.of(
-				SharedMonsterAttributes.MOVEMENT_SPEED, UUID.fromString("f65cfcaf-e7ec-4dfb-aa6c-711735d007e3"),
-				SharedMonsterAttributes.ATTACK_DAMAGE, UUID.fromString("ab67c89e-74a5-4e27-9621-40bffb4f7a03"),
-				SharedMonsterAttributes.KNOCKBACK_RESISTANCE, UUID.fromString("05529535-9bcf-42bb-8822-45f5ce6a8f08"));
+				Attributes.MOVEMENT_SPEED, UUID.fromString("f65cfcaf-e7ec-4dfb-aa6c-711735d007e3"),
+				Attributes.ATTACK_DAMAGE, UUID.fromString("ab67c89e-74a5-4e27-9621-40bffb4f7a03"),
+				Attributes.KNOCKBACK_RESISTANCE, UUID.fromString("05529535-9bcf-42bb-8822-45f5ce6a8f08"));
 
 		addAbility(EntitySpider.class, (spider, player) -> { if(player.collidedHorizontally) player.motionY = 0.2; });
 		addAbility(EntityChicken.class, (chicken, player) -> { if(!player.onGround && player.motionY < 0) player.motionY *= 0.6D; });
@@ -240,7 +241,7 @@ public class Possession extends SpellRay {
 					double targetValue = instance.getAttributeValue();
 					double currentValue = possessor.getAttributeMap().getAttributeInstance(attribute).getAttributeValue();
 					// Don't ask me why, but the player's base movement speed seems to be 0.1
-					if(attribute == SharedMonsterAttributes.MOVEMENT_SPEED) currentValue /= possessor.capabilities.getWalkSpeed();
+					if(attribute == Attributes.MOVEMENT_SPEED) currentValue /= possessor.capabilities.getWalkSpeed();
 
 					for(EntityEquipmentSlot slot : EntityEquipmentSlot.values()){
 						if(target.getItemStackFromSlot(slot).getAttributeModifiers(slot).containsKey(attribute.getName())){
@@ -304,8 +305,8 @@ public class Possession extends SpellRay {
 				// Packets
 
 				WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(possessor, target, duration), possessor);
-				if(possessor instanceof EntityPlayerMP){
-					WizardryPacketHandler.net.sendTo(new PacketPossession.Message(possessor, target, duration), (EntityPlayerMP)possessor);
+				if(possessor instanceof ServerPlayer){
+					WizardryPacketHandler.net.sendTo(new PacketPossession.Message(possessor, target, duration), (ServerPlayer)possessor);
 				}
 			}
 
@@ -362,7 +363,7 @@ public class Possession extends SpellRay {
 			player.getAttributeMap().getAttributeInstance(attribute).removeModifier(INHERITED_ATTRIBUTES.get(attribute));
 		}
 
-		if(player instanceof EntityPlayerMP){
+		if(player instanceof ServerPlayer){
 
 			player.inventory.clear();
 
@@ -375,9 +376,9 @@ public class Possession extends SpellRay {
 
 		this.playSound(player.world, player, 0, -1, null, "end");
 
-		if(!player.world.isRemote && player instanceof EntityPlayerMP){
+		if(!player.world.isRemote && player instanceof ServerPlayer){
 			WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(player, null, 0), player);
-			WizardryPacketHandler.net.sendTo(new PacketPossession.Message(player, null, 0), (EntityPlayerMP)player);
+			WizardryPacketHandler.net.sendTo(new PacketPossession.Message(player, null, 0), (ServerPlayer)player);
 		}
 	}
 

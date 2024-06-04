@@ -9,6 +9,8 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.RayTracer;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.block.material.Material;
@@ -23,8 +25,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.*;
@@ -382,8 +382,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 							if(this.getCaster() != null && raytraceresult.entityHit != this.getCaster()
 									&& raytraceresult.entityHit instanceof Player
-									&& this.getCaster() instanceof EntityPlayerMP){
-								((EntityPlayerMP)this.getCaster()).connection
+									&& this.getCaster() instanceof ServerPlayer){
+								((ServerPlayer)this.getCaster()).connection
 										.sendPacket(new SPacketChangeGameState(6, 0.0F));
 							}
 						}
@@ -553,7 +553,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	// Data reading and writing
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound tag){
+	public void writeEntityToNBT(CompoundTag tag){
 		tag.setShort("xTile", (short)this.blockX);
 		tag.setShort("yTile", (short)this.blockY);
 		tag.setShort("zTile", (short)this.blockZ);
@@ -572,7 +572,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound tag){
+	public void readEntityFromNBT(CompoundTag tag){
 		this.blockX = tag.getShort("xTile");
 		this.blockY = tag.getShort("yTile");
 		this.blockZ = tag.getShort("zTile");

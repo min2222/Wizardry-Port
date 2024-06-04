@@ -11,10 +11,10 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.*;
 import net.minecraft.entity.monster.IMob;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.world.InteractionHand;
@@ -269,7 +269,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Implementors should call this from writeEntityToNBT. Can be overridden as long as super is called, but there's
 	 * very little point in doing that since anything extra could just be added to writeEntityToNBT anyway.
 	 */
-	default void writeNBTDelegate(NBTTagCompound tagcompound){
+	default void writeNBTDelegate(CompoundTag tagcompound){
 		if(this.getCaster() != null){
 			tagcompound.setUniqueId("casterUUID", this.getCaster().getUniqueID());
 		}
@@ -280,7 +280,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, IEntityOw
 	 * Implementors should call this from readEntityFromNBT. Can be overridden as long as super is called, but there's
 	 * very little point in doing that since anything extra could just be added to readEntityFromNBT anyway.
 	 */
-	default void readNBTDelegate(NBTTagCompound tagcompound){
+	default void readNBTDelegate(CompoundTag tagcompound){
 		this.setOwnerId(tagcompound.getUniqueId("casterUUID"));
 		this.setLifetime(tagcompound.getInteger("lifetime"));
 	}

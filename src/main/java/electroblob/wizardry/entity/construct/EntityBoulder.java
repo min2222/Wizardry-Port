@@ -11,6 +11,7 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
@@ -19,7 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.util.Mth;
@@ -224,7 +224,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt){
+	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		velX = nbt.getDouble("velX");
 		velZ = nbt.getDouble("velZ");
@@ -232,7 +232,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt){
+	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setDouble("velX", velX);
 		nbt.setDouble("velZ", velZ);

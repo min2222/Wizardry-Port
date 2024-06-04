@@ -24,11 +24,11 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -78,8 +78,8 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onPlayerLoggedInEvent(PlayerLoggedInEvent event){
 		// When a player logs in, they are sent the glyph data, server settings and spell properties.
-		if(event.player instanceof EntityPlayerMP){
-			EntityPlayerMP player = (EntityPlayerMP)event.player;
+		if(event.player instanceof ServerPlayer){
+			ServerPlayer player = (ServerPlayer)event.player;
 			SpellGlyphData.get(player.world).sync(player);
 			SpellEmitterData.get(player.world).sync(player);
 			Wizardry.settings.sync(player);
@@ -103,12 +103,12 @@ public final class WizardryEventHandler {
 		// Guess we'll just have to make do
 		// Also, this seems to get fired on player login, so to prevent the toasts from appearing every login the
 		// only way I can see to do it is by testing the player has been around long enough.
-		if(event.getEntityPlayer() instanceof EntityPlayerMP && event.getEntityPlayer().ticksExisted > 0){
-			syncAdvancements((EntityPlayerMP)event.getEntityPlayer(), true);
+		if(event.getEntityPlayer() instanceof ServerPlayer && event.getEntityPlayer().ticksExisted > 0){
+			syncAdvancements((ServerPlayer)event.getEntityPlayer(), true);
 		}
 	}
 
-	private static void syncAdvancements(EntityPlayerMP player, boolean showToasts){
+	private static void syncAdvancements(ServerPlayer player, boolean showToasts){
 
 		Wizardry.logger.info("Synchronising advancements for " + player.getName());
 
@@ -151,8 +151,8 @@ public final class WizardryEventHandler {
 			Player player = (Player)event.getCaster();
 
 			// Advancement triggers
-			if(player instanceof EntityPlayerMP){
-				WizardryAdvancementTriggers.cast_spell.trigger((EntityPlayerMP)player, event.getSpell(), player.getHeldItem(player.getActiveHand()));
+			if(player instanceof ServerPlayer){
+				WizardryAdvancementTriggers.cast_spell.trigger((ServerPlayer)player, event.getSpell(), player.getHeldItem(player.getActiveHand()));
 			}
 
 			// Spell discovery (only players can discover spells, obviously)
@@ -186,8 +186,8 @@ public final class WizardryEventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public static void onDiscoverSpellEvent(DiscoverSpellEvent event){
-		if(event.getEntityPlayer() instanceof EntityPlayerMP){
-			WizardryAdvancementTriggers.discover_spell.trigger((EntityPlayerMP)event.getEntityPlayer(), event.getSpell(), event.getSource());
+		if(event.getEntityPlayer() instanceof ServerPlayer){
+			WizardryAdvancementTriggers.discover_spell.trigger((ServerPlayer)event.getEntityPlayer(), event.getSpell(), event.getSource());
 		}
 	}
 

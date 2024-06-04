@@ -13,9 +13,9 @@ import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -445,8 +445,8 @@ public class ContainerArcaneWorkbench extends Container implements ISpellSortabl
 			if(((IWorkbenchItem)centre.getStack().getItem())
 				.onApplyButtonPressed(player, centre, this.getSlot(CRYSTAL_SLOT), this.getSlot(UPGRADE_SLOT), spellBooks)){
 
-				if(player instanceof EntityPlayerMP){
-					WizardryAdvancementTriggers.arcane_workbench.trigger((EntityPlayerMP)player, centre.getStack());
+				if(player instanceof ServerPlayer){
+					WizardryAdvancementTriggers.arcane_workbench.trigger((ServerPlayer)player, centre.getStack());
 				}
 			}
 		}

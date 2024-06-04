@@ -3,7 +3,7 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.init.Items;
+import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntityFlowerPot;

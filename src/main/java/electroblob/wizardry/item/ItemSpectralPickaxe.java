@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 
 public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 
-	private EnumRarity rarity = EnumRarity.COMMON;
+	private Rarity rarity = Rarity.COMMON;
 
 	public ItemSpectralPickaxe(ToolMaterial material){
 		super(material);
@@ -27,13 +27,13 @@ public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
 		addAnimationPropertyOverrides();
 	}
 
-	public Item setRarity(EnumRarity rarity){
+	public Item setRarity(Rarity rarity){
 		this.rarity = rarity;
 		return this;
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
+	public Rarity getRarity(ItemStack stack){
 		return rarity;
 	}
 

@@ -12,12 +12,12 @@ import electroblob.wizardry.util.*;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntityDispenser;
 import net.minecraft.util.SoundEvent;
@@ -173,8 +173,8 @@ public class Grapple extends Spell {
 						double az1 = (-velocity.z - entity.motionZ) * REEL_ACCELERATION;
 						entity.addVelocity(ax1, ay1, az1);
 						// Player motion is handled on that player's client so needs packets
-						if(entity instanceof EntityPlayerMP){
-							((EntityPlayerMP)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+						if(entity instanceof ServerPlayer){
+							((ServerPlayer)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
 						}
 					}
 
@@ -254,8 +254,8 @@ public class Grapple extends Spell {
 				double az1 = (-velocity.z - target.motionZ) * REEL_ACCELERATION;
 				target.addVelocity(ax1, ay1, az1);
 				// Player motion is handled on that player's client so needs packets
-				if(target instanceof EntityPlayerMP){
-					((EntityPlayerMP)target).connection.sendPacket(new SPacketEntityVelocity(target));
+				if(target instanceof ServerPlayer){
+					((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
 				}
 			}
 
@@ -316,8 +316,8 @@ public class Grapple extends Spell {
 					double az1 = (-velocity.z - entity.motionZ) * REEL_ACCELERATION;
 					entity.addVelocity(ax1, ay1, az1);
 					// Player motion is handled on that player's client so needs packets
-					if(entity instanceof EntityPlayerMP){
-						((EntityPlayerMP)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+					if(entity instanceof ServerPlayer){
+						((ServerPlayer)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
 					}
 				}
 

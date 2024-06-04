@@ -1,7 +1,7 @@
 package electroblob.wizardry.entity.construct;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
 /**
@@ -42,13 +42,13 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt){
+	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		setSizeMultiplier(nbt.getFloat("sizeMultiplier"));
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt){
+	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setFloat("sizeMultiplier", sizeMultiplier);
 

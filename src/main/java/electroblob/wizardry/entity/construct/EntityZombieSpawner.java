@@ -9,10 +9,10 @@ import electroblob.wizardry.spell.ZombieApocalypse;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 
 public class EntityZombieSpawner extends EntityMagicConstruct {
@@ -47,7 +47,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				zombie.setLifetime(Spells.zombie_apocalypse.getProperty(SpellMinion.MINION_LIFETIME).intValue());
-				IAttributeInstance attribute = zombie.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+				IAttributeInstance attribute = zombie.getEntityAttribute(Attributes.ATTACK_DAMAGE);
 				attribute.applyModifier(new AttributeModifier(SpellMinion.POTENCY_ATTRIBUTE_MODIFIER,
 						damageMultiplier - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				zombie.setHealth(zombie.getMaxHealth()); // Need to set this because we may have just modified the value
@@ -79,14 +79,14 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt){
+	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
 		nbt.setInteger("spawnTimer", spawnTimer);
 		nbt.setBoolean("spawnHusks", spawnHusks);
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt){
+	protected void readEntityFromNBT(CompoundTag nbt){
 		super.readEntityFromNBT(nbt);
 		this.spawnTimer = nbt.getInteger("spawnTimer");
 		this.spawnHusks = nbt.getBoolean("spawnHusks");

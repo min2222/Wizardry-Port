@@ -10,8 +10,8 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
@@ -57,7 +57,7 @@ public class SummonSpiritHorse extends Spell {
 			horse.setHorseSaddled(true);
 			world.spawnEntity(horse);
 
-			horse.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(
+			horse.getEntityAttribute(Attributes.MOVEMENT_SPEED).applyModifier(
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 			// Jump strength increases ridiculously fast, so we're reducing the effect of the modifier by 75%
 			horse.getEntityAttribute(EntitySpiritHorse.JUMP_STRENGTH).applyModifier(new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER,

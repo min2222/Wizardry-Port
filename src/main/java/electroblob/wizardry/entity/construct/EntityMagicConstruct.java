@@ -6,11 +6,11 @@ import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.IEntityOwnable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.util.SoundCategory;
@@ -98,14 +98,14 @@ public abstract class EntityMagicConstruct extends Entity implements IEntityOwna
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbttagcompound){
+	protected void readEntityFromNBT(CompoundTag nbttagcompound){
 		if(nbttagcompound.hasUniqueId("casterUUID")) casterUUID = nbttagcompound.getUniqueId("casterUUID");
 		lifetime = nbttagcompound.getInteger("lifetime");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbttagcompound){
+	protected void writeEntityToNBT(CompoundTag nbttagcompound){
 		if(casterUUID != null){
 			nbttagcompound.setUniqueId("casterUUID", casterUUID);
 		}

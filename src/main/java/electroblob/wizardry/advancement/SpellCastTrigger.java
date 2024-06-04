@@ -10,7 +10,7 @@ import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 
@@ -67,7 +67,7 @@ public class SpellCastTrigger implements ICriterionTrigger<SpellCastTrigger.Inst
 				ItemPredicate.deserialize(json.get("item")));
 	}
 
-	public void trigger(EntityPlayerMP player, Spell spell, ItemStack stack){
+	public void trigger(ServerPlayer player, Spell spell, ItemStack stack){
 
 		SpellCastTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 

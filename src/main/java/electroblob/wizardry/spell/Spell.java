@@ -17,9 +17,9 @@ import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumAction;
 import net.minecraft.world.item.Item;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -315,7 +315,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	}
 
 	/** Called from the event handler when a player logs in. */
-	public static void syncProperties(EntityPlayerMP player){
+	public static void syncProperties(ServerPlayer player){
 		// On the server side, send a packet to the player to synchronise their spell properties
 		// To avoid sending extra data unnecessarily, the spell properties are sent in order of spell ID
 		List<Spell> spells = new ArrayList<>(registry.getValuesCollection());

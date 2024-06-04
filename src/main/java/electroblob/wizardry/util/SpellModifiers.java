@@ -3,8 +3,8 @@ package electroblob.wizardry.util;
 import com.google.common.collect.Sets;
 import electroblob.wizardry.event.SpellCastEvent;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.Collections;
@@ -209,7 +209,7 @@ public final class SpellModifiers {
 	 * <p></p>
 	 * Note that needsSyncing is set to true for all returned modifiers.
 	 */
-	public static SpellModifiers fromNBT(NBTTagCompound nbt){
+	public static SpellModifiers fromNBT(CompoundTag nbt){
 		SpellModifiers modifiers = new SpellModifiers();
 		for(String key : nbt.getKeySet()){
 			modifiers.set(key, nbt.getFloat(key), true);
@@ -226,8 +226,8 @@ public final class SpellModifiers {
 	 * <p></p>
 	 * Note that information about syncing of modifiers is discarded.
 	 */
-	public NBTTagCompound toNBT(){
-		NBTTagCompound nbt = new NBTTagCompound();
+	public CompoundTag toNBT(){
+		CompoundTag nbt = new CompoundTag();
 		for(Entry<String, Float> entry : multiplierMap.entrySet()){
 			nbt.setFloat(entry.getKey(), entry.getValue());
 		}

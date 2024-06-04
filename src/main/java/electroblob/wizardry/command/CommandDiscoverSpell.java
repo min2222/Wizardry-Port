@@ -6,7 +6,7 @@ import electroblob.wizardry.event.DiscoverSpellEvent;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.command.*;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -64,7 +64,7 @@ public class CommandDiscoverSpell extends CommandBase {
 			boolean clear = false;
 			boolean all = false;
 
-			EntityPlayerMP player = null;
+			ServerPlayer player = null;
 
 			try{
 				player = getCommandSenderAsPlayer(sender);
@@ -94,7 +94,7 @@ public class CommandDiscoverSpell extends CommandBase {
 			if(i < arguments.length){
 				// If the second argument is a player and is not the player that gave the command, the spell is
 				// discovered as the given player rather than the command sender.
-				EntityPlayerMP entityplayermp = getPlayer(server, sender, arguments[i++]);
+				ServerPlayer entityplayermp = getPlayer(server, sender, arguments[i++]);
 				if(player != entityplayermp){
 					player = entityplayermp;
 				}

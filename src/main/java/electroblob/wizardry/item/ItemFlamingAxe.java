@@ -9,11 +9,11 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
 
-	private EnumRarity rarity = EnumRarity.COMMON;
+	private Rarity rarity = Rarity.COMMON;
 
 	public ItemFlamingAxe(ToolMaterial material){
 		super(material, 8, -3);
@@ -39,20 +39,20 @@ public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
 		Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
 
 		if(slot == EntityEquipmentSlot.MAINHAND){
-			multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(POTENCY_MODIFIER,
+			multimap.put(Attributes.ATTACK_DAMAGE.getName(), new AttributeModifier(POTENCY_MODIFIER,
 					"Potency modifier", IConjuredItem.getDamageMultiplier(stack) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 		}
 
 		return multimap;
 	}
 
-	public Item setRarity(EnumRarity rarity){
+	public Item setRarity(Rarity rarity){
 		this.rarity = rarity;
 		return this;
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack stack){
+	public Rarity getRarity(ItemStack stack){
 		return rarity;
 	}
 

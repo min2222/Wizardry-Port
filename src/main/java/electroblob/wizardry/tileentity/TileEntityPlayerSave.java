@@ -2,9 +2,9 @@ package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -27,13 +27,13 @@ public class TileEntityPlayerSave extends TileEntity {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tagCompound){
+	public void readFromNBT(CompoundTag tagCompound){
 		super.readFromNBT(tagCompound);
 		if(tagCompound.hasUniqueId("casterUUID")) casterUUID = tagCompound.getUniqueId("casterUUID");
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tagCompound){
+	public CompoundTag writeToNBT(CompoundTag tagCompound){
 
 		super.writeToNBT(tagCompound);
 
@@ -67,8 +67,8 @@ public class TileEntityPlayerSave extends TileEntity {
 	}
 
 	@Override
-	public final NBTTagCompound getUpdateTag(){
-		return this.writeToNBT(new NBTTagCompound());
+	public final CompoundTag getUpdateTag(){
+		return this.writeToNBT(new CompoundTag());
 	}
 
 	@Override

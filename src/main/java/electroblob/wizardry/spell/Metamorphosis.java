@@ -16,7 +16,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.passive.*;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
@@ -86,7 +86,7 @@ public class Metamorphosis extends SpellRay {
 			if(!world.isRemote){
 				// Transfers attributes from the old entity to the new one.
 				newEntity.setHealth(((LivingEntity)target).getHealth());
-				NBTTagCompound tag = new NBTTagCompound();
+				CompoundTag tag = new CompoundTag();
 				target.writeToNBT(tag);
 				// Remove the UUID because keeping it the same causes the entity to disappear
 				NBTExtras.removeUniqueId(tag, "UUID");

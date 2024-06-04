@@ -2,7 +2,7 @@ package electroblob.wizardry.packet;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -19,7 +19,7 @@ public class PacketRequestAdvancementSync implements IMessageHandler<PacketReque
 		// Just to make sure that the side is correct
 		if(ctx.side.isServer()){
 
-			final EntityPlayerMP player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.getServerHandler().player;
 
 			ArrayList<ResourceLocation> advancements = new ArrayList<>();
 
