@@ -1,30 +1,38 @@
 package electroblob.wizardry.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.properties.IProperty;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.init.Biomes;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -32,12 +40,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.level.BlockEvent;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * Contains useful static methods for interacting with blocks and block states. These methods used to be part of
@@ -87,13 +90,13 @@ public final class BlockUtils {
 	 */
 	public static int getLightLevel(Level world, BlockPos pos){
 
-		int i = world.getLightFromNeighbors(pos);
+		int i = world.getMaxLocalRawBrightness(pos);
 
         if(world.isThundering()){
-            int j = world.getSkylightSubtracted();
-            world.setSkylightSubtracted(10);
-            i = world.getLightFromNeighbors(pos);
-            world.setSkylightSubtracted(j);
+            int j = world.getSkyDarken();
+            ObfuscationReflectionHelper.setPrivateValue(Level.class, world, 10, "f_46425_");
+            i = world.getMaxLocalRawBrightness(pos);
+            ObfuscationReflectionHelper.setPrivateValue(Level.class, world, j, "f_46425_");
         }
 
         return i;
@@ -339,7 +342,7 @@ public final class BlockUtils {
 	public static boolean isTreeBlock(Level world, BlockPos pos){
 		BlockState block = world.getBlockState(pos);
 		return block.is(BlockTags.LOGS) || block.getBlock() instanceof CactusBlock
-				|| block.getMaterial() == Material.LEAVES || block.isFoliage(world, pos)
+				|| block.getMaterial() == Material.LEAVES || block.getBlock() instanceof LeavesBlock
 				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, world.getBlockState(pos));
 	}
 
@@ -371,12 +374,12 @@ public final class BlockUtils {
 	 */
 	public static BlockPos getConnectedChest(Level world, BlockPos pos){
 
-		Block block = level.getBlockState(pos).getBlock();
+		Block block = world.getBlockState(pos).getBlock();
 
-		if(block instanceof BlockChest){
+		if(block instanceof ChestBlock){
 			for(Direction enumfacing : Direction.Plane.HORIZONTAL){
 				BlockPos pos1 = pos.relative(enumfacing);
-				if(level.getBlockState(pos1).getBlock() == block){
+				if(world.getBlockState(pos1).getBlock() == block){
 					return pos1;
 				}
 			}
@@ -391,7 +394,7 @@ public final class BlockUtils {
 	 * @return True if the given block state is a water source block, false otherwise.
 	 */
 	public static boolean isWaterSource(BlockState state){
-		return state.getMaterial() == Material.WATER && (state.getBlock() == Blocks.WATER || state.getBlock() == Blocks.FLOWING_WATER) && state.getValue(BlockLiquid.LEVEL) == 0;
+		return state.getMaterial() == Material.WATER && (state.getBlock() == Blocks.WATER) && state.getValue(LiquidBlock.LEVEL) == 0;
 	}
 
 	/**
@@ -400,7 +403,7 @@ public final class BlockUtils {
 	 * @return True if the given block state is a lava source block, false otherwise.
 	 */
 	public static boolean isLavaSource(BlockState state){
-		return state.getMaterial() == Material.LAVA && (state.getBlock() == Blocks.LAVA || state.getBlock() == Blocks.FLOWING_LAVA) && state.getValue(BlockLiquid.LEVEL) == 0;
+		return state.getMaterial() == Material.LAVA && (state.getBlock() == Blocks.LAVA) && state.getValue(LiquidBlock.LEVEL) == 0;
 	}
 
 	/**
@@ -413,17 +416,17 @@ public final class BlockUtils {
 	 */
 	public static boolean freeze(Level world, BlockPos pos, boolean freezeLava){
 
-		BlockState state = level.getBlockState(pos);
+		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 
 		if(isWaterSource(state)){
-			level.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
+			world.setBlockAndUpdate(pos, Blocks.ICE.defaultBlockState());
 		}else if(freezeLava && isLavaSource(state)){
-			level.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
-		}else if(freezeLava && (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA)){
-			level.setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
-		}else if(canBlockBeReplaced(world, pos.up()) && Blocks.SNOW_LAYER.canPlaceBlockAt(world, pos.up())){
-			level.setBlockAndUpdate(pos.up(), Blocks.SNOW_LAYER.defaultBlockState());
+			world.setBlockAndUpdate(pos, Blocks.OBSIDIAN.defaultBlockState());
+		}else if(freezeLava && (block == Blocks.LAVA)){
+			world.setBlockAndUpdate(pos, Blocks.COBBLESTONE.defaultBlockState());
+		}else if(canBlockBeReplaced(world, pos.above()) && Blocks.SNOW.defaultBlockState().canSurvive(world, pos.above())){
+			world.setBlockAndUpdate(pos.above(), Blocks.SNOW.defaultBlockState());
 		}else{
 			return false;
 		}
@@ -506,8 +509,8 @@ public final class BlockUtils {
 	@Nullable
 	public static BlockPos findNearbyFloorSpace(Entity entity, int horizontalRange, int verticalRange){
 
-		Level world = entity.world;
-		BlockPos origin = new BlockPos(entity);
+		Level world = entity.level;
+		BlockPos origin = entity.blockPosition();
 		return findNearbyFloorSpace(world, origin, horizontalRange, verticalRange);
 	}
 
@@ -561,7 +564,7 @@ public final class BlockUtils {
 		for(int x = -horizontalRange; x <= horizontalRange; x++){
 			for(int z = -horizontalRange; z <= horizontalRange; z++){
 
-				Integer y = getNearestFloor(world, origin.add(x, 0, z), verticalRange);
+				Integer y = getNearestFloor(world, origin.offset(x, 0, z), verticalRange);
 
 				if(y != null){
 
@@ -570,9 +573,9 @@ public final class BlockUtils {
 					if(lineOfSight){
 						// Since we're only using finding collidable surfaces, it doesn't make much sense to include
 						// non-collidable blocks here!
-						HitResult rayTrace = world.rayTraceBlocks(centre, GeometryUtils.getCentre(location),
-								false, true, false);
-						if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK) continue;
+						HitResult rayTrace = world.clip(new ClipContext(centre, GeometryUtils.getCentre(location),
+								ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, null));
+						if(rayTrace != null && rayTrace.getType() == HitResult.Type.BLOCK) continue;
 					}
 
 					possibleLocations.add(location);
@@ -623,22 +626,22 @@ public final class BlockUtils {
 		/** Returns a {@code SurfaceCriteria} based on the given condition, where the inside of the surface satisfies
 		 * the condition and the outside does not. */
 		static SurfaceCriteria basedOn(Predicate<BlockState> condition){
-			return (world, pos, side) -> condition.test(level.getBlockState(pos)) && !condition.test(level.getBlockState(pos.relative(side)));
+			return (world, pos, side) -> condition.test(world.getBlockState(pos)) && !condition.test(world.getBlockState(pos.relative(side)));
 		}
 
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through and
 		 * a block that can be moved through. This means the surface can be stood on. */
-		SurfaceCriteria COLLIDABLE = basedOn(b -> b.getMaterial().blocksMovement());
+		SurfaceCriteria COLLIDABLE = basedOn(b -> b.getMaterial().blocksMotion());
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side and
 		 * a block that is replaceable. This means the surface can be built on. */
-		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.isSideSolid(pos, side) && level.getBlockState(pos.relative(side)).getBlock().isReplaceable(world, pos.relative(side));
+		SurfaceCriteria BUILDABLE = (world, pos, side) -> world.getBlockState(pos).isFaceSturdy(world, pos, side) && world.getBlockState(pos.relative(side)).getMaterial().isReplaceable();
 
 		/** Surface criterion which defines a surface as the boundary between a block that is solid on the required side
 		 * or a liquid, and an air block. Used for freezing water and placing snow. */
 		// Was getNearestFloorLevelB
-		SurfaceCriteria SOLID_LIQUID_TO_AIR = (world, pos, side) -> (level.getBlockState(pos).getMaterial().isLiquid()
-				|| world.isSideSolid(pos, side) && world.isEmptyBlock(pos.relative(side)));
+		SurfaceCriteria SOLID_LIQUID_TO_AIR = (world, pos, side) -> (world.getBlockState(pos).getMaterial().isLiquid()
+				|| world.getBlockState(pos).isFaceSturdy(world, pos, side) && world.isEmptyBlock(pos.relative(side)));
 
 		/** Surface criterion which defines a surface as the boundary between any non-air block and an air block.
 		 * Used for particles, and is also good for placing fire. */
@@ -648,7 +651,7 @@ public final class BlockUtils {
 		/** Surface criterion which defines a surface as the boundary between a block that cannot be moved through, and
 		 * a block that can be moved through or a tree block (log or leaves). Used for structure generation. */
 		SurfaceCriteria COLLIDABLE_IGNORING_TREES = basedOn((world, pos) ->
-				level.getBlockState(pos).getMaterial().blocksMovement() && !isTreeBlock(world, pos));
+				world.getBlockState(pos).getMaterial().blocksMotion() && !isTreeBlock(world, pos));
 
 	}
 
