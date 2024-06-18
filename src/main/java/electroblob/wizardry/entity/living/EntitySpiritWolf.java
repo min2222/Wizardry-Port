@@ -8,6 +8,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityAgeable;
 import net.minecraft.world.entity.IEntityLivingData;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.passive.EntityWolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.Level;
  * Does not implement ISummonedCreature because it has different despawning rules and because EntityWolf already has an
  * owner system.
  */
-public class EntitySpiritWolf extends EntityWolf {
+public class EntitySpiritWolf extends Wolf {
 
 	private int dispelTimer = 0;
 

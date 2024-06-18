@@ -1,135 +1,128 @@
 package electroblob.wizardry.advancement;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import net.minecraft.advancements.ICriterionTrigger;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonObject;
+
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+
 /** Advancement trigger for things done in the arcane workbench or imbuement altar. The majority of any
  * ICriterionTrigger class is just boilerplate, and this is no exception. */
-public class WizardryContainerTrigger implements ICriterionTrigger<WizardryContainerTrigger.Instance> {
+public class WizardryContainerTrigger implements CriterionTrigger<WizardryContainerTrigger.Instance> {
+    private final ResourceLocation id;
+    private final Map<PlayerAdvancements, WizardryContainerTrigger.Listeners> listeners = Maps.newHashMap();
 
-	private final ResourceLocation id;
-	private final Map<PlayerAdvancements, WizardryContainerTrigger.Listeners> listeners = Maps.newHashMap();
+    public WizardryContainerTrigger(ResourceLocation id) {
+        this.id = id;
+    }
 
-	public WizardryContainerTrigger(ResourceLocation id){
-		this.id = id;
-	}
+    public ResourceLocation getId() {
+        return this.id;
+    }
 
-	public ResourceLocation getId(){
-		return this.id;
-	}
+    public void addPlayerListener(PlayerAdvancements advancements, Listener<WizardryContainerTrigger.Instance> listener) {
+        WizardryContainerTrigger.Listeners listeners = this.listeners.get(advancements);
 
-	public void addListener(PlayerAdvancements advancements, Listener<WizardryContainerTrigger.Instance> listener){
+        if (listeners == null) {
+            listeners = new WizardryContainerTrigger.Listeners(advancements);
+            this.listeners.put(advancements, listeners);
+        }
 
-		WizardryContainerTrigger.Listeners listeners = this.listeners.get(advancements);
+        listeners.add(listener);
+    }
 
-		if(listeners == null){
-			listeners = new WizardryContainerTrigger.Listeners(advancements);
-			this.listeners.put(advancements, listeners);
-		}
+    public void removePlayerListener(PlayerAdvancements advancements, Listener<WizardryContainerTrigger.Instance> listener) {
+        WizardryContainerTrigger.Listeners listeners = this.listeners.get(advancements);
 
-		listeners.add(listener);
-	}
+        if (listeners != null) {
+            listeners.remove(listener);
 
-	public void removeListener(PlayerAdvancements advancements, Listener<WizardryContainerTrigger.Instance> listener){
+            if (listeners.isEmpty()) {
+                this.listeners.remove(advancements);
+            }
+        }
+    }
 
-		WizardryContainerTrigger.Listeners listeners = this.listeners.get(advancements);
+    public void removePlayerListeners(PlayerAdvancements advancements) {
+        this.listeners.remove(advancements);
+    }
 
-		if(listeners != null){
-			listeners.remove(listener);
+    public WizardryContainerTrigger.Instance createInstance(JsonObject json, DeserializationContext context) {
+        return new WizardryContainerTrigger.Instance(this.id, ItemPredicate.fromJson(json.get("item")), json, context);
+    }
 
-			if(listeners.isEmpty()){
-				this.listeners.remove(advancements);
-			}
-		}
-	}
+    public void trigger(ServerPlayer player, ItemStack stack) {
+        WizardryContainerTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 
-	public void removeAllListeners(PlayerAdvancements advancements){
-		this.listeners.remove(advancements);
-	}
+        if (listeners != null) {
+            listeners.trigger(stack);
+        }
+    }
 
-	public WizardryContainerTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context){
-		return new WizardryContainerTrigger.Instance(this.id, ItemPredicate.deserialize(json.get("item")));
-	}
+    public static class Instance extends AbstractCriterionTriggerInstance {
+        private final ItemPredicate item;
 
-	public void trigger(ServerPlayer player, ItemStack stack){
+        public Instance(ResourceLocation criterionIn, ItemPredicate item, JsonObject json, DeserializationContext context) {
+            super(criterionIn, EntityPredicate.Composite.fromJson(json, "entity", context));
+            this.item = item;
+        }
 
-		WizardryContainerTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
+        public boolean test(ItemStack stack) {
+            return this.item.matches(stack);
+        }
+    }
 
-		if(listeners != null){
-			listeners.trigger(stack);
-		}
-	}
+    static class Listeners {
+        private final PlayerAdvancements playerAdvancements;
+        private final Set<Listener<WizardryContainerTrigger.Instance>> listeners = Sets.newHashSet();
 
-	public static class Instance extends AbstractCriterionTriggerInstance {
+        public Listeners(PlayerAdvancements advancements) {
+            this.playerAdvancements = advancements;
+        }
 
-		private final ItemPredicate item;
+        public boolean isEmpty() {
+            return this.listeners.isEmpty();
+        }
 
-		public Instance(ResourceLocation criterionIn, ItemPredicate item){
-			super(criterionIn);
-			this.item = item;
-		}
+        public void add(Listener<WizardryContainerTrigger.Instance> listener) {
+            this.listeners.add(listener);
+        }
 
-		public boolean test(ItemStack stack){
-			return this.item.test(stack);
-		}
-	}
+        public void remove(Listener<WizardryContainerTrigger.Instance> listener) {
+            this.listeners.remove(listener);
+        }
 
-	static class Listeners {
+        public void trigger(ItemStack stack) {
+            List<Listener<WizardryContainerTrigger.Instance>> list = null;
 
-		private final PlayerAdvancements playerAdvancements;
-		private final Set<Listener<WizardryContainerTrigger.Instance>> listeners = Sets.newHashSet();
+            for (Listener<WizardryContainerTrigger.Instance> listener : this.listeners) {
+                if (listener.getTriggerInstance().test(stack)) {
+                    if (list == null) {
+                        list = Lists.newArrayList();
+                    }
 
-		public Listeners(PlayerAdvancements advancements){
-			this.playerAdvancements = advancements;
-		}
+                    list.add(listener);
+                }
+            }
 
-		public boolean isEmpty(){
-			return this.listeners.isEmpty();
-		}
-
-		public void add(Listener<WizardryContainerTrigger.Instance> listener){
-			this.listeners.add(listener);
-		}
-
-		public void remove(Listener<WizardryContainerTrigger.Instance> listener){
-			this.listeners.remove(listener);
-		}
-
-		public void trigger(ItemStack stack){
-
-			List<Listener<WizardryContainerTrigger.Instance>> list = null;
-
-			for(Listener<WizardryContainerTrigger.Instance> listener : this.listeners){
-
-				if(listener.getCriterionInstance().test(stack)){
-
-					if(list == null){
-						list = Lists.newArrayList();
-					}
-
-					list.add(listener);
-				}
-			}
-
-			if(list != null){
-				for(Listener<WizardryContainerTrigger.Instance> listener : list){
-					listener.grantCriterion(this.playerAdvancements);
-				}
-			}
-		}
-	}
+            if (list != null) {
+                for (Listener<WizardryContainerTrigger.Instance> listener : list) {
+                    listener.run(this.playerAdvancements);
+                }
+            }
+        }
+    }
 }

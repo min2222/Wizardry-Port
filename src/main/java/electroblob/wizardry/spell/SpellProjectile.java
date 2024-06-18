@@ -1,5 +1,9 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.entity.projectile.EntityBomb;
@@ -8,18 +12,14 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.Mth;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 /**
  * Generic superclass for all spells which launch non-directed projectiles (i.e. instances of {@link EntityMagicProjectile}).
@@ -74,7 +74,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 		// The required range
 		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		if(projectile.hasNoGravity()){
+		if(projectile.isNoGravity()){
 			// No sensible spell will do this - range is meaningless if the projectile has no gravity or lifetime
 			if(projectile.getLifetime() <= 0) return FALLBACK_VELOCITY;
 			// Speed = distance/time (trivial, I know, but I've put it here for the sake of completeness)
@@ -84,7 +84,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			// * Potions and xp bottles seem to have more gravity (because that makes sense...)
 			float g = 0.03f;
 			// Assume horizontal projection
-			return range / Math.sqrt(2 * launchHeight/g);
+			return (float) (range / Math.sqrt(2 * launchHeight/g));
 		}
 	}
 
@@ -111,7 +111,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			world.addFreshEntity(projectile);
 		}
 
-		caster.swingArm(hand);
+		caster.swing(hand);
 		
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 
@@ -127,8 +127,8 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 				// Creates a projectile from the supplied factory
 				T projectile = projectileFactory.apply(world);
 				// Sets the necessary parameters
-				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(level.getDifficulty())
-						: EntityUtils.getDefaultAimingError(level.getDifficulty());
+				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
+						: EntityUtils.getDefaultAimingError(world.getDifficulty());
 				projectile.aim(caster, target, calculateVelocity(projectile, modifiers, caster.getEyeHeight()
 						- (float)EntityMagicProjectile.LAUNCH_Y_OFFSET), aimingError);
 				projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
@@ -138,7 +138,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 				world.addFreshEntity(projectile);
 			}
 
-			caster.swingArm(hand);
+			caster.swing(hand);
 			
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
@@ -156,7 +156,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			T projectile = projectileFactory.apply(world);
 			// Sets the necessary parameters
 			projectile.setPos(x, y, z);
-			Vec3i vec = direction.step();
+			Vec3i vec = direction.getNormal();
 			projectile.shoot(vec.getX(), vec.getY(), vec.getZ(), calculateVelocity(projectile, modifiers,
 					0.375f), DISPENSER_INACCURACY); // 0.375 is the height of the hole in a dispenser
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
@@ -166,7 +166,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			world.addFreshEntity(projectile);
 		}
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 
 		return true;
 	}

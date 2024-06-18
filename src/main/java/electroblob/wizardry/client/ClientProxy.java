@@ -56,10 +56,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiMerchant;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBlaze;
 import net.minecraft.client.renderer.entity.RenderHusk;
@@ -92,6 +94,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.lwjgl.input.Keyboard;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -114,20 +118,20 @@ public class ClientProxy extends CommonProxy {
 	private static final Map<ResourceLocation, IWizardryParticleFactory> factories = new HashMap<>();
 
 	// Key Bindings
-	public static final KeyBinding NEXT_SPELL = new KeyBinding("key." + Wizardry.MODID + ".next_spell", KeyConflictContext.IN_GAME, Keyboard.KEY_N, "key.categories." + Wizardry.MODID);
-	public static final KeyBinding PREVIOUS_SPELL = new KeyBinding("key." + Wizardry.MODID + ".previous_spell", KeyConflictContext.IN_GAME, Keyboard.KEY_B, "key.categories." + Wizardry.MODID);
-	public static final KeyBinding[] SPELL_QUICK_ACCESS = new KeyBinding[ItemWand.BASE_SPELL_SLOTS + Constants.UPGRADE_STACK_LIMIT];
+	public static final KeyMapping NEXT_SPELL = new KeyMapping("key." + Wizardry.MODID + ".next_spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, InputConstants.KEY_N, "key.categories." + Wizardry.MODID);
+	public static final KeyMapping PREVIOUS_SPELL = new KeyMapping("key." + Wizardry.MODID + ".previous_spell", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, InputConstants.KEY_B, "key.categories." + Wizardry.MODID);
+	public static final KeyMapping[] SPELL_QUICK_ACCESS = new KeyMapping[ItemWand.BASE_SPELL_SLOTS + Constants.UPGRADE_STACK_LIMIT];
 
 	static {
 		for(int i = 0; i < SPELL_QUICK_ACCESS.length; i++){
-			SPELL_QUICK_ACCESS[i] = new KeyBinding("key." + Wizardry.MODID + ".spell_" + (i+1),
-					KeyConflictContext.IN_GAME, KeyModifier.ALT, Keyboard.KEY_1 + i, "key.categories." + Wizardry.MODID);
+			SPELL_QUICK_ACCESS[i] = new KeyMapping("key." + Wizardry.MODID + ".spell_" + (i+1),
+					KeyConflictContext.IN_GAME, KeyModifier.ALT, InputConstants.Type.KEYSYM, InputConstants.KEY_1 + i, "key.categories." + Wizardry.MODID);
 		}
 	}
 
 	// Armour Models
 	// Can't use an EnumMap here because our additional values aren't really part of the enum
-	public static final Map<ArmorMaterial, ModelBiped> wizard_armour_models = new HashMap<>();
+	public static final Map<ArmorMaterial, HumanoidModel> wizard_armour_models = new HashMap<>();
 
 	static {
 		wizard_armour_models.put(Materials.SILK, new ModelWizardArmour(0.75f));

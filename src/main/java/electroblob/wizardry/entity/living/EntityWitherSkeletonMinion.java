@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.monster.EntityWitherSkeleton;
+import net.minecraft.world.entity.monster.WitherSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class EntityWitherSkeletonMinion extends EntityWitherSkeleton implements ISummonedCreature {
+public class EntityWitherSkeletonMinion extends WitherSkeleton implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = -1;

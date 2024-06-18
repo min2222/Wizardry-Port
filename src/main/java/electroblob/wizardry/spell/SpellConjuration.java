@@ -93,9 +93,9 @@ public class SpellConjuration extends Spell {
 		addItemExtras(caster, stack, modifiers);
 
 		if(caster.getMainHandItem().isEmpty()){
-			caster.setHeldItem(InteractionHand.MAIN_HAND, stack);
+			caster.setItemInHand(InteractionHand.MAIN_HAND, stack);
 		}else{
-			if(!caster.inventory.addItemStackToInventory(stack)) return false;
+			if(!caster.getInventory().add(stack)) return false;
 		}
 
 		return true;

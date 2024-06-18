@@ -1,5 +1,9 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.entity.projectile.EntityMagicArrow;
@@ -9,17 +13,13 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 /**
  * Generic superclass for all spells which launch directed projectiles (i.e. instances of {@link EntityMagicArrow}). This
@@ -83,7 +83,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			// Arrows have gravity 0.05
 			float g = 0.05f;
 			// Assume horizontal projection
-			return range / Math.sqrt(2 * launchHeight/g);
+			return (float) (range / Math.sqrt(2 * launchHeight/g));
 		}
 	}
 
@@ -116,8 +116,8 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 				// Creates a projectile from the supplied factory
 				T projectile = arrowFactory.apply(world);
 				// Sets the necessary parameters
-				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(level.getDifficulty())
-						: EntityUtils.getDefaultAimingError(level.getDifficulty());
+				int aimingError = caster instanceof ISpellCaster ? ((ISpellCaster)caster).getAimingError(world.getDifficulty())
+						: EntityUtils.getDefaultAimingError(world.getDifficulty());
 				projectile.aim(caster, target, calculateVelocity(projectile, modifiers, caster.getEyeHeight()
 						- (float)EntityMagicProjectile.LAUNCH_Y_OFFSET), aimingError);
 				projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
@@ -126,7 +126,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 				world.addFreshEntity(projectile);
 			}
 
-			caster.swingArm(hand);
+			caster.swing(hand);
 			
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 
@@ -144,7 +144,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			T projectile = arrowFactory.apply(world);
 			// Sets the necessary parameters
 			projectile.setPos(x, y, z);
-			Vec3i vec = direction.step();
+			Vec3i vec = direction.getNormal();
 			projectile.shoot(vec.getX(), vec.getY(), vec.getZ(), calculateVelocity(projectile, modifiers,
 					0.375f), DISPENSER_INACCURACY); // 0.375 is the height of the hole in a dispenser
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
@@ -154,7 +154,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 		}
 
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 
 		return true;
 	}

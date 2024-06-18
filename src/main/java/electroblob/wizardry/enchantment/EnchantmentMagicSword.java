@@ -1,23 +1,22 @@
 package electroblob.wizardry.enchantment;
 
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentDamage;
-import net.minecraft.world.entity.EnumCreatureAttribute;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MobType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.DamageEnchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 // This one is for imbued swords. The only reason this is separate is that the way vanilla is written allows me to hook
 // into the damage increase for melee weapons, meaning I don't have to use events - always handy!
-public class EnchantmentMagicSword extends EnchantmentDamage implements Imbuement {
+public class EnchantmentMagicSword extends DamageEnchantment implements Imbuement {
 
 	public EnchantmentMagicSword(){
 		super(Enchantment.Rarity.COMMON, 0, EquipmentSlot.MAINHAND);
 		// Setting this to null stops the book appearing in the creative inventory
-		this.type = null;
 	}
 
 	@Override
-	public boolean canApply(ItemStack p_92089_1_){
+	public boolean canEnchant(ItemStack p_92089_1_){
 		return false;
 	}
 
@@ -35,13 +34,8 @@ public class EnchantmentMagicSword extends EnchantmentDamage implements Imbuemen
 
 	// Returns the number by which the damage should be increased (or something)
 	@Override
-	public float calcDamageByCreature(int p_152376_1_, EnumCreatureAttribute p_152376_2_){
+	public float getDamageBonus(int p_152376_1_, MobType p_152376_2_){
 		return (float)p_152376_1_ * 1.25F;
-	}
-
-	@Override
-	public String getName(){
-		return "enchantment." + this.getRegistryName();
 	}
 
 	@Override

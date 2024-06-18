@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelIronGolem;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EntityIronGolem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +25,7 @@ public class RenderSpectralGolem extends RenderLiving<EntityIronGolem>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityIronGolem entity)
+    protected ResourceLocation getEntityTexture(IronGolem entity)
     {
         return SPECTRAL_GOLEM_TEXTURES;
     }

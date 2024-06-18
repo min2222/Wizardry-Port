@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import java.util.UUID;
+
 import electroblob.wizardry.data.IStoredVariable;
 import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
@@ -11,12 +13,10 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import java.util.UUID;
 
 public class SummonSpiritWolf extends Spell {
 
@@ -53,12 +53,12 @@ public class SummonSpiritWolf extends Spell {
 
 			EntitySpiritWolf wolf = new EntitySpiritWolf(world);
 			wolf.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-			wolf.setTamed(true);
-			wolf.setOwnerId(caster.getUUID());
+			wolf.setTame(true);
+			wolf.setOwnerUUID(caster.getUUID());
 			// Potency gives the wolf more strength AND more health
-			wolf.getEntityAttribute(Attributes.ATTACK_DAMAGE).applyModifier(
+			wolf.getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
-			wolf.getEntityAttribute(Attributes.MAX_HEALTH).applyModifier(
+			wolf.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(
 					new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.amplified(SpellModifiers.POTENCY, 1.5f) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 			wolf.setHealth(wolf.getMaxHealth());
 

@@ -73,16 +73,16 @@ public class WallOfFrost extends SpellRay {
 				pos = pos.relative(side.getOpposite());
 			}
 
-			if(origin.squareDistanceTo(pos.getX(), pos.getY(), pos.getZ()) > MINIMUM_PLACEMENT_RANGE * MINIMUM_PLACEMENT_RANGE
-					&& level.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && level.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
+			if(origin.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > MINIMUM_PLACEMENT_RANGE * MINIMUM_PLACEMENT_RANGE
+					&& world.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && world.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
 
 				pos = pos.relative(side);
 				
 				int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
 				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-					level.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
-					world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
+					world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
+					world.scheduleTick(pos.immutable(), WizardryBlocks.dry_frosted_ice, duration);
 				}
 
 				// Builds a 2 block high wall if it hits the ground
@@ -90,8 +90,8 @@ public class WallOfFrost extends SpellRay {
 					pos = pos.relative(side);
 
 					if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-						level.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
-						world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.dry_frosted_ice, duration);
+						world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
+						world.scheduleTick(pos.immutable(), WizardryBlocks.dry_frosted_ice, duration);
 					}
 				}
 			}

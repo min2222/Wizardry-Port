@@ -9,8 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
@@ -34,14 +34,14 @@ public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
 		
 		if(alreadySpawned % 2 == 0){
 			// Archers
-			minion.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+			minion.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
 		}else{
 			// Swordsmen
-			minion.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+			minion.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
 		}
 		
-		minion.setItemStackToSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
-		minion.setItemStackToSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
+		minion.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+		minion.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.CHAINMAIL_CHESTPLATE));
 		minion.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 		minion.setDropChance(EquipmentSlot.HEAD, 0.0f);
 		minion.setDropChance(EquipmentSlot.CHEST, 0.0f);

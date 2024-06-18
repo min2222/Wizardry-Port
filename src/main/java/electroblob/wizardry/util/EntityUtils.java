@@ -27,6 +27,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
@@ -68,13 +69,13 @@ public final class EntityUtils {
 		private Operations(){} // No instances!
 
 		/** Adds the attribute modifier amount to the base value. */
-		public static final int ADD = 0;
+		public static final Operation ADD = Operation.ADDITION;
 		/** Multiplies the base value by 1 plus the attribute modifier amount. Multiple modifiers are processed in
 		 * parallel, i.e. the calculation is based on the base value and does not depend on previous modifiers. */
-		public static final int MULTIPLY_FLAT = 1;
+		public static final Operation MULTIPLY_FLAT = Operation.MULTIPLY_BASE;
 		/** Multiplies the base value by 1 plus the attribute modifier amount. Multiple modifiers are processed in
 		 * series, i.e. the calculation is based on the value after previous modifiers are applied, in the order added. */
-		public static final int MULTIPLY_CUMULATIVE = 2;
+		public static final Operation MULTIPLY_CUMULATIVE = Operation.MULTIPLY_TOTAL;
 	}
 
 	// Entity retrieval

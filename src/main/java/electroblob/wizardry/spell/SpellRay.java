@@ -1,25 +1,27 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
 
 /**
  * Generic superclass for all spells which use a raytrace to do something and (optionally) spawn particles along that
@@ -167,7 +169,7 @@ public abstract class SpellRay extends Spell {
 
 		if(!shootSpell(world, origin, look, caster, ticksInUse, modifiers)) return false;
 		
-		if(casterSwingsArm(world, caster, hand, ticksInUse, modifiers)) caster.swingArm(hand);
+		if(casterSwingsArm(world, caster, hand, ticksInUse, modifiers)) caster.swing(hand);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -192,7 +194,7 @@ public abstract class SpellRay extends Spell {
 
 				// This works as if the NPC had actually aimed at the floor beneath the target, so it needs to check that
 				// the block is not air and (optionally) not a liquid.
-				if(!world.isEmptyBlock(pos) && (!level.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
+				if(!world.isEmptyBlock(pos) && (!world.getBlockState(pos).getMaterial().isLiquid() || hitLiquids)){
 					targetPos = new Vec3(x + 0.5, y + 1, z + 0.5);
 				}
 			}
@@ -202,7 +204,7 @@ public abstract class SpellRay extends Spell {
 
 		if(!shootSpell(world, origin, targetPos.subtract(origin).normalize(), caster, ticksInUse, modifiers)) return false;
 
-		if(casterSwingsArm(world, caster, hand, ticksInUse, modifiers)) caster.swingArm(hand);
+		if(casterSwingsArm(world, caster, hand, ticksInUse, modifiers)) caster.swing(hand);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -215,7 +217,7 @@ public abstract class SpellRay extends Spell {
 		
 		if(!shootSpell(world, origin, vec, null, ticksInUse, modifiers)) return false;
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 		return true;
 	}
 
@@ -271,20 +273,20 @@ public abstract class SpellRay extends Spell {
 
 		if(rayTrace != null){
 			// Doesn't matter which way round these are, they're mutually exclusive
-			if(rayTrace.typeOfHit == HitResult.Type.ENTITY){
+			if(rayTrace.getType() == HitResult.Type.ENTITY){
 				// Do whatever the spell does when it hits an entity
 				// FIXME: Some spells (e.g. lightning web) seem to not render when aimed at item frames
-				flag = onEntityHit(world, rayTrace.entityHit, rayTrace.hitVec, caster, origin, ticksInUse, modifiers);
+				flag = onEntityHit(world, ((EntityHitResult) rayTrace).getEntity(), rayTrace.getLocation(), caster, origin, ticksInUse, modifiers);
 				// If the spell succeeded, clip the particles to the correct distance so they don't go through the entity
-				if(flag) range = origin.distanceTo(rayTrace.hitVec);
+				if(flag) range = origin.distanceTo(rayTrace.getLocation());
 				
-			}else if(rayTrace.typeOfHit == HitResult.Type.BLOCK){
+			}else if(rayTrace.getType() == HitResult.Type.BLOCK){
 				// Do whatever the spell does when it hits an block
-				flag = onBlockHit(world, rayTrace.getBlockPos(), rayTrace.sideHit, rayTrace.hitVec, caster, origin, ticksInUse, modifiers);
+				flag = onBlockHit(world, ((BlockHitResult) rayTrace).getBlockPos(), ((BlockHitResult) rayTrace).getDirection(), rayTrace.getLocation(), caster, origin, ticksInUse, modifiers);
 				// Clip the particles to the correct distance so they don't go through the block
 				// Unlike with entities, this is done regardless of whether the spell succeeded, since no spells go
 				// through blocks (and in fact, even the ray tracer itself doesn't do that)
-				range = origin.distanceTo(rayTrace.hitVec);
+				range = origin.distanceTo(rayTrace.getLocation());
 			}
 		}
 		

@@ -85,7 +85,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 		stopCasting();
 
-		if(!tileEntity.getWorld().isRemote){
+		if(!tileEntity.getLevel().isClientSide){
 			IMessage msg = new PacketDispenserCastSpell.Message(x, y, z, getDirection(), tileEntity.getPos(), spell, 0, modifiers);
 			WizardryPacketHandler.net.sendToDimension(msg, tileEntity.getWorld().provider.getDimension());
 		}

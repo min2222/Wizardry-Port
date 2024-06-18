@@ -1,5 +1,10 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import electroblob.wizardry.block.BlockTransportationStone;
 import electroblob.wizardry.data.IStoredVariable;
 import electroblob.wizardry.data.Persistence;
@@ -14,21 +19,16 @@ import electroblob.wizardry.util.Location;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Transportation extends Spell {
 
@@ -77,7 +77,7 @@ public class Transportation extends Spell {
 
 				if(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_transportation)){
 
-					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.dimension).collect(Collectors.toList());
+					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.level.dimension().location().getPath()).collect(Collectors.toList());
 
 					if(locationsInDimension.isEmpty()){
 						if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
@@ -101,7 +101,7 @@ public class Transportation extends Spell {
 
 					Location destination = locations.get(locations.size() - 1); // The most recent one, or the only one
 
-					if(destination.dimension == caster.dimension){
+					if(destination.dimension == caster.level.dimension().location().getPath()){
 						return attemptTravelTo(caster, world, destination.pos, modifiers);
 					}else{
 						if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
@@ -128,7 +128,7 @@ public class Transportation extends Spell {
 
 	public static boolean isLocationAimedAt(Player player, BlockPos pos, float partialTicks){
 
-		Vec3 origin = player.getPositionEyes(partialTicks);
+		Vec3 origin = player.getEyePosition(partialTicks);
 		Vec3 centre = GeometryUtils.getCentre(pos);
 		Vec3 direction = centre.subtract(origin);
 		double distance = direction.length();
@@ -138,13 +138,13 @@ public class Transportation extends Spell {
 
 	public static double getLookDeviationAngle(Player player, BlockPos pos, float partialTicks){
 
-		Vec3 origin = player.getPositionEyes(partialTicks);
-		Vec3 look = player.getLook(partialTicks);
+		Vec3 origin = player.getEyePosition(partialTicks);
+		Vec3 look = player.getViewVector(partialTicks);
 		Vec3 centre = GeometryUtils.getCentre(pos);
 		Vec3 direction = centre.subtract(origin);
 		double distance = direction.length();
 
-		return Math.acos(direction.dotProduct(look) / distance); // Angle between a and b = acos((a.b) / (|a|*|b|))
+		return Math.acos(direction.dot(look) / distance); // Angle between a and b = acos((a.b) / (|a|*|b|))
 	}
 
 	public static double getIconSize(double distance){
@@ -157,7 +157,7 @@ public class Transportation extends Spell {
 
 		if(BlockTransportationStone.testForCircle(world, destination)){
 			this.playSound(world, player, 0, -1, modifiers);
-			player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 150, 0));
+			player.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 150, 0));
 			data.setVariable(COUNTDOWN_KEY, getProperty(TELEPORT_COUNTDOWN).intValue());
 			return true;
 		}else{
@@ -170,7 +170,7 @@ public class Transportation extends Spell {
 
 		if(countdown == null) return 0;
 
-		if(!player.world.isClientSide){
+		if(!player.level.isClientSide){
 
 			WizardData data = WizardData.get(player);
 
@@ -180,23 +180,23 @@ public class Transportation extends Spell {
 			// If the location was selected, either it was already at the end of the list or it was moved there
 			Location destination = locations.get(locations.size() - 1);
 
-			if(countdown == 1 && destination.dimension == player.dimension){
+			if(countdown == 1 && destination.dimension == player.level.dimension().location().getPath()){
 
-				Entity mount = player.getRidingEntity();
-				if(mount != null) player.dismountRidingEntity();
+				Entity mount = player.getVehicle();
+				if(mount != null) player.stopRiding();
 
-				player.setPosAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
+				player.moveTo(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
 
 				boolean teleportMount = mount != null && ItemArtefact.isArtefactActive(player, WizardryItems.charm_mount_teleporting);
 
 				if(teleportMount){
-					mount.setPosAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
+					mount.moveTo(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
 					player.startRiding(mount);
 				}
 
 				player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0));
 				IMessage msg = new PacketTransportation.Message(destination.pos, teleportMount ? null : player);
-				WizardryPacketHandler.net.sendToDimension(msg, player.world.provider.getDimension());
+				WizardryPacketHandler.net.sendToDimension(msg, player.level.dimension());
 			}
 
 			if(countdown > 0){

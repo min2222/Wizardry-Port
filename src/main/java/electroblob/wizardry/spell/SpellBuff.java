@@ -1,5 +1,12 @@
 package electroblob.wizardry.spell;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
@@ -7,23 +14,17 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Generic superclass for all spells which buff their caster.
@@ -82,7 +83,7 @@ public class SpellBuff extends Spell {
 			// TODO: Find a way of only adding the strength key if the potion is affected by amplifiers (dynamically if possible)
 			// BrewingRecipeRegistry#getOutput might be a good place to start
 			addProperties(getStrengthKey(potion));
-			if(!potion.isInstant()) addProperties(getDurationKey(potion));
+			if(!potion.isInstantenous()) addProperties(getDurationKey(potion));
 		}
 	}
 
@@ -94,11 +95,11 @@ public class SpellBuff extends Spell {
 	// Potion-specific equivalent to defining the identifiers as constants
 
 	protected static String getDurationKey(MobEffect potion){
-		return potion.getRegistryName().getPath() + "_duration";
+		return ForgeRegistries.MOB_EFFECTS.getKey(potion).getPath() + "_duration";
 	}
 
 	protected static String getStrengthKey(MobEffect potion){
-		return potion.getRegistryName().getPath() + "_strength";
+		return ForgeRegistries.MOB_EFFECTS.getKey(potion).getPath() + "_strength";
 	}
 
 	/**
@@ -126,7 +127,7 @@ public class SpellBuff extends Spell {
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 		// Wizards can only cast a buff spell if they don't already have its effects.
 		// Some buff spells doesn't add any potion effects, those are ignored by this check
-		if(!potionSet.isEmpty() && caster.getActivePotionMap().keySet().containsAll(potionSet)) return false;
+		if(!potionSet.isEmpty() && caster.getActiveEffectsMap().keySet().containsAll(potionSet)) return false;
 		// Only return on the server side or the client probably won't spawn particles
 		if(!this.applyEffects(caster, modifiers) && !world.isClientSide) return false;
 		if(world.isClientSide) this.spawnParticles(world, caster, modifiers);
@@ -138,13 +139,13 @@ public class SpellBuff extends Spell {
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		// Gets a 1x1x1 bounding box corresponding to the block in front of the dispenser
 		AABB boundingBox = new AABB(new BlockPos(x, y, z));
-		List<LivingEntity> entities = level.getEntitiesWithinAABB(LivingEntity.class, boundingBox);
+		List<LivingEntity> entities = world.getEntitiesOfClass(LivingEntity.class, boundingBox);
 		
 		float distance = -1;
 		LivingEntity nearestEntity = null;
 		// Finds the nearest entity within the bounding box
 		for(LivingEntity entity : entities){
-			float newDistance = (float)entity.getDistance(x, y, z);
+			float newDistance = (float)entity.distanceToSqr(x, y, z);
 			if(distance == -1 || newDistance < distance){
 				distance = newDistance;
 				nearestEntity = entity;
@@ -157,7 +158,7 @@ public class SpellBuff extends Spell {
 		if(!this.applyEffects(nearestEntity, modifiers) && !world.isClientSide) return false;
 		if(world.isClientSide) this.spawnParticles(world, nearestEntity, modifiers);
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 
 		return true;
 	}
@@ -173,7 +174,7 @@ public class SpellBuff extends Spell {
 		int bonusAmplifier = getBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
 		for(MobEffect potion : potionSet){
-			caster.addEffect(new MobEffectInstance(potion, potion.isInstant() ? 1 :
+			caster.addEffect(new MobEffectInstance(potion, potion.isInstantenous() ? 1 :
 					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)getProperty(getStrengthKey(potion)).floatValue() + bonusAmplifier,
 					false, true));

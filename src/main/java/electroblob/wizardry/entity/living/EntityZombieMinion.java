@@ -1,35 +1,34 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.EntityFlying;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
-import java.util.UUID;
-
-public class EntityZombieMinion extends EntityZombie implements ISummonedCreature {
+public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	private static final EntityDataSerializer<Boolean> SPAWN_PARTICLES = SynchedEntityData.createKey(EntityZombieMinion.class, EntityDataSerializers.BOOLEAN);
 

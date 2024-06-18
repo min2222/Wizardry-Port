@@ -1,14 +1,14 @@
 package electroblob.wizardry.enchantment;
 
+import java.util.function.Predicate;
+
 import electroblob.wizardry.util.IElementalDamage;
 import electroblob.wizardry.util.MagicDamage;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentProtection;
-import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageSource;
-
-import java.util.function.Predicate;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 
 /**
  * This class is for the various magic protection enchantments added by wizardry.
@@ -20,7 +20,7 @@ public class EnchantmentMagicProtection extends Enchantment {
 	public final EnchantmentMagicProtection.Type protectionType;
 
 	public EnchantmentMagicProtection(Enchantment.Rarity rarity, EnchantmentMagicProtection.Type protectionType, EquipmentSlot... slots){
-		super(rarity, EnumEnchantmentType.ARMOR, slots);
+		super(rarity, EnchantmentCategory.ARMOR, slots);
 		this.protectionType = protectionType;
 	}
 
@@ -29,13 +29,13 @@ public class EnchantmentMagicProtection extends Enchantment {
 	// https://minecraft.gamepedia.com/Enchanting/Levels <- This is what the results of the 2 methods below are compared to
 
 	@Override
-	public int getMinEnchantability(int enchantmentLevel){
+	public int getMinCost(int enchantmentLevel){
 		return this.protectionType.getMinimalEnchantability() + (enchantmentLevel - 1) * this.protectionType.getEnchantIncreasePerLevel();
 	}
 
 	@Override
-	public int getMaxEnchantability(int enchantmentLevel){
-		return this.getMinEnchantability(enchantmentLevel) + this.protectionType.getEnchantIncreasePerLevel();
+	public int getMaxCost(int enchantmentLevel){
+		return this.getMaxCost(enchantmentLevel) + this.protectionType.getEnchantIncreasePerLevel();
 	}
 
 	@Override
@@ -44,31 +44,26 @@ public class EnchantmentMagicProtection extends Enchantment {
 	}
 
 	@Override
-	public int calcModifierDamage(int level, DamageSource source){
-		if(source.canHarmInCreative()) return 0;
+	public int getDamageProtection(int level, DamageSource source){
+		if(source.isBypassInvul()) return 0;
 		if(this.protectionType.protectsAgainst(source)) return this.protectionType.getProtectionMultiplier() * level;
 		return 0;
 	}
 
 	@Override
-	public String getName(){
-		return "enchantment.ebwizardry:" + this.protectionType.getTypeName() + "_protection";
-	}
-
-	@Override
-	public boolean canApplyTogether(Enchantment ench){
+	public boolean checkCompatibility(Enchantment ench){
 		if(ench instanceof EnchantmentMagicProtection){
 			return false; // As per EnchantmentProtection, only feather falling can be applied with other protection types
-		}else if(ench instanceof EnchantmentProtection){
-			return ((EnchantmentProtection)ench).protectionType == EnchantmentProtection.Type.FALL;
+		}else if(ench instanceof ProtectionEnchantment){
+			return ((ProtectionEnchantment)ench).type == ProtectionEnchantment.Type.FALL;
 		}else{
-			return super.canApplyTogether(ench);
+			return super.checkCompatibility(ench);
 		}
 	}
 
 	public enum Type {
 
-		MAGIC("magic", 1, 5, 8, s -> s instanceof IElementalDamage || s.isMagicDamage()),
+		MAGIC("magic", 1, 5, 8, s -> s instanceof IElementalDamage || s.isMagic()),
 		FROST("frost", 2, 10, 8, s -> s instanceof IElementalDamage && ((IElementalDamage)s).getType() == MagicDamage.DamageType.FROST),
 		SHOCK("shock", 2, 10, 8, s -> s instanceof IElementalDamage && ((IElementalDamage)s).getType() == MagicDamage.DamageType.SHOCK);
 		// Fire already exists, and the other types aren't used enough to be worth having

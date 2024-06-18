@@ -30,10 +30,7 @@ public class Telekinesis extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(target instanceof ItemEntity){
-
-			target.motionX = (origin.x - target.getX()) / 6;
-			target.motionY = (origin.y - target.getY()) / 6;
-			target.motionZ = (origin.z - target.getZ()) / 6;
+			target.setDeltaMovement((origin.x - target.getX()) / 6, (origin.y - target.getY()) / 6, (origin.z - target.getZ()) / 6);
 			return true;
 
 		} else if (target instanceof Player && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((Player) target, WizardryItems.amulet_anchoring))) {
@@ -45,13 +42,12 @@ public class Telekinesis extends SpellRay {
 			if (!player.getMainHandItem().isEmpty()) {
 
 				if (!world.isClientSide) {
-					ItemEntity item = player.entityDropItem(player.getMainHandItem(), 0);
+					ItemEntity item = player.spawnAtLocation(player.getMainHandItem(), 0);
 					// Makes the item move towards the caster
-					item.motionX = (origin.x - player.getX()) / 20;
-					item.motionZ = (origin.z - player.getZ()) / 20;
+					item.setDeltaMovement((origin.x - player.getX()) / 20, item.getDeltaMovement().y, (origin.z - player.getZ()) / 20);
 				}
 
-				player.setHeldItem(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+				player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
 
 				return true;
 			}
@@ -65,7 +61,7 @@ public class Telekinesis extends SpellRay {
 		
 		if(caster instanceof Player){
 			
-			BlockState blockstate = level.getBlockState(pos);
+			BlockState blockstate = world.getBlockState(pos);
 	
 			if(blockstate.getBlock().onBlockActivated(world, pos, blockstate, (Player)caster, InteractionHand.MAIN_HAND,
 					side, 0, 0, 0)){

@@ -8,14 +8,14 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Whirlwind extends SpellRay {
 
@@ -41,25 +41,23 @@ public class Whirlwind extends SpellRay {
 		// Left as EntityLivingBase because why not be able to move armour stands around?
 		if(target instanceof LivingEntity){
 			
-			Vec3 vec = target.getPositionEyes(1).subtract(origin).normalize();
+			Vec3 vec = target.getEyePosition(1).subtract(origin).normalize();
 
 			if(!world.isClientSide){
 
 				float velocity = getProperty(REPULSION_VELOCITY).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
-				target.motionX = vec.x * velocity;
-				target.motionY = vec.y * velocity + 1;
-				target.motionZ = vec.z * velocity;
+				target.setDeltaMovement(vec.x * velocity, vec.y * velocity + 1, vec.z * velocity);
 
 				// Player motion is handled on that player's client so needs packets
 				if(target instanceof ServerPlayer){
-					((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+					((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 				}
 			}
 
 			if(world.isClientSide){
 				
-				double distance = target.getDistance(origin.x, origin.y, origin.z);
+				double distance = target.distanceToSqr(origin.x, origin.y, origin.z);
 				
 				for(int i = 0; i < 10; i++){
 					double x = origin.x + world.random.nextDouble() - 0.5 + vec.x * distance * 0.5;

@@ -1,8 +1,8 @@
 package electroblob.wizardry.enchantment;
 
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 // This one is for everything other than imbued swords.
 public class EnchantmentTimed extends Enchantment implements Imbuement {
@@ -13,13 +13,8 @@ public class EnchantmentTimed extends Enchantment implements Imbuement {
 	}
 
 	@Override
-	public boolean canApply(ItemStack p_92089_1_){
+	public boolean canEnchant(ItemStack p_92089_1_){
 		return false;
-	}
-
-	@Override
-	public String getName(){
-		return "enchantment." + this.getRegistryName();
 	}
 
 	/**

@@ -1,19 +1,19 @@
 package electroblob.wizardry.util;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.core.BlockPos;
-
 import javax.annotation.concurrent.Immutable;
 
-/** Simple wrapper class that stores a {@link BlockPos} and an integer dimension ID. */
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+
+/** Simple wrapper class that stores a {@link BlockPos} and an string dimension ID. */
 @Immutable
 public class Location {
 
 	public final BlockPos pos;
-	public final int dimension;
+	public final String dimension;
 
-	public Location(BlockPos pos, int dimension){
+	public Location(BlockPos pos, String dimension){
 		this.pos = pos;
 		this.dimension = dimension;
 	}
@@ -35,13 +35,13 @@ public class Location {
 	 * same as that returned by {@link NbtUtils#writeBlockPos(BlockPos)}, but with an extra "dimension" key. */
 	public CompoundTag toNBT(){
 		CompoundTag nbt = NbtUtils.writeBlockPos(pos);
-		nbt.putInt("dimension", dimension);
+		nbt.putString("dimension", dimension);
 		return nbt;
 	}
 
 	/** Creates a new {@code Location} from the given {@link CompoundTag}. The given compound tag should be the
 	 * same as that returned by {@link NbtUtils#writeBlockPos(BlockPos)}, but with an extra "dimension" key. */
 	public static Location fromNBT(CompoundTag nbt){
-		return new Location(NbtUtils.readBlockPos(nbt), nbt.getInt("dimension"));
+		return new Location(NbtUtils.readBlockPos(nbt), nbt.getString("dimension"));
 	}
 }

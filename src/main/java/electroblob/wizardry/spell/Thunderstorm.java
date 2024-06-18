@@ -1,20 +1,25 @@
 package electroblob.wizardry.spell;
 
+import java.util.List;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
-import net.minecraft.world.entity.player.Player;
+import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class Thunderstorm extends Spell {
 
@@ -51,7 +56,7 @@ public class Thunderstorm extends Spell {
 	// This spell is exactly the same for players and NPCs.
 	private boolean doCasting(Level world, LivingEntity caster, SpellModifiers modifiers){
 		
-		if(world.canBlockSeeSky(new BlockPos(caster))){
+		if(world.canSeeSky(caster.blockPosition())){
 
 			double maxRadius = getProperty(EFFECT_RADIUS).doubleValue();
 
@@ -68,10 +73,12 @@ public class Thunderstorm extends Spell {
 				if(y != null){
 
 					if(!world.isClientSide){
-						EntityLightningBolt lightning = new EntityLightningBolt(world, x, y, z, false);
-						lightning.getPersistentData().setUniqueId(LightningBolt.SUMMONER_NBT_KEY, caster.getUUID());
-						lightning.getPersistentData().setFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
-						world.addWeatherEffect(lightning);
+						net.minecraft.world.entity.LightningBolt lightning = new net.minecraft.world.entity.LightningBolt(EntityType.LIGHTNING_BOLT, world);
+						lightning.setPos(x, y, z);
+						lightning.setVisualOnly(false);
+						lightning.getPersistentData().putUUID(LightningBolt.SUMMONER_NBT_KEY, caster.getUUID());
+						lightning.getPersistentData().putFloat(LightningBolt.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+						world.addFreshEntity(lightning);
 					}
 
 					// Secondary chaining effect

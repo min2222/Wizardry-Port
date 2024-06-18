@@ -6,10 +6,11 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.entity.monster.EntitySnowman;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.SnowGolem;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class SummonSnowGolem extends Spell {
@@ -28,7 +29,7 @@ public class SummonSnowGolem extends Spell {
 
 		if(!world.isClientSide){
 			
-			EntitySnowman snowman = new EntitySnowman(world);
+			SnowGolem snowman = new SnowGolem(EntityType.SNOW_GOLEM, world);
 			snowman.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 			world.addFreshEntity(snowman);
 			

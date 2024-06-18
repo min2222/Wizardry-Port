@@ -1,117 +1,107 @@
 package electroblob.wizardry.advancement;
 
+import java.util.Arrays;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.spell.Spell;
-import net.minecraft.util.JsonUtils;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
+import net.minecraft.util.GsonHelper;
 
 /** Predicate used by advancement triggers to match spells. */
 public class SpellPredicate {
+    public static final SpellPredicate ANY = new SpellPredicate();
+    private final Spell spell;
+    private final Tier[] tiers;
+    private final Element[] elements;
 
-	public static final SpellPredicate ANY = new SpellPredicate();
-	private final Spell spell;
-	private final Tier[] tiers;
-	private final Element[] elements;
+    public SpellPredicate() {
+        this.spell = null;
+        this.tiers = Tier.values();
+        this.elements = Element.registry.get().getValues().toArray(new Element[Element.registry.get().getValues().size()]);
+    }
 
-	public SpellPredicate(){
-		this.spell = null;
-		this.tiers = Tier.values();
-		this.elements = Element.values();
-	}
+    public SpellPredicate(@Nullable Spell spell, Tier[] tiers, Element[] elements) {
+        this.spell = spell;
+        this.tiers = tiers;
+        this.elements = elements;
+    }
 
-	public SpellPredicate(@Nullable Spell spell, Tier[] tiers, Element[] elements){
-		this.spell = spell;
-		this.tiers = tiers;
-		this.elements = elements;
-	}
+    public boolean test(Spell spell) {
+        if (this.spell != null && spell != this.spell) {
+            return false;
+        } else if (!Arrays.asList(this.tiers).contains(spell.getTier())) {
+            return false;
+        } else if (!Arrays.asList(this.elements).contains(spell.getElement())) {
+            return false;
+        }
 
-	public boolean test(Spell spell){
+        return true;
+    }
 
-		if(this.spell != null && spell != this.spell){
-			return false;
-		}else if(!Arrays.asList(this.tiers).contains(spell.getTier())){
-			return false;
-		}else if(!Arrays.asList(this.elements).contains(spell.getElement())){
-			return false;
-		}
+    public static SpellPredicate deserialize(@Nullable JsonElement element) {
+        if (element != null && !element.isJsonNull()) {
+            JsonObject jsonobject = GsonHelper.convertToJsonObject(element, "spell");
 
-		return true;
-	}
+            Spell spell = null;
 
-	public static SpellPredicate deserialize(@Nullable JsonElement element){
+            if (jsonobject.has("spell")) {
+                String s = GsonHelper.getAsString(jsonobject, "spell");
+                spell = Spell.get(s);
 
-		if(element != null && !element.isJsonNull()){
+                if (spell == null) {
+                    throw new JsonSyntaxException("Unknown spell id '" + s + "'");
+                }
+            }
 
-			JsonObject jsonobject = JsonUtils.getJsonObject(element, "spell");
+            Tier[] tiers = Tier.values();
 
-			Spell spell = null;
+            if (jsonobject.has("tiers")) {
+                try {
+                    JsonArray array = GsonHelper.getAsJsonArray(jsonobject, "tiers");
+                    tiers = Streams.stream(array).map(je -> Tier.fromName(GsonHelper.convertToString(je, "element of array tiers"))).toArray(Tier[]::new);
+                } catch (IllegalArgumentException e) {
+                    throw new JsonSyntaxException("Incorrect spell predicate value", e);
+                }
+            }
 
-			if(jsonobject.has("spell")){
+            Element[] elements = (Element[]) Elements.registry.get().getValues().toArray();
 
-				String s = JsonUtils.getString(jsonobject, "spell");
-				spell = Spell.get(s);
+            if (jsonobject.has("elements")) {
+                try {
+                    JsonArray array = GsonHelper.getAsJsonArray(jsonobject, "elements");
+                    elements = Streams.stream(array).map(je -> Element.fromName(GsonHelper.convertToString(je, "element of array elements"))).toArray(Element[]::new);
+                } catch (IllegalArgumentException e) {
+                    throw new JsonSyntaxException("Incorrect spell predicate value", e);
+                }
+            }
 
-				if(spell == null){
-					throw new JsonSyntaxException("Unknown spell id '" + s + "'");
-				}
-			}
+            return new SpellPredicate(spell, tiers, elements);
 
-			Tier[] tiers = Tier.values();
+        } else {
+            return ANY;
+        }
+    }
 
-			if(jsonobject.has("tiers")){
-				try{
-					JsonArray array = JsonUtils.getJsonArray(jsonobject, "tiers");
-					tiers = Streams.stream(array)
-							.map(je -> Tier.fromName(JsonUtils.getString(je, "element of array tiers")))
-							.toArray(Tier[]::new);
-				}catch(IllegalArgumentException e){
-					throw new JsonSyntaxException("Incorrect spell predicate value", e);
-				}
-			}
+    public static SpellPredicate[] deserializeArray(@Nullable JsonElement element) {
+        if (element != null && !element.isJsonNull()) {
+            JsonArray jsonarray = GsonHelper.convertToJsonArray(element, "spells");
+            SpellPredicate[] predicates = new SpellPredicate[jsonarray.size()];
 
-			Element[] elements = Element.values();
+            for (int i = 0; i < predicates.length; ++i) {
+                predicates[i] = deserialize(jsonarray.get(i));
+            }
 
-			if(jsonobject.has("elements")){
-				try{
-					JsonArray array = JsonUtils.getJsonArray(jsonobject, "elements");
-					elements = Streams.stream(array)
-							.map(je -> Element.fromName(JsonUtils.getString(je, "element of array elements")))
-							.toArray(Element[]::new);
-				}catch(IllegalArgumentException e){
-					throw new JsonSyntaxException("Incorrect spell predicate value", e);
-				}
-			}
-
-			return new SpellPredicate(spell, tiers, elements);
-
-		}else{
-			return ANY;
-		}
-	}
-
-	public static SpellPredicate[] deserializeArray(@Nullable JsonElement element){
-
-		if(element != null && !element.isJsonNull()){
-
-			JsonArray jsonarray = JsonUtils.getJsonArray(element, "spells");
-			SpellPredicate[] predicates = new SpellPredicate[jsonarray.size()];
-
-			for(int i = 0; i < predicates.length; ++i){
-				predicates[i] = deserialize(jsonarray.get(i));
-			}
-
-			return predicates;
-
-		}else{
-			return new SpellPredicate[0];
-		}
-	}
+            return predicates;
+        } else {
+            return new SpellPredicate[0];
+        }
+    }
 }

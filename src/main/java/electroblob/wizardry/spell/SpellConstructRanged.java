@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Function;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.construct.EntityMagicConstruct;
 import electroblob.wizardry.item.SpellActions;
@@ -7,18 +9,18 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.RayTracer;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-
-import java.util.function.Function;
 
 /**
  * Generic superclass for all spells which conjure constructs (i.e. instances of {@link EntityMagicConstruct}) at an
@@ -90,16 +92,16 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
 
-		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
+		if(rayTrace != null && rayTrace.getType() == HitResult.Type.BLOCK && (((BlockHitResult) rayTrace).getDirection() == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isClientSide){
 				
-				double x = rayTrace.hitVec.x;
-				double y = rayTrace.hitVec.y;
-				double z = rayTrace.hitVec.z;
+				double x = rayTrace.getLocation().x;
+				double y = rayTrace.getLocation().y;
+				double z = rayTrace.getLocation().z;
 				
-				if(!spawnConstruct(world, x, y, z, rayTrace.sideHit, caster, modifiers)) return false;
+				if(!spawnConstruct(world, x, y, z, ((BlockHitResult) rayTrace).getDirection(), caster, modifiers)) return false;
 			}
 			
 		}else if(!requiresFloor){
@@ -128,19 +130,19 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
                         SpellModifiers modifiers){
 
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
-		Vec3 origin = caster.getPositionEyes(1);
+		Vec3 origin = caster.getEyePosition(1);
 
-		if(target != null && caster.getDistance(target) <= range){
+		if(target != null && caster.distanceTo(target) <= range){
 
 			if(!world.isClientSide){
 				
 				double x = target.getX();
 				double y = target.getY();
 				double z = target.getZ();
+				
+				HitResult hit = world.clip(new ClipContext(origin, new Vec3(x, y, z), ClipContext.Block.COLLIDER, hitLiquids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, null));
 
-				HitResult hit = world.rayTraceBlocks(origin, new Vec3(x, y, z), hitLiquids, ignoreUncollidables, false);
-
-				if(hit != null && hit.typeOfHit == HitResult.Type.BLOCK && !hit.getBlockPos().equals(new BlockPos(x, y, z))){
+				if(hit != null && hit.getType() == HitResult.Type.BLOCK && !((BlockHitResult) hit).getBlockPos().equals(new BlockPos(x, y, z))){
 					return false; // Something was in the way
 				}
 
@@ -148,7 +150,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 				
 				// If the target is not on the ground but the construct must be placed on the floor, searches for the
 				// floor under the caster and returns false if it does not find one within 3 blocks.
-				if(!target.onGround && requiresFloor){
+				if(!target.isOnGround() && requiresFloor){
 					Integer floor = BlockUtils.getNearestFloor(world, new BlockPos(x, y, z), 3);
 					if(floor == null) return false;
 					y = floor;
@@ -158,7 +160,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 				if(!spawnConstruct(world, x, y, z, side, caster, modifiers)) return false;
 			}
 			
-			caster.swingArm(hand);
+			caster.swing(hand);
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
 		}
@@ -172,18 +174,18 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		Vec3 origin = new Vec3(x, y, z);
 		Vec3 endpoint = origin.add(new Vec3(direction.step()).scale(range));
-		HitResult rayTrace = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, false);
+        HitResult rayTrace = world.clip(new ClipContext(origin, endpoint, ClipContext.Block.COLLIDER, hitLiquids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, null));
 
-		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||
+		if(rayTrace != null && rayTrace.getType() == HitResult.Type.BLOCK && (((BlockHitResult) rayTrace).getDirection() == Direction.UP ||
 				!requiresFloor)){
 			
 			if(!world.isClientSide){
 				
-				double x1 = rayTrace.hitVec.x;
-				double y1 = rayTrace.hitVec.y;
-				double z1 = rayTrace.hitVec.z;
+				double x1 = rayTrace.getLocation().x;
+				double y1 = rayTrace.getLocation().y;
+				double z1 = rayTrace.getLocation().z;
 				
-				if(!spawnConstruct(world, x1, y1, z1, rayTrace.sideHit, null, modifiers)) return false;
+				if(!spawnConstruct(world, x1, y1, z1, ((BlockHitResult) rayTrace).getDirection(), null, modifiers)) return false;
 			}
 			
 		}else if(!requiresFloor){
@@ -198,7 +200,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		}
 
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 		return true;
 	}
 

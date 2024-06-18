@@ -31,7 +31,7 @@ public class SummonSkeleton extends SpellMinion<EntitySkeletonMinion> {
 
 	@Override
 	protected void addMinionExtras(EntitySkeletonMinion minion, BlockPos pos, LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
-		minion.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
+		minion.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
 		minion.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 	}
 

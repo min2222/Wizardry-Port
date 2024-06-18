@@ -4,7 +4,7 @@ import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.InventoryEnderChest;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.level.Level;
 
 public class VanishingBox extends Spell {
@@ -20,7 +20,7 @@ public class VanishingBox extends Spell {
 
 		if(!world.isClientSide){
 
-			InventoryEnderChest enderchest = caster.getInventoryEnderChest();
+			PlayerEnderChestContainer enderchest = caster.getEnderChestInventory();
 
 			if(enderchest != null){
 				caster.displayGUIChest(enderchest);

@@ -13,6 +13,7 @@ import net.minecraft.world.entity.IEntityLivingData;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.passive.EntityAnimal;
 import net.minecraft.world.entity.passive.EntityHorse;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +31,7 @@ import net.minecraft.world.level.Level;
  * owner system.
  */
 @SuppressWarnings("deprecation") // It's what Entity does, so...
-public class EntitySpiritHorse extends EntityHorse {
+public class EntitySpiritHorse extends Horse {
 
 	public static final Attribute JUMP_STRENGTH = AbstractHorse.JUMP_STRENGTH;
 

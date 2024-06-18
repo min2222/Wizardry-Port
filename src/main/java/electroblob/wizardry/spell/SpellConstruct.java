@@ -1,23 +1,24 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.construct.EntityMagicConstruct;
 import electroblob.wizardry.entity.construct.EntityScaledConstruct;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 /**
  * Generic superclass for all spells which conjure constructs (i.e. instances of {@link EntityMagicConstruct}).
@@ -92,8 +93,8 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster.onGround || !requiresFloor){
-			if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.onGround ? Direction.UP : null,
+		if(caster.isOnGround() || !requiresFloor){
+			if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.isOnGround() ? Direction.UP : null,
 					caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
@@ -106,8 +107,8 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
 		if(target != null){
-			if(caster.onGround || !requiresFloor){
-				if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.onGround ? Direction.UP : null,
+			if(caster.isOnGround() || !requiresFloor){
+				if(!spawnConstruct(world, caster.getX(), caster.getY(), caster.getZ(), caster.isOnGround() ? Direction.UP : null,
 						caster, modifiers)) return false;
 				this.playSound(world, caster, ticksInUse, -1, modifiers);
 				return true;
@@ -130,7 +131,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 		if(floor != null){
 			if(!spawnConstruct(world, x, floor, z, direction, null, modifiers)) return false;
 			// This MUST be the coordinates of the actual dispenser, so we need to offset it
-			this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+			this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 			return true;
 		}
 
@@ -167,7 +168,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 			// very simple. The trade-off is that we have to create the entity before the spell fails, but unless
 			// world.addFreshEntity(...) is called, its scope is limited to this method so it should be fine.
 			// Needs to be last in case addConstructExtras modifies the bounding box
-			if(!allowOverlap && !level.getEntitiesWithinAABB(construct.getClass(), construct.getBoundingBox()).isEmpty()) return false;
+			if(!allowOverlap && !world.getEntitiesOfClass(construct.getClass(), construct.getBoundingBox()).isEmpty()) return false;
 			// Spawns the construct in the world
 			world.addFreshEntity(construct);
 		}

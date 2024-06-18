@@ -1,5 +1,9 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISummonedCreature;
 import electroblob.wizardry.item.SpellActions;
@@ -9,20 +13,19 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.IEntityLivingData;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 /**
  * Generic superclass for all spells which summon minions (i.e. instances of {@link ISummonedCreature}).
@@ -121,7 +124,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 			}
 		}
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 
 		return true;
 	}
@@ -153,10 +156,10 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				if(flying){
 					if(pos != null){
 						// Make sure the flying entity spawns above the ground
-						pos = pos.up(2); // Adding 2 will suffice, it's not exactly a game-changer...
+						pos = pos.above(2); // Adding 2 will suffice, it's not exactly a game-changer...
 					}else{
 						// If there was no floor around to spawn them on, just pick any spot in mid-air
-						pos = caster.getPosition().north(world.random.nextInt(range*2) - range)
+						pos = caster.blockPosition().north(world.random.nextInt(range*2) - range)
 								.east(world.random.nextInt(range*2) - range);
 					}
 				}else{
@@ -172,11 +175,11 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
-				AttributeInstance attribute = minion.getEntityAttribute(Attributes.ATTACK_DAMAGE);
-				if(attribute != null) attribute.applyModifier( // Apparently some things don't have an attack damage
+				AttributeInstance attribute = minion.getAttribute(Attributes.ATTACK_DAMAGE);
+				if(attribute != null) attribute.addTransientModifier( // Apparently some things don't have an attack damage
 						new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				// This is only used for artefacts, but it's a nice example of custom spell modifiers
-				minion.getEntityAttribute(Attributes.MAX_HEALTH).applyModifier(
+				minion.getAttribute(Attributes.MAX_HEALTH).addTransientModifier(
 						new AttributeModifier(HEALTH_MODIFIER, modifiers.get(HEALTH_MODIFIER) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				minion.setHealth(minion.getMaxHealth()); // Need to set this because we may have just modified the value
 
@@ -203,7 +206,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	}
 	
 	/**
-	 * Called just before each minion is spawned. Calls {@link Mob#onInitialSpawn(DifficultyInstance, IEntityLivingData)}
+	 * Called just before each minion is spawned. Calls {@link Mob#onInitialSpawn(DifficultyInstance, SpawnGroupData)}
 	 * by default, but subclasses can override to call extra methods on the summoned entity, for example to add
 	 * special equipment. This method is only called server-side so cannot be used to spawn particles directly.
 	 * @param minion The entity being spawned.
@@ -214,7 +217,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 	 * {@link SpellMinion#MINION_COUNT}.
 	 */
 	protected void addMinionExtras(T minion, BlockPos pos, @Nullable LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
-		minion.onInitialSpawn(minion.level.getDifficultyForLocation(pos), null);
+		minion.finalizeSpawn((ServerLevelAccessor) minion.level, minion.level.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null, null);
 	}
 
 }

@@ -1,31 +1,31 @@
 package electroblob.wizardry.enchantment;
 
+import java.util.Iterator;
+
 import com.google.common.collect.Iterables;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryEnchantments;
 import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Items;
-import net.minecraft.inventory.ContainerChest;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.Iterator;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * Interface for temporary enchantments that last for a certain duration ('imbuements'). This interface allows
@@ -82,7 +82,7 @@ public interface Imbuement {
 	@SubscribeEvent
 	public static void onPlayerOpenContainerEvent(PlayerContainerEvent event){
 		// Brute-force fix to stop enchanted books in dungeon chests from having imbuements on them.
-		if(event.getContainer() instanceof ContainerChest){
+		if(event.getContainer() instanceof ChestMenu){
 			// Still not sure if it's better to set stacks in slots or modify the itemstack list directly, but I would
 			// imagine it's the former.
 			for(Slot slot : event.getContainer().slots){
@@ -126,23 +126,23 @@ public interface Imbuement {
 				ItemStack bow = archer.getMainHandItem();
 
 				if(!ImbueWeapon.isBow(bow)){
-					bow = archer.getOffHandItem();
+					bow = archer.getOffhandItem();
 					if(!ImbueWeapon.isBow(bow)) return;
 				}
 
 				// Taken directly from ItemBow, so it works exactly the same as the power enchantment.
-				int level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.magic_bow, bow);
+				int level = bow.getEnchantmentLevel(WizardryEnchantments.magic_bow);
 
 				if(level > 0){
-					arrow.setDamage(arrow.getDamage() + (double)level * 0.5D + 0.5D);
+					arrow.setBaseDamage(arrow.getBaseDamage() + (double)level * 0.5D + 0.5D);
 				}
 
-				if(EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.flaming_weapon, bow) > 0){
+				if(bow.getEnchantmentLevel(WizardryEnchantments.flaming_weapon) > 0){
 					// Again, this is exactly what happens in ItemBow (flame is flame; level does nothing).
 					arrow.setSecondsOnFire(100);
 				}
 
-				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon, bow);
+				level = bow.getEnchantmentLevel(WizardryEnchantments.freezing_weapon);
 
 				if(level > 0){
 					if(arrow.getPersistentData() != null){

@@ -17,7 +17,7 @@ public class SummonWitherSkeleton extends SpellMinion<EntityWitherSkeletonMinion
 	
 	@Override
 	protected void addMinionExtras(EntityWitherSkeletonMinion minion, BlockPos pos, LivingEntity caster, SpellModifiers modifiers, int alreadySpawned){
-		minion.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
+		minion.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
 		minion.setDropChance(EquipmentSlot.MAINHAND, 0.0f);
 	}
 
