@@ -4,7 +4,6 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.text.TextComponentTranslation;
 
 /**
  * DamageSource specifically for summoned creatures. Despite being for melee attacks, this is actually an indirect
@@ -24,9 +23,9 @@ public class MinionDamage extends IndirectMagicDamage {
 	}
 
 	@Override
-	public Component getDeathMessage(LivingEntity victim){
-		Component itextcomponent = this.damageSourceEntity.getDisplayName();
-		String key = "death.attack." + this.damageType;
+	public Component getLocalizedDeathMessage(LivingEntity victim){
+		Component itextcomponent = this.entity.getDisplayName();
+		String key = "death.attack." + this.msgId;
 		return Component.translatable(key, victim.getDisplayName(), itextcomponent);
 	}
 

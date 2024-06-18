@@ -34,8 +34,8 @@ public enum RelativeFacing {
 	public static RelativeFacing relativise(Direction absolute, Entity relativeTo){
 		if(absolute == Direction.DOWN) return DOWN;
 		if(absolute == Direction.UP) return UP;
-		Direction look = relativeTo.getAdjustedHorizontalFacing();
-		int relativeIndex = absolute.getHorizontalIndex() - look.getHorizontalIndex();
+		Direction look = relativeTo.getMotionDirection();
+		int relativeIndex = absolute.get2DDataValue() - look.get2DDataValue();
 		if(relativeIndex < 0) relativeIndex += 4;
 		return HORIZONTALS[relativeIndex];
 	}

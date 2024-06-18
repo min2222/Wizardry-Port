@@ -1,8 +1,8 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.world.entity.monster.EntityCreeper;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,14 +37,14 @@ public interface IElementalDamage {
 			// One convenient side effect of the new damage type system is that I can get rid of all the places where
 			// creepers are charged and just put them here under shock damage - this is precisely the sort of
 			// repetitive code I was trying to get rid of, since errors can (and did!) occur.
-			if(event.getEntity() instanceof EntityCreeper
-					&& !((EntityCreeper)event.getEntity()).getPowered()
+			if(event.getEntity() instanceof Creeper
+					&& !((Creeper)event.getEntity()).isPowered()
 					&& ((IElementalDamage)event.getSource()).getType() == DamageType.SHOCK){
 				// Charges creepers when they are hit by shock damage
-				EntityUtils.chargeCreeper((EntityCreeper)event.getEntity());
+				EntityUtils.chargeCreeper((Creeper)event.getEntity());
 			}
 
-			if(event.getEntity().isEntityUndead()
+			if(event.getEntity().isInvertedHealAndHarm()
 					&& ((IElementalDamage)event.getSource()).getType() == DamageType.RADIANT){
 				event.getEntity().setSecondsOnFire(8); // Same as zombies/skeletons in sunlight
 			}

@@ -1,16 +1,20 @@
 package electroblob.wizardry.util;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.entity.ICustomHitbox;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Contains a number of static methods that perform raytracing and related functions. This was split off from
@@ -43,9 +47,9 @@ public final class RayTracer {
 	public static HitResult standardBlockRayTrace(Level world, LivingEntity entity, double range, boolean hitLiquids,
                                                   boolean ignoreUncollidables, boolean returnLastUncollidable){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
-		Vec3 origin = entity.getPositionEyes(1);
-		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
-		return world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, returnLastUncollidable);
+		Vec3 origin = entity.getEyePosition(1);
+		Vec3 endpoint = origin.add(entity.getLookAngle().scale(range));
+		return world.clip(new ClipContext(origin, endpoint, ClipContext.Block.COLLIDER, hitLiquids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, entity));
 	}
 
 	/**
@@ -76,8 +80,8 @@ public final class RayTracer {
 	@Nullable
 	public static HitResult standardEntityRayTrace(Level world, Entity entity, double range, boolean hitLiquids){
 		// This method does not apply an offset like ray spells do, since it is not desirable in most other use cases.
-		Vec3 origin = entity.getPositionEyes(1);
-		Vec3 endpoint = origin.add(entity.getLookVec().scale(range));
+		Vec3 origin = entity.getEyePosition(1);
+		Vec3 endpoint = origin.add(entity.getLookAngle().scale(range));
 		return rayTrace(world, origin, endpoint, 0, hitLiquids, false, false, Entity.class, ignoreEntityFilter(entity));
 	}
 
@@ -136,19 +140,19 @@ public final class RayTracer {
 
 		// The AxisAlignedBB constructor accepts min/max coords in either order.
 		AABB searchVolume = new AABB(origin.x, origin.y, origin.z, endpoint.x, endpoint.y, endpoint.z)
-				.grow(borderSize, borderSize, borderSize);
+				.inflate(borderSize, borderSize, borderSize);
 
 		// Gets all of the entities in the bounding box that could be collided with.
-		List<Entity> entities = level.getEntitiesWithinAABB(entityType, searchVolume);
+		List<? extends Entity> entities = world.getEntitiesOfClass(entityType, searchVolume);
 		// Applies the given filter to remove entities that should be ignored.
 		entities.removeIf(filter);
 
 		// Finds the first block hit by the ray trace, if any.
-		HitResult result = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, returnLastUncollidable);
+		HitResult result = world.clip(new ClipContext(origin, endpoint, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, null));
 
 		// Clips the entity search range to the part of the ray trace before the block hit, if it hit a block.
 		if(result != null){
-			endpoint = result.hitVec;
+			endpoint = result.getLocation();
 		}
 
 		// Search variables
@@ -176,18 +180,20 @@ public final class RayTracer {
 				if(entityBounds != null){
 
 					// This is zero for everything except fireballs...
-					float entityBorderSize = entity.getCollisionBorderSize();
+					float entityBorderSize = entity.getPickRadius();
 					// ... meaning the following line does nothing in all other cases.
 					// -> Added the non-zero check to prevent unnecessary AABB object creation.
 					if(entityBorderSize != 0)
-						entityBounds = entityBounds.grow(entityBorderSize, entityBorderSize, entityBorderSize);
+						entityBounds = entityBounds.inflate(entityBorderSize, entityBorderSize, entityBorderSize);
 
 					// Aim assist expands the bounding box to hit entities within the specified distance of the ray trace.
-					if(fuzziness != 0) entityBounds = entityBounds.grow(fuzziness, fuzziness, fuzziness);
+					if(fuzziness != 0) entityBounds = entityBounds.inflate(fuzziness, fuzziness, fuzziness);
 
 					// Finds the first point at which the ray trace intercepts the entity's bounding box, if any.
-					HitResult hit = entityBounds.calculateIntercept(origin, endpoint);
-					if(hit != null) intercept = hit.hitVec;
+                    Optional<Vec3> hit = entityBounds.clip(origin, endpoint);
+                    if (hit.isPresent()) {
+                        intercept = hit.get();
+                    }
 				}
 			}
 
@@ -205,7 +211,7 @@ public final class RayTracer {
 
 		// If the ray trace hit an entity, return that entity; otherwise return the result of the block ray trace.
 		if(closestHitEntity != null){
-			result = new HitResult(closestHitEntity, closestHitPosition);
+			result = new EntityHitResult(closestHitEntity, closestHitPosition);
 		}
 
 		return result;

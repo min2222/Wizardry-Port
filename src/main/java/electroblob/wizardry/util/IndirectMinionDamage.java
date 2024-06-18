@@ -4,7 +4,6 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.util.text.TextComponentTranslation;
 
 /**
  * DamageSource specifically for summoned creatures. This is for ranged attacks and works exactly the same way as a
@@ -28,9 +27,9 @@ public class IndirectMinionDamage extends IndirectMagicDamage {
 	}
 
 	@Override
-	public Component getDeathMessage(LivingEntity victim){
+	public Component getLocalizedDeathMessage(LivingEntity victim){
 		Component itextcomponent = this.minion.getDisplayName();
-		String key = "death.attack." + this.damageType;
+		String key = "death.attack." + this.msgId;
 		return Component.translatable(key, victim.getDisplayName(), itextcomponent);
 	}
 

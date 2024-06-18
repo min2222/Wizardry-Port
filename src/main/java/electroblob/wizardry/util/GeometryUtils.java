@@ -1,13 +1,13 @@
 package electroblob.wizardry.util;
 
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Contains useful static methods for performing geometry operations on vectors, bounding boxes, {@code BlockPos}
@@ -39,7 +39,7 @@ public final class GeometryUtils {
 	 * plus 0.5 in x, y, and z).
 	 */
 	public static Vec3 getCentre(BlockPos pos){
-		return new Vec3(pos).add(0.5, 0.5, 0.5);
+		return Vec3.atCenterOf(pos);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public final class GeometryUtils {
 	 * centre of the block plus 0.5 in the given direction).
 	 */
 	public static Vec3 getFaceCentre(BlockPos pos, Direction face){
-		return getCentre(pos).add(new Vec3(face.getDirectionVec()).scale(0.5));
+		return getCentre(pos).add(new Vec3(face.step()).scale(0.5));
 	}
 
 	/**
@@ -133,7 +133,7 @@ public final class GeometryUtils {
 	 * DNW, DNE, DSE, DSW, UNW, UNE, USE, USW. The returned coordinates are absolute (i.e. measured from the world origin).
 	 */
 	public static Vec3[] getVertices(Level world, BlockPos pos){
-		return getVertices(level.getBlockState(pos).getBoundingBox(world, pos).offset(pos.getX(), pos.getY(), pos.getZ()));
+		return getVertices(world.getBlockState(pos).getCollisionShape(world, pos).move(pos.getX(), pos.getY(), pos.getZ()).bounds());
 	}
 
 	/**

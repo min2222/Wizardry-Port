@@ -1,8 +1,8 @@
 package electroblob.wizardry.util;
 
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.entity.Entity;
 
 public class IndirectMagicDamage extends IndirectEntityDamageSource implements IElementalDamage {
 
@@ -13,8 +13,8 @@ public class IndirectMagicDamage extends IndirectEntityDamageSource implements I
 		super(name, magic, caster);
 		this.type = type;
 		this.isRetaliatory = isRetaliatory;
-		this.setMagicDamage();
-		if(type == DamageType.FIRE) this.setSecondsOnFireDamage();
+		this.setMagic();
+		if(type == DamageType.FIRE) this.setIsFire();
 		if(type == DamageType.BLAST) this.setExplosion();
 	}
 

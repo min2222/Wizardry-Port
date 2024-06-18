@@ -1,41 +1,44 @@
 package electroblob.wizardry.util;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Streams;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
-import net.minecraft.world.entity.item.EntityArmorStand;
-import net.minecraft.world.entity.monster.EntityCreeper;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.EntityThrowable;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-
-import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * Contains useful static methods for retrieving and interacting with players, mobs and other entities. These methods
@@ -51,11 +54,11 @@ public final class EntityUtils {
 	private EntityUtils(){} // No instances!
 
 	/** Changed to a constant in wizardry 2.1, since this is a lot more efficient. */
-	private static final EntityDataSerializer<Boolean> POWERED;
+	private static final EntityDataAccessor<Boolean> POWERED;
 
 	static {
 		// Null is passed in deliberately since POWERED is a static field.
-		POWERED = ObfuscationReflectionHelper.getPrivateValue(EntityCreeper.class, null, "field_184714_b");
+		POWERED = ObfuscationReflectionHelper.getPrivateValue(Creeper.class, null, "f_32274_");
 	}
 
 	/** Stores constant values for attribute modifier operations (and javadoc for what they actually do!) */
@@ -107,9 +110,9 @@ public final class EntityUtils {
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinRadius(double radius, double x, double y, double z, Level world, Class<T> entityType){
 		AABB aabb = new AABB(x - radius, y - radius, z - radius, x + radius, y + radius, z + radius);
-		List<T> entityList = level.getEntitiesWithinAABB(entityType, aabb);
+		List<T> entityList = world.getEntitiesOfClass(entityType, aabb);
 		for(int i = 0; i < entityList.size(); i++){
-			if(entityList.get(i).getDistance(x, y, z) > radius){
+			if(entityList.get(i).distanceToSqr(x, y, z) > radius){
 				entityList.remove(i);
 				break;
 			}
@@ -146,9 +149,9 @@ public final class EntityUtils {
 	 */
 	public static <T extends Entity> List<T> getEntitiesWithinCylinder(double radius, double x, double y, double z, double height, Level world, Class<T> entityType) {
 		AABB aabb = new AABB(x - radius, y, z - radius, x + radius, y + height, z + radius);
-		List<T> entityList = level.getEntitiesWithinAABB(entityType, aabb);
+		List<T> entityList = world.getEntitiesOfClass(entityType, aabb);
 		for(T entity : entityList) {
-			if (entity.getDistance(x, entity.getY(), z) > radius) {
+			if (entity.distanceToSqr(x, entity.getY(), z) > radius) {
 				entityList.remove(entity);
 				break;
 			}
@@ -169,7 +172,7 @@ public final class EntityUtils {
 
 		if(id == null) return null; // It would return null eventually but there's no point even looking
 
-		for(Entity entity : world.loadedEntityList){
+		for(Entity entity : world.getEntities().getAll()){
 			// This is a perfect example of where you need to use .equals() and not ==. For most applications,
 			// this was unnoticeable until world reload because the UUID instance or entity instance is stored.
 			// Fixed now though.
@@ -201,12 +204,12 @@ public final class EntityUtils {
 	 * @param entity The entity to undo gravity for.
 	 */
 	public static void undoGravity(Entity entity){
-		if(!entity.hasNoGravity()){
+		if(!entity.isNoGravity()){
 			double gravity = 0.04;
-			if(entity instanceof EntityThrowable) gravity = 0.03;
+			if(entity instanceof ThrowableProjectile) gravity = 0.03;
 			else if(entity instanceof Arrow) gravity = 0.05;
 			else if(entity instanceof LivingEntity) gravity = 0.08;
-			entity.motionY += gravity;
+			entity.push(0, gravity, 0);
 		}
 	}
 
@@ -238,7 +241,7 @@ public final class EntityUtils {
 				* 0.01D){
 			dx = (Math.random() - Math.random()) * 0.01D;
 		}
-		target.knockBack(attacker, strength, dx, dz);
+		target.knockback(strength, dx, dz);
 	}
 
 	/**
@@ -252,22 +255,22 @@ public final class EntityUtils {
 	 */
 	public static Vec3 findSpaceForTeleport(Entity entity, Vec3 destination, boolean accountForPassengers){
 
-		Level world = entity.world;
+		Level world = entity.level;
 		AABB box = entity.getBoundingBox();
 
 		if(accountForPassengers){
 			for(Entity passenger : entity.getPassengers()){
-				box = box.union(passenger.getBoundingBox());
+				box = box.minmax(passenger.getBoundingBox());
 			}
 		}
 
-		box = box.offset(destination.subtract(entity.getX(), entity.getY(), entity.getZ()));
+		box = box.move(destination.subtract(entity.getX(), entity.getY(), entity.getZ()));
 
 		// All the parameters of this method are INCLUSIVE, so even the max coordinates should be rounded down
-		Iterable<BlockPos> cuboid = BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
+		Iterable<BlockPos> cuboid = BlockPos.betweenClosed(Mth.floor(box.minX), Mth.floor(box.minY),
 				Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ));
 
-		if(Streams.stream(cuboid).noneMatch(b -> world.collidesWithAnyBlock(new AABB(b)))){
+		if(Streams.stream(cuboid).noneMatch(b -> !world.noCollision(new AABB(b)))){
 			// Nothing in the way
 			return destination;
 
@@ -286,7 +289,7 @@ public final class EntityUtils {
 			int pz = Mth.ceil(dz) - nz;
 
 			// Check all the blocks in and around the bounding box...
-			List<BlockPos> nearby = Streams.stream(BlockPos.getAllInBox(Mth.floor(box.minX) - 1,
+			List<BlockPos> nearby = Streams.stream(BlockPos.betweenClosed(Mth.floor(box.minX) - 1,
 					Mth.floor(box.minY) - 1, Mth.floor(box.minZ) - 1,
 					Mth.floor(box.maxX) + 1, Mth.floor(box.maxY) + 1,
 					Mth.floor(box.maxZ) + 1)).collect(Collectors.toList());
@@ -300,7 +303,7 @@ public final class EntityUtils {
 
 				BlockPos pos = nearby.remove(0);
 
-				if(world.collidesWithAnyBlock(new AABB(pos))){
+				if(!world.noCollision(new AABB(pos))){
 					Predicate<BlockPos> nearSolidBlock = b -> b.getX() >= pos.getX() - nx && b.getX() <= pos.getX() + px
 														   && b.getY() >= pos.getY() - ny && b.getY() <= pos.getY() + py
 														   && b.getZ() >= pos.getZ() - nz && b.getZ() <= pos.getZ() + pz;
@@ -311,7 +314,7 @@ public final class EntityUtils {
 
 			if(possiblePositions.isEmpty()) return null; // No space nearby
 
-			BlockPos nearest = possiblePositions.stream().min(Comparator.comparingDouble(b -> destination.squareDistanceTo(
+			BlockPos nearest = possiblePositions.stream().min(Comparator.comparingDouble(b -> destination.distanceToSqr(
 					b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5))).get(); // The list can't be empty
 
 			return GeometryUtils.getFaceCentre(nearest, Direction.DOWN);
@@ -334,13 +337,9 @@ public final class EntityUtils {
 	 * @return True if the attack succeeded, false if not.
 	 */
 	public static boolean attackEntityWithoutKnockback(Entity entity, DamageSource source, float amount){
-		double vx = entity.motionX;
-		double vy = entity.motionY;
-		double vz = entity.motionZ;
+		Vec3 motion = entity.getDeltaMovement();
 		boolean succeeded = entity.hurt(source, amount);
-		entity.motionX = vx;
-		entity.motionY = vy;
-		entity.motionZ = vz;
+		entity.setDeltaMovement(motion);
 		return succeeded;
 	}
 
@@ -355,13 +354,13 @@ public final class EntityUtils {
 		// With the exception of minions, melee damage always has the same entity for immediate/true source
 		if(!(source instanceof MinionDamage) && source.getDirectEntity() != source.getEntity()) return false;
 		if(source.isProjectile()) return false; // Projectile damage obviously isn't melee damage
-		if(source.isUnblockable()) return false; // Melee damage should always be blockable
+		if(source.isBypassArmor()) return false; // Melee damage should always be blockable
 		if(!(source instanceof MinionDamage) && source instanceof IElementalDamage) return false;
 		if(!(source.getEntity() instanceof LivingEntity)) return false; // Only living things can melee!
 
-		if(source.getEntity() instanceof Player && source.getDamageLocation() != null
-				&& source.getDamageLocation().distanceTo(source.getEntity().position()) > ((LivingEntity)source
-				.getEntity()).getEntityAttribute(Player.REACH_DISTANCE).getAttributeValue()){
+		if(source.getEntity() instanceof Player && source.getSourcePosition() != null
+				&& source.getSourcePosition().distanceTo(source.getEntity().position()) > ((LivingEntity)source
+				.getEntity()).getAttribute(ForgeMod.REACH_DISTANCE.get()).getBaseValue()){
 			return false; // Out of melee reach for players
 		}
 
@@ -382,7 +381,7 @@ public final class EntityUtils {
 	// better to make a parent class which is extended by both armour stands and EntityLivingBase and contains only
 	// the code required by both.
 	public static boolean isLiving(Entity entity){
-		return entity instanceof LivingEntity && !(entity instanceof EntityArmorStand);
+		return entity instanceof LivingEntity && !(entity instanceof ArmorStand);
 	}
 
 	/**
@@ -390,7 +389,7 @@ public final class EntityUtils {
 	 * means they have cheats enabled.
 	 */
 	public static boolean isPlayerOp(Player player, MinecraftServer server){
-		return server.getPlayerList().getOppedPlayers().getEntry(player.getGameProfile()) != null;
+		return server.getPlayerList().getOps().get(player.getGameProfile()) != null;
 	}
 
 	/**
@@ -406,7 +405,7 @@ public final class EntityUtils {
 	 */
 	public static boolean canDamageBlocks(@Nullable Entity entity, Level world){
 		if(entity == null) return Wizardry.settings.dispenserBlockDamage;
-		else if(entity instanceof Player) return ((Player)entity).isAllowEdit() && Wizardry.settings.playerBlockDamage;
+		else if(entity instanceof Player) return ((Player)entity).mayBuild() && Wizardry.settings.playerBlockDamage;
 		return ForgeEventFactory.getMobGriefingEvent(world, entity);
 	}
 
@@ -432,9 +431,9 @@ public final class EntityUtils {
 
 			if(data != null && data.currentlyCasting() == spell) return true;
 
-			if(caster.isHandActive() && caster.getItemInUseMaxCount() >= spell.getChargeup()){
+			if(caster.isUsingItem() && caster.getUseItemRemainingTicks() >= spell.getChargeup()){
 
-				ItemStack stack = caster.getItemInHand(caster.getActiveHand());
+				ItemStack stack = caster.getItemInHand(caster.getUsedItemHand());
 
 				if(stack.getItem() instanceof ISpellCastingItem && ((ISpellCastingItem)stack.getItem()).getCurrentSpell(stack) == spell){
 					// Don't do this, it interferes with stuff! We effectively already tested this with caster.isHandActive() anyway
@@ -467,12 +466,12 @@ public final class EntityUtils {
 
 	/**
 	 * Turns the given creeper into a charged creeper. In 1.10, this requires reflection since the DataManager keys are
-	 * private. (You <i>could</i> call {@link EntityCreeper#onStruckByLightning(EntityLightningBolt)} and then heal it
+	 * private. (You <i>could</i> call {@link Creeper#thunderHit(LightningBolt)} and then heal it
 	 * and extinguish it, but that's a bit awkward, and it'll trigger events and stuff...)
 	 */
 	// The reflection here only gets done once to initialise the POWERED field, so it's not a performance issue at all.
-	public static void chargeCreeper(EntityCreeper creeper){
-		creeper.getDataManager().set(POWERED, true);
+	public static void chargeCreeper(Creeper creeper){
+		creeper.getEntityData().set(POWERED, true);
 	}
 
 	// No point allowing anything other than players for these methods since other entities can use Entity#playSound.
@@ -485,7 +484,7 @@ public final class EntityUtils {
 	 */
 	public static void playSoundAtPlayer(Player player, SoundEvent sound, SoundSource category, float volume,
                                          float pitch){
-		player.world.playSound(null, player.getX(), player.getY(), player.getZ(), sound, category, volume, pitch);
+		player.level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, category, volume, pitch);
 	}
 
 	/**
@@ -493,7 +492,7 @@ public final class EntityUtils {
 	 * defaults to {@link SoundSource#PLAYERS}.
 	 */
 	public static void playSoundAtPlayer(Player player, SoundEvent sound, float volume, float pitch){
-		player.world.playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, volume, pitch);
+		player.level.playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, volume, pitch);
 	}
 
 }

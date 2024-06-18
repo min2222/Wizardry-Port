@@ -503,7 +503,7 @@ public final class ParticleBuilder {
 	 * @throws IllegalStateException if the particle builder is not yet building.
 	 */
 	public ParticleBuilder face(Direction direction){
-		return face(direction.getHorizontalAngle(), direction.getAxis().isVertical() ? direction.getAxisDirection().getOffset() * 90 : 0);
+		return face(direction.toYRot(), direction.getAxis().isVertical() ? direction.getAxisDirection().getStep() * 90 : 0);
 	}
 
 	// ============================================= Targeted-only methods =============================================
@@ -614,7 +614,7 @@ public final class ParticleBuilder {
 		if(x == 0 && y == 0 && z == 0 && entity == null) Wizardry.logger.warn("Spawning particle at (0, 0, 0) - are you"
 				+ " sure the position/entity has been set correctly?");
 		
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			Wizardry.logger.warn("ParticleBuilder.spawn(...) called on the server side! ParticleBuilder has prevented a "
 					+ "server crash, but calling it on the server will do nothing. Consider adding a level.isClientSide check.");
 			// Must stop here because the line after this if statement would crash the server!
@@ -634,14 +634,14 @@ public final class ParticleBuilder {
 		if(!Double.isNaN(vx) && !Double.isNaN(vy) && !Double.isNaN(vz)) 	particle.setVelocity(vx, vy, vz);
 		if(r >= 0 && g >= 0 && b >= 0) 										particle.setRBGColorF(r, g, b);
 		if(fr >= 0 && fg >= 0 && fb >= 0)									particle.setFadeColour(fr, fg, fb);
-		if(lifetime >= 0) 													particle.setMaxAge(lifetime);
+		if(lifetime >= 0) 													particle.setLifetime(lifetime);
 		if(radius > 0) 														particle.setSpin(radius, rpt);
 		if(!Float.isNaN(yaw) && !Float.isNaN(pitch)) 						particle.setFacing(yaw, pitch);
 		if(seed != 0)														particle.setSeed(seed);
 		if(!Double.isNaN(tvx) && !Double.isNaN(tvy) && !Double.isNaN(tvz)) 	particle.setTargetVelocity(tvx, tvy, tvz);
 		if(length > 0)														particle.setLength(length);
 
-		particle.multipleParticleScaleBy(scale);
+		particle.scale(scale);
 		particle.setGravity(gravity);
 		particle.setShaded(shaded);
 		particle.setCollisions(collide);
@@ -649,7 +649,7 @@ public final class ParticleBuilder {
 		particle.setTargetPosition(tx, ty, tz);
 		particle.setTargetEntity(target);
 		
-		net.minecraft.client.Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+		net.minecraft.client.Minecraft.getInstance().particleEngine.add(particle);
 		
 		reset();
 	}
@@ -714,9 +714,9 @@ public final class ParticleBuilder {
 	 */
 	public static ParticleBuilder create(ResourceLocation type, Entity entity){
 		
-		double x = entity.getX() + (entity.world.random.nextDouble() - 0.5D) * (double)entity.width;
-		double y = entity.getY() + entity.world.random.nextDouble() * (double)entity.getBbHeight();
-		double z = entity.getZ() + (entity.world.random.nextDouble() - 0.5D) * (double)entity.width;
+		double x = entity.getX() + (entity.level.random.nextDouble() - 0.5D) * (double)entity.getBbWidth();
+		double y = entity.getY() + entity.level.random.nextDouble() * (double)entity.getBbHeight();
+		double z = entity.getZ() + (entity.level.random.nextDouble() - 0.5D) * (double)entity.getBbWidth();
 		
 		return ParticleBuilder.instance.particle(type).pos(x, y, z);
 	}
@@ -763,7 +763,7 @@ public final class ParticleBuilder {
 			px = x + world.random.nextDouble() - 0.5;
 			py = y + world.random.nextDouble() - 0.5;
 			pz = z + world.random.nextDouble() - 0.5;
-			world.spawnParticle(ParticleTypes.SMOKE_LARGE, px, py, pz, 0, 0, 0);
+			world.addParticle(ParticleTypes.LARGE_SMOKE, px, py, pz, 0, 0, 0);
 		}
 	}
 

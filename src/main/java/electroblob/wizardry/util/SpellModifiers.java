@@ -1,16 +1,17 @@
 package electroblob.wizardry.util;
 
-import com.google.common.collect.Sets;
-import electroblob.wizardry.event.SpellCastEvent;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.collect.Sets;
+
+import electroblob.wizardry.event.SpellCastEvent;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.Item;
 
 /**
  * <i>"{@code SpellModifiers} - modify all the things!"</i>
@@ -181,18 +182,18 @@ public final class SpellModifiers {
 	}
 
 	/** Reads this SpellModifiers object from the given ByteBuf. */
-	public void read(ByteBuf buf){
+	public void read(FriendlyByteBuf buf){
 		int entryCount = buf.readInt();
 		for(int i = 0; i < entryCount; i++){
-			this.set(ByteBufUtils.readUTF8String(buf), buf.readFloat(), false);
+			this.set(buf.readUtf(), buf.readFloat(), false);
 		}
 	}
 
 	/** Writes this SpellModifiers object to the given ByteBuf so it can be sent via packets. */
-	public void write(ByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeInt(syncedMultiplierMap.size());
 		for(Entry<String, Float> entry : syncedMultiplierMap.entrySet()){
-			ByteBufUtils.writeUTF8String(buf, entry.getKey());
+			buf.writeUtf(entry.getKey());
 			buf.writeFloat(entry.getValue());
 		}
 	}
@@ -211,7 +212,7 @@ public final class SpellModifiers {
 	 */
 	public static SpellModifiers fromNBT(CompoundTag nbt){
 		SpellModifiers modifiers = new SpellModifiers();
-		for(String key : nbt.getKeySet()){
+		for(String key : nbt.getAllKeys()){
 			modifiers.set(key, nbt.getFloat(key), true);
 		}
 		return modifiers;
@@ -229,7 +230,7 @@ public final class SpellModifiers {
 	public CompoundTag toNBT(){
 		CompoundTag nbt = new CompoundTag();
 		for(Entry<String, Float> entry : multiplierMap.entrySet()){
-			nbt.setFloat(entry.getKey(), entry.getValue());
+			nbt.putFloat(entry.getKey(), entry.getValue());
 		}
 		return nbt;
 	}

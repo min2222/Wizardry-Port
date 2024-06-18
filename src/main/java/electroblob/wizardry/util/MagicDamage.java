@@ -1,17 +1,37 @@
 package electroblob.wizardry.util;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.entity.living.*;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.boss.EntityDragon;
-import net.minecraft.world.entity.boss.EntityWither;
-import net.minecraft.world.damagesource.EntityDamageSource;
-
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+
+import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.entity.living.EntityBlazeMinion;
+import electroblob.wizardry.entity.living.EntityIceGiant;
+import electroblob.wizardry.entity.living.EntityIceWraith;
+import electroblob.wizardry.entity.living.EntityLightningWraith;
+import electroblob.wizardry.entity.living.EntityPhoenix;
+import electroblob.wizardry.entity.living.EntityShadowWraith;
+import electroblob.wizardry.entity.living.EntitySkeletonMinion;
+import electroblob.wizardry.entity.living.EntitySpiderMinion;
+import electroblob.wizardry.entity.living.EntityStormElemental;
+import electroblob.wizardry.entity.living.EntityZombieMinion;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.EntityDamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.PolarBear;
+import net.minecraft.world.entity.animal.SnowGolem;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
 
 // A note on the use of the vanilla damagesources:
 // When using indirect damage sources, the SECOND argument is the original entity (i.e. the caster), and the
@@ -90,26 +110,26 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 		// they're included here anyway for completeness and in case anyone wants to check if an entity is immune to
 		// an unspecified element for reasons other than dealing damage.
 		setEntityImmunities(EntityPhoenix.class, DamageType.FIRE);
-		setEntityImmunities(EntityBlaze.class, DamageType.FIRE);
+		setEntityImmunities(Blaze.class, DamageType.FIRE);
 		setEntityImmunities(EntityBlazeMinion.class, DamageType.FIRE);
-		setEntityImmunities(EntityPigZombie.class, DamageType.FIRE, DamageType.POISON);
-		setEntityImmunities(EntityMagmaCube.class, DamageType.FIRE);
-		setEntityImmunities(EntityGhast.class, DamageType.FIRE);
-		setEntityImmunities(EntityDragon.class, DamageType.FIRE);
+		setEntityImmunities(ZombifiedPiglin.class, DamageType.FIRE, DamageType.POISON);
+		setEntityImmunities(MagmaCube.class, DamageType.FIRE);
+		setEntityImmunities(Ghast.class, DamageType.FIRE);
+		setEntityImmunities(EnderDragon.class, DamageType.FIRE);
 		setEntityImmunities(EntityStormElemental.class, DamageType.FIRE, DamageType.SHOCK);
-		setEntityImmunities(EntityWither.class, DamageType.FIRE, DamageType.WITHER);
-		setEntityImmunities(EntitySnowman.class, DamageType.FROST);
-		setEntityImmunities(EntityPolarBear.class, DamageType.FROST);
+		setEntityImmunities(WitherBoss.class, DamageType.FIRE, DamageType.WITHER);
+		setEntityImmunities(SnowGolem.class, DamageType.FROST);
+		setEntityImmunities(PolarBear.class, DamageType.FROST);
 		setEntityImmunities(EntityIceWraith.class, DamageType.FROST);
 		setEntityImmunities(EntityIceGiant.class, DamageType.FROST);
 		setEntityImmunities(EntityLightningWraith.class, DamageType.SHOCK);
 		setEntityImmunities(EntityShadowWraith.class, DamageType.WITHER);
-		setEntityImmunities(EntityWitherSkeleton.class, DamageType.WITHER);
-		setEntityImmunities(EntitySpider.class, DamageType.POISON);
+		setEntityImmunities(WitherSkeleton.class, DamageType.WITHER);
+		setEntityImmunities(Spider.class, DamageType.POISON);
 		setEntityImmunities(EntitySpiderMinion.class, DamageType.POISON);
-		setEntityImmunities(EntityCaveSpider.class, DamageType.POISON);
-		setEntityImmunities(EntityZombie.class, DamageType.POISON);
-		setEntityImmunities(EntitySkeleton.class, DamageType.POISON);
+		setEntityImmunities(CaveSpider.class, DamageType.POISON);
+		setEntityImmunities(Zombie.class, DamageType.POISON);
+		setEntityImmunities(Skeleton.class, DamageType.POISON);
 		setEntityImmunities(EntityZombieMinion.class, DamageType.POISON);
 		setEntityImmunities(EntitySkeletonMinion.class, DamageType.POISON);
 	}
@@ -118,8 +138,8 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 		super(name, caster);
 		this.type = type;
 		this.isRetaliatory = isRetaliatory;
-		this.setMagicDamage();
-		if(type == DamageType.FIRE) this.setSecondsOnFireDamage();
+		this.setMagic();
+		if(type == DamageType.FIRE) this.setIsFire();
 		if(type == DamageType.BLAST) this.setExplosion();
 	}
 
@@ -133,7 +153,7 @@ public class MagicDamage extends EntityDamageSource implements IElementalDamage 
 	 */
 	public static boolean isEntityImmune(DamageType type, Entity entity){
 
-		if(type == DamageType.FIRE && entity.isImmuneToFire()) return true;
+		if(type == DamageType.FIRE && entity.getType().fireImmune()) return true;
 		EnumSet immunities = immunityMapping.get(entity.getClass());
 
 		return immunities != null && immunities.contains(type);

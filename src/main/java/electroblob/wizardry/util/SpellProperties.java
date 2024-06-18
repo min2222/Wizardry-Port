@@ -1,9 +1,34 @@
 package electroblob.wizardry.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.SpellType;
@@ -12,21 +37,12 @@ import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.stream.Collectors;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * Object that stores base properties associated with spells. Each spell has a single instance of this class which
@@ -108,25 +124,25 @@ public final class SpellProperties {
 		enabledContexts = new EnumMap<>(Context.class);
 		baseValues = new HashMap<>();
 
-		JsonObject enabled = JsonUtils.getJsonObject(json, "enabled");
+		JsonObject enabled = GsonHelper.getAsJsonObject(json, "enabled");
 
 		// This time we know the exact set of properties so we can iterate over them instead of the json object
 		// In fact, we actually want to throw an exception if any of them are missing
 		for(Context context : Context.values()){
-			enabledContexts.put(context, JsonUtils.getBoolean(enabled, context.name));
+			enabledContexts.put(context, GsonHelper.getAsBoolean(enabled, context.name));
 		}
 
 		try {
-			tier = Tier.fromName(JsonUtils.getString(json, "tier"));
-			element = Element.fromName(JsonUtils.getString(json, "element"));
-			type = SpellType.fromName(JsonUtils.getString(json, "type"));
+			tier = Tier.fromName(GsonHelper.getAsString(json, "tier"));
+			element = Element.fromName(GsonHelper.getAsString(json, "element"));
+			type = SpellType.fromName(GsonHelper.getAsString(json, "type"));
 		}catch(IllegalArgumentException e){
 			throw new JsonSyntaxException("Incorrect spell property value", e);
 		}
 
-		cost = JsonUtils.getInt(json, "cost");
-		chargeup = JsonUtils.getInt(json, "chargeup");
-		cooldown = JsonUtils.getInt(json, "cooldown");
+		cost = GsonHelper.getAsInt(json, "cost");
+		chargeup = GsonHelper.getAsInt(json, "chargeup");
+		cooldown = GsonHelper.getAsInt(json, "cooldown");
 
 		// There's not much point specifying the classes of the numbers here because the json getter methods just
 		// perform conversion to the requested type anyway. It therefore makes very little difference whether the
@@ -140,7 +156,7 @@ public final class SpellProperties {
 		// The most pragmatic solution is to let the spell class decide for itself.
 		// (Of course, we can only hope that the users aren't jerks and don't try to summon 2 and a half spiders...)
 
-		JsonObject baseValueObject = JsonUtils.getJsonObject(json, "base_properties");
+		JsonObject baseValueObject = GsonHelper.getAsJsonObject(json, "base_properties");
 
 		// If the code requests more values than the JSON file contains, that will cause a JsonSyntaxException here anyway.
 		// If there are redundant values in the JSON file, chances are that a user has misunderstood the system and tried
@@ -157,7 +173,7 @@ public final class SpellProperties {
 		if(baseValueNames.length > 0){
 
 			for(String baseValueName : baseValueNames){
-				baseValues.put(baseValueName, JsonUtils.getFloat(baseValueObject, baseValueName));
+				baseValues.put(baseValueName, GsonHelper.getAsFloat(baseValueObject, baseValueName));
 			}
 		}
 
@@ -278,9 +294,9 @@ public final class SpellProperties {
 
 	public static void loadWorldSpecificSpellProperties(Level world){
 
-		Wizardry.logger.info("Loading custom spell properties for world {}", level.getWorldInfo().getWorldName());
+		Wizardry.logger.info("Loading custom spell properties for world {}", world.getServer().getWorldData().getLevelName());
 
-		File spellJSONDir = new File(new File(level.getSaveHandler().getWorldDirectory(), "data"), "spells");
+		File spellJSONDir = new File(world.getServer().getWorldPath(new LevelResource("data")).toFile(), "spells");
 
 		if(spellJSONDir.mkdirs()) return; // If it just got created it can't possibly have anything inside
 
@@ -304,7 +320,9 @@ public final class SpellProperties {
 	private static boolean loadBuiltInSpellProperties(String modID){
 
 		// Yes, I know you're not supposed to do orElse(null). But... meh.
-		ModContainer mod = Loader.instance().getModList().stream().filter(m -> m.getModId().equals(modID)).findFirst().orElse(null);
+        List<ModContainer> mods = ObfuscationReflectionHelper.getPrivateValue(ModList.class, ModList.get(), "mods");
+        List<ModContainer> modList = mods != null ? ImmutableList.copyOf(mods) : ImmutableList.<ModContainer>of();
+        ModContainer mod = modList.stream().filter(m -> m.getModId().equals(modID)).findFirst().orElse(null);
 
 		if(mod == null){
 			Wizardry.logger.warn("Tried to load built-in spell properties for mod with ID '" + modID + "', but no such mod was loaded");
@@ -325,9 +343,9 @@ public final class SpellProperties {
 		// - defaultUnfoundRoot is the default value to return if the root specified isn't found
 		// - visitAllFiles determines whether the method short-circuits; in other words, if the processor returns false
 		// at any point and visitAllFiles is false, the method returns immediately.
-		boolean success = CraftingHelper.findFiles(mod, "assets/" + modID + "/spells", null,
-
-				(root, file) -> {
+		boolean success = true;
+		
+		findFiles(mod, "assets/" + modID + "/spells", Files::exists, (root, file) -> {
 
 					String relative = root.relativize(file).toString();
 					if(!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
@@ -358,7 +376,7 @@ public final class SpellProperties {
 
 						reader = Files.newBufferedReader(file);
 
-						JsonObject json = JsonUtils.fromJson(gson, reader, JsonObject.class);
+						JsonObject json = GsonHelper.fromJson(gson, reader, JsonObject.class);
 						SpellProperties properties = new SpellProperties(json, spell);
 						spell.setProperties(properties);
 
@@ -375,7 +393,7 @@ public final class SpellProperties {
 					return true;
 
 				},
-				true, true);
+				true, 2);
 
 		// If a spell is missing its file, log an error
 		if(!spells.isEmpty()){
@@ -389,6 +407,43 @@ public final class SpellProperties {
 
 		return success;
 	}
+	
+    public static void findFiles(ModContainer mod, String base, Predicate<Path> rootFilter, BiFunction<Path, Path, Boolean> processor, boolean visitAllFiles) {
+        findFiles(mod, base, rootFilter, processor, visitAllFiles, Integer.MAX_VALUE);
+    }
+
+    public static void findFiles(ModContainer mod, String base, Predicate<Path> rootFilter, BiFunction<Path, Path, Boolean> processor, boolean visitAllFiles, int maxDepth) {
+        if (mod.getModId().equals("minecraft")) {
+            return;
+        }
+
+        try {
+            for (var root : Collections.singletonList(mod.getModInfo().getOwningFile().getFile().getSecureJar().getRootPath())) {
+                walk(root.resolve(base), rootFilter, processor, visitAllFiles, maxDepth);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    private static void walk(Path root, Predicate<Path> rootFilter, BiFunction<Path, Path, Boolean> processor, boolean visitAllFiles, int maxDepth) throws IOException {
+        if (root == null || !Files.exists(root) || !rootFilter.test(root)) {
+            return;
+        }
+
+        if (processor != null) {
+            try (var stream = Files.walk(root, maxDepth)) {
+                Iterator<Path> itr = stream.iterator();
+
+                while (itr.hasNext()) {
+                    boolean keepGoing = processor.apply(root, itr.next());
+                    if (!visitAllFiles && !keepGoing) {
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
 	private static boolean loadSpellPropertiesFromDir(File dir){
 
@@ -419,7 +474,7 @@ public final class SpellProperties {
 
 				reader = Files.newBufferedReader(file.toPath());
 
-				JsonObject json = JsonUtils.fromJson(gson, reader, JsonObject.class);
+				JsonObject json = GsonHelper.fromJson(gson, reader, JsonObject.class);
 				SpellProperties properties = new SpellProperties(json, spell);
 				spell.setProperties(properties);
 

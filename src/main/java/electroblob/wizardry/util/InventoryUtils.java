@@ -8,6 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlot.Type;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
@@ -34,7 +35,7 @@ public final class InventoryUtils {
 	static {
 		// The list of slots needs to be mutable.
 		List<EquipmentSlot> slots = new ArrayList<>(Arrays.asList(EquipmentSlot.values()));
-		slots.removeIf(slot -> slot.getSlotType() != Type.ARMOR);
+		slots.removeIf(slot -> slot.getType() != Type.ARMOR);
 		ARMOUR_SLOTS = slots.toArray(new EquipmentSlot[0]);
 	}
 
@@ -49,7 +50,7 @@ public final class InventoryUtils {
 	 */
 	public static List<ItemStack> getHotbar(Player player){
 		NonNullList<ItemStack> hotbar = NonNullList.create();
-		hotbar.addAll(player.inventory.mainInventory.subList(0, 9));
+		hotbar.addAll(player.getInventory().items.subList(0, 9));
 		return hotbar;
 	}
 
@@ -65,21 +66,21 @@ public final class InventoryUtils {
 	public static List<ItemStack> getPrioritisedHotbarAndOffhand(Player player){
 		List<ItemStack> hotbar = getHotbar(player);
 		// Adds the offhand item to the beginning of the list so it is processed before the hotbar
-		hotbar.add(0, player.getOffHandItem());
+		hotbar.add(0, player.getOffhandItem());
 		// Moves the item in the main hand to the beginning of the list so it is processed first
 		hotbar.remove(player.getMainHandItem());
 		hotbar.add(0, player.getMainHandItem());
 		return hotbar;
 	}
 
-	/** Returns which {@link EnumHandSide} the given {@link InteractionHand} is on for the given entity. */
-	public static EnumHandSide getSideForHand(LivingEntity entity, InteractionHand hand){
-		return hand == InteractionHand.MAIN_HAND ? entity.getPrimaryHand() : entity.getPrimaryHand().opposite();
+	/** Returns which {@link HumanoidArm} the given {@link InteractionHand} is on for the given entity. */
+	public static HumanoidArm getSideForHand(LivingEntity entity, InteractionHand hand){
+		return hand == InteractionHand.MAIN_HAND ? entity.getMainArm() : entity.getMainArm().getOpposite();
 	}
 
-	/** Returns which {@link InteractionHand} is on the given {@link EnumHandSide} for the given entity. */
-	public static InteractionHand getHandForSide(LivingEntity entity, EnumHandSide side){
-		return side == entity.getPrimaryHand() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+	/** Returns which {@link InteractionHand} is on the given {@link HumanoidArm} for the given entity. */
+	public static InteractionHand getHandForSide(LivingEntity entity, HumanoidArm side){
+		return side == entity.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 	}
 
 	/** Returns the opposite {@link InteractionHand} to the one given. */
@@ -93,19 +94,19 @@ public final class InventoryUtils {
 	 */
 	public static boolean doesPlayerHaveItem(Player player, Item item){
 
-		for(ItemStack stack : player.inventory.mainInventory){
+		for(ItemStack stack : player.getInventory().items){
 			if(stack.getItem() == item){
 				return true;
 			}
 		}
 
-		for(ItemStack stack : player.inventory.armorInventory){
+		for(ItemStack stack : player.getInventory().armor){
 			if(stack.getItem() == item){
 				return true;
 			}
 		}
 
-		for(ItemStack stack : player.inventory.offHandInventory){
+		for(ItemStack stack : player.getInventory().offhand){
 			if(stack.getItem() == item){
 				return true;
 			}
@@ -122,7 +123,7 @@ public final class InventoryUtils {
 	 * @return The resulting {@link ItemStack}
 	 */
 	public static ItemStack copyWithMeta(ItemStack toCopy, int newMetadata){
-		ItemStack copy = new ItemStack(toCopy.getItem(), toCopy.getCount(), newMetadata);
+		ItemStack copy = new ItemStack(toCopy.getItem(), toCopy.getCount());
 		CompoundTag compound = toCopy.getTag();
 		if(compound != null) copy.setTag(compound.copy());
 		return copy;
@@ -141,7 +142,7 @@ public final class InventoryUtils {
 				&& stack1.isStackable() && stack2.isStackable()
 				&& stack1.getItem() == stack2.getItem()
 				&& (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata())
-				&& ItemStack.areItemStackTagsEqual(stack1, stack2);
+				&& ItemStack.isSameItemSameTags(stack1, stack2);
 	}
 
 	/**
@@ -158,14 +159,14 @@ public final class InventoryUtils {
 		// Check slots that aren't in the main inventory first by comparing with the existing item
 		if(entity instanceof LivingEntity){
 			for(EquipmentSlot eslot : EquipmentSlot.values()){
-				if(((LivingEntity)entity).getItemStackFromSlot(eslot) == original){
-					entity.setItemStackToSlot(eslot, replacement);
+				if(((LivingEntity)entity).getItemBySlot(eslot) == original){
+					entity.setItemSlot(eslot, replacement);
 					return true;
 				}
 			}
 		}
 		// Otherwise use the normal behaviour
-		return entity.replaceItemInInventory(slot, replacement);
+        return entity.getSlot(slot).set(replacement);
 	}
 
 }

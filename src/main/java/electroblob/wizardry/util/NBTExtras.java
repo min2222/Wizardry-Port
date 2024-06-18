@@ -1,13 +1,17 @@
 package electroblob.wizardry.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+
 import electroblob.wizardry.Wizardry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-
-import java.util.*;
-import java.util.function.Function;
 
 /**
  * Contains a number of useful static methods for interacting with NBT data, particularly involving collections.
@@ -54,7 +58,7 @@ public final class NBTExtras {
 			CompoundTag mapping = new CompoundTag();
 			NBTExtras.storeTagSafely(mapping, keyTagName, keyFunction.apply(entry.getKey()));
 			NBTExtras.storeTagSafely(mapping, valueTagName, valueFunction.apply(entry.getValue()));
-			tagList.appendTag(mapping);
+			tagList.add(mapping);
 		}
 
 		return tagList;
@@ -94,23 +98,23 @@ public final class NBTExtras {
 
 		Map<K, V> map = new HashMap<>();
 
-		for(int i = 0; i < tagList.tagCount(); i++){
-			CompoundTag mapping = tagList.getCompoundTagAt(i);
-			Tag keyTag = mapping.getTag(keyTagName);
-			Tag valueTag = mapping.getTag(valueTagName);
+		for(int i = 0; i < tagList.size(); i++){
+			CompoundTag mapping = tagList.getCompound(i);
+			Tag keyTag = mapping.get(keyTagName);
+			Tag valueTag = mapping.get(valueTagName);
 			K key = null;
 			try{
 				key = keyFunction.apply((L)keyTag);
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading map from NBT: unexpected tag type " + Tag.NBT_TYPES[keyTag.getId()], e);
+						"Error when reading map from NBT: unexpected tag type " + getTagTypeName(keyTag.getId()), e);
 			}
 			V value = null;
 			try{
 				value = valueFunction.apply((W)valueTag);
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading map from NBT: unexpected tag type " + Tag.NBT_TYPES[valueTag.getId()],
+						"Error when reading map from NBT: unexpected tag type " + getTagTypeName(valueTag.getId()),
 						e);
 			}
 			map.put(key, value);
@@ -143,7 +147,7 @@ public final class NBTExtras {
 		ListTag tagList = new ListTag();
 		// If the collection is ordered, it will preserve the order, even though we don't know what type it is yet.
 		for(E element : list){
-			tagList.appendTag(mapper.apply(element));
+			tagList.add(mapper.apply(element));
 		}
 
 		return tagList;
@@ -178,13 +182,13 @@ public final class NBTExtras {
 		ListTag tagList2 = tagList.copy();
 
 		while(!tagList2.isEmpty()){
-			Tag tag = tagList2.removeTag(0);
+			Tag tag = tagList2.remove(0);
 			// Why oh why is NBTTagList not parametrised? It even has a tagType field, so it must know!
 			try{
 				list.add(function.apply((T)tag));
 			}catch (ClassCastException e){
 				Wizardry.logger.error(
-						"Error when reading list from NBT: unexpected tag type " + Tag.NBT_TYPES[tag.getId()], e);
+						"Error when reading list from NBT: unexpected tag type " + getTagTypeName(tag.getId()), e);
 			}
 		}
 
@@ -202,8 +206,8 @@ public final class NBTExtras {
 	 * {@link NbtUtils}, which store the long values under "M" and "L" in their own compound tag.</i>
 	 */
 	public static void removeUniqueId(CompoundTag tag, String key){
-		tag.removeTag(key + "Most");
-		tag.removeTag(key + "Least");
+		tag.remove(key + "Most");
+		tag.remove(key + "Least");
 	}
 
 	/**
@@ -220,9 +224,9 @@ public final class NBTExtras {
 
 		if(compound == tag || deepContains(tag, compound)){
 			Wizardry.logger.error("Cannot store tag of type {} under key '{}' as it would result in a circular reference! Please report this (including your full log) to wizardry's issue tracker.",
-					Tag.getTypeName(tag.getId()), key);
+					getTagTypeName(tag.getId()), key);
 		}else{
-			compound.setTag(key, tag);
+			compound.put(key, tag);
 		}
 	}
 
@@ -237,8 +241,8 @@ public final class NBTExtras {
 
 		if(toSearch instanceof CompoundTag){
 
-			for(String subKey : ((CompoundTag)toSearch).getKeySet()){
-				Tag subTag = ((CompoundTag)toSearch).getTag(subKey);
+			for(String subKey : ((CompoundTag)toSearch).getAllKeys()){
+				Tag subTag = ((CompoundTag)toSearch).get(subKey);
 				if(subTag == searchFor || deepContains(subTag, searchFor)) return true;
 			}
 
@@ -251,4 +255,38 @@ public final class NBTExtras {
 		return false;
 	}
 
+    public static String getTagTypeName(int p_193581_0_) {
+        switch (p_193581_0_) {
+            case 0:
+                return "TAG_End";
+            case 1:
+                return "TAG_Byte";
+            case 2:
+                return "TAG_Short";
+            case 3:
+                return "TAG_Int";
+            case 4:
+                return "TAG_Long";
+            case 5:
+                return "TAG_Float";
+            case 6:
+                return "TAG_Double";
+            case 7:
+                return "TAG_Byte_Array";
+            case 8:
+                return "TAG_String";
+            case 9:
+                return "TAG_List";
+            case 10:
+                return "TAG_Compound";
+            case 11:
+                return "TAG_Int_Array";
+            case 12:
+                return "TAG_Long_Array";
+            case 99:
+                return "Any Numeric Tag";
+            default:
+                return "UNKNOWN";
+        }
+    }
 }
