@@ -3,12 +3,12 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 public class SlowTime extends SpellBuff {
 
@@ -24,7 +24,7 @@ public class SlowTime extends SpellBuff {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.world.isClientSide){
+		if(caster.level.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);
 		}
 

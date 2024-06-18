@@ -50,7 +50,7 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 	@Override
 	protected void writeEntityToNBT(CompoundTag nbt){
 		super.writeEntityToNBT(nbt);
-		nbt.setFloat("sizeMultiplier", sizeMultiplier);
+		nbt.putFloat("sizeMultiplier", sizeMultiplier);
 
 	}
 

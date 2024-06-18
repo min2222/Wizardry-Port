@@ -24,20 +24,20 @@ public class EntityArrowRain extends EntityScaledConstruct {
 
 		if(!this.level.isClientSide){
 
-			double x = getX() + (world.random.nextDouble() - 0.5D) * (double)width;
-			double y = getY() + world.random.nextDouble() * (double)height;
-			double z = getZ() + (world.random.nextDouble() - 0.5D) * (double)width;
+			double x = getX() + (level.random.nextDouble() - 0.5D) * (double)getBbWidth();
+			double y = getY() + level.random.nextDouble() * (double)getBbHeight();
+			double z = getZ() + (level.random.nextDouble() - 0.5D) * (double)getBbWidth();
 
-			EntityConjuredArrow arrow = new EntityConjuredArrow(world, x, y, z);
+			EntityConjuredArrow arrow = new EntityConjuredArrow(level, x, y, z);
 
-			arrow.motionX = Mth.cos((float)Math.toRadians(this.rotationYaw + 90));
+			arrow.motionX = Mth.cos((float)Math.toRadians(this.getYRot() + 90));
 			arrow.motionY = -0.6;
-			arrow.motionZ = Mth.sin((float)Math.toRadians(this.rotationYaw + 90));
+			arrow.motionZ = Mth.sin((float)Math.toRadians(this.getYRot() + 90));
 
-			arrow.getOwner() = this.getCaster();
-			arrow.setDamage(7.0d * damageMultiplier);
+			arrow.setOwner(this.getCaster());
+			arrow.setBaseDamage(7.0d * damageMultiplier);
 
-			this.world.addFreshEntity(arrow);
+			this.level.addFreshEntity(arrow);
 		}
 	}
 

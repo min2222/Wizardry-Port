@@ -53,9 +53,9 @@ public class SpectralPathway extends Spell {
 
 			for(int i = 0; i < (int)(getProperty(LENGTH).floatValue() * modifiers.get(WizardryItems.range_upgrade)); i++){
 				// If either a block gets placed or one has already been placed, flag is set to true.
-				flag = placePathwayBlockIfPossible(world, origin.offset(direction, startPoint + i),
+				flag = placePathwayBlockIfPossible(world, origin.relative(direction, startPoint + i),
 						modifiers.get(WizardryItems.duration_upgrade)) || flag;
-				flag = placePathwayBlockIfPossible(world, origin.offset(direction, startPoint + i)
+				flag = placePathwayBlockIfPossible(world, origin.relative(direction, startPoint + i)
 						// Moves the BlockPos minus one block perpendicular to direction.
 						.offset(Direction.getFacingFromAxis(AxisDirection.NEGATIVE, direction.rotateY().getAxis())),
 						modifiers.get(WizardryItems.duration_upgrade)) || flag;
@@ -69,9 +69,9 @@ public class SpectralPathway extends Spell {
 
 	private boolean placePathwayBlockIfPossible(Level world, BlockPos pos, float durationMultiplier){
 		if(BlockUtils.canBlockBeReplaced(world, pos, true)){
-			level.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
-			if(level.getTileEntity(pos) instanceof TileEntityTimer){
-				((TileEntityTimer)level.getTileEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
+			world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
+			if(world.getBlockEntity(pos) instanceof TileEntityTimer){
+				((TileEntityTimer)world.getBlockEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
 			}
 			return true;
 		}

@@ -1,27 +1,28 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.registry.WizardrySounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.IEntityLivingData;
-import net.minecraft.world.entity.monster.EntitySlime;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.IEntityLivingData;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
-
 /** As of Wizardry 1.2, this is now an ISummonedCreature like the rest of them, and it extends EntitySlime. */
-public class EntityMagicSlime extends EntitySlime implements ISummonedCreature {
+public class EntityMagicSlime extends Slime implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = 200;

@@ -19,6 +19,6 @@ public class RadiantTotem extends SpellConstructRanged<EntityRadiantTotem> {
 
 	@Override
 	protected void addConstructExtras(EntityRadiantTotem construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
-		construct.getY() += 1.2;
+		construct.setPos(construct.position().add(0, 1.2, 0));
 	}
 }

@@ -7,17 +7,16 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EntitySlime;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Slime extends SpellRay {
 
@@ -36,7 +35,7 @@ public class Slime extends SpellRay {
 		
 		if(EntityUtils.isLiving(target) && !(target instanceof EntityMagicSlime)){
 
-			if(target instanceof EntitySlime){
+			if(target instanceof net.minecraft.world.entity.monster.Slime){
 				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
@@ -64,7 +63,7 @@ public class Slime extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.addParticle(ParticleTypes.SLIME, x, y, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.ITEM_SLIME, x, y, z, 0, 0, 0);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.2f, 0.8f, 0.1f).spawn(world);
 	}
 

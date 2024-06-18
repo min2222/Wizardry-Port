@@ -1,5 +1,8 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
@@ -7,17 +10,16 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.ITickable;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class SpeedTime extends Spell {
 
@@ -53,7 +55,7 @@ public class SpeedTime extends Spell {
 
 		// Hold onto your hats ladies and gentlemen, this effect scales with potency modifiers! Speeeeeeeeed!
 		if(Wizardry.settings.worldTimeManipulation){
-			level.setWorldTime(level.getWorldTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
+			((ServerLevel) world).setDayTime(world.getDayTime() + (long)(getProperty(TIME_INCREMENT).floatValue() * modifiers.get(SpellModifiers.POTENCY)));
 			flag = true;
 		}
 
@@ -63,9 +65,9 @@ public class SpeedTime extends Spell {
 		float potencyLevel = ((modifiers.get(SpellModifiers.POTENCY) - 1) * 2 + 1) * getProperty(EXTRA_TICKS).floatValue();
 
 		// Ticks all the entities near the caster
-		List<Entity> entities = new ArrayList<>(world.loadedEntityList);
+		List<Entity> entities = new ArrayList<>(world.getEntities().getAll());
 		entities.removeIf(e -> e instanceof Player);
-		entities.removeIf(e -> caster.getDistance(e) > radius);
+		entities.removeIf(e -> caster.distanceTo(e) > radius);
 
 		if(!entities.isEmpty()){
 			for(int i = 0; i < potencyLevel; i++){
@@ -77,7 +79,7 @@ public class SpeedTime extends Spell {
 		// Ticks all the tile entities near the caster
 		// Copy the list first!
 		List<BlockEntity> tileentities = new ArrayList<>(world.tickableTileEntities);
-		tileentities.removeIf(t -> caster.distanceToSqr(t.getPos()) > radius*radius);
+		tileentities.removeIf(t -> caster.distanceToSqr(Vec3.atCenterOf(t.getBlockPos())) > radius*radius);
 
 		if(!tileentities.isEmpty()){
 			for(int i = 0; i < potencyLevel; i++){
@@ -88,13 +90,13 @@ public class SpeedTime extends Spell {
 
 		if(!world.isClientSide){
 
-			List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.getPosition(), radius);
+			List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.blockPosition(), radius);
 
 			for(BlockPos pos : sphere){
 
-				if(level.getBlockState(pos).getBlock().getTickRandomly()){
+				if(world.getBlockState(pos).isRandomlyTicking()){
 					for(int i = 0; i < potencyLevel; i++){
-						level.getBlockState(pos).getBlock().randomTick(world, pos, level.getBlockState(pos), world.rand);
+						world.getBlockState(pos).getBlock().randomTick(world.getBlockState(pos), (ServerLevel) world, pos , world.random);
 						flag = true;
 					}
 				}
@@ -111,10 +113,10 @@ public class SpeedTime extends Spell {
 				double y = caster.getY() + caster.getBbHeight() / 2;
 				double z = caster.getZ();
 
-				ParticleBuilder.create(ParticleBuilder.Type.SPARKLE, world.rand, x, y, z, particleSpread, false)
+				ParticleBuilder.create(ParticleBuilder.Type.SPARKLE, world.random, x, y, z, particleSpread, false)
 						.vel(-0.25, 0, 0).time(16).clr(1f, 1f, 1f).spawn(world);
 
-				ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.rand, x, y, z, particleSpread, false)
+				ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.random, x, y, z, particleSpread, false)
 						.vel(-0.25, 0, 0).time(16).scale(0.5f).clr(0.6f + world.random.nextFloat() * 0.4f,
 						0.6f + world.random.nextFloat() * 0.4f, 0.6f + world.random.nextFloat() * 0.4f).spawn(world);
 			}

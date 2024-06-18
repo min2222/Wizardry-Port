@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.monster.CaveSpider;
 import net.minecraft.world.entity.monster.EntityCaveSpider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
@@ -27,7 +28,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
-public class EntitySpiderMinion extends EntityCaveSpider implements ISummonedCreature {
+public class EntitySpiderMinion extends CaveSpider implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = -1;

@@ -8,10 +8,10 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -49,8 +49,8 @@ public class SixthSense extends Spell {
 	}
 
 	@SubscribeEvent
-	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
-		if(event.getEntity().world.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.sixth_sense
+	public static void onPotionAddedEvent(MobEffectEvent.Added event){
+		if(event.getEntity().level.isClientSide && event.getEffectInstance().getEffect() == WizardryPotions.sixth_sense
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());

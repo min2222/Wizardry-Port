@@ -7,12 +7,12 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Snare extends SpellRay {
 
@@ -31,11 +31,11 @@ public class Snare extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(side == Direction.UP && world.isSideSolid(pos, Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos.up())){
+		if(side == Direction.UP && world.getBlockState(pos).isFaceSturdy(world, pos, Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos.above())){
 			if(!world.isClientSide){
-				level.setBlockAndUpdate(pos.up(), WizardryBlocks.snare.defaultBlockState());
-				((TileEntityPlayerSave)level.getTileEntity(pos.up())).setCaster(caster);
-				((TileEntityPlayerSave)level.getTileEntity(pos.up())).sync();
+				world.setBlockAndUpdate(pos.above(), WizardryBlocks.snare.defaultBlockState());
+				((TileEntityPlayerSave)world.getBlockEntity(pos.above())).setCaster(caster);
+				((TileEntityPlayerSave)world.getBlockEntity(pos.above())).sync();
 			}
 			return true;
 		}

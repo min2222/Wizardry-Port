@@ -22,6 +22,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
@@ -129,7 +130,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 
 		if(this instanceof Entity){ // Bit of a cheat but it saves having yet another method just to get the world
 
-			Entity entity = EntityUtils.getEntityByUUID(((Entity)this).world, getOwnerUUID());
+			Entity entity = EntityUtils.getEntityByUUID(((Entity)this).level, getOwnerUUID());
 
 			if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 				Wizardry.logger.warn("{} has a non-living owner!", this);
@@ -160,8 +161,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	 * @param buffer The packet data stream
 	 */
 	@Override
-	default void writeSpawnData(ByteBuf buffer){
-		buffer.writeInt(getCaster() != null ? getCaster().getEntityId() : -1);
+	default void writeSpawnData(FriendlyByteBuf buffer){
+		buffer.writeInt(getCaster() != null ? getCaster().getId() : -1);
 		buffer.writeInt(getLifetime());
 	}
 
@@ -172,11 +173,11 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	 * @param buffer The packet data stream
 	 */
 	@Override
-	default void readSpawnData(ByteBuf buffer){
+	default void readSpawnData(FriendlyByteBuf buffer){
 		int id = buffer.readInt();
 		// We're on the client side here, so we can safely use Minecraft.getMinecraft().world via proxies.
 		if(id > -1){
-			Entity entity = Wizardry.proxy.getTheWorld().getEntityByID(id);
+			Entity entity = Wizardry.proxy.getTheWorld().getEntity(id);
 			if(entity instanceof LivingEntity) setCaster((LivingEntity)entity);
 			else Wizardry.logger.warn("Received a spawn packet for entity {}, but no living entity matched the supplied ID", this);
 		}
