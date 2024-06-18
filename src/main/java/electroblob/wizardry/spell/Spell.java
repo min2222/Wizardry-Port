@@ -30,12 +30,16 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -91,7 +95,7 @@ import java.util.stream.Collectors;
  * @see Spells
  */
 @Mod.EventBusSubscriber
-public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements Comparable<Spell> {
+public abstract class Spell implements Comparable<Spell> {
 
 	// Spell checklist:
 	// - Create and register spell, add texture and properties json file
@@ -138,6 +142,8 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/** The unlocalised name of the spell. */
 	private final String unlocalisedName;
+	
+	private ResourceLocation registryName;
 
 	// The spell properties system turned out to be a bit of a pain. Ideally I'd attach them to a world or whatever, but
 	// often we're accessing spell properties from places where a world is not available (and besides, I don't want to
@@ -229,6 +235,14 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 		this.items(WizardryItems.spell_book, WizardryItems.scroll);
 		this.npcSelector((e, o) -> false);
 	}
+	
+	public void setRegistryName(String modId, String name) {
+		this.registryName = new ResourceLocation(modId, name);
+	}
+	
+	public ResourceLocation getRegistryName() {
+		return this.registryName;
+	}
 
 	// ========================================= Initialisation methods ===========================================
 
@@ -308,7 +322,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	/** <b>Internal, do not use.</b> Use {@link Spell#setProperties(SpellProperties)} to set a spell's properties. */
 	public void setPropertiesClient(SpellProperties properties){
 		// Quick sanity check
-		if(FMLCommonHandler.instance().getEffectiveSide() != Dist.CLIENT) Wizardry.logger.warn("Spell#setPropertiesClient called from the server side!");
+		if(EffectiveSide.get() != LogicalSide.CLIENT) Wizardry.logger.warn("Spell#setPropertiesClient called from the server side!");
 		// This is like the other method but with no logging or global properties so that we can silently ignore syncing
 		// in singleplayer (LAN is like singleplayer because the host receives the packet before opening to LAN anyway)
 		if(!arePropertiesInitialised()) this.properties = properties;
@@ -318,7 +332,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	public static void syncProperties(ServerPlayer player){
 		// On the server side, send a packet to the player to synchronise their spell properties
 		// To avoid sending extra data unnecessarily, the spell properties are sent in order of spell ID
-		List<Spell> spells = new ArrayList<>(registry.getValuesCollection());
+		List<Spell> spells = new ArrayList<>(registry.getValues());
 		spells.sort(Comparator.comparingInt(Spell::networkID));
 		WizardryPacketHandler.net.sendTo(new PacketSpellProperties.Message(spells.stream()
 				.map(s -> s.properties).toArray(SpellProperties[]::new)), player);
@@ -876,7 +890,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 		if(this.sounds != null){
 			for(SoundEvent sound : this.sounds){
-				ResourceLocation soundName = SoundEvent.REGISTRY.getNameForObject(sound);
+				ResourceLocation soundName = ForgeRegistries.SOUND_EVENTS.getKey(sound);
 				if(soundName != null && (identifiers.size() == 0 || identifiers.contains(soundName.getPath()))){
 					world.playSound(null, x, y, z, sound, WizardrySounds.SPELLS, volume, pitch + pitchVariation * (world.random.nextFloat() - 0.5f));
 				}
@@ -971,7 +985,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * returned by {@code Spell.getAllSpells().size()}, but this method is more efficient.
 	 */
 	public static int getTotalSpellCount(){
-		return registry.getValuesCollection().size() - 1;
+		return registry.getValues().size() - 1;
 	}
 
 	/**
@@ -985,10 +999,10 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 
 	/** Gets a spell instance from its network ID, or the {@link None} spell if no such spell exists. */
 	public static Spell byNetworkID(int id){
-		if(id < 0 || id >= registry.getValuesCollection().size()){
+		if(id < 0 || id >= registry.getValues().size()){
 			return Spells.none;
 		}
-		return registry.getValuesCollection().stream().filter(s -> s.id == id).findAny().orElse(Spells.none);
+		return registry.getValues().stream().filter(s -> s.id == id).findAny().orElse(Spells.none);
 	}
 
 	/**
@@ -1026,7 +1040,7 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	 * @see TierElementFilter
 	 */
 	public static List<Spell> getSpells(Predicate<Spell> filter){
-		return registry.getValuesCollection().stream().filter(filter.and(s -> s != Spells.none)).collect(Collectors.toList());
+		return registry.getValues().stream().filter(filter.and(s -> s != Spells.none)).collect(Collectors.toList());
 	}
 
 	/** Returns all registered spells, excluding the {@link None} spell. */
@@ -1074,11 +1088,11 @@ public abstract class Spell extends IForgeRegistryEntry.Impl<Spell> implements C
 	// Not ideal but it solves the reloading of spell properties without breaking encapsulation
 
 	@SubscribeEvent
-	public static void onWorldLoadEvent(WorldEvent.Load event){
-		if(!event.getWorld().isRemote){
-			if(event.getWorld().provider.getDimension() != 0) return; // Only do it once per save file
+	public static void onWorldLoadEvent(LevelEvent.Load event){
+		if(!event.getLevel().isClientSide()){
+			if(!((Level) event.getLevel()).dimension().equals(Level.OVERWORLD)) return; // Only do it once per save file
 			clearProperties();
-			SpellProperties.loadWorldSpecificSpellProperties(event.getWorld());
+			SpellProperties.loadWorldSpecificSpellProperties((Level) event.getLevel());
 			for(Spell spell : Spell.registry){
 				if(!spell.arePropertiesInitialised()) spell.setProperties(spell.globalProperties);
 			}

@@ -10,6 +10,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.properties.PropertyBool;
 import net.minecraft.world.level.block.properties.PropertyEnum;
 import net.minecraft.world.level.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.CreativeModeTab;
@@ -28,7 +29,7 @@ import java.util.EnumMap;
 
 public class BlockPedestal extends Block implements ITileEntityProvider {
 
-	public static final PropertyEnum<Element> ELEMENT = PropertyEnum.create("element", Element.class,
+	public static final EnumProperty<Element> ELEMENT = EnumProperty.create("element", Element.class,
 			Arrays.copyOfRange(Element.values(), 1, Element.values().length)); // Everything except MAGIC
 
 	// A 'natural' pedestal is one that was generated as part of a structure, is unbreakable and has a tileentity

@@ -34,6 +34,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -47,7 +48,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Mod.EventBusSubscriber
-public class EntityEvilWizard extends EntityMob implements ISpellCaster, IEntityAdditionalSpawnData {
+public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditionalSpawnData {
 
 	private EntityAIAttackSpell<EntityEvilWizard> spellCastingAI = new EntityAIAttackSpell<>(this, 0.5D, 14.0F, 30, 50);
 

@@ -1,16 +1,18 @@
 package electroblob.wizardry.tileentity;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class TileEntityPlayerSave extends BlockEntity {
 
@@ -19,29 +21,29 @@ public class TileEntityPlayerSave extends BlockEntity {
 	 * {@link TileEntityPlayerSave#getCaster()}. */
 	private UUID casterUUID;
 
-	public TileEntityPlayerSave(){}
+    public TileEntityPlayerSave(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
+        super(p_155228_, p_155229_, p_155230_);
+    }
 
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
-		this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
+		this.level.markAndNotifyBlock(worldPosition, this.level.getChunkAt(worldPosition), level.getBlockState(worldPosition), level.getBlockState(worldPosition), 3, 512);
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag tagCompound){
-		super.readFromNBT(tagCompound);
+	public void load(CompoundTag tagCompound){
+		super.load(tagCompound);
 		if(tagCompound.hasUUID("casterUUID")) casterUUID = tagCompound.getUUID("casterUUID");
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag tagCompound){
+	public void saveAdditional(CompoundTag tagCompound){
 
-		super.writeToNBT(tagCompound);
+		super.saveAdditional(tagCompound);
 
 		if(casterUUID != null){
-			tagCompound.setUniqueId("casterUUID", casterUUID);
+			tagCompound.putUUID("casterUUID", casterUUID);
 		}
-
-		return tagCompound;
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class TileEntityPlayerSave extends BlockEntity {
 	@Nullable
 	public LivingEntity getCaster(){
 
-		Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
+		Entity entity = EntityUtils.getEntityByUUID(level, casterUUID);
 
 		if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 			Wizardry.logger.warn("{} has a non-living owner!", this);
@@ -64,21 +66,6 @@ public class TileEntityPlayerSave extends BlockEntity {
 
 	public void setCaster(@Nullable LivingEntity caster){
 		this.casterUUID = caster == null ? null : caster.getUUID();
-	}
-
-	@Override
-	public final CompoundTag getUpdateTag(){
-		return this.writeToNBT(new CompoundTag());
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		return new SPacketUpdateTileEntity(pos, 0, this.getUpdateTag());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		readFromNBT(pkt.getNbtCompound());
 	}
 
 }

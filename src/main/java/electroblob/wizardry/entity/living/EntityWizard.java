@@ -22,6 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -58,7 +59,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Mod.EventBusSubscriber
-public class EntityWizard extends EntityCreature implements INpc, IMerchant, ISpellCaster, IEntityAdditionalSpawnData {
+public class EntityWizard extends PathfinderMob implements INpc, IMerchant, ISpellCaster, IEntityAdditionalSpawnData {
 
 	private EntityAIAttackSpell<EntityWizard> spellCastingAI = new EntityAIAttackSpell<>(this, 0.5D, 14.0F, 30, 50);
 

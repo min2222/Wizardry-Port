@@ -2,15 +2,14 @@ package electroblob.wizardry.util;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-
-import java.util.Random;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * <i>"Don't waste time spawning particles manually - let {@code ParticleBuilder} do the work for you!"</i>
@@ -737,7 +736,7 @@ public final class ParticleBuilder {
 	 * @return The particle builder instance, allowing other methods to be chained onto this one
 	 * @throws IllegalStateException if the particle builder is already building.
 	 */
-	public static ParticleBuilder create(ResourceLocation type, Random random, double x, double y, double z, double radius, boolean move){
+	public static ParticleBuilder create(ResourceLocation type, RandomSource random, double x, double y, double z, double radius, boolean move){
 		
 		double px = x + (random.nextDouble()*2 - 1) * radius;
 		double py = y + (random.nextDouble()*2 - 1) * radius;

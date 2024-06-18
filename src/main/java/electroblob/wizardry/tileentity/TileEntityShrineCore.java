@@ -20,10 +20,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.util.ITickable;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
@@ -34,8 +39,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class TileEntityShrineCore extends BlockEntity implements ITickable {
-
+public class TileEntityShrineCore extends BlockEntity {
+	
 	private static final double ACTIVATION_RADIUS = 5;
 
 	private boolean activated = false;
@@ -43,91 +48,89 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 	private final UUID[] linkedWizards = new UUID[3];
 	private BlockEntity linkedContainer;
 	private BlockPos linkedContainerPos; // Temporary stores the container position read from NBT until the world is set
-
-	@Override
-	public void setPos(BlockPos pos){
-		super.setPos(pos);
-		initContainmentField(pos);
+	
+	public TileEntityShrineCore(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
+		super(p_155228_, p_155229_, p_155230_);
+		initContainmentField(p_155229_);
 	}
 
 	private void initContainmentField(BlockPos pos){
 		float r = PotionContainment.getContainmentDistance(0);
-		this.containmentField = new AABB(-r, -r, -r, r, r, r).offset(GeometryUtils.getCentre(pos));
+		this.containmentField = new AABB(-r, -r, -r, r, r, r).move(GeometryUtils.getCentre(pos));
 	}
 
 	public void linkContainer(BlockEntity container){
 		this.linkedContainer = container;
 	}
 
-	@Override
-	public void update(){
+    public static void update(Level p_155014_, BlockPos p_155015_, BlockState p_155016_, TileEntityShrineCore p_155017_) {
 
-		if(this.linkedContainer == null && this.linkedContainerPos != null){
-			this.linkContainer(level.getTileEntity(this.linkedContainerPos));
+		if(p_155017_.linkedContainer == null && p_155017_.linkedContainerPos != null){
+			p_155017_.linkContainer(p_155014_.getBlockEntity(p_155017_.linkedContainerPos));
 		}
 
-		double x = this.pos.getX() + 0.5;
-		double y = this.pos.getY() + 0.5;
-		double z = this.pos.getZ() + 0.5;
+		double x = p_155015_.getX() + 0.5;
+		double y = p_155015_.getY() + 0.5;
+		double z = p_155015_.getZ() + 0.5;
 
-		if(!activated && level.getClosestPlayer(x, y, z, ACTIVATION_RADIUS, false) != null){
+		if(!p_155017_.activated && p_155014_.getNearestPlayer(x, y, z, ACTIVATION_RADIUS, false) != null){
 
-			this.activated = true;
+			p_155017_.activated = true;
 
-			if(level.isClientSide){
-				ParticleBuilder.create(Type.SPHERE).pos(x, y + 1, z).clr(0xf06495).scale(5).time(12).spawn(world);
+			if(p_155014_.isClientSide){
+				ParticleBuilder.create(Type.SPHERE).pos(x, y + 1, z).clr(0xf06495).scale(5).time(12).spawn(p_155014_);
 			}
 
-			world.playSound(x, y, z,
+			p_155014_.playLocalSound(x, y, z,
 					WizardrySounds.BLOCK_PEDESTAL_ACTIVATE, SoundSource.BLOCKS, 1.5f, 1, false);
 
-			if(!level.isClientSide){
+			if(!p_155014_.isClientSide){
 
-				EntityEvilWizard[] wizards = new EntityEvilWizard[linkedWizards.length];
+				EntityEvilWizard[] wizards = new EntityEvilWizard[p_155017_.linkedWizards.length];
 
-				for(int i = 0; i < linkedWizards.length; i++){
+				for(int i = 0; i < p_155017_.linkedWizards.length; i++){
 
-					EntityEvilWizard wizard = new EntityEvilWizard(world);
+					EntityEvilWizard wizard = new EntityEvilWizard(p_155014_);
 
-					float angle = world.random.nextFloat() * 2 * (float)Math.PI;
-					double x1 = this.pos.getX() + 0.5 + 5 * Mth.sin(angle);
-					double z1 = this.pos.getZ() + 0.5 + 5 * Mth.cos(angle);
-					Integer y1 = BlockUtils.getNearestFloor(world, new BlockPos(x1, this.pos.getY(), z1), 8);
+					float angle = p_155014_.random.nextFloat() * 2 * (float)Math.PI;
+					double x1 = p_155015_.getX() + 0.5 + 5 * Mth.sin(angle);
+					double z1 = p_155015_.getZ() + 0.5 + 5 * Mth.cos(angle);
+					Integer y1 = BlockUtils.getNearestFloor(p_155014_, new BlockPos(x1, p_155015_.getY(), z1), 8);
 					if(y1 == null){
 						// Fallback to the position of the shrine core if it failed to find a position (unlikely)
-						x1 = this.pos.getX() + 1; // Offset it so the wizard isn't inside the block
-						y1 = this.pos.getY();
-						z1 = this.pos.getZ();
+						x1 = p_155015_.getX() + 1; // Offset it so the wizard isn't inside the block
+						y1 = p_155015_.getY();
+						z1 = p_155015_.getZ();
 					}
 
-					wizard.setLocationAndAngles(x1, y1 + 0.5, z1, 0, 0);
-					wizard.setElement(level.getBlockState(pos).getValue(BlockPedestal.ELEMENT));
-					wizard.onInitialSpawn(level.getDifficultyForLocation(pos), null);
+					wizard.moveTo(x1, y1 + 0.5, z1, 0, 0);
+					wizard.setElement(p_155014_.getBlockState(p_155015_).getValue(BlockPedestal.ELEMENT));
+					wizard.finalizeSpawn((ServerLevelAccessor) p_155014_, p_155014_.getCurrentDifficultyAt(p_155015_), MobSpawnType.STRUCTURE, null, null);
 					wizard.hasStructure = true;
 
-					world.addFreshEntity(wizard);
+					p_155014_.addFreshEntity(wizard);
 					wizards[i] = wizard;
-					linkedWizards[i] = wizard.getUUID();
+					p_155017_.linkedWizards[i] = wizard.getUUID();
 				}
 
-				for(EntityEvilWizard wizard : wizards) wizard.groupUUIDs.addAll(Arrays.asList(linkedWizards));
+				for(EntityEvilWizard wizard : wizards) wizard.groupUUIDs.addAll(Arrays.asList(p_155017_.linkedWizards));
 			}
 
-			containNearbyTargets();
+			p_155017_.containNearbyTargets();
 		}
 
-		if(activated && level.getTotalWorldTime() % 20L == 0) containNearbyTargets();
+		if(p_155017_.activated && p_155014_.getGameTime() % 20L == 0) p_155017_.containNearbyTargets();
 
-		if(activated && areWizardsDead() && !level.isClientSide){
-			conquer();
+		if(p_155017_.activated && p_155017_.areWizardsDead() && !p_155014_.isClientSide){
+			p_155017_.conquer();
 		}
 	}
 
 	private boolean areWizardsDead(){
 
 		for(UUID uuid : linkedWizards){
-			Entity entity = EntityUtils.getEntityByUUID(world, uuid);
-			if(entity instanceof EntityEvilWizard && entity.isEntityAlive()) return false;
+			Entity entity = EntityUtils.getEntityByUUID(level, uuid);
+			if(entity instanceof EntityEvilWizard && entity.isAlive()) return false;
 		}
 
 		return true;
@@ -135,18 +138,18 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 
 	public void conquer(){
 
-		double x = this.pos.getX() + 0.5;
-		double y = this.pos.getY() + 0.5;
-		double z = this.pos.getZ() + 0.5;
+		double x = this.worldPosition.getX() + 0.5;
+		double y = this.worldPosition.getY() + 0.5;
+		double z = this.worldPosition.getZ() + 0.5;
 
 		if(!level.isClientSide){
 
-			WizardryPacketHandler.net.sendToAllAround(new PacketConquerShrine.Message(this.pos),
-					new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), x, y, z, 64));
+			WizardryPacketHandler.net.sendToAllAround(new PacketConquerShrine.Message(this.worldPosition),
+					new NetworkRegistry.TargetPoint(this.level.dimension(), x, y, z, 64));
 
-			if(level.getBlockState(pos).getBlock() == WizardryBlocks.runestone_pedestal){
-				level.setBlockAndUpdate(pos, WizardryBlocks.runestone_pedestal.defaultBlockState()
-						.withProperty(BlockPedestal.ELEMENT, level.getBlockState(pos).getValue(BlockPedestal.ELEMENT)));
+			if(level.getBlockState(worldPosition).getBlock() == WizardryBlocks.runestone_pedestal){
+				level.setBlockAndUpdate(worldPosition, WizardryBlocks.runestone_pedestal.defaultBlockState()
+						.setValue(BlockPedestal.ELEMENT, level.getBlockState(worldPosition).getValue(BlockPedestal.ELEMENT)));
 			}else{
 				Wizardry.logger.warn("What's going on?! A shrine core is being conquered but the block at its position is not a runestone pedestal!");
 			}
@@ -155,67 +158,66 @@ public class TileEntityShrineCore extends BlockEntity implements ITickable {
 		world.markTileEntityForRemoval(this);
 
 		if(!level.isClientSide){
-			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getTileData(), ArcaneLock.NBT_KEY);
+			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getPersistentData(), ArcaneLock.NBT_KEY);
 		}else{
-			BlockEntity tileEntity = level.getTileEntity(this.pos.up());
+			BlockEntity tileEntity = level.getBlockEntity(this.worldPosition.above());
 			if(tileEntity != null){ // Bit of a dirty fix but it's only visual, so meh
-				NBTExtras.removeUniqueId(tileEntity.getTileData(), ArcaneLock.NBT_KEY);
+				NBTExtras.removeUniqueId(tileEntity.getPersistentData(), ArcaneLock.NBT_KEY);
 			}
 		}
 
-		world.playSound(x, y, z, WizardrySounds.BLOCK_PEDESTAL_CONQUER, SoundSource.BLOCKS, 1, 1, false);
+		level.playLocalSound(x, y, z, WizardrySounds.BLOCK_PEDESTAL_CONQUER, SoundSource.BLOCKS, 1, 1, false);
 
 		if(level.isClientSide){
-			ParticleBuilder.create(Type.SPHERE).scale(5).pos(x, y + 1, z).clr(0xf06495).time(12).spawn(world);
+			ParticleBuilder.create(Type.SPHERE).scale(5).pos(x, y + 1, z).clr(0xf06495).time(12).spawn(level);
 			for(int i=0; i<5; i++){
-				float brightness = 0.8f + world.random.nextFloat() * 0.2f;
-				ParticleBuilder.create(Type.SPARKLE, world.rand, x, y + 1, z, 1, true)
-				.clr(1, brightness, brightness).spawn(world);
+				float brightness = 0.8f + level.random.nextFloat() * 0.2f;
+				ParticleBuilder.create(Type.SPARKLE, level.random, x, y + 1, z, 1, true)
+				.clr(1, brightness, brightness).spawn(level);
 			}
 		}
 	}
 
 	private void containNearbyTargets(){
 
-		List<LivingEntity> entities = level.getEntitiesWithinAABB(LivingEntity.class, containmentField,
+		List<LivingEntity> entities = level.getEntitiesOfClass(LivingEntity.class, containmentField,
 				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
 		for(LivingEntity entity : entities){
 			entity.addEffect(new MobEffectInstance(WizardryPotions.containment, 219));
-			NBTExtras.storeTagSafely(entity.getPersistentData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.pos));
+			NBTExtras.storeTagSafely(entity.getPersistentData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.worldPosition));
 		}
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag compound){
+	public void saveAdditional(CompoundTag compound){
 
-		compound.setBoolean("activated", this.activated);
-		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NbtUtils.writeBlockPos(linkedContainer.getPos()));
+		compound.putBoolean("activated", this.activated);
+		if(linkedContainer != null) NBTExtras.storeTagSafely(compound, "linkedContainerPos", NbtUtils.writeBlockPos(linkedContainer.getBlockPos()));
 
 		ListTag tagList = new ListTag();
 		for(UUID uuid : linkedWizards){
-			if(uuid != null) tagList.appendTag(NbtUtils.createUUIDTag(uuid));
+			if(uuid != null) tagList.add(NbtUtils.createUUID(uuid));
 		}
 		NBTExtras.storeTagSafely(compound, "wizards", tagList);
-
-		return super.writeToNBT(compound);
+		super.saveAdditional(compound);
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag compound){
+	public void load(CompoundTag compound){
 
 		this.activated = compound.getBoolean("activated");
-		this.linkedContainerPos = NbtUtils.readBlockPos(compound.getCompoundTag("linkedContainerPos"));
+		this.linkedContainerPos = NbtUtils.readBlockPos(compound.getCompound("linkedContainerPos"));
 
-		ListTag tagList = compound.getTagList("wizards", Constants.NBT.TAG_COMPOUND);
+		ListTag tagList = compound.getList("wizards", Tag.TAG_COMPOUND);
 		int i = 0;
 		for(Tag tag : tagList){
-			if(tag instanceof CompoundTag) linkedWizards[i++] = NbtUtils.getUUIDFromTag((CompoundTag)tag);
+			if(tag instanceof CompoundTag) linkedWizards[i++] = NbtUtils.loadUUID((CompoundTag)tag);
 			else Wizardry.logger.warn("Unexpected tag type in NBT tag list of compound tags!");
 		}
 
-		super.readFromNBT(compound);
+		super.load(compound);
 		// Must be after super
-		initContainmentField(this.pos);
+		initContainmentField(this.worldPosition);
 	}
 }

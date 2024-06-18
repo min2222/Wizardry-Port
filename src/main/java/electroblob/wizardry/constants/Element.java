@@ -6,11 +6,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import javax.annotation.Nullable;
 
-public enum Element implements IStringSerializable {
+public enum Element implements StringRepresentable {
 
 	/** The 'default' element, with {@link electroblob.wizardry.registry.Spells#magic_missile magic missile} being its
 	 * only spell. */

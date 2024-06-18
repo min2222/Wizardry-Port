@@ -1,37 +1,39 @@
 package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.block.BlockVanishingCobweb;
+import electroblob.wizardry.registry.WizardryBlocks;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class TileEntityTimer extends BlockEntity implements ITickable {
+public class TileEntityTimer extends BlockEntity {
 
 	public int timer = 0;
 	public int maxTimer;
 
-	public TileEntityTimer(){
+    public TileEntityTimer(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
+        super(p_155228_, p_155229_, p_155230_);
+    }
 
-	}
+    public TileEntityTimer(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_, int maxTimer) {
+        this(p_155228_, p_155229_, p_155230_);
+        this.maxTimer = maxTimer;
+    }
 
-	public TileEntityTimer(int maxTimer){
-		this.maxTimer = maxTimer;
-	}
+    public static void update(Level p_155014_, BlockPos p_155015_, BlockState p_155016_, TileEntityTimer p_155017_) {
+    	p_155017_.timer++;
 
-	@Override
-	public void update(){
-
-		timer++;
-
-		if(maxTimer > 0 && timer > maxTimer && !this.level.isClientSide){// && this.level.getBlockId(xCoord, yCoord, zCoord) ==
+		if(p_155017_.maxTimer > 0 && p_155017_.timer > p_155017_.maxTimer && !p_155014_.isClientSide){// && this.level.getBlockId(xCoord, yCoord, zCoord) ==
 														// Wizardry.magicLight.blockID){
-			if(this.getBlockType() instanceof BlockVanishingCobweb){
+			if(p_155017_.getBlockState() == WizardryBlocks.VANISHING_COBWEB.get().defaultBlockState()){
 				// destroyBlock breaks the block as if broken by a player, with sound and particles.
-				this.world.destroyBlock(pos, false);
+                p_155014_.destroyBlock(p_155015_, false);
 			}else{
-				this.level.setBlockToAir(pos);
+				p_155014_.setBlockAndUpdate(p_155015_, Blocks.AIR.defaultBlockState());
 			}
 		}
 	}
@@ -45,36 +47,16 @@ public class TileEntityTimer extends BlockEntity implements ITickable {
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag tagCompound){
-		super.readFromNBT(tagCompound);
+	public void load(CompoundTag tagCompound){
+		super.load(tagCompound);
 		timer = tagCompound.getInt("timer");
 		maxTimer = tagCompound.getInt("maxTimer");
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag tagCompound){
-		super.writeToNBT(tagCompound);
+	public void saveAdditional(CompoundTag tagCompound){
+		super.saveAdditional(tagCompound);
 		tagCompound.putInt("timer", timer);
 		tagCompound.putInt("maxTimer", maxTimer);
-		return tagCompound;
 	}
-
-	@Override
-	public final CompoundTag getUpdateTag(){
-		return this.writeToNBT(new CompoundTag());
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		CompoundTag tag = new CompoundTag();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(pos, 1, tag);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		CompoundTag tag = pkt.getNbtCompound();
-		readFromNBT(tag);
-	}
-
 }
