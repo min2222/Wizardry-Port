@@ -35,9 +35,9 @@ import java.util.UUID;
 public class CurseOfSoulbinding extends SpellRay {
 
 	public static final IStoredVariable<Set<UUID>> TARGETS_KEY = new IStoredVariable.StoredVariable<>("soulboundCreatures",
-			s -> NBTExtras.listToNBT(s, NbtUtils::createUUIDTag),
+			s -> NBTExtras.listToNBT(s, NbtUtils::createUUID),
 			// For some reason gradle screams at me unless I explicitly declare the type of t here, despite IntelliJ being fine without it
-			(ListTag t) -> new HashSet<>(NBTExtras.NBTToList(t, NbtUtils::getUUIDFromTag)),
+			(ListTag t) -> new HashSet<>(NBTExtras.NBTToList(t, NbtUtils::loadUUID)),
 			// Curse of soulbinding is lifted when the caster dies, but not when they switch dimensions.
 			Persistence.DIMENSION_CHANGE);
 
@@ -90,8 +90,8 @@ public class CurseOfSoulbinding extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		if(!event.getEntity().world.isClientSide && event.getEntity() instanceof Player
-				&& !event.getSource().isUnblockable() && !(event.getSource() instanceof IElementalDamage
+		if(!event.getEntity().level.isClientSide && event.getEntity() instanceof Player
+				&& !event.getSource().isBypassArmor() && !(event.getSource() instanceof IElementalDamage
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
 			Player player = (Player)event.getEntity();
@@ -101,17 +101,17 @@ public class CurseOfSoulbinding extends SpellRay {
 
 				for(Iterator<UUID> iterator = getSoulboundCreatures(data).iterator(); iterator.hasNext();){
 
-					Entity entity = EntityUtils.getEntityByUUID(player.world, iterator.next());
+					Entity entity = EntityUtils.getEntityByUUID(player.level, iterator.next());
 
 					if (entity == null || (entity instanceof LivingEntity && !((LivingEntity) entity).hasEffect(WizardryPotions.curse_of_soulbinding))) {
 						iterator.remove();
 					} else if (entity instanceof LivingEntity) {
 						// Retaliatory effect
 						if(DamageSafetyChecker.attackEntitySafely(entity, MagicDamage.causeDirectMagicDamage(player,
-								MagicDamage.DamageType.MAGIC, true), event.getAmount(), event.getSource().getDamageType(),
+								MagicDamage.DamageType.MAGIC, true), event.getAmount(), event.getSource().getMsgId(),
 								DamageSource.MAGIC, false)){
 							// Sound only plays if the damage succeeds
-							entity.playSound(WizardrySounds.SPELL_CURSE_OF_SOULBINDING_RETALIATE, 1.0F, player.world.random.nextFloat() * 0.2F + 1.0F);
+							entity.playSound(WizardrySounds.SPELL_CURSE_OF_SOULBINDING_RETALIATE, 1.0F, player.level.random.nextFloat() * 0.2F + 1.0F);
 						}
 					}
 				}

@@ -3,20 +3,24 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EntityBlaze;
-import net.minecraft.world.entity.monster.EntityMagmaCube;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Freeze extends SpellRay {
 
@@ -33,13 +37,13 @@ public class Freeze extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 
-			if(target instanceof EntityBlaze || target instanceof EntityMagmaCube){
+			if(target instanceof Blaze || target instanceof MagmaCube){
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.FROST),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			}
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
-				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.frost,
@@ -47,7 +51,7 @@ public class Freeze extends SpellRay {
 						getProperty(EFFECT_STRENGTH).intValue()));
 			}
 
-			if(target.isBurning()) target.extinguish();
+			if(target.isOnFire()) target.clearFire();
 
 			return true;
 		}

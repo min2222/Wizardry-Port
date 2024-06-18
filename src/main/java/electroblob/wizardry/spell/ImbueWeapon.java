@@ -11,12 +11,12 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemBow;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.ItemSword;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 
 public class ImbueWeapon extends Spell {
@@ -39,7 +39,7 @@ public class ImbueWeapon extends Spell {
 						&& WizardData.get(caster).getImbuementDuration(WizardryEnchantments.magic_sword) <= 0){
 					// The enchantment level as determined by the damage multiplier. The + 0.5f is so that
 					// weird float processing doesn't incorrectly round it down.
-					stack.addEnchantment(WizardryEnchantments.magic_sword, modifiers.get(SpellModifiers.POTENCY) == 1.0f
+					stack.enchant(WizardryEnchantments.magic_sword, modifiers.get(SpellModifiers.POTENCY) == 1.0f
 							? 1
 							: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f) / Constants.POTENCY_INCREASE_PER_TIER
 									+ 0.5f));
@@ -51,7 +51,7 @@ public class ImbueWeapon extends Spell {
 						&& WizardData.get(caster).getImbuementDuration(WizardryEnchantments.magic_bow) <= 0){
 					// The enchantment level as determined by the damage multiplier. The + 0.5f is so that
 					// weird float processing doesn't incorrectly round it down.
-					stack.addEnchantment(WizardryEnchantments.magic_bow, modifiers.get(SpellModifiers.POTENCY) == 1.0f
+					stack.enchant(WizardryEnchantments.magic_bow, modifiers.get(SpellModifiers.POTENCY) == 1.0f
 							? 1
 							: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f) / Constants.POTENCY_INCREASE_PER_TIER
 									+ 0.5f));
@@ -78,14 +78,14 @@ public class ImbueWeapon extends Spell {
 		return false;
 	}
 
-	/** Returns true if the given item counts as a sword, i.e. it extends {@link ItemSword} or is in the whitelist. */
+	/** Returns true if the given item counts as a sword, i.e. it extends {@link SwordItem} or is in the whitelist. */
 	public static boolean isSword(ItemStack stack){
-		return stack.getItem() instanceof ItemSword || Settings.containsMetaItem(Wizardry.settings.swordItemWhitelist, stack);
+		return stack.getItem() instanceof SwordItem || Settings.containsMetaItem(Wizardry.settings.swordItemWhitelist, stack);
 	}
 
-	/** Returns true if the given item counts as a bow, i.e. it extends {@link ItemBow} or is in the whitelist. */
+	/** Returns true if the given item counts as a bow, i.e. it extends {@link BowItem} or is in the whitelist. */
 	public static boolean isBow(ItemStack stack){
-		return stack.getItem() instanceof ItemBow || Settings.containsMetaItem(Wizardry.settings.bowItemWhitelist, stack);
+		return stack.getItem() instanceof BowItem || Settings.containsMetaItem(Wizardry.settings.bowItemWhitelist, stack);
 	}
 
 }

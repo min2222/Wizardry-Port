@@ -1,5 +1,10 @@
 package electroblob.wizardry.spell;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockCrystalOre;
@@ -9,23 +14,21 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.RelativeFacing;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BlockOre;
-import net.minecraft.world.level.block.BlockRedstoneOre;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DropExperienceBlock;
+import net.minecraft.world.level.block.RedStoneOreBlock;
+import net.minecraft.world.phys.Vec3;
 
 public class Divination extends Spell {
 
@@ -64,14 +67,14 @@ public class Divination extends Spell {
 
 		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-		List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.getPosition(), range);
+		List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.blockPosition(), range);
 
 		sphere.removeIf(b -> {
-			Block block = level.getBlockState(b).getBlock();
-			return !(block instanceof BlockOre
-								|| block instanceof BlockRedstoneOre
+			Block block = world.getBlockState(b).getBlock();
+			return !(block instanceof DropExperienceBlock
+								|| block instanceof RedStoneOreBlock
 								|| block instanceof BlockCrystalOre
-								|| Settings.containsMetaBlock(Wizardry.settings.divinationOreWhitelist, level.getBlockState(b)));
+								|| Settings.containsMetaBlock(Wizardry.settings.divinationOreWhitelist, world.getBlockState(b)));
 		});
 
 		Strength strength = Strength.NOTHING;
@@ -86,7 +89,7 @@ public class Divination extends Spell {
 			// The weights are sorted in ascending order, so this must be the largest
 			BlockPos target = sphere.get(sphere.size() - 1);
 
-			direction = Direction.getFacingFromVector((float)(target.getX() + 0.5 - caster.getX()),
+			direction = Direction.getNearest((float)(target.getX() + 0.5 - caster.getX()),
 					(float)(target.getY() + 0.5 - (caster.getY() + caster.getEyeHeight())),
 					(float)(target.getZ() + 0.5 - caster.getZ()));
 
@@ -94,7 +97,7 @@ public class Divination extends Spell {
 		}
 
 		if(!world.isClientSide){
-			caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + "."
+			caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ strength.key, Component.translatable("spell." + this.getUnlocalisedName() + "."
 					+ RelativeFacing.relativise(direction, caster).name)), false);
 		}else{
@@ -109,8 +112,8 @@ public class Divination extends Spell {
 					break;
 				case VERY_STRONG:
 					spawnHintParticles(world, caster, 12, direction);
-					caster.addVelocity(direction.getXOffset() * NUDGE_SPEED, direction.getYOffset() * NUDGE_SPEED,
-							direction.getZOffset() * NUDGE_SPEED);
+					caster.push(direction.getStepX() * NUDGE_SPEED, direction.getStepY() * NUDGE_SPEED,
+							direction.getStepZ() * NUDGE_SPEED);
 					break;
 			}
 		}
@@ -120,10 +123,10 @@ public class Divination extends Spell {
 
 	private static void spawnHintParticles(Level world, Entity caster, int count, Direction direction){
 
-		Vec3 vec = new Vec3(caster.getPosition().offset(Direction.UP).offset(direction, 2)).add(0.5, 0.5, 0.5);
+		Vec3 vec = Vec3.atCenterOf(caster.blockPosition().relative(Direction.UP).relative(direction, 2));
 
 		for(int i=0; i<count; i++){
-			ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.rand, vec.x, vec.y, vec.z, 0.7, false)
+			ParticleBuilder.create(ParticleBuilder.Type.FLASH, world.random, vec.x, vec.y, vec.z, 0.7, false)
 					.time(20 + world.random.nextInt(5)).clr(0.6f + world.random.nextFloat() * 0.4f,
 					0.6f + world.random.nextFloat() * 0.4f, 0.6f + world.random.nextFloat() * 0.4f).scale(0.3f).spawn(world);
 		}
@@ -131,19 +134,22 @@ public class Divination extends Spell {
 
 	protected static float calculateWeight(Level world, Player caster, BlockPos pos, double range, SpellModifiers modifiers){
 
-		Block block = level.getBlockState(pos).getBlock();
+		Block block = world.getBlockState(pos).getBlock();
 		// On a non-sorcery wand, the value of the ore has no effect on its weight
 		float weightModifier = modifiers.get(SpellModifiers.POTENCY) - 1;
 
 		// xp is a decent way of determining the 'value' of a block
 		// There is a degree of randomness associated with it though...
-		float xp = block.getExpDrop(level.getBlockState(pos), world, pos, 0);
+        float xp = block.getExpDrop(world.getBlockState(pos), world, world.random, pos, 0, 0);
 		// For some reason smelting gives a lot less than mining, hence the multiplying by 4
-		if(xp == 0) xp = 4 * FurnaceRecipes.instance().getSmeltingExperience(new ItemStack(block));
+        Optional<SmeltingRecipe> optional = world.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(new ItemStack(block)), world);
+        if (optional.isPresent()) {
+            if (xp == 0) xp = 4 * optional.get().getExperience();
+        }
 
 		// By my (rather rough) calculations, this should mean that using a master sorcerer wand, an iron ore block
 		// and a diamond ore block just under twice as far away as the iron ore should have about the same weight
-		return (float)(1 - caster.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)/range + 0.2 * weightModifier * xp);
+		return (float)(1 - caster.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)/range + 0.2 * weightModifier * xp);
 	}
 
 }

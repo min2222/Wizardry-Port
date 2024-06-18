@@ -55,7 +55,7 @@ public class FontOfMana extends SpellAreaEffect {
 		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.font_of_mana)){
 			// Dividing by this rather than setting it takes upgrades and font of mana into account simultaneously
 			event.getModifiers().set(WizardryItems.cooldown_upgrade, event.getModifiers().get(WizardryItems.cooldown_upgrade)
-					/ (2 + event.getCaster().getActivePotionEffect(WizardryPotions.font_of_mana).getAmplifier()), false);
+					/ (2 + event.getCaster().getEffect(WizardryPotions.font_of_mana).getAmplifier()), false);
 		}
 	}
 }

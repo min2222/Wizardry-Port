@@ -143,8 +143,8 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 			// Creates a projectile from the supplied factory
 			T projectile = arrowFactory.apply(world);
 			// Sets the necessary parameters
-			projectile.setPosition(x, y, z);
-			Vec3i vec = direction.getDirectionVec();
+			projectile.setPos(x, y, z);
+			Vec3i vec = direction.step();
 			projectile.shoot(vec.getX(), vec.getY(), vec.getZ(), calculateVelocity(projectile, modifiers,
 					0.375f), DISPENSER_INACCURACY); // 0.375 is the height of the hole in a dispenser
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);

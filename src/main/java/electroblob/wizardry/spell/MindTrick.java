@@ -10,17 +10,17 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class MindTrick extends SpellRay {
@@ -40,19 +40,19 @@ public class MindTrick extends SpellRay {
 
 				if(target instanceof Player){
 
-					((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.NAUSEA,
+					((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.CONFUSION,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 
 				}else if(target instanceof Mob){
 
-					((Mob)target).setAttackTarget(null);
+					((Mob)target).setTarget(null);
 					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.mind_trick,
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 				}
 				
 			}else{
 				for(int i=0; i<10; i++){
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+					ParticleBuilder.create(Type.DARK_MAGIC, world.random, target.getX(),
 							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.8f, 0.2f, 1.0f).spawn(world);
 				}
@@ -83,7 +83,7 @@ public class MindTrick extends SpellRay {
 			// ought to be cancelled if something attacks the entity since potions, drowning, cacti etc. don't affect the
 			// targeting.
 			if(event.getEntity().hasEffect(WizardryPotions.mind_trick)){
-				event.getEntity().removePotionEffect(WizardryPotions.mind_trick);
+				event.getEntity().removeEffect(WizardryPotions.mind_trick);
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class MindTrick extends SpellRay {
 		if((event.getEntity().hasEffect(WizardryPotions.mind_trick)
 				|| event.getEntity().hasEffect(WizardryPotions.fear))
 				&& event.getEntity() instanceof Mob && event.getTarget() != null){
-			((Mob)event.getEntity()).setAttackTarget(null);
+			((Mob)event.getEntity()).setTarget(null);
 		}
 	}
 }

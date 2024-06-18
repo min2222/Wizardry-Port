@@ -1,15 +1,16 @@
 package electroblob.wizardry.registry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 /**
  * Class responsible for defining, storing and registering all of wizardry's sound events.
@@ -178,7 +179,7 @@ public final class WizardrySounds {
 	 * registered automatically later. */
 	public static SoundEvent createSound(String modID, String name){
 		// All the setRegistryName methods delegate to this one, it doesn't matter which you use.
-		SoundEvent sound = new SoundEvent(new ResourceLocation(modID, name)).setRegistryName(name);
+		SoundEvent sound = new SoundEvent(new ResourceLocation(modID, name));
 		sounds.add(sound);
 		return sound;
 	}
@@ -186,8 +187,12 @@ public final class WizardrySounds {
 	// For some reason, sound events seem to work even when they aren't registered, without even so much as a warning.
 	
 	@SubscribeEvent
-	public static void register(RegistryEvent.Register<SoundEvent> event){
-		event.getRegistry().registerAll(sounds.toArray(new SoundEvent[0]));
+	public static void register(RegisterEvent event){
+		event.register(ForgeRegistries.Keys.SOUND_EVENTS, t -> {
+			for(SoundEvent sound : sounds) {
+				t.register(sound.getLocation(), sound);
+			}
+		});
 	}
 
 }

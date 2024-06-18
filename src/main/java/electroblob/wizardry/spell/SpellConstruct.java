@@ -156,7 +156,7 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 			// Creates a new construct using the supplied factory
 			T construct = constructFactory.apply(world);
 			// Sets the position of the construct (and initialises its bounding box)
-			construct.setPosition(x, y, z);
+			construct.setPos(x, y, z);
 			// Sets the various parameters
 			construct.setCaster(caster);
 			construct.lifetime = permanent ? -1 : (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));

@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.event.SpellCastEvent;
@@ -13,13 +15,11 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import javax.annotation.Nullable;
 
 @Mod.EventBusSubscriber
 public class EmpoweringPresence extends SpellAreaEffect {
@@ -66,7 +66,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 				&& !(event.getSpell() instanceof EmpoweringPresence)){ // Prevent exponential empowerment stacking!
 
 			float potency = 1 + Spells.empowering_presence.getProperty(POTENCY_PER_LEVEL).floatValue()
-					* (event.getCaster().getActivePotionEffect(WizardryPotions.empowerment).getAmplifier() + 1);
+					* (event.getCaster().getEffect(WizardryPotions.empowerment).getAmplifier() + 1);
 
 			event.getModifiers().set(SpellModifiers.POTENCY,
 					event.getModifiers().get(SpellModifiers.POTENCY) * potency, true);

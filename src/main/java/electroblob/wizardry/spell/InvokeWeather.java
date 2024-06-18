@@ -1,17 +1,18 @@
 package electroblob.wizardry.spell;
 
+import java.util.Random;
+
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import java.util.Random;
 
 public class InvokeWeather extends Spell {
 
@@ -26,28 +27,19 @@ public class InvokeWeather extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.dimension == 0){
+		if(caster.level.dimension().equals(Level.OVERWORLD)){
 
 			if(!world.isClientSide){
 				
 				int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
 				
 				if(world.isRaining()){
-					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".sun"), true);
-					level.getWorldInfo().setCleanWeatherTime(standardWeatherTime);
-					level.getWorldInfo().setRainTime(0);
-					level.getWorldInfo().setThunderTime(0);
-					level.getWorldInfo().setRaining(false);
-					level.getWorldInfo().setThundering(false);
+					caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".sun"), true);
+                    ((ServerLevel) world).setWeatherParameters(standardWeatherTime, 0, false, false);
 				}else{
-					caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".rain"), true);
-					level.getWorldInfo().setCleanWeatherTime(0);
-					level.getWorldInfo().setRainTime(standardWeatherTime);
-					level.getWorldInfo().setThunderTime(standardWeatherTime);
-					level.getWorldInfo().setRaining(true);
+					caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".rain"), true);
 					// Thunderstorm is guaranteed if the caster has a bottled thundercloud charm equipped
-					level.getWorldInfo().setThundering(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_storm)
-							|| world.random.nextFloat() < getProperty(THUNDERSTORM_CHANCE).floatValue());
+                    ((ServerLevel) world).setWeatherParameters(0, standardWeatherTime, true, ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_STORM.get()) || world.random.nextFloat() < getProperty(THUNDERSTORM_CHANCE).floatValue());
 				}
 			}
 

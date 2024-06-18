@@ -4,8 +4,8 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Evade extends Spell {
 
@@ -26,23 +26,23 @@ public class Evade extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(!caster.onGround) return false; // Prevents cheesing with cooldown upgrades to effectively fly super-fast
+		if(!caster.isOnGround()) return false; // Prevents cheesing with cooldown upgrades to effectively fly super-fast
 
-		Vec3 look = caster.getLookVec();
+		Vec3 look = caster.getLookAngle();
 		// We want a horizontal only vector
 		look = look.subtract(0, look.y, 0).normalize();
 
 		Vec3 evadeDirection;
-		if(caster.moveStrafing == 0){
+		if(caster.xxa  == 0){
 			// If the caster isn't strafing, pick a random direction
-			evadeDirection = look.rotateYaw(world.random.nextBoolean() ? (float)Math.PI/2f : (float)-Math.PI/2f);
+			evadeDirection = look.yRot(world.random.nextBoolean() ? (float)Math.PI/2f : (float)-Math.PI/2f);
 		}else{
 			// Otherwise, evade always moves whichever direction the caster was already strafing
-			evadeDirection = look.rotateYaw(Math.signum(caster.moveStrafing) * (float)Math.PI/2f);
+			evadeDirection = look.yRot(Math.signum(caster.xxa ) * (float)Math.PI/2f);
 		}
 
 		evadeDirection = evadeDirection.scale(getProperty(EVADE_VELOCITY).floatValue() * modifiers.get(SpellModifiers.POTENCY));
-		caster.addVelocity(evadeDirection.x, UPWARD_VELOCITY, evadeDirection.z);
+		caster.push(evadeDirection.x, UPWARD_VELOCITY, evadeDirection.z);
 
 		return true;
 	}

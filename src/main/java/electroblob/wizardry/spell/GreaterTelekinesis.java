@@ -10,22 +10,23 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityTNTPrimed;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class GreaterTelekinesis extends SpellRay {
 
@@ -67,12 +68,12 @@ public class GreaterTelekinesis extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		// Can't be cast by dispensers so we know caster isn't null, but just in case...
-		if(caster != null && (target instanceof LivingEntity || target instanceof EntityLevitatingBlock || target instanceof EntityTNTPrimed)){
+		if(caster != null && (target instanceof LivingEntity || target instanceof EntityLevitatingBlock || target instanceof PrimedTnt)){
 
 			if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
 					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 				return false;
 			}
@@ -86,10 +87,10 @@ public class GreaterTelekinesis extends SpellRay {
 			
 			if(caster.isShiftKeyDown()){
 				
-				Vec3 look = caster.getLookVec().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
-				target.addVelocity(look.x, look.y, look.z);
+				Vec3 look = caster.getLookAngle().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
+				target.push(look.x, look.y, look.z);
 				// No IntelliJ, it's not always false, that's not how polymorphism works
-				if(caster instanceof Player) caster.swingArm(caster.getActiveHand() == null ? InteractionHand.MAIN_HAND : caster.getActiveHand());
+				if(caster instanceof Player) caster.swing(caster.getUsedItemHand() == null ? InteractionHand.MAIN_HAND : caster.getUsedItemHand());
 				
 			}else{
 			
@@ -98,17 +99,17 @@ public class GreaterTelekinesis extends SpellRay {
 				// The following code extrapolates the entity's current velocity to determine whether it will pass the
 				// target position in the next tick, and adds or subtracts velocity accordingly.
 				
-				Vec3 vec = origin.add(caster.getLookVec().scale(getProperty(HOLD_RANGE).floatValue()));
+				Vec3 vec = origin.add(caster.getLookAngle().scale(getProperty(HOLD_RANGE).floatValue()));
 				
-				Vec3 velocity = vec.subtract(targetPos).subtract(target.motionX, target.motionY, target.motionZ)
+				Vec3 velocity = vec.subtract(targetPos).subtract(target.getDeltaMovement())
 						.scale(1 - UNDERSHOOT);
 				
-				target.addVelocity(velocity.x, velocity.y, velocity.z);
+				target.push(velocity.x, velocity.y, velocity.z);
 			}
 			
 			// Player motion is handled on that player's client so needs packets
 			if(target instanceof ServerPlayer){
-				((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+				((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 			}
 			
 			if(world.isClientSide){
@@ -134,20 +135,20 @@ public class GreaterTelekinesis extends SpellRay {
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.canDamageBlocks(caster, world) && !BlockUtils.isBlockUnbreakable(world, pos)
-				&& level.getBlockState(pos).getMaterial().isSolid()
-				&& (level.getTileEntity(pos) == null || !level.getTileEntity(pos).getTileData().hasUUID(ArcaneLock.NBT_KEY))){
+				&& world.getBlockState(pos).getMaterial().isSolid()
+				&& (world.getBlockEntity(pos) == null || !world.getBlockEntity(pos).getPersistentData().hasUUID(ArcaneLock.NBT_KEY))){
 			
 			if(!world.isClientSide){
 
 				EntityLevitatingBlock block = new EntityLevitatingBlock(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-						level.getBlockState(pos));
+						world.getBlockState(pos));
 
-				block.fallTime = 1;
+				block.time = 1;
 				block.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				block.setCaster(caster);
 
 				world.addFreshEntity(block);
-				level.setBlockToAir(pos);
+				world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}
 				
 			return true;

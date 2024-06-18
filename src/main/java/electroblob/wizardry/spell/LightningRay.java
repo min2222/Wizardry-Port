@@ -7,15 +7,15 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class LightningRay extends SpellRay {
 
@@ -47,7 +47,7 @@ public class LightningRay extends SpellRay {
 
 			if(MagicDamage.isEntityImmune(DamageType.SHOCK, target)){
 				if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player)
-					((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
+					((Player)caster).displayClientMessage(Component.translatable("spell.resist", target.getName(),
 							this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.

@@ -35,21 +35,21 @@ public class ForestOfThorns extends Spell {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
+		if(!summonThorns(world, caster, caster.blockPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
-		if(!summonThorns(world, caster, caster.getPosition(), modifiers)) return false;
+		if(!summonThorns(world, caster, caster.blockPosition(), modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
 
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		if(!summonThorns(world, null, new BlockPos(x, y, z).offset(direction), modifiers)) return false;
+		if(!summonThorns(world, null, new BlockPos(x, y, z).relative(direction), modifiers)) return false;
 		this.playSound(world, x, y, z, ticksInUse, duration, modifiers);
 		return true;
 	}
@@ -70,7 +70,7 @@ public class ForestOfThorns extends Spell {
 
 					if(distance > radius || distance < radius - 1.5) continue;
 
-					Integer y = BlockUtils.getNearestSurface(world, origin.add(x, 0, z), Direction.UP, (int)radius, true, BlockUtils.SurfaceCriteria.BUILDABLE);
+					Integer y = BlockUtils.getNearestSurface(world, origin.offset(x, 0, z), Direction.UP, (int)radius, true, BlockUtils.SurfaceCriteria.BUILDABLE);
 					if(y != null) ring.add(new BlockPos(origin.getX() + x, y, origin.getZ() + z));
 				}
 			}
@@ -80,11 +80,11 @@ public class ForestOfThorns extends Spell {
 			// Because we're always using EnumFacing.UP in the code above, we can be sure that pos is the block above the floor
 			for(BlockPos pos : ring){
 
-				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up())){
+				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.above())){
 
 					((BlockThorns)WizardryBlocks.thorns).placeAt(world, pos, 3);
 
-					BlockEntity tileentity = level.getTileEntity(pos);
+					BlockEntity tileentity = world.getBlockEntity(pos);
 
 					if(tileentity instanceof TileEntityThorns){
 

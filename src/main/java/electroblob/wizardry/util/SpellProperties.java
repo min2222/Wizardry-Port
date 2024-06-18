@@ -354,7 +354,7 @@ public final class SpellProperties {
 					String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
 					ResourceLocation key = new ResourceLocation(modID, name);
 
-					Spell spell = Spell.registry.getValue(key);
+					Spell spell = Spell.registry.get().getValue(key);
 
 					// If no spell matches a particular file, log it and just ignore the file
 					if(spell == null){
@@ -460,7 +460,7 @@ public final class SpellProperties {
 
 			ResourceLocation key = new ResourceLocation(modID, name);
 
-			Spell spell = Spell.registry.getValue(key);
+			Spell spell = Spell.registry.get().getValue(key);
 
 			// If no spell matches a particular file, log it and just ignore the file
 			if(spell == null){

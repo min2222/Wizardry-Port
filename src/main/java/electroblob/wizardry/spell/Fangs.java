@@ -1,27 +1,31 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.entity.Mob;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.EntityEvokerFangs;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber
 public class Fangs extends Spell {
@@ -41,7 +45,7 @@ public class Fangs extends Spell {
 
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
-		if(!spawnFangs(world, caster.position(), GeometryUtils.horizontalise(caster.getLookVec()), caster, modifiers)) return false;
+		if(!spawnFangs(world, caster.position(), GeometryUtils.horizontalise(caster.getLookAngle()), caster, modifiers)) return false;
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -55,7 +59,7 @@ public class Fangs extends Spell {
 
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		if(!spawnFangs(world, new Vec3(x, y, z), new Vec3(direction.getDirectionVec()), null, modifiers)) return false;
+		if(!spawnFangs(world, new Vec3(x, y, z), new Vec3(direction.step()), null, modifiers)) return false;
 		this.playSound(world, x, y, z, ticksInUse, -1, modifiers);
 		return true;
 	}
@@ -65,7 +69,7 @@ public class Fangs extends Spell {
 		boolean defensiveCircle = caster instanceof Player && caster.isShiftKeyDown()
 				&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.ring_evoker);
 
-		if(!defensiveCircle && direction.lengthSquared() == 0) return false; // Prevent casting directly down/up
+		if(!defensiveCircle && direction.lengthSqr() == 0) return false; // Prevent casting directly down/up
 
 		boolean flag = false;
 
@@ -76,7 +80,7 @@ public class Fangs extends Spell {
 			double z = origin.z;
 
 			for(int i = 0; i < 12; i++){
-				ParticleBuilder.create(Type.DARK_MAGIC, world.rand, x, y, z, 0.5, false)
+				ParticleBuilder.create(Type.DARK_MAGIC, world.random, x, y, z, 0.5, false)
 						.clr(0.4f, 0.3f, 0.35f).spawn(world); // Colour from EntitySpellcasterIllager
 			}
 
@@ -115,8 +119,8 @@ public class Fangs extends Spell {
 		Integer y = BlockUtils.getNearestFloor(world, new BlockPos(vec), 5);
 
 		if(y != null){
-			EntityEvokerFangs fangs = new EntityEvokerFangs(world, vec.x, y, vec.z, yaw, delay, caster); // null is fine here
-			fangs.getPersistentData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+			EvokerFangs fangs = new EvokerFangs(world, vec.x, y, vec.z, yaw, delay, caster); // null is fine here
+			fangs.getPersistentData().putFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 			world.addFreshEntity(fangs);
 			return true;
 		}
@@ -126,7 +130,7 @@ public class Fangs extends Spell {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public static void onLivingAttackEvent(LivingAttackEvent event){
-		if(event.getSource().getDirectEntity() instanceof EntityEvokerFangs){
+		if(event.getSource().getDirectEntity() instanceof EvokerFangs){
 			if(!AllyDesignationSystem.isValidTarget(event.getSource().getEntity(), event.getEntity())){
 				event.setCanceled(true); // Don't attack allies
 			}

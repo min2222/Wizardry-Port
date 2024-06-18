@@ -4,10 +4,10 @@ import electroblob.wizardry.entity.living.EntityDecoy;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class Decoy extends Spell {
@@ -27,7 +27,7 @@ public class Decoy extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		// Determines whether the caster moves left and the decoy moves right, or vice versa.
 		// Uses the synchronised entity id to ensure it is consistent on client and server, but not always the same.
-		double splitSpeed = caster.getEntityId() % 2 == 0 ? 0.3 : -0.3;
+		double splitSpeed = caster.getId() % 2 == 0 ? 0.3 : -0.3;
 		spawnDecoy(world, caster, modifiers, splitSpeed);
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 		return true;
@@ -49,11 +49,11 @@ public class Decoy extends Spell {
 			EntityDecoy decoy = new EntityDecoy(world);
 			decoy.setCaster(caster);
 			decoy.setLifetime(getProperty(DECOY_LIFETIME).intValue());
-			decoy.setLocationAndAngles(caster.getX(), caster.getY(), caster.getZ(), caster.rotationYaw, caster.rotationPitch);
-			decoy.addVelocity(-caster.getLookVec().z * splitSpeed, 0, caster.getLookVec().x * splitSpeed);
+			decoy.moveTo(caster.getX(), caster.getY(), caster.getZ(), caster.getYRot(), caster.getXRot());
+			decoy.push(-caster.getLookAngle().z * splitSpeed, 0, caster.getLookAngle().x * splitSpeed);
 			// Ignores the show names setting, since this would allow a player to easily detect a decoy
 			// Instead, a decoy player has its caster's name tag shown permanently and non-player decoys have nothing
-			if(caster instanceof Player) decoy.setCustomNameTag(caster.getName());
+			if(caster instanceof Player) decoy.setCustomName(caster.getName());
 			world.addFreshEntity(decoy);
 
 			// Tricks any mobs that are targeting the caster into targeting the decoy instead.
@@ -63,12 +63,12 @@ public class Decoy extends Spell {
 				// The default base value is 0.5, so modifiers of 2 or more will guarantee mobs are tricked
 				if(creature.getTarget() == caster && world.random.nextFloat()
 						< getProperty(MOB_TRICK_CHANCE).floatValue() * modifiers.get(SpellModifiers.POTENCY)){
-					creature.setAttackTarget(decoy);
+					creature.setTarget(decoy);
 				}
 			}
 		}
 
-		caster.addVelocity(caster.getLookVec().z * splitSpeed, 0, -caster.getLookVec().x * splitSpeed);
+		caster.push(caster.getLookAngle().z * splitSpeed, 0, -caster.getLookAngle().x * splitSpeed);
 	}
 
 }

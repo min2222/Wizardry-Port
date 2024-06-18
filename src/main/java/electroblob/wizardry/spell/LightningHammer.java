@@ -22,13 +22,13 @@ public class LightningHammer extends SpellConstructRanged<EntityHammer> {
 
 	@Override
 	protected boolean spawnConstruct(Level world, double x, double y, double z, Direction side, LivingEntity caster, SpellModifiers modifiers){
-		if(!world.canBlockSeeSky(new BlockPos(x, y, z))) return false;
+		if(!world.canSeeSky(new BlockPos(x, y, z))) return false;
 		return super.spawnConstruct(world, x, y + 50, z, side, caster, modifiers);
 	}
 
 	@Override
 	protected void addConstructExtras(EntityHammer construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
-		construct.motionY = -2;
+		construct.setDeltaMovement(construct.getDeltaMovement().x, -2, construct.getDeltaMovement().z);
 	}
 
 }

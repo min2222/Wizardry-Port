@@ -7,13 +7,13 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -60,11 +60,11 @@ public class MarkSacrifice extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		MobEffectInstance effect = event.getEntity().getActivePotionEffect(WizardryPotions.mark_of_sacrifice);
+		MobEffectInstance effect = event.getEntity().getEffect(WizardryPotions.mark_of_sacrifice);
 
-		if(effect != null && event.getSource().isMagicDamage()){
+		if(effect != null && event.getSource().isMagic()){
 			event.setAmount(event.getAmount() * (1 + (1 + effect.getAmplifier()) * DAMAGE_INCREASE_PER_LEVEL));
-			event.getEntity().removePotionEffect(WizardryPotions.mark_of_sacrifice);
+			event.getEntity().removeEffect(WizardryPotions.mark_of_sacrifice);
 		}
 	}
 

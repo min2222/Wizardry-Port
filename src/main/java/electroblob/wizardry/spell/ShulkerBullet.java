@@ -80,7 +80,7 @@ public class ShulkerBullet extends Spell {
 			}else{
 				// Can't use the normal constructor because it doesn't accept null for the owner
 				EntityShulkerBullet bullet = new EntityShulkerBullet(world);
-				bullet.setLocationAndAngles(x, y, z, bullet.rotationYaw, bullet.rotationPitch);
+				bullet.setLocationAndAngles(x, y, z, bullet.getYRot(), bullet.rotationPitch);
 
 				// Where there's a will there's a way...
 				CompoundTag nbt = new CompoundTag();

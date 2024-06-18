@@ -6,16 +6,16 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 public class Ignite extends SpellRay {
 	
@@ -31,7 +31,7 @@ public class Ignite extends SpellRay {
 		if(target instanceof LivingEntity) {
 			
 			if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
@@ -51,7 +51,7 @@ public class Ignite extends SpellRay {
 		if(world.isEmptyBlock(pos)){
 			
 			if(!world.isClientSide && BlockUtils.canPlaceBlock(caster, world, pos)){
-				level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+				world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 			}
 			
 			return true;
@@ -67,7 +67,7 @@ public class Ignite extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
 	}
 
 }

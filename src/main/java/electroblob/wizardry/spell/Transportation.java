@@ -71,7 +71,7 @@ public class Transportation extends Spell {
 				if(locations == null) data.setVariable(Transportation.LOCATIONS_KEY, locations = new ArrayList<>(Transportation.MAX_REMEMBERED_LOCATIONS));
 
 				if(locations.isEmpty()){
-					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 					return false;
 				}
 
@@ -80,7 +80,7 @@ public class Transportation extends Spell {
 					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.dimension).collect(Collectors.toList());
 
 					if(locationsInDimension.isEmpty()){
-						if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 						return false;
 					}
 
@@ -104,7 +104,7 @@ public class Transportation extends Spell {
 					if(destination.dimension == caster.dimension){
 						return attemptTravelTo(caster, world, destination.pos, modifiers);
 					}else{
-						if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+						if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 					}
 
 				}
@@ -161,7 +161,7 @@ public class Transportation extends Spell {
 			data.setVariable(COUNTDOWN_KEY, getProperty(TELEPORT_COUNTDOWN).intValue());
 			return true;
 		}else{
-			if(!world.isClientSide) player.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".missing"), true);
+			if(!world.isClientSide) player.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".missing"), true);
 			return false;
 		}
 	}
@@ -185,12 +185,12 @@ public class Transportation extends Spell {
 				Entity mount = player.getRidingEntity();
 				if(mount != null) player.dismountRidingEntity();
 
-				player.setPositionAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
+				player.setPosAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
 
 				boolean teleportMount = mount != null && ItemArtefact.isArtefactActive(player, WizardryItems.charm_mount_teleporting);
 
 				if(teleportMount){
-					mount.setPositionAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
+					mount.setPosAndUpdate(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
 					player.startRiding(mount);
 				}
 

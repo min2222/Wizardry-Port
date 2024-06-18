@@ -47,7 +47,7 @@ public class Shockwave extends SpellAreaEffect {
 			if(!Wizardry.settings.playersMoveEachOther) return false;
 
 			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)){
-				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 				return false;
@@ -103,14 +103,14 @@ public class Shockwave extends SpellAreaEffect {
 			BlockState block = level.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
+				world.addParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
 						particleZ, particleX - origin.x, 0, particleZ - origin.z, Block.getStateId(block));
 			}
 		}
 
 		ParticleBuilder.create(Type.SPHERE).pos(origin.add(0, 0.1, 0)).scale((float)radius * 0.8f).clr(0.8f, 0.9f, 1).spawn(world);
 
-		world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
+		world.addParticle(ParticleTypes.EXPLOSION_LARGE, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
 	}
 
 }

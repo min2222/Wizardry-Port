@@ -6,6 +6,7 @@ import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.InteractionHand;
@@ -26,7 +27,7 @@ import java.util.UUID;
  * @since Wizardry 1.2
  * @author Electroblob
  */
-public abstract class EntitySummonedCreature extends EntityCreature implements ISummonedCreature {
+public abstract class EntitySummonedCreature extends PathfinderMob implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = -1;

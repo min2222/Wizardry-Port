@@ -50,7 +50,7 @@ public class Charge extends Spell {
 
 		WizardData.get(caster).setVariable(CHARGE_MODIFIERS, modifiers);
 
-		if(world.isClientSide) world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, caster.getX(), caster.getY() + caster.getBbHeight()/2, caster.getZ(), 0, 0, 0);
+		if(world.isClientSide) world.addParticle(ParticleTypes.EXPLOSION_EMITTER, caster.getX(), caster.getY() + caster.getBbHeight()/2, caster.getZ(), 0, 0, 0);
 
 		this.playSound(world, caster, ticksInUse, -1, modifiers);
 
@@ -66,20 +66,19 @@ public class Charge extends Spell {
 			SpellModifiers modifiers = WizardData.get(player).getVariable(CHARGE_MODIFIERS);
 			if(modifiers == null) modifiers = new SpellModifiers();
 
-			Vec3 look = player.getLookVec();
+			Vec3 look = player.getLookAngle();
 
 			float speed = Spells.charge.getProperty(Charge.CHARGE_SPEED).floatValue() * modifiers.get(WizardryItems.range_upgrade);
 
-			player.motionX = look.x * speed;
-			player.motionZ = look.z * speed;
+            player.setDeltaMovement(look.x * speed, player.getDeltaMovement().y, look.z * speed);
 
-			if(player.world.isClientSide){
+			if(player.level.isClientSide){
 				for(int i = 0; i < 5; i++){
-					ParticleBuilder.create(Type.SPARK, player).spawn(player.world);
+					ParticleBuilder.create(Type.SPARK, player).spawn(player.level);
 				}
 			}
 
-			List<LivingEntity> collided = player.level.getEntitiesWithinAABB(LivingEntity.class, player.getBoundingBox().grow(EXTRA_HIT_MARGIN));
+			List<LivingEntity> collided = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(EXTRA_HIT_MARGIN));
 
 			collided.remove(player);
 
@@ -87,14 +86,14 @@ public class Charge extends Spell {
 			float knockback = Spells.charge.getProperty(KNOCKBACK_STRENGTH).floatValue();
 
 			collided.forEach(e -> e.hurt(MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.SHOCK), damage));
-			collided.forEach(e -> e.addVelocity(player.motionX * knockback, player.motionY * knockback + 0.3f, player.motionZ * knockback));
+			collided.forEach(e -> e.push(player.getDeltaMovement().x * knockback, player.getDeltaMovement().y * knockback + 0.3f, player.getDeltaMovement().z * knockback));
 
-			if(player.world.isClientSide) player.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE,
-					player.getX() + player.motionX, player.getY() + player.getBbHeight()/2, player.getZ() + player.motionZ, 0, 0, 0);
+			if(player.level.isClientSide) player.level.addParticle(ParticleTypes.EXPLOSION_EMITTER,
+					player.getX() + player.getDeltaMovement().x, player.getY() + player.getBbHeight()/2, player.getZ() + player.getDeltaMovement().z, 0, 0, 0);
 
 			if(collided.isEmpty()) chargeTime--;
 			else{
-				EntityUtils.playSoundAtPlayer(player, SoundEvents.ENTITY_GENERIC_HURT, 1, 1);
+				EntityUtils.playSoundAtPlayer(player, SoundEvents.GENERIC_HURT, 1, 1);
 				chargeTime = 0;
 			}
 		}
@@ -115,7 +114,7 @@ public class Charge extends Spell {
 				Integer chargeTime = WizardData.get(player).getVariable(CHARGE_TIME);
 
 				if(chargeTime != null && chargeTime > 0
-						&& player.getBoundingBox().grow(EXTRA_HIT_MARGIN).intersects(attacker.getBoundingBox())){
+						&& player.getBoundingBox().inflate(EXTRA_HIT_MARGIN).intersects(attacker.getBoundingBox())){
 					event.setCanceled(true);
 				}
 			}

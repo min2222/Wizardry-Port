@@ -3,19 +3,23 @@ package electroblob.wizardry.spell;
 import electroblob.wizardry.entity.projectile.EntityEmber;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Disintegration extends SpellRay {
 
@@ -33,7 +37,7 @@ public class Disintegration extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(MagicDamage.isEntityImmune(DamageType.FIRE, target)){
-			if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 		}else{
 
@@ -52,7 +56,7 @@ public class Disintegration extends SpellRay {
 
 	public static void spawnEmbers(Level world, LivingEntity caster, Entity target, int count){
 
-		target.extinguish();
+		target.clearFire();
 
 		if(world.isClientSide){ // FIXME: Various syncing issues here!
 			// Set NBT client-side, it's only for rendering
@@ -66,12 +70,10 @@ public class Disintegration extends SpellRay {
 				double x = (world.random.nextDouble() - 0.5) * target.getBbWidth();
 				double y = world.random.nextDouble() * target.getBbHeight();
 				double z = (world.random.nextDouble() - 0.5) * target.getBbWidth();
-				ember.setPosition(target.getX() + x, target.getY() + y, target.getZ() + z);
+				ember.setPos(target.getX() + x, target.getY() + y, target.getZ() + z);
 				ember.tickCount = world.random.nextInt(20);
 				float speed = 0.2f;
-				ember.motionX = x * speed;
-				ember.motionY = y * 0.5f * speed;
-				ember.motionZ = z * speed;
+				ember.setDeltaMovement(x * speed, y * 0.5f * speed, z * speed);
 				world.addFreshEntity(ember);
 			}
 		}
@@ -83,11 +85,11 @@ public class Disintegration extends SpellRay {
 		if(world.isClientSide){
 			
 			for(int i = 0; i < 8; i++){
-				world.spawnParticle(ParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);
+				world.addParticle(ParticleTypes.LAVA, hit.x, hit.y, hit.z, 0, 0, 0);
 			}
 			
-			if(level.getBlockState(pos).getMaterial().isSolid()){
-				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
+			if(world.getBlockState(pos).getMaterial().isSolid()){
+				Vec3 vec = hit.add(new Vec3(side.step()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).clr(1, 0.2f, 0).spawn(world);
 			}
 		}

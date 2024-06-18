@@ -1,5 +1,9 @@
 package electroblob.wizardry.spell;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.item.ISpellCastingItem;
@@ -11,23 +15,19 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class Mine extends SpellRay {
 
@@ -54,9 +54,9 @@ public class Mine extends SpellRay {
 		// Needs to be outside because it gets run on the client-side
 		if(caster instanceof Player){
 			if(caster.getMainHandItem().getItem() instanceof ISpellCastingItem){
-				caster.swingArm(InteractionHand.MAIN_HAND);
-			}else if(caster.getOffHandItem().getItem() instanceof ISpellCastingItem){
-				caster.swingArm(InteractionHand.OFF_HAND);
+				caster.swing(InteractionHand.MAIN_HAND);
+			}else if(caster.getOffhandItem().getItem() instanceof ISpellCastingItem){
+				caster.swing(InteractionHand.OFF_HAND);
 			}
 		}
 
@@ -66,7 +66,7 @@ public class Mine extends SpellRay {
 			// Reworked to respect the rules, but since we might break multiple blocks this is left as an optimisation
 			if(!EntityUtils.canDamageBlocks(caster, world)) return false;
 
-			BlockState state = level.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			// The maximum harvest level as determined by the potency multiplier. The + 0.5f is so that
 			// weird float processing doesn't incorrectly round it down.
 			int harvestLevel = (int)((modifiers.get(SpellModifiers.POTENCY) - 1) / Constants.POTENCY_INCREASE_PER_TIER + 0.5f);
@@ -92,7 +92,7 @@ public class Mine extends SpellRay {
 
 					if(BlockUtils.isBlockUnbreakable(world, pos1)) continue;
 
-					BlockState state1 = level.getBlockState(pos1);
+					BlockState state1 = world.getBlockState(pos1);
 
 					if(state1.getBlock().getHarvestLevel(state1) <= harvestLevel || harvestLevel >= 3){
 
@@ -109,7 +109,7 @@ public class Mine extends SpellRay {
 								flag = world.destroyBlock(pos1, false);
 								if(flag){
 									ItemStack stack = getSilkTouchDrop(state1);
-									if(stack != null) Block.spawnAsEntity(world, pos1, stack);
+									if(stack != null) Block.popResource(world, pos1, stack);
 								}
 							}else{
 								flag = world.destroyBlock(pos1, true);

@@ -53,7 +53,7 @@ public class ShadowWard extends Spell {
 			double dx = -1 + 2 * world.random.nextFloat();
 			double dy = -1 + world.random.nextFloat();
 			double dz = -1 + 2 * world.random.nextFloat();
-			world.spawnParticle(ParticleTypes.PORTAL, caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ(), dx, dy, dz);
+			world.addParticle(ParticleTypes.PORTAL, caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ(), dx, dy, dz);
 		}
 
 		if(ticksInUse % 50 == 0){

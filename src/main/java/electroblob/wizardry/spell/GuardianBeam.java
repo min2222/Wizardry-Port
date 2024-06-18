@@ -1,16 +1,21 @@
 package electroblob.wizardry.spell;
 
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 
 public class GuardianBeam extends SpellRay {
 
@@ -37,8 +42,8 @@ public class GuardianBeam extends SpellRay {
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
-				if(!((LivingEntity)target).canBreatheUnderwater() && !((LivingEntity)target).hasEffect(MobEffects.WATER_BREATHING)){
-					target.setAir(Math.max(-20, target.getAir() - getProperty(AIR_DEPLETION).intValue()));
+				if(!((LivingEntity)target).canDrownInFluidType(ForgeMod.WATER_TYPE.get()) && !((LivingEntity)target).hasEffect(MobEffects.WATER_BREATHING)){
+					target.setAirSupply(Math.max(-20, target.getAirSupply() - getProperty(AIR_DEPLETION).intValue()));
 				}
 			}
 			
@@ -56,7 +61,7 @@ public class GuardianBeam extends SpellRay {
 
 				Vec3 direction = GeometryUtils.getCentre(target).subtract(origin);
 				Vec3 pos = origin.add(direction.scale(world.random.nextFloat()));
-				ParticleBuilder.create(Type.MAGIC_BUBBLE, world.rand, pos.x, pos.y, pos.z, 0.15, false).spawn(world);
+				ParticleBuilder.create(Type.MAGIC_BUBBLE, world.random, pos.x, pos.y, pos.z, 0.15, false).spawn(world);
 			}
 		}
 

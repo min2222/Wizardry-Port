@@ -31,18 +31,6 @@ public final class Spells {
 
 	private Spells(){} // No instances!
 
-	// This is here because this class is already an event handler.
-	@SubscribeEvent
-	public static void createRegistry(RegistryEvent.NewRegistry event){
-
-		RegistryBuilder<Spell> builder = new RegistryBuilder<>();
-		builder.setType(Spell.class);
-		builder.setName(new ResourceLocation(Wizardry.MODID, "spells"));
-		builder.setIDRange(0, 5000); // Is there any penalty for using a larger number?
-
-		Spell.registry = builder.create();
-	}
-
 	@Nonnull
 	@SuppressWarnings("ConstantConditions")
 	private static <T> T placeholder(){ return null; }

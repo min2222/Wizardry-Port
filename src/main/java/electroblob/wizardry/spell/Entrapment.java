@@ -37,7 +37,7 @@ public class Entrapment extends SpellRay {
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
 				
 				EntityBubble bubble = new EntityBubble(world);
-				bubble.setPosition(target.getX(), target.getY(), target.getZ());
+				bubble.setPos(target.getX(), target.getY(), target.getZ());
 				bubble.setCaster(caster);
 				bubble.lifetime = ((int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				bubble.isDarkOrb = true;
@@ -63,7 +63,7 @@ public class Entrapment extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.PORTAL, x, y - 0.5, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.PORTAL, x, y - 0.5, z, 0, 0, 0);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.1f, 0, 0).spawn(world);
 	}
 

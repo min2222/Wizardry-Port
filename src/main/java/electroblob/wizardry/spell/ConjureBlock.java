@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 public class ConjureBlock extends SpellRay {
 	
@@ -33,11 +34,11 @@ public class ConjureBlock extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster != null && caster.isShiftKeyDown() && level.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
+		if(caster != null && caster.isShiftKeyDown() && world.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
 
 			if(!world.isClientSide){
 				// Dispelling of blocks
-				level.setBlockToAir(pos);
+				world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}else{
 				ParticleBuilder.create(Type.FLASH).pos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5).scale(3)
 				.clr(0.75f, 1, 0.85f).spawn(world);
@@ -57,10 +58,10 @@ public class ConjureBlock extends SpellRay {
 
 			if(!world.isClientSide){
 				
-				level.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
+				world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
 				
-				if(level.getTileEntity(pos) instanceof TileEntityTimer){
-					((TileEntityTimer)level.getTileEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()
+				if(world.getBlockEntity(pos) instanceof TileEntityTimer){
+					((TileEntityTimer)world.getBlockEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()
 							* modifiers.get(WizardryItems.duration_upgrade)));
 				}
 			}

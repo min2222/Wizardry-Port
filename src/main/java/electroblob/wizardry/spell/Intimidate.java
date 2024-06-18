@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
@@ -7,21 +9,19 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityCreature;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.RandomPositionGenerator;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class Intimidate extends SpellAreaEffect {
@@ -48,12 +48,12 @@ public class Intimidate extends SpellAreaEffect {
 	@Override
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster != null && target instanceof EntityCreature){
+		if(caster != null && target instanceof PathfinderMob){
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
 			CompoundTag entityNBT = target.getPersistentData();
-			if(entityNBT != null) entityNBT.setUniqueId(NBT_KEY, caster.getUUID());
+			if(entityNBT != null) entityNBT.putUUID(NBT_KEY, caster.getUUID());
 
 			target.addEffect(new MobEffectInstance(WizardryPotions.fear,
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
@@ -66,7 +66,7 @@ public class Intimidate extends SpellAreaEffect {
 	@Override
 	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(caster != null) origin = caster.getPositionEyes(1);
+		if(caster != null) origin = caster.getEyePosition(1);
 
 		for(int i = 0; i < 30; i++){
 			double x = origin.x - 1 + world.random.nextDouble() * 2;
@@ -85,11 +85,11 @@ public class Intimidate extends SpellAreaEffect {
 	 * @param distance How far the entity will run from the caster
 	 * @return True if a new path was found and set, false if not.
 	 */
-	public static boolean runAway(EntityCreature target, LivingEntity caster, double distance){
+	public static boolean runAway(PathfinderMob target, LivingEntity caster, double distance){
 
-		if(target.getDistance(caster) < distance){
+		if(target.distanceTo(caster) < distance){
 
-			Vec3 Vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(target, (int)distance, (int)(distance/2),
+			Vec3 Vec3d = DefaultRandomPos.getPosAway(target, (int)distance, (int)(distance/2),
 					new Vec3(caster.getX(), caster.getY(), caster.getZ()));
 
 			if(Vec3d == null){
@@ -102,14 +102,14 @@ public class Intimidate extends SpellAreaEffect {
 
 				boolean flag = true;
 
-				if(!target.getNavigator().noPath()){
-					PathPoint point = target.getNavigator().getPath().getFinalPathPoint();
-					if(point != null) flag = caster.getDistance(point.x, point.y, point.z) < distance;
+				if(!target.getNavigation().isDone()){
+					Node point = target.getNavigation().getPath().getEndNode();
+					if(point != null) flag = caster.distanceToSqr(point.x, point.y, point.z) < distance;
 				}
 				// Has a built in mind trick effect because for whatever reason this makes it work with skeletons.
-				target.setAttackTarget(null);
+				target.setTarget(null);
 
-				if(flag) return target.getNavigator().tryMoveToXYZ(Vec3d.x, Vec3d.y, Vec3d.z, 1.25);// target.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
+				if(flag) return target.getNavigation().moveTo(Vec3d.x, Vec3d.y, Vec3d.z, 1.25);// target.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
 			}
 		}
 
@@ -121,18 +121,18 @@ public class Intimidate extends SpellAreaEffect {
 
 		// No need to do this every tick either
 		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.fear)
-				&& event.getEntity() instanceof EntityCreature){
+				&& event.getEntity() instanceof PathfinderMob){
 
 			CompoundTag entityNBT = event.getEntity().getPersistentData();
-			EntityCreature creature = (EntityCreature)event.getEntity();
+			PathfinderMob creature = (PathfinderMob)event.getEntity();
 
 			if(entityNBT != null && entityNBT.hasUUID(NBT_KEY)){
 
-				Entity caster = EntityUtils.getEntityByUUID(creature.world, entityNBT.getUUID(NBT_KEY));
+				Entity caster = EntityUtils.getEntityByUUID(creature.level, entityNBT.getUUID(NBT_KEY));
 
 				if(caster instanceof LivingEntity){
 					double distance = BASE_AVOID_DISTANCE + AVOID_DISTANCE_PER_LEVEL
-							* event.getEntity().getActivePotionEffect(WizardryPotions.fear).getAmplifier();
+							* event.getEntity().getEffect(WizardryPotions.fear).getAmplifier();
 					runAway(creature, (LivingEntity)caster, distance);
 				}
 			}

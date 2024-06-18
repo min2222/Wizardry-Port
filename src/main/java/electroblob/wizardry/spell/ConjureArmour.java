@@ -35,14 +35,14 @@ public class ConjureArmour extends SpellConjuration {
 		// Used this rather than getArmorInventoryList because I need to access the slot itself
 		for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
 			
-			if(caster.getItemStackFromSlot(slot).isEmpty() &&
+			if(caster.getItemBySlot(slot).isEmpty() &&
 					!InventoryUtils.doesPlayerHaveItem(caster, SPECTRAL_ARMOUR_MAP.get(slot))){
 				
 				armour = new ItemStack(SPECTRAL_ARMOUR_MAP.get(slot));
 				IConjuredItem.setDurationMultiplier(armour, modifiers.get(WizardryItems.duration_upgrade));
 				// Sets a blank "ench" tag to trick the renderer into showing the enchantment effect on the armour model
 				NBTExtras.storeTagSafely(armour.getTag(), "ench", new ListTag());
-				caster.setItemStackToSlot(slot, armour);
+				caster.setItemSlot(slot, armour);
 				flag = true;
 			}
 		}

@@ -9,18 +9,18 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EntityBlaze;
-import net.minecraft.world.entity.monster.EntityMagmaCube;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class FrostRay extends SpellRay {
 
@@ -51,11 +51,11 @@ public class FrostRay extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 
-			if(target.isBurning()) target.extinguish();
+			if(target.isOnFire()) target.clearFire();
 
 			if(MagicDamage.isEntityImmune(DamageType.FROST, target)){
 				if(!world.isClientSide && ticksInUse == 1 && caster instanceof Player) ((Player)caster)
-				.sendStatusMessage(Component.translatable("spell.resist", target.getName(),
+				.displayClientMessage(Component.translatable("spell.resist", target.getName(),
 						this.getNameForTranslationFormatted()), true);
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.
@@ -67,7 +67,7 @@ public class FrostRay extends SpellRay {
 
 				if(ticksInUse % 10 == 0){
 					float damage = getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY);
-					if(target instanceof EntityBlaze || target instanceof EntityMagmaCube) damage *= 2;
+					if(target instanceof Blaze || target instanceof MagmaCube) damage *= 2;
 
 					EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeDirectMagicDamage(caster,
 							DamageType.FROST), damage);

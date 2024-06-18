@@ -40,7 +40,7 @@ public class Glide extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.motionY < -0.1 && !caster.isInWater()){
+		if(caster.getDeltaMovement().y < -0.1 && !caster.isInWater()){
 
 			float speed = getProperty(SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 			// There seems to be some sort of 'terminal velocity', presumably due to the slight slowing-down effect in
@@ -48,9 +48,9 @@ public class Glide extends Spell {
 			// appear to have no effect (a bug which had me confused for quite a while!) This also applies to flight.
 			float acceleration = getProperty(ACCELERATION).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
-			caster.motionY = -getProperty(FALL_SPEED).floatValue();
-			if(Math.abs(caster.motionX) < speed && Math.abs(caster.motionZ) < speed){
-				caster.addVelocity(caster.getLookVec().x * acceleration, 0, caster.getLookVec().z * acceleration);
+			caster.setDeltaMovement(caster.getDeltaMovement().x, -getProperty(FALL_SPEED).floatValue(), caster.getDeltaMovement().z);
+			if(Math.abs(caster.getDeltaMovement().x) < speed && Math.abs(caster.getDeltaMovement().z) < speed){
+				caster.push(caster.getLookAngle().x * acceleration, 0, caster.getLookAngle().z * acceleration);
 			}
 
 			if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0.0f;

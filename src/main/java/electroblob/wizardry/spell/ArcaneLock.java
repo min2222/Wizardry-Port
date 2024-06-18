@@ -2,24 +2,28 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.util.*;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.NBTExtras;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class ArcaneLock extends SpellRay {
@@ -61,21 +65,21 @@ public class ArcaneLock extends SpellRay {
 
 	private boolean toggleLock(Level world, BlockPos pos, Player player){
 
-		BlockEntity tileentity = level.getTileEntity(pos);
+		BlockEntity tileentity = world.getBlockEntity(pos);
 
 		if(tileentity != null){
 
-			if(tileentity.getTileData().hasUUID(NBT_KEY)){
+			if(tileentity.getPersistentData().hasUUID(NBT_KEY)){
 				// Unlocking
-				if(level.getPlayerEntityByUUID(tileentity.getTileData().getUUID(NBT_KEY)) == player){
-					NBTExtras.removeUniqueId(tileentity.getTileData(), NBT_KEY);
-					world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
+				if(world.getPlayerByUUID(tileentity.getPersistentData().getUUID(NBT_KEY)) == player){
+					NBTExtras.removeUniqueId(tileentity.getPersistentData(), NBT_KEY);
+                    world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), 3, 512);
 					return true;
 				}
 			}else{
 				// Locking
-				tileentity.getTileData().setUniqueId(NBT_KEY, player.getUUID());
-				world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
+				tileentity.getPersistentData().putUUID(NBT_KEY, player.getUUID());
+                world.markAndNotifyBlock(pos, world.getChunkAt(pos), world.getBlockState(pos), world.getBlockState(pos), 3, 512);
 				return true;
 			}
 		}
@@ -95,13 +99,13 @@ public class ArcaneLock extends SpellRay {
 
 		if(!canBypassLocks(event.getEntity())){
 
-			BlockEntity tileentity = event.getWorld().getTileEntity(event.getPos());
+			BlockEntity tileentity = event.getLevel().getBlockEntity(event.getPos());
 
 			// Prevents arcane-locked containers from being opened
 			// Need to check if it has the unique id first because if it is absent getUUID will return the nil UUID
-			if(tileentity != null && tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
+			if(tileentity != null && tileentity.getPersistentData().hasUUID(ArcaneLock.NBT_KEY)){
 				// Why is getUUID marked @Nullable? It literally creates a UUID and returns it!
-				Player owner = event.getWorld().getPlayerEntityByUUID(tileentity.getTileData().getUUID(ArcaneLock.NBT_KEY));
+				Player owner = event.getLevel().getPlayerByUUID(tileentity.getPersistentData().getUUID(ArcaneLock.NBT_KEY));
 				// Only the player that owns the lock or an ally of that player may open the container
 				// If nobody owns it (i.e. it's part of a shrine, or the owner logged out), player will be null
 				// Unfortunately we can't get the owner's allies if the owner is offline
@@ -118,33 +122,33 @@ public class ArcaneLock extends SpellRay {
 	// block break event below, just in case.
 	@SubscribeEvent
 	public static void onLeftClickBlockEvent(PlayerInteractEvent.LeftClickBlock event){
-		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getWorld(), event.getPos()));
+		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getLevel(), event.getPos()));
 	}
 
 	@SubscribeEvent
 	public static void onBlockBreakEvent(BlockEvent.BreakEvent event){
-		event.setCanceled(checkForLockedBlockBreak(event.getPlayer(), event.getWorld(), event.getPos()));
+		event.setCanceled(checkForLockedBlockBreak(event.getPlayer(), (Level) event.getLevel(), event.getPos()));
 	}
 
 	// Yup, this spell even protects your chests from the enderdragon now!
 	@SubscribeEvent
 	public static void onLivingDestroyBlockEvent(LivingDestroyBlockEvent event){
-		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getEntity().world, event.getPos()));
+		event.setCanceled(checkForLockedBlockBreak(event.getEntity(), event.getEntity().level, event.getPos()));
 	}
 
 	private static boolean checkForLockedBlockBreak(LivingEntity breaker, Level world, BlockPos pos){
 
 		if(!(breaker instanceof Player) || !canBypassLocks((Player)breaker)){
 
-			BlockEntity tileentity = level.getTileEntity(pos);
+			BlockEntity tileentity = world.getBlockEntity(pos);
 
 			// Prevents arcane-locked containers from being broken
 			// Need to check if it has the unique id first because if it is absent getUUID will return the nil UUID
-			if(tileentity != null && tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
+			if(tileentity != null && tileentity.getPersistentData().hasUUID(ArcaneLock.NBT_KEY)){
 				// Only the player that owns the lock may break the container
 				// If nobody owns it (i.e. it's part of a shrine), player will be null
 				// Why is getUUID marked @Nullable? It literally creates a UUID and returns it!
-				if(breaker.getUUID() != tileentity.getTileData().getUUID(ArcaneLock.NBT_KEY)){
+				if(breaker.getUUID() != tileentity.getPersistentData().getUUID(ArcaneLock.NBT_KEY)){
 					return true;
 				}
 			}
@@ -156,15 +160,15 @@ public class ArcaneLock extends SpellRay {
 	private static boolean canBypassLocks(Player player){
 		if(!player.isCreative()) return false;
 		if(Wizardry.settings.creativeBypassesArcaneLock) return true;
-		MinecraftServer server = player.level.getMinecraftServer();
+		MinecraftServer server = player.level.getServer();
 		return server != null && EntityUtils.isPlayerOp(player, server);
 	}
 
 	@SubscribeEvent
 	public static void onExplosionEvent(ExplosionEvent.Detonate event){
 		// Prevents arcane-locked containers from being exploded
-		event.getAffectedBlocks().removeIf(pos -> event.getWorld().getTileEntity(pos) != null
-				&& event.getWorld().getTileEntity(pos).getTileData().hasUUID(NBT_KEY));
+		event.getAffectedBlocks().removeIf(pos -> event.getLevel().getBlockEntity(pos) != null
+				&& event.getLevel().getBlockEntity(pos).getPersistentData().hasUUID(NBT_KEY));
 	}
 
 }

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.EntityThrowable;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -31,7 +32,7 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
  * @author Electroblob
  * @see EntityBomb
  */
-public abstract class EntityMagicProjectile extends EntityThrowable implements IEntityAdditionalSpawnData {
+public abstract class EntityMagicProjectile extends ThrowableProjectile implements IEntityAdditionalSpawnData {
 
 	public static final double LAUNCH_Y_OFFSET = 0.1;
 	public static final int SEEKING_TIME = 15;

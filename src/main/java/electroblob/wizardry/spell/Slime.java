@@ -37,7 +37,7 @@ public class Slime extends SpellRay {
 		if(EntityUtils.isLiving(target) && !(target instanceof EntityMagicSlime)){
 
 			if(target instanceof EntitySlime){
-				if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 
@@ -64,7 +64,7 @@ public class Slime extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.SLIME, x, y, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.SLIME, x, y, z, 0, 0, 0);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.2f, 0.8f, 0.1f).spawn(world);
 	}
 

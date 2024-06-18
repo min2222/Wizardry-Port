@@ -1,15 +1,37 @@
 package electroblob.wizardry.spell;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.IVariable;
 import electroblob.wizardry.data.IVariable.Variable;
 import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
-import electroblob.wizardry.entity.living.*;
-import electroblob.wizardry.entity.projectile.*;
+import electroblob.wizardry.entity.living.EntityDecoy;
+import electroblob.wizardry.entity.living.EntityIceWraith;
+import electroblob.wizardry.entity.living.EntityLightningWraith;
+import electroblob.wizardry.entity.living.EntityShadowWraith;
+import electroblob.wizardry.entity.living.EntityStormElemental;
+import electroblob.wizardry.entity.living.EntityStrayMinion;
+import electroblob.wizardry.entity.projectile.EntityDarknessOrb;
+import electroblob.wizardry.entity.projectile.EntityIceShard;
+import electroblob.wizardry.entity.projectile.EntityLargeMagicFireball;
+import electroblob.wizardry.entity.projectile.EntityLightningDisc;
+import electroblob.wizardry.entity.projectile.EntityMagicArrow;
+import electroblob.wizardry.entity.projectile.EntityMagicFireball;
+import electroblob.wizardry.entity.projectile.EntityMagicProjectile;
 import electroblob.wizardry.integration.DamageSafetyChecker;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.packet.PacketControlInput;
@@ -24,35 +46,47 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.alchemy.PotionUtils;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.entity.ai.EntityAIAttackMelee;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.passive.EntityChicken;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.EntityPotion;
-import net.minecraft.world.entity.projectile.EntitySnowball;
-import net.minecraft.init.Enchantments;
-import net.minecraft.world.item.Items;
+import net.minecraft.core.Direction;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemBow;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.EntityAIAttackMelee;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.SnowGolem;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.Snowball;
+import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -66,13 +100,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class Possession extends SpellRay {
@@ -95,7 +124,7 @@ public class Possession extends SpellRay {
 	public static final IVariable<Integer> SHOOT_COOLDOWN_KEY = new Variable<Integer>(Persistence.DIMENSION_CHANGE).withTicker((p, n) -> Math.max(n-1, 0));
 
 	private static final Multimap<Class<? extends Mob>, BiConsumer<?, Player>> abilities = HashMultimap.create();
-	private static final Map<Class<? extends Mob>, Function<Level, ? extends IProjectile>> projectiles = new HashMap<>();
+	private static final Map<Class<? extends Mob>, Function<Level, ? extends Projectile>> projectiles = new HashMap<>();
 	private static final Set<Class<? extends Mob>> blacklist = new HashSet<>();
 
 	private static final Map<Attribute, UUID> INHERITED_ATTRIBUTES;
@@ -107,17 +136,17 @@ public class Possession extends SpellRay {
 				Attributes.ATTACK_DAMAGE, UUID.fromString("ab67c89e-74a5-4e27-9621-40bffb4f7a03"),
 				Attributes.KNOCKBACK_RESISTANCE, UUID.fromString("05529535-9bcf-42bb-8822-45f5ce6a8f08"));
 
-		addAbility(EntitySpider.class, (spider, player) -> { if(player.collidedHorizontally) player.motionY = 0.2; });
-		addAbility(EntityChicken.class, (chicken, player) -> { if(!player.onGround && player.motionY < 0) player.motionY *= 0.6D; });
-		addAbility(Mob.class, (entity, player) -> { if(!entity.isImmuneToFire() && player.isBurning()) player.extinguish(); });
+		addAbility(Spider.class, (spider, player) -> { if(player.horizontalCollision) player.motionY = 0.2; });
+		addAbility(Chicken.class, (chicken, player) -> { if(!player.onGround && player.motionY < 0) player.motionY *= 0.6D; });
+		addAbility(Mob.class, (entity, player) -> { if(!entity.getType().fireImmune() && player.isOnFire()) player.clearFire(); });
 
-		addProjectile(EntitySnowman.class, EntitySnowball::new); // Woooo snowballs!
-		addProjectile(EntityBlaze.class, EntityMagicFireball::new); // Ugh normal fireballs don't fit so let's just use mine!
-		addProjectile(EntityGhast.class, EntityLargeMagicFireball::new);
+		addProjectile(SnowGolem.class, t -> new Snowball(EntityType.SNOWBALL, t)); // Woooo snowballs!
+		addProjectile(Blaze.class, EntityMagicFireball::new); // Ugh normal fireballs don't fit so let's just use mine!
+		addProjectile(Ghast.class, EntityLargeMagicFireball::new);
 		addProjectile(EntityIceWraith.class, EntityIceShard::new);
 		addProjectile(EntityShadowWraith.class, EntityDarknessOrb::new);
 		addProjectile(EntityStormElemental.class, EntityLightningDisc::new);
-		addProjectile(EntityWitch.class, EntityPotion::new);
+		addProjectile(Witch.class, t -> new ThrownPotion(EntityType.POTION, t));
 
 		blacklist.add(EntityDecoy.class);
 	}
@@ -141,9 +170,9 @@ public class Possession extends SpellRay {
 	}
 
 	@Override
-	public boolean cast(Level world, Player caster, EnumHand hand, int ticksInUse, SpellModifiers modifiers){
+	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		Vec3 look = caster.getLookVec();
+		Vec3 look = caster.getLookAngle();
 		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
 
 		if(!shootSpell(world, origin, look, caster, ticksInUse, modifiers)) return false;
@@ -163,7 +192,7 @@ public class Possession extends SpellRay {
 			Player player = (Player)caster;
 
 			if(!player.isCreative() && player.getHealth() <= getProperty(CRITICAL_HEALTH).floatValue()){
-				player.sendStatusMessage(Component.translatable(
+				player.displayClientMessage(Component.translatable(
 						"spell." + this.getRegistryName() + ".insufficienthealth"), true);
 				return false;
 			}
@@ -180,7 +209,7 @@ public class Possession extends SpellRay {
 	}
 
 	@Override
-	protected boolean onBlockHit(Level world, BlockPos pos, EnumFacing side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse,
+	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse,
                                  SpellModifiers modifiers){
 		return false;
 	}
@@ -211,15 +240,15 @@ public class Possession extends SpellRay {
 			WizardData.get(possessor).setVariable(POSSESSEE_KEY, target);
 			WizardData.get(possessor).setVariable(TIMER_KEY, duration);
 
-			possessor.setPositionAndRotation(target.getX(), target.getY(), target.getZ(), target.rotationYaw, target.rotationPitch);
+			possessor.moveTo(target.getX(), target.getY(), target.getZ(), target.getYRot(), target.getXRot());
 			possessor.eyeHeight = target.getEyeHeight();
 			setSize(possessor, target.getBbWidth(), target.getBbHeight());
 
-			target.dismountRidingEntity();
+			target.stopRiding();
 			target.discard();
-			target.setNoAI(true);
-			target.setAttackTarget(null);
-			target.getPersistentData().setBoolean(NBT_KEY, true);
+			target.setNoAi(true);
+			target.setTarget(null);
+			target.getPersistentData().putBoolean(NBT_KEY, true);
 
 			// Attributes
 
@@ -328,7 +357,7 @@ public class Possession extends SpellRay {
 			victim.isDead = false;
 			victim.setNoAI(false);
 			victim.getPersistentData().removeTag(NBT_KEY);
-			victim.setPosition(player.getX(), player.getY(), player.getZ());
+			victim.setPos(player.getX(), player.getY(), player.getZ());
 			if(!player.world.isClientSide) player.world.addFreshEntity(victim);
 
 			for(MobEffectInstance effect : player.getActivePotionEffects()){
@@ -440,20 +469,20 @@ public class Possession extends SpellRay {
 
 	/** Adds the given factory to the list of projectiles. When a player right-clicks while possessing an entity of the
 	 * given type, the given projectile factory will be invoked to create a projectile, which is then aimed and spawned. */
-	public static <T extends Entity & IProjectile> void addProjectile(Class<? extends Mob> entityType, Function<Level, T> factory){
+	public static <T extends Entity & Projectile> void addProjectile(Class<? extends Mob> entityType, Function<Level, T> factory){
 		projectiles.put(entityType, factory);
 	}
 
 	/** Copied from Entity#setSize, with the call to move(...) removed. This is presumably also better than reflecting
 	 * into Entity#setSize, which is protected. */
-	private static void setSize(Entity entity, float getBbWidth(), float height){
+	private static void setSize(Entity entity, float width, float height){
 
-		if(getBbWidth() != entity.getBbWidth() || height != entity.getBbHeight()){
+		if(width != entity.getBbWidth() || height != entity.getBbHeight()){
 
-			entity.getBbWidth() = getBbWidth();
+			entity.getBbWidth() = width;
 			entity.getBbHeight() = height;
 
-			double halfgetBbWidth() = (double)getBbWidth() / 2.0D;
+			double halfwidth = (double)getBbWidth() / 2.0D;
 			entity.setEntityBoundingBox(new AABB(entity.getX() - halfgetBbWidth(), entity.getY(), entity.getZ() - halfgetBbWidth(), entity.getX() + halfgetBbWidth(), entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfgetBbWidth()));
 		}
 	}
@@ -471,7 +500,7 @@ public class Possession extends SpellRay {
 			if(possessee != null){
 				// Updating these to the player's variables won't have an effect on player movement, but it will
 				// affect various bits of mob-specific logic
-				possessee.setPosition(event.player.getX(), event.player.getY(), event.player.getZ());
+				possessee.setPos(event.player.getX(), event.player.getY(), event.player.getZ());
 				possessee.motionX = event.player.motionX;
 				possessee.motionY = event.player.motionY;
 				possessee.motionZ = event.player.motionZ;
@@ -610,8 +639,8 @@ public class Possession extends SpellRay {
 					if(factory != null){
 
 						IProjectile projectile = factory.apply(possessor.world);
-						Vec3 look = possessor.getLookVec();
-						((Entity)projectile).setPosition(possessor.getX() + look.x, possessor.getY() + possessor.getEyeHeight() + look.y, possessor.getZ() + look.z);
+						Vec3 look = possessor.getLookAngle();
+						((Entity)projectile).setPos(possessor.getX() + look.x, possessor.getY() + possessor.getEyeHeight() + look.y, possessor.getZ() + look.z);
 						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.level.getDifficulty()));
 
 						if(projectile instanceof EntityMagicProjectile) ((EntityMagicProjectile)projectile).setCaster(possessor);

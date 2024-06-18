@@ -1,5 +1,7 @@
 package electroblob.wizardry.event;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.spell.Spell;
@@ -9,9 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * SpellCastEvent is the parent event class for all spell casting events. Methods which subscribe to this event will
@@ -48,7 +49,7 @@ public abstract class SpellCastEvent extends Event {
 		this.modifiers = modifiers;
 		this.source = source;
 		this.caster = caster;
-		this.world = caster.world; // World is required for the position-based casting, but we may as well set it here
+		this.world = caster.level; // World is required for the position-based casting, but we may as well set it here
 		this.x = Double.NaN; // Better to use NaN than some arbitrary number, because NaN will throw an exception when
 		this.y = Double.NaN; // someone tries to operate on it whereas 0, for example, will likely just cause strange
 		this.z = Double.NaN; // behaviour - the cause of which may not be immediately obvious.

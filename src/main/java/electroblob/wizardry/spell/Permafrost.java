@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import java.util.List;
+
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryBlocks;
@@ -10,13 +12,11 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
+import net.minecraft.world.phys.Vec3;
 
 public class Permafrost extends SpellRay {
 
@@ -66,7 +66,7 @@ public class Permafrost extends SpellRay {
 
 			int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
-			List<BlockPos> sphere = BlockUtils.getBlockSphere(pos.up(), radius);
+			List<BlockPos> sphere = BlockUtils.getBlockSphere(pos.above(), radius);
 
 			for(BlockPos pos1 : sphere){
 				flag |= tryToPlaceIce(world, pos1, caster, duration);
@@ -82,10 +82,10 @@ public class Permafrost extends SpellRay {
 
 	private boolean tryToPlaceIce(Level world, BlockPos pos, LivingEntity caster, int duration){
 
-		if(level.getBlockState(pos.down()).isSideSolid(world, pos.down(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
+		if(world.getBlockState(pos.below()).isFaceSturdy(world, pos.below(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
 			if(BlockUtils.canPlaceBlock(caster, world, pos)){
-				level.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
-				world.scheduleUpdate(pos.toImmutable(), WizardryBlocks.permafrost, duration);
+				world.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
+				world.scheduleTick(pos.immutable(), WizardryBlocks.permafrost, duration);
 				return true;
 			}
 		}

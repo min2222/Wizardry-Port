@@ -36,7 +36,7 @@ public class Flamecatcher extends SpellConjuration {
 			double x = caster.getX() + world.random.nextDouble() * 2 - 1;
 			double y = caster.getY() + caster.getEyeHeight() - 0.5 + world.random.nextDouble();
 			double z = caster.getZ() + world.random.nextDouble() * 2 - 1;
-			world.spawnParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+			world.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
 		}
 	}
 

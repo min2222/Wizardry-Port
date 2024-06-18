@@ -26,7 +26,7 @@ public class Decay extends SpellConstructRanged<EntityDecay> {
 
 		BlockPos origin = new BlockPos(x, y, z);
 
-		if(level.getBlockState(origin).isNormalCube()) return false;
+		if(world.getBlockState(origin).isCollisionShapeFullBlock(world, origin)) return false;
 		
 		super.spawnConstruct(world, x, y, z, side, caster, modifiers);
 

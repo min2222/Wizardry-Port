@@ -2,9 +2,9 @@ package electroblob.wizardry.spell;
 
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 public class Leap extends Spell {
@@ -21,23 +21,23 @@ public class Leap extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.onGround){
+		if(caster.isOnGround()){
 
-			caster.motionY = getProperty(VERTICAL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
+			caster.setDeltaMovement(caster.getDeltaMovement().x, getProperty(VERTICAL_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY), caster.getDeltaMovement().z);
 			double horizontalSpeed = getProperty(HORIZONTAL_SPEED).floatValue();
-			caster.addVelocity(caster.getLookVec().x * horizontalSpeed, 0, caster.getLookVec().z * horizontalSpeed);
+			caster.push(caster.getLookAngle().x * horizontalSpeed, 0, caster.getLookAngle().z * horizontalSpeed);
 
 			if(world.isClientSide){
 				for(int i = 0; i < 10; i++){
 					double x = caster.getX() + world.random.nextFloat() - 0.5F;
 					double y = caster.getY();
 					double z = caster.getZ() + world.random.nextFloat() - 0.5F;
-					world.spawnParticle(ParticleTypes.CLOUD, x, y, z, 0, 0, 0);
+					world.addParticle(ParticleTypes.CLOUD, x, y, z, 0, 0, 0);
 				}
 			}
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
-			caster.swingArm(hand);
+			caster.swing(hand);
 			return true;
 		}
 

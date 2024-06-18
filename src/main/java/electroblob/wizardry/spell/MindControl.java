@@ -1,5 +1,8 @@
 package electroblob.wizardry.spell;
 
+import java.util.Arrays;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.EntityEvilWizard;
 import electroblob.wizardry.item.SpellActions;
@@ -11,31 +14,31 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.item.EntityArmorStand;
-import net.minecraft.world.entity.passive.EntitySheep;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.npc.Npc;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.Tags.EntityTypes;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Arrays;
-import java.util.List;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber
 public class MindControl extends SpellRay {
@@ -60,7 +63,7 @@ public class MindControl extends SpellRay {
 				if(!world.isClientSide){
 					if(caster instanceof Player){
 						// Adds a message saying that the player/boss entity/wizard resisted mind control
-						((Player)caster).sendStatusMessage(Component.translatable("spell.resist", target.getName(),
+						((Player)caster).displayClientMessage(Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
 					}
 				}
@@ -70,14 +73,14 @@ public class MindControl extends SpellRay {
 				if(!world.isClientSide){
 					if(!MindControl.findMindControlTarget((Mob)target, caster, world)){
 						// If no valid target was found, this just acts like mind trick.
-						((Mob)target).setAttackTarget(null);
+						((Mob)target).setTarget(null);
 					}
 				}
 
-				if(target instanceof EntitySheep && ((EntitySheep)target).getFleeceColor() == EnumDyeColor.BLUE
+				if(target instanceof Sheep && ((Sheep)target).getColor() == DyeColor.BLUE
 						&& EntityUtils.canDamageBlocks(caster, world)){
-					if(!world.isClientSide) ((EntitySheep)target).setFleeceColor(EnumDyeColor.RED); // Wololo!
-					world.playSound(caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
+					if(!world.isClientSide) ((Sheep)target).setColor(DyeColor.RED); // Wololo!
+					world.playLocalSound(caster.getX(), caster.getY(), caster.getZ(), SoundEvents.EVOKER_PREPARE_WOLOLO, WizardrySounds.SPELLS, 1, 1, false);
 				}
 
 				if(!world.isClientSide) startControlling((Mob)target, caster,
@@ -87,10 +90,10 @@ public class MindControl extends SpellRay {
 			if(world.isClientSide){
 				
 				for(int i=0; i<10; i++){
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+					ParticleBuilder.create(Type.DARK_MAGIC, world.random, target.getX(),
 							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.8f, 0.2f, 1.0f).spawn(world);
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, target.getX(),
+					ParticleBuilder.create(Type.DARK_MAGIC, world.random, target.getX(),
 							target.getY() + target.getEyeHeight(), target.getZ(), 0.25, false)
 					.clr(0.2f, 0.04f, 0.25f).spawn(world);
 				}
@@ -117,13 +120,13 @@ public class MindControl extends SpellRay {
 
 		// TODO: Add a max health limit that scales with potency
 
-		return target instanceof Mob && target.isNonBoss() && !(target instanceof INpc)
+		return target instanceof Mob && !target.getType().is(EntityTypes.BOSSES) && !(target instanceof Npc)
 				&& !(target instanceof EntityEvilWizard) && !Arrays.asList(Wizardry.settings.mindControlTargetsBlacklist)
-				.contains(EntityList.getKey(target.getClass()));
+				.contains(ForgeRegistries.ENTITY_TYPES.getKey(target.getType()));
 	}
 
 	public static void startControlling(Mob target, LivingEntity controller, int duration){
-		target.getPersistentData().setUniqueId(NBT_KEY, controller.getUUID());
+		target.getPersistentData().putUUID(NBT_KEY, controller.getUUID());
 		target.addEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
 	}
 
@@ -143,24 +146,24 @@ public class MindControl extends SpellRay {
 		// no longer lasts until the creature dies; instead it is a potion effect which continues to
 		// set the target until it wears off.
 		List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(
-				target.getEntityAttribute(Attributes.FOLLOW_RANGE).getAttributeValue(),
+				target.getAttribute(Attributes.FOLLOW_RANGE).getBaseValue(),
 				target.getX(), target.getY(), target.getZ(), world);
 
 		possibleTargets.remove(target);
-		possibleTargets.remove(target.getRidingEntity());
-		possibleTargets.removeIf(e -> e instanceof EntityArmorStand);
+		possibleTargets.remove(target.getVehicle());
+		possibleTargets.removeIf(e -> e instanceof ArmorStand);
 
 		LivingEntity newAITarget = null;
 
 		for(LivingEntity possibleTarget : possibleTargets){
 			if(AllyDesignationSystem.isValidTarget(caster, possibleTarget) && (newAITarget == null
-					|| target.getDistance(possibleTarget) < target.getDistance(newAITarget))){
+					|| target.distanceTo(possibleTarget) < target.distanceTo(newAITarget))){
 				newAITarget = possibleTarget;
 			}
 		}
 
 		if(newAITarget != null){
-			target.setAttackTarget(newAITarget);
+			target.setTarget(newAITarget);
 			return true;
 		}
 
@@ -191,7 +194,7 @@ public class MindControl extends SpellRay {
 				}
 			}
 			// If the caster couldn't be found or no valid target was found, this just acts like mind trick.
-			entity.setAttackTarget(null);
+			entity.setTarget(null);
 		}
 	}
 
@@ -210,9 +213,9 @@ public class MindControl extends SpellRay {
 			
 			// Processes targeting if the current target is null or has died
 			if(((Mob)event.getEntity()).getTarget() == null
-				|| !((Mob)event.getEntity()).getTarget().isEntityAlive()){
+				|| !((Mob)event.getEntity()).getTarget().isAlive()){
 			
-				processTargeting(entity.world, entity, null);
+				processTargeting(entity.level, entity, null);
 			}
 		}
 	}
@@ -221,23 +224,23 @@ public class MindControl extends SpellRay {
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// The != null check prevents infinite loops with mind trick
 		if(event.getTarget() != null && event.getEntity() instanceof Mob)
-			processTargeting(event.getEntity().world, (Mob)event.getEntity(), event.getTarget());
+			processTargeting(event.getEntity().level, (Mob)event.getEntity(), event.getTarget());
 	}
 
 	@SubscribeEvent
-	public static void onPotionExpiryEvent(PotionEvent.PotionExpiryEvent event){
-		onEffectEnd(event.getPotionEffect(), event.getEntity());
+	public static void onPotionExpiryEvent(MobEffectEvent.Expired event){
+		onEffectEnd(event.getEffectInstance(), event.getEntity());
 	}
 
 	@SubscribeEvent
-	public static void onPotionExpiryEvent(PotionEvent.PotionRemoveEvent event){
-		onEffectEnd(event.getPotionEffect(), event.getEntity());
+	public static void onPotionExpiryEvent(MobEffectEvent.Remove event){
+		onEffectEnd(event.getEffectInstance(), event.getEntity());
 	}
 
 	private static void onEffectEnd(MobEffectInstance effect, Entity entity){
-		if(effect != null && effect.getPotion() == WizardryPotions.mind_control && entity instanceof Mob){
-			((Mob)entity).setAttackTarget(null); // End effect
-			((Mob)entity).setRevengeTarget(null); // End effect
+		if(effect != null && effect.getEffect() == WizardryPotions.mind_control && entity instanceof Mob){
+			((Mob)entity).setTarget(null); // End effect
+			((Mob)entity).setLastHurtByMob(null); // End effect
 		}
 	}
 

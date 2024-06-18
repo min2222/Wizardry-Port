@@ -159,7 +159,7 @@ public abstract class SpellRay extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 		
-		Vec3 look = caster.getLookVec();
+		Vec3 look = caster.getLookAngle();
 		Vec3 origin = new Vec3(caster.getX(), caster.getY() + caster.getEyeHeight() - Y_OFFSET, caster.getZ());
 		if(!this.isContinuous && world.isClientSide && !Wizardry.proxy.isFirstPerson(caster)){
 			origin = origin.add(look.scale(1.2));
@@ -210,7 +210,7 @@ public abstract class SpellRay extends Spell {
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
-		Vec3 vec = new Vec3(direction.getDirectionVec());
+		Vec3 vec = new Vec3(direction.step());
 		Vec3 origin = new Vec3(x, y, z);
 		
 		if(!shootSpell(world, origin, vec, null, ticksInUse, modifiers)) return false;

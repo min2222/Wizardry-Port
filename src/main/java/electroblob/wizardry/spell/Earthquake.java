@@ -1,19 +1,19 @@
  package electroblob.wizardry.spell;
 
  import electroblob.wizardry.Wizardry;
- import electroblob.wizardry.entity.construct.EntityEarthquake;
- import electroblob.wizardry.item.SpellActions;
- import electroblob.wizardry.registry.WizardryItems;
- import electroblob.wizardry.util.BlockUtils;
- import electroblob.wizardry.util.EntityUtils;
- import electroblob.wizardry.util.SpellModifiers;
- import net.minecraft.world.level.block.Block;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.core.Direction;
- import net.minecraft.core.particles.ParticleTypes;
- import net.minecraft.world.entity.LivingEntity;
- import net.minecraft.world.entity.player.Player;
- import net.minecraft.world.level.Level;
+import electroblob.wizardry.entity.construct.EntityEarthquake;
+import electroblob.wizardry.item.SpellActions;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
  public class Earthquake extends SpellConstruct<EntityEarthquake> {
 
@@ -43,7 +43,7 @@
 		
 		if(world.isClientSide){
 
-			world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, x, y + 0.1, z, 0, 0, 0);
+			world.addParticle(ParticleTypes.EXPLOSION, x, y + 0.1, z, 0, 0, 0);
 
 			double particleX, particleZ;
 
@@ -53,8 +53,8 @@
 				particleZ = z - 1.0d + 2 * world.random.nextDouble();
 
 				BlockState block = BlockUtils.getBlockEntityIsStandingOn(caster);
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, y,
-						particleZ, particleX - x, 0, particleZ - z, Block.getStateId(block));
+				world.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), particleX, y,
+						particleZ, particleX - x, 0, particleZ - z);
 			}
 
 			EntityUtils.getEntitiesWithinRadius(15, x, y, z, world, Player.class)

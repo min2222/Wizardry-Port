@@ -39,7 +39,7 @@ public class ForestsCurse extends SpellAreaEffect {
 			int amplifier = (int)(getProperty(EFFECT_STRENGTH).floatValue() + bonusAmplifier);
 
 			target.addEffect(new MobEffectInstance(MobEffects.POISON, duration, amplifier));
-			target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, duration, amplifier));
+			target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, amplifier));
 			target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, amplifier));
 		}
 

@@ -1,20 +1,24 @@
 package electroblob.wizardry.spell;
 
+import java.util.List;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.util.Mth;
+import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class LightningPulse extends Spell {
 
@@ -36,7 +40,7 @@ public class LightningPulse extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.onGround){
+		if(caster.isOnGround()){
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(
 					getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade),
@@ -57,13 +61,11 @@ public class LightningPulse extends Spell {
 						dx /= vectorLength;
 						dz /= vectorLength;
 
-						target.motionX = getProperty(REPULSION_VELOCITY).floatValue() * dx;
-						target.motionY = 0;
-						target.motionZ = getProperty(REPULSION_VELOCITY).floatValue() * dz;
+						target.setDeltaMovement(getProperty(REPULSION_VELOCITY).floatValue() * dx, 0, getProperty(REPULSION_VELOCITY).floatValue() * dz);
 
 						// Player motion is handled on that player's client so needs packets
 						if(target instanceof ServerPlayer){
-							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+							((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 						}
 					}
 				}

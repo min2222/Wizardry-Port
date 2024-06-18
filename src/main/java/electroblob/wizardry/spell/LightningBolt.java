@@ -7,14 +7,15 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -48,21 +49,23 @@ public class LightningBolt extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(world.canBlockSeeSky(pos.up())){
+		if(world.canSeeSky(pos.above())){
 
 			if(!world.isClientSide){
 				// Temporarily disable the fire tick gamerule if player block damage is disabled
 				// Bit of a hack but it works fine!
-				boolean doFireTick = level.getGameRules().getBoolean("doFireTick");
-				if(doFireTick && !Wizardry.settings.playerBlockDamage) level.getGameRules().setOrCreateGameRule("doFireTick", "false");
+				boolean doFireTick = world.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK);
+				if(doFireTick && !Wizardry.settings.playerBlockDamage) world.getGameRules().getRule(GameRules.RULE_DOFIRETICK).set(false, world.getServer());
 
-				EntityLightningBolt lightning = new EntityLightningBolt(world, pos.getX(), pos.getY(), pos.getZ(), false);
-				if(caster != null) lightning.getPersistentData().setUniqueId(SUMMONER_NBT_KEY, caster.getUUID());
-				lightning.getPersistentData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
-				world.addWeatherEffect(lightning);
+                net.minecraft.world.entity.LightningBolt lightning = new net.minecraft.world.entity.LightningBolt(EntityType.LIGHTNING_BOLT, world);
+                lightning.setPos(pos.getX(), pos.getY(), pos.getZ());
+                lightning.setVisualOnly(false);
+				if(caster != null) lightning.getPersistentData().putUUID(SUMMONER_NBT_KEY, caster.getUUID());
+				lightning.getPersistentData().putFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+				world.addFreshEntity(lightning);
 
 				// Reset doFireTick to true if it was true before
-				if(doFireTick && !Wizardry.settings.playerBlockDamage) level.getGameRules().setOrCreateGameRule("doFireTick", "true");
+				if(doFireTick && !Wizardry.settings.playerBlockDamage) world.getGameRules().getRule(GameRules.RULE_DOFIRETICK).set(true, world.getServer());
 			}
 
 			return true;
@@ -85,7 +88,7 @@ public class LightningBolt extends SpellRay {
 
 		if(event.getLightning().getPersistentData().hasUUID(SUMMONER_NBT_KEY)){
 
-			summoner = EntityUtils.getEntityByUUID(event.getLightning().world,
+			summoner = EntityUtils.getEntityByUUID(event.getLightning().level,
 					event.getLightning().getPersistentData().getUUID(SUMMONER_NBT_KEY));
 
 			if(!(summoner instanceof LivingEntity)) summoner = null;
@@ -99,7 +102,7 @@ public class LightningBolt extends SpellRay {
 
 			// Don't need DamageSafetyChecker here because this isn't an attack event
 			EntityUtils.attackEntityWithoutKnockback(event.getEntity(), source, damage);
-			event.getEntity().getPersistentData().setBoolean(IMMUNE_TO_LIGHTNING_NBT_KEY, true);
+			event.getEntity().getPersistentData().putBoolean(IMMUNE_TO_LIGHTNING_NBT_KEY, true);
 		}
 	}
 
@@ -108,7 +111,7 @@ public class LightningBolt extends SpellRay {
 		if(event.getEntity().getPersistentData().contains(IMMUNE_TO_LIGHTNING_NBT_KEY)
 				&& event.getSource() == DamageSource.LIGHTNING_BOLT){
 			event.setCanceled(true);
-			event.getEntity().getPersistentData().removeTag(IMMUNE_TO_LIGHTNING_NBT_KEY);
+			event.getEntity().getPersistentData().remove(IMMUNE_TO_LIGHTNING_NBT_KEY);
 		}
 	}
 	

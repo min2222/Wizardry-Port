@@ -52,7 +52,7 @@ public class SummonSpiritWolf extends Spell {
 			if(pos == null) return false;
 
 			EntitySpiritWolf wolf = new EntitySpiritWolf(world);
-			wolf.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+			wolf.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 			wolf.setTamed(true);
 			wolf.setOwnerId(caster.getUUID());
 			// Potency gives the wolf more strength AND more health

@@ -56,7 +56,7 @@ public class Banish extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.PORTAL, x, y - 0.5, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.PORTAL, x, y - 0.5, z, 0, 0, 0);
 		ParticleBuilder.create(Type.DARK_MAGIC).pos(x, y, z).clr(0.2f, 0, 0.2f).spawn(world);
 	}
 
@@ -76,7 +76,7 @@ public class Banish extends SpellRay {
 				double dx1 = entity.getX();
 				double dy1 = entity.getY() + entity.getBbHeight() * world.random.nextFloat();
 				double dz1 = entity.getZ();
-				world.spawnParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.random.nextDouble() - 0.5,
+				world.addParticle(ParticleTypes.PORTAL, dx1, dy1, dz1, world.random.nextDouble() - 0.5,
 						world.random.nextDouble() - 0.5, world.random.nextDouble() - 0.5);
 			}
 
@@ -87,17 +87,17 @@ public class Banish extends SpellRay {
 
 			// This means stuff like snow layers is ignored, meaning when on snow-covered ground the target does
 			// not teleport 1 block above the ground.
-			if(!level.getBlockState(new BlockPos(x, y, z)).getMaterial().blocksMovement()){
+			if(!world.getBlockState(new BlockPos(x, y, z)).getMaterial().blocksMotion()){
 				y--;
 			}
 
-			if(level.getBlockState(new BlockPos(x, y + 1, z)).getMaterial().blocksMovement()
-					|| level.getBlockState(new BlockPos(x, y + 2, z)).getMaterial().blocksMovement()){
+			if(world.getBlockState(new BlockPos(x, y + 1, z)).getMaterial().blocksMotion()
+					|| world.getBlockState(new BlockPos(x, y + 2, z)).getMaterial().blocksMotion()){
 				return false;
 			}
 
 			if(!world.isClientSide){
-				entity.setPositionAndUpdate(x + 0.5, y + 1, z + 0.5);
+				entity.moveTo(x + 0.5, y + 1, z + 0.5);
 			}
 
 			this.playSound(world, entity, 0, -1, new SpellModifiers());

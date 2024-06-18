@@ -113,7 +113,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				T minion = minionFactory.apply(world);
 
 				// In this case we don't care whether the minions can fly or not.
-				minion.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+				minion.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				this.addMinionExtras(minion, pos, null, modifiers, i);
 
@@ -167,7 +167,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				
 				T minion = createMinion(world, caster, modifiers);
 				
-				minion.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+				minion.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 				minion.setCaster(caster);
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers

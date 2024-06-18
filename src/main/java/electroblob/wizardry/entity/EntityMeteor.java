@@ -11,12 +11,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class EntityMeteor extends EntityFallingBlock {
+public class EntityMeteor extends FallingBlockEntity {
 
 	/**
 	 * The entity blast multiplier.

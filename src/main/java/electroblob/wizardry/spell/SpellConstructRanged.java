@@ -106,7 +106,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 			
 			if(!world.isClientSide){
 				
-				Vec3 look = caster.getLookVec();
+				Vec3 look = caster.getLookAngle();
 				
 				double x = caster.getX() + look.x * range;
 				double y = caster.getY() + caster.getEyeHeight() + look.y * range;
@@ -171,7 +171,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 		
 		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
 		Vec3 origin = new Vec3(x, y, z);
-		Vec3 endpoint = origin.add(new Vec3(direction.getDirectionVec()).scale(range));
+		Vec3 endpoint = origin.add(new Vec3(direction.step()).scale(range));
 		HitResult rayTrace = world.rayTraceBlocks(origin, endpoint, hitLiquids, ignoreUncollidables, false);
 
 		if(rayTrace != null && rayTrace.typeOfHit == HitResult.Type.BLOCK && (rayTrace.sideHit == Direction.UP ||

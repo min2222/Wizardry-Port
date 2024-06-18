@@ -30,7 +30,7 @@ public class Enrage extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(caster != null && target instanceof Mob){
-			target.setRevengeTarget(caster); // Yours truly, angry mobs
+			target.setLastHurtByMob(caster); // Yours truly, angry mobs
 		}
 
 		return true;
@@ -39,7 +39,7 @@ public class Enrage extends SpellAreaEffect {
 	@Override
 	protected void spawnParticleEffect(Level world, Vec3 origin, double radius, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
-		if(caster != null) origin = caster.getPositionEyes(1);
+		if(caster != null) origin = caster.getEyePosition(1);
 
 		for(int i = 0; i < 30; i++){
 			double x = origin.x - 1 + world.random.nextDouble() * 2;

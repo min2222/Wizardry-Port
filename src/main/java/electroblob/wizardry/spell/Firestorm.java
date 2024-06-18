@@ -89,7 +89,7 @@ public class Firestorm extends SpellAreaEffect {
 			for(int i = -(int)radius; i <= (int)radius; i++){
 				for(int j = -(int)radius; j <= (int)radius; j++){
 
-					BlockPos pos = new BlockPos(origin).add(i, 0, j);
+					BlockPos pos = new BlockPos(origin).offset(i, 0, j);
 
 					Integer y = BlockUtils.getNearestSurface(world, new BlockPos(pos), Direction.UP, (int)radius, true, SurfaceCriteria.NOT_AIR_TO_AIR);
 
@@ -102,7 +102,7 @@ public class Firestorm extends SpellAreaEffect {
 						// Randomised with weighting so that the nearer the block the more likely it is to be set alight.
 						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius && dist > 1.5
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
-							level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
+							world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 						}
 					}
 				}

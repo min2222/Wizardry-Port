@@ -8,7 +8,9 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -32,30 +34,30 @@ public class PocketFurnace extends Spell {
 
 		ItemStack stack, result;
 
-		for(int i = 0; i < caster.inventory.getSizeInventory() && usesLeft > 0; i++){
+		for(int i = 0; i < caster.getInventory().getContainerSize() && usesLeft > 0; i++){
 
-			stack = caster.inventory.getStackInSlot(i);
+			stack = caster.getInventory().getItem(i);
 
 			if(!stack.isEmpty() && !world.isClientSide){
 
 				result = FurnaceRecipes.instance().getSmeltingResult(stack);
 
-				if(!result.isEmpty() && !(stack.getItem() instanceof ItemTool) && !(stack.getItem() instanceof ItemSword)
-						&& !(stack.getItem() instanceof ItemArmor)
+				if(!result.isEmpty() && !(stack.getItem() instanceof ItemTool) && !(stack.getItem() instanceof SwordItem)
+						&& !(stack.getItem() instanceof ArmorItem)
 						&& !Settings.containsMetaItem(Wizardry.settings.pocketFurnaceItemBlacklist, stack)){
 
 					if(stack.getCount() <= usesLeft){
 						ItemStack stack2 = new ItemStack(result.getItem(), stack.getCount(), result.getItemDamage());
 						if(InventoryUtils.doesPlayerHaveItem(caster, result.getItem())){
-							caster.inventory.addItemStackToInventory(stack2);
-							caster.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+							caster.getInventory().addItemStackToInventory(stack2);
+							caster.getInventory().setInventorySlotContents(i, ItemStack.EMPTY);
 						}else{
-							caster.inventory.setInventorySlotContents(i, stack2);
+							caster.getInventory().setInventorySlotContents(i, stack2);
 						}
 						usesLeft -= stack.getCount();
 					}else{
-						caster.inventory.remove(i, usesLeft);
-						caster.inventory.addItemStackToInventory(
+						caster.getInventory().remove(i, usesLeft);
+						caster.getInventory().addItemStackToInventory(
 								new ItemStack(result.getItem(), usesLeft, result.getItemDamage()));
 						usesLeft = 0;
 					}
@@ -70,7 +72,7 @@ public class PocketFurnace extends Spell {
 				double x1 = (double)((float)caster.getX() + world.random.nextFloat() * 2 - 1.0F);
 				double y1 = (double)((float)caster.getY() + caster.getEyeHeight() - 0.5F + world.random.nextFloat());
 				double z1 = (double)((float)caster.getZ() + world.random.nextFloat() * 2 - 1.0F);
-				world.spawnParticle(ParticleTypes.FLAME, x1, y1, z1, 0, 0.01F, 0);
+				world.addParticle(ParticleTypes.FLAME, x1, y1, z1, 0, 0.01F, 0);
 			}
 		}
 

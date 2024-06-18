@@ -46,12 +46,12 @@ public class CelestialSmite extends SpellRay {
 
 		if(world.isClientSide){
 
-			ParticleBuilder.create(Type.BEAM).pos(hit.x, level.getActualHeight(), hit.z).target(hit).scale(8)
+			ParticleBuilder.create(Type.BEAM).pos(hit.x, world.getActualHeight(), hit.z).target(hit).scale(8)
 			.clr(0xffbf00).time(10).spawn(world);
 			ParticleBuilder.create(Type.SPHERE).pos(hit).scale(4).clr(0xfff098).spawn(world);
 
 			if(side == Direction.UP){
-				Vec3 vec = hit.add(new Vec3(side.getDirectionVec()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
+				Vec3 vec = hit.add(new Vec3(side.step()).scale(GeometryUtils.ANTI_Z_FIGHTING_OFFSET));
 				ParticleBuilder.create(Type.SCORCH).pos(vec).face(side).scale(3).spawn(world);
 			}
 		}

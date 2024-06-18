@@ -5,12 +5,12 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 	
@@ -28,13 +28,13 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 		if(side == null) return false;
 
 		BlockPos blockHit = new BlockPos(x, y, z);
-		if(side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) blockHit = blockHit.offset(side);
+		if(side.getAxisDirection() == Direction.AxisDirection.NEGATIVE) blockHit = blockHit.relative(side);
 
-		if(level.getBlockState(blockHit).isNormalCube()) return false;
+		if(world.getBlockState(blockHit).isCollisionShapeFullBlock(world, blockHit)) return false;
 
 		Vec3 origin = new Vec3(x, y, z);
 
-		Vec3 pos = origin.add(new Vec3(side.getOpposite().getDirectionVec()));
+		Vec3 pos = origin.add(new Vec3(side.getOpposite().step()));
 		
 		// Now always spawns a spike exactly at the position aimed at
 		super.spawnConstruct(world, pos.x, pos.y, pos.z, side, caster, modifiers);
@@ -49,17 +49,17 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 
 			// First, generate a random vector of length radius with a z component of zero
 			// Then rotate it so that what was south is now the side that was hit
-			Vec3 offset = Vec3.fromPitchYaw(world.random.nextFloat() * 180 - 90, world.random.nextBoolean() ? 0 : 180)
-					.scale(radius).rotateYaw(side.getHorizontalAngle() * (float)Math.PI/180).rotatePitch(GeometryUtils.getPitch(side) * (float)Math.PI/180);
+			Vec3 offset = Vec3.directionFromRotation(world.random.nextFloat() * 180 - 90, world.random.nextBoolean() ? 0 : 180)
+					.scale(radius).yRot(side.toYRot() * (float)Math.PI/180).xRot(GeometryUtils.getPitch(side) * (float)Math.PI/180);
 
-			if(side.getAxis().isHorizontal()) offset = offset.rotateYaw((float)Math.PI/2);
+			if(side.getAxis().isHorizontal()) offset = offset.yRot((float)Math.PI/2);
 
 			Integer surface = BlockUtils.getNearestSurface(world, new BlockPos(origin.add(offset)), side,
-					(int)maxRadius, true, BlockUtils.SurfaceCriteria.basedOn(BlockState::isNormalCube));
+					(int)maxRadius, true, BlockUtils.SurfaceCriteria.basedOn(this::isCollisionShapeFullBlock));
 
 			if(surface != null){
 				Vec3 vec = GeometryUtils.replaceComponent(origin.add(offset), side.getAxis(), surface)
-						.subtract(new Vec3(side.getDirectionVec()));
+						.subtract(new Vec3(side.step()));
 				super.spawnConstruct(world, vec.x, vec.y, vec.z, side, caster, modifiers);
 			}
 		}
@@ -67,10 +67,14 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 		return true;
 	}
 	
+    public boolean isCollisionShapeFullBlock(BlockGetter p_60839_, BlockPos p_60840_) {
+        return p_60839_.getBlockState(p_60840_).isCollisionShapeFullBlock(p_60839_, p_60840_);
+    }
+	
 	@Override
 	protected void addConstructExtras(EntityIceSpike construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		// In this particular case, lifetime is implemented as a delay instead so is treated differently.
-		construct.lifetime = 30 + construct.world.random.nextInt(15);
+		construct.lifetime = 30 + construct.level.random.nextInt(15);
 		construct.setFacing(side);
 	}
 

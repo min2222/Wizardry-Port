@@ -44,12 +44,12 @@ public class Detonate extends SpellRay {
 			for(LivingEntity target : targets){
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),
 						// Damage decreases with distance but cannot be less than 0, naturally.
-						Math.max(getProperty(MAX_DAMAGE).floatValue() - (float)target.getDistance(pos.getX() + 0.5,
+						Math.max(getProperty(MAX_DAMAGE).floatValue() - (float)target.distanceToSqr(pos.getX() + 0.5,
 								pos.getY() + 0.5, pos.getZ() + 0.5) * 4, 0) * modifiers.get(SpellModifiers.POTENCY));
 			}
 			
 		}else{
-			world.spawnParticle(ParticleTypes.EXPLOSION_HUGE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
+			world.addParticle(ParticleTypes.EXPLOSION_EMITTER, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, 0, 0);
 		}
 		
 		return true;
@@ -62,7 +62,7 @@ public class Detonate extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
 	}
 
 }

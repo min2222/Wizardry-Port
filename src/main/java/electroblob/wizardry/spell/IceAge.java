@@ -105,7 +105,7 @@ public class IceAge extends SpellAreaEffect {
 			for(int i = -(int)radius; i <= (int)radius; i++){
 				for(int j = -(int)radius; j <= (int)radius; j++){
 
-					BlockPos pos = new BlockPos(origin).add(i, 0, j);
+					BlockPos pos = new BlockPos(origin).offset(i, 0, j);
 
 					Integer y = BlockUtils.getNearestSurface(world, new BlockPos(pos), Direction.UP, (int)radius, true, BlockUtils.SurfaceCriteria.SOLID_LIQUID_TO_AIR);
 
@@ -118,7 +118,7 @@ public class IceAge extends SpellAreaEffect {
 						// Randomised with weighting so that the nearer the block the more likely it is to be snowed.
 						if(y != -1 && world.random.nextInt((int)(dist * 2) + 1) < radius && dist < radius
 								&& BlockUtils.canPlaceBlock(caster, world, pos)){
-							BlockUtils.freeze(world, pos.down(), true);
+							BlockUtils.freeze(world, pos.below(), true);
 						}
 					}
 				}

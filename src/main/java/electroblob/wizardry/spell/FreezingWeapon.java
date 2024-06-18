@@ -41,7 +41,7 @@ public class FreezingWeapon extends Spell {
 						&& !EnchantmentHelper.getEnchantments(stack).containsKey(WizardryEnchantments.freezing_weapon)){
 					// The enchantment level as determined by the damage multiplier. The + 0.5f is so that
 					// weird float processing doesn't incorrectly round it down.
-					stack.addEnchantment(WizardryEnchantments.freezing_weapon,
+					stack.enchant(WizardryEnchantments.freezing_weapon,
 							modifiers.get(SpellModifiers.POTENCY) == 1.0f ? 1
 									: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f)
 											/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f));

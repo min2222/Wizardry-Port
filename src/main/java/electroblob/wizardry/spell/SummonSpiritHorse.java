@@ -52,7 +52,7 @@ public class SummonSpiritHorse extends Spell {
 			if(pos == null) return false;
 
 			EntitySpiritHorse horse = new EntitySpiritHorse(world);
-			horse.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+			horse.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 			horse.setTamedBy(caster);
 			horse.setHorseSaddled(true);
 			world.addFreshEntity(horse);

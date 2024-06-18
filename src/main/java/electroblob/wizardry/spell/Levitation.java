@@ -42,12 +42,12 @@ public class Levitation extends Spell {
 
 		if(!Wizardry.settings.replaceVanillaFallDamage) caster.fallDistance = 0;
 
-		caster.motionY = caster.motionY < getProperty(SPEED).floatValue() ? caster.motionY
-				+ getProperty(ACCELERATION).floatValue() : caster.motionY;
+		caster.setDeltaMovement(caster.getDeltaMovement().x, caster.getDeltaMovement().y < getProperty(SPEED).floatValue() ? caster.getDeltaMovement().y
+				+ getProperty(ACCELERATION).floatValue() : caster.getDeltaMovement().y, caster.getDeltaMovement().z);
 
 		if(world.isClientSide){
 			double x = caster.getX() - 0.25 + world.random.nextDouble() * 0.5;
-			double y = caster.getPositionEyes(1).y;
+			double y = caster.getEyePosition(1).y;
 			double z = caster.getZ() - 0.25 + world.random.nextDouble() * 0.5;
 			ParticleBuilder.create(Type.SPARKLE).pos(x, y, z).vel(0, -0.1, 0).time(15).clr(0.5f, 1, 0.7f).spawn(world);
 		}

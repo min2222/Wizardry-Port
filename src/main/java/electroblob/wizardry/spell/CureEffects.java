@@ -1,12 +1,12 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.ArrayList;
+import net.minecraft.world.item.Items;
 
 public class CureEffects extends SpellBuff {
 
@@ -18,16 +18,16 @@ public class CureEffects extends SpellBuff {
 	@Override
 	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 
-		if(!caster.getActivePotionEffects().isEmpty()){
+		if(!caster.getActiveEffects().isEmpty()){
 
 			ItemStack milk = new ItemStack(Items.MILK_BUCKET);
 
 			boolean flag = false;
 
-			for(MobEffectInstance effect : new ArrayList<>(caster.getActivePotionEffects())){ // Get outta here, CMEs
+			for(MobEffectInstance effect : new ArrayList<>(caster.getActiveEffects())){ // Get outta here, CMEs
 				// The PotionEffect version (as opposed to Potion) does not call cleanup callbacks
 				if(effect.isCurativeItem(milk)){
-					caster.removePotionEffect(effect.getPotion());
+					caster.removeEffect(effect.getEffect());
 					flag = true;
 				}
 			}

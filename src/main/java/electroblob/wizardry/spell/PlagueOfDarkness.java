@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.MagicDamage;
@@ -7,17 +9,15 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class PlagueOfDarkness extends SpellAreaEffect {
 
@@ -62,11 +62,11 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 
-			BlockState block = level.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
+			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
-						particleZ, particleX - origin.x, 0, particleZ - origin.z, Block.getStateId(block));
+				world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, block), particleX, origin.y,
+						particleZ, particleX - origin.x, 0, particleZ - origin.z);
 			}
 		}
 

@@ -20,7 +20,7 @@ public class Tornado extends SpellConstruct<EntityTornado> {
 	@Override
 	protected void addConstructExtras(EntityTornado construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
 		float speed = getProperty(SPEED).floatValue();
-		Vec3 direction = caster == null ? new Vec3(side.getDirectionVec()) : caster.getLookVec();
+		Vec3 direction = caster == null ? new Vec3(side.step()) : caster.getLookAngle();
 		construct.setHorizontalVelocity(direction.x * speed, direction.z * speed);
 	}
 

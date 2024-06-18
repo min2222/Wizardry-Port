@@ -2,8 +2,13 @@ package electroblob.wizardry.spell;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.entity.living.*;
+import electroblob.wizardry.entity.living.EntityHuskMinion;
+import electroblob.wizardry.entity.living.EntitySkeletonMinion;
+import electroblob.wizardry.entity.living.EntityStrayMinion;
+import electroblob.wizardry.entity.living.EntityWitherSkeletonMinion;
+import electroblob.wizardry.entity.living.EntityZombieMinion;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.NBTExtras;
@@ -11,27 +16,41 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.passive.*;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ambient.Bat;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.animal.MushroomCow;
+import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.monster.CaveSpider;
+import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.monster.Skeleton;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.Stray;
+import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Metamorphosis extends SpellRay {
 
 	public static final BiMap<Class<? extends LivingEntity>, Class<? extends LivingEntity>> TRANSFORMATIONS = HashBiMap.create();
 
 	static {
-		addTransformation(EntityPig.class, EntityPigZombie.class);
-		addTransformation(EntityCow.class, EntityMooshroom.class);
-		addTransformation(EntityChicken.class, EntityBat.class);
-		addTransformation(EntityZombie.class, EntityHusk.class);
-		addTransformation(EntitySkeleton.class, EntityStray.class, EntityWitherSkeleton.class);
-		addTransformation(EntitySpider.class, EntityCaveSpider.class);
-		addTransformation(EntitySlime.class, EntityMagmaCube.class);
+		addTransformation(Pig.class, ZombifiedPiglin.class);
+		addTransformation(Cow.class, MushroomCow.class);
+		addTransformation(Chicken.class, Bat.class);
+		addTransformation(Zombie.class, Husk.class);
+		addTransformation(Skeleton.class, Stray.class, WitherSkeleton.class);
+		addTransformation(Spider.class, CaveSpider.class);
+		addTransformation(Slime.class, MagmaCube.class);
 		addTransformation(EntityZombieMinion.class, EntityHuskMinion.class);
 		addTransformation(EntitySkeletonMinion.class, EntityStrayMinion.class, EntityWitherSkeletonMinion.class);
 	}
@@ -86,18 +105,18 @@ public class Metamorphosis extends SpellRay {
 				// Transfers attributes from the old entity to the new one.
 				newEntity.setHealth(((LivingEntity)target).getHealth());
 				CompoundTag tag = new CompoundTag();
-				target.writeToNBT(tag);
+				target.save(tag);
 				// Remove the UUID because keeping it the same causes the entity to disappear
 				NBTExtras.removeUniqueId(tag, "UUID");
-				newEntity.readFromNBT(tag);
+				newEntity.load(tag);
 
 				target.discard();
-				newEntity.setPosition(xPos, yPos, zPos);
+				newEntity.setPos(xPos, yPos, zPos);
 				world.addFreshEntity(newEntity);
 				
 			}else{
 				for(int i=0; i<20; i++){
-					ParticleBuilder.create(Type.DARK_MAGIC, world.rand, xPos, yPos + 1, zPos, 1, false)
+					ParticleBuilder.create(Type.DARK_MAGIC, world.random, xPos, yPos + 1, zPos, 1, false)
 							.clr(0.1f, 0, 0).spawn(world);
 				}
 				ParticleBuilder.create(Type.BUFF).pos(xPos, yPos, zPos).clr(0xd363cb).spawn(world);

@@ -1,5 +1,22 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.SpellType;
@@ -16,40 +33,31 @@ import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 
 /**
  * Generic spell class which is the superclass to all spells in wizardry. When extending this class, you must do the
@@ -138,7 +146,7 @@ public abstract class Spell implements Comparable<Spell> {
 	public static final String MATCH_VALUE_SEPARATOR = ",";
 
 	/** Forge registry-based replacement for the internal spells list. */
-	public static IForgeRegistry<Spell> registry;
+    public static Supplier<IForgeRegistry<Spell>> registry = null;
 
 	/** The unlocalised name of the spell. */
 	private final String unlocalisedName;
@@ -243,6 +251,16 @@ public abstract class Spell implements Comparable<Spell> {
 	public ResourceLocation getRegistryName() {
 		return this.registryName;
 	}
+	
+	// This is here because this class is already an event handler.
+	@SubscribeEvent
+	public static void createRegistry(NewRegistryEvent event){
+		RegistryBuilder<Spell> builder = new RegistryBuilder<>();
+		builder.setName(new ResourceLocation(Wizardry.MODID, "spells"));
+		builder.setIDRange(0, 5000); // Is there any penalty for using a larger number?
+
+		registry = event.create(builder);
+	}
 
 	// ========================================= Initialisation methods ===========================================
 
@@ -332,14 +350,14 @@ public abstract class Spell implements Comparable<Spell> {
 	public static void syncProperties(ServerPlayer player){
 		// On the server side, send a packet to the player to synchronise their spell properties
 		// To avoid sending extra data unnecessarily, the spell properties are sent in order of spell ID
-		List<Spell> spells = new ArrayList<>(registry.getValues());
+		List<Spell> spells = new ArrayList<>(registry.get().getValues());
 		spells.sort(Comparator.comparingInt(Spell::networkID));
 		WizardryPacketHandler.net.sendTo(new PacketSpellProperties.Message(spells.stream()
 				.map(s -> s.properties).toArray(SpellProperties[]::new)), player);
 	}
 
 	private static void clearProperties(){
-		for(Spell spell : registry){
+		for(Spell spell : registry.get()){
 			spell.properties = null;
 		}
 	}
@@ -985,7 +1003,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * returned by {@code Spell.getAllSpells().size()}, but this method is more efficient.
 	 */
 	public static int getTotalSpellCount(){
-		return registry.getValues().size() - 1;
+		return registry.get().getValues().size() - 1;
 	}
 
 	/**
@@ -993,16 +1011,16 @@ public abstract class Spell implements Comparable<Spell> {
 	 * metadata has no spell assigned then the {@link None} spell will be returned.
 	 */
 	public static Spell byMetadata(int metadata){
-		Spell spell = ((ForgeRegistry<Spell>)registry).getValue(metadata);
+		Spell spell = ((ForgeRegistry<Spell>)registry.get()).getValue(metadata);
 		return spell == null ? Spells.none : spell;
 	}
 
 	/** Gets a spell instance from its network ID, or the {@link None} spell if no such spell exists. */
 	public static Spell byNetworkID(int id){
-		if(id < 0 || id >= registry.getValues().size()){
+		if(id < 0 || id >= registry.get().getValues().size()){
 			return Spells.none;
 		}
-		return registry.getValues().stream().filter(s -> s.id == id).findAny().orElse(Spells.none);
+		return registry.get().getValues().stream().filter(s -> s.id == id).findAny().orElse(Spells.none);
 	}
 
 	/**
@@ -1016,14 +1034,14 @@ public abstract class Spell implements Comparable<Spell> {
 	public static Spell get(String name){
 		ResourceLocation key = new ResourceLocation(name);
 		if(key.getNamespace().equals("minecraft")) key = new ResourceLocation(Wizardry.MODID, name);
-		return registry.getValue(key);
+		return registry.get().getValue(key);
 	}
 
 	/** Returns a list of all registered spells' registry names, excluding the 'none' spell. Used in commands. */
 	public static Collection<ResourceLocation> getSpellNames(){
 		// Maybe it would be better to store all of this statically?
-		Set<ResourceLocation> keys = new HashSet<ResourceLocation>(registry.getKeys());
-		keys.remove(registry.getKey(Spells.none));
+		Set<ResourceLocation> keys = new HashSet<ResourceLocation>(registry.get().getKeys());
+		keys.remove(registry.get().getKey(Spells.none));
 		return keys;
 	}
 
@@ -1040,7 +1058,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * @see TierElementFilter
 	 */
 	public static List<Spell> getSpells(Predicate<Spell> filter){
-		return registry.getValues().stream().filter(filter.and(s -> s != Spells.none)).collect(Collectors.toList());
+		return registry.get().getValues().stream().filter(filter.and(s -> s != Spells.none)).collect(Collectors.toList());
 	}
 
 	/** Returns all registered spells, excluding the {@link None} spell. */
@@ -1093,7 +1111,7 @@ public abstract class Spell implements Comparable<Spell> {
 			if(!((Level) event.getLevel()).dimension().equals(Level.OVERWORLD)) return; // Only do it once per save file
 			clearProperties();
 			SpellProperties.loadWorldSpecificSpellProperties((Level) event.getLevel());
-			for(Spell spell : Spell.registry){
+			for(Spell spell : registry.get()){
 				if(!spell.arePropertiesInitialised()) spell.setProperties(spell.globalProperties);
 			}
 		}
@@ -1120,7 +1138,7 @@ public abstract class Spell implements Comparable<Spell> {
 	public static void onClientDisconnectEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
 		// Why does the world UNLOAD event happen during world LOADING? How does that even work?!
 		clearProperties();
-		for(Spell spell : Spell.registry){
+		for(Spell spell : registry.get()){
 			// If someone wants to access them from the menu, they'll get the global ones (not sure why you'd want to)
 			// No need to sync here since the server is about to shut down anyway
 			spell.setProperties(spell.globalProperties);

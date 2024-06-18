@@ -1,5 +1,10 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.entity.construct.EntityIceBarrier;
 import electroblob.wizardry.item.SpellActions;
@@ -9,19 +14,15 @@ import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class FrostBarrier extends Spell {
 
@@ -48,8 +49,8 @@ public class FrostBarrier extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.onGround){
-			if(!createBarriers(world, caster.position(), caster.getLookVec(), caster, modifiers)) return false;
+		if(caster.isOnGround()){
+			if(!createBarriers(world, caster.position(), caster.getLookAngle(), caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
 			return true;
 		}
@@ -60,7 +61,7 @@ public class FrostBarrier extends Spell {
 	@Override
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target, SpellModifiers modifiers){
 
-		if(caster.onGround){
+		if(caster.isOnGround()){
 			if(!createBarriers(world, caster.position(), target.position().subtract(caster.position()),
 					caster, modifiers)) return false;
 			this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -72,9 +73,9 @@ public class FrostBarrier extends Spell {
 
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
-		if(!createBarriers(world, new Vec3(x, y, z), new Vec3(direction.getDirectionVec()), null, modifiers)) return false;
+		if(!createBarriers(world, new Vec3(x, y, z), new Vec3(direction.step()), null, modifiers)) return false;
 		// This MUST be the coordinates of the actual dispenser, so we need to offset it
-		this.playSound(world, x - direction.getXOffset(), y - direction.getYOffset(), z - direction.getZOffset(), ticksInUse, duration, modifiers);
+		this.playSound(world, x - direction.getStepX(), y - direction.getStepY(), z - direction.getStepZ(), ticksInUse, duration, modifiers);
 		return true;
 	}
 
@@ -92,11 +93,11 @@ public class FrostBarrier extends Spell {
 
 			for(int i = 0; i < barrierCount; i++){
 
-				EntityIceBarrier barrier = createBarrier(world, centre, direction.rotateYaw((float)(BARRIER_SPACING / BARRIER_ARC_RADIUS) * i), caster, modifiers, barrierCount, i);
+				EntityIceBarrier barrier = createBarrier(world, centre, direction.yRot((float)(BARRIER_SPACING / BARRIER_ARC_RADIUS) * i), caster, modifiers, barrierCount, i);
 				if(barrier != null) barriers.add(barrier);
 
 				if(i == 0) continue; // Only one in the middle
-				barrier = createBarrier(world, centre, direction.rotateYaw(-(float)(BARRIER_SPACING / BARRIER_ARC_RADIUS) * i), caster, modifiers, barrierCount, i);
+				barrier = createBarrier(world, centre, direction.yRot(-(float)(BARRIER_SPACING / BARRIER_ARC_RADIUS) * i), caster, modifiers, barrierCount, i);
 				if(barrier != null) barriers.add(barrier);
 			}
 
@@ -119,15 +120,15 @@ public class FrostBarrier extends Spell {
 		double yOffset = 1.5 * scale;
 
 		EntityIceBarrier barrier = new EntityIceBarrier(world);
-		barrier.setPosition(position.x, position.y - yOffset, position.z);
+		barrier.setPos(position.x, position.y - yOffset, position.z);
 		barrier.setCaster(caster);
 		barrier.lifetime = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 		barrier.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-		barrier.setRotation((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.rotationPitch);
+		barrier.setRotation((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.getXRot());
 		barrier.setSizeMultiplier(scale);
 		barrier.setDelay(1 + 3 * index); // Delay 0 seems to move it down 1 block, no idea why
 
-		if(!level.getEntitiesWithinAABB(barrier.getClass(), barrier.getBoundingBox().offset(0, yOffset, 0)).isEmpty()) return null;
+		if(!world.getEntitiesOfClass(barrier.getClass(), barrier.getBoundingBox().move(0, yOffset, 0)).isEmpty()) return null;
 
 		return barrier;
 	}

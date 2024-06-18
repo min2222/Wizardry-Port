@@ -35,7 +35,7 @@ public class FlamingWeapon extends Spell {
 						&& !EnchantmentHelper.getEnchantments(stack).containsKey(WizardryEnchantments.flaming_weapon)){
 					// The enchantment level as determined by the damage multiplier. The + 0.5f is so that
 					// weird float processing doesn't incorrectly round it down.
-					stack.addEnchantment(WizardryEnchantments.flaming_weapon,
+					stack.enchant(WizardryEnchantments.flaming_weapon,
 							modifiers.get(SpellModifiers.POTENCY) == 1.0f ? 1
 									: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f)
 											/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f));

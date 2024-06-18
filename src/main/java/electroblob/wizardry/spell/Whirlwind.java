@@ -33,7 +33,7 @@ public class Whirlwind extends SpellRay {
 		if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
 				|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
 
-			if(!world.isClientSide && caster instanceof Player) ((Player)caster).sendStatusMessage(
+			if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			return false;
 		}
@@ -65,7 +65,7 @@ public class Whirlwind extends SpellRay {
 					double x = origin.x + world.random.nextDouble() - 0.5 + vec.x * distance * 0.5;
 					double y = origin.y + world.random.nextDouble() - 0.5 + vec.y * distance * 0.5;
 					double z = origin.z + world.random.nextDouble() - 0.5 + vec.z * distance * 0.5;
-					world.spawnParticle(ParticleTypes.CLOUD, x, y, z, vec.x, vec.y, vec.z);
+					world.addParticle(ParticleTypes.CLOUD, x, y, z, vec.x, vec.y, vec.z);
 				}
 			}
 			

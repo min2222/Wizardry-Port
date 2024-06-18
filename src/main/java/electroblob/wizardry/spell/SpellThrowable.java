@@ -88,7 +88,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 		if(!world.isClientSide){
 			float velocity = calculateVelocity(modifiers, caster.getEyeHeight() - LAUNCH_Y_OFFSET);
 			T projectile = projectileFactory.apply(world, caster);
-			projectile.shoot(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, velocity, 1.0f);
+			projectile.shoot(caster, caster.rotationPitch, caster.getYRot(), 0.0f, velocity, 1.0f);
 			projectile.getPersistentData().setFloat(DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 			addProjectileExtras(projectile, caster, modifiers);
 			world.addFreshEntity(projectile);
@@ -138,7 +138,7 @@ public class SpellThrowable<T extends EntityThrowable> extends Spell {
 
 			double dxNormalised = dx / horizontalDistance;
 			double dzNormalised = dz / horizontalDistance;
-			throwable.setPosition(caster.getX() + dxNormalised, throwable.getY(), caster.getZ() + dzNormalised);
+			throwable.setPos(caster.getX() + dxNormalised, throwable.getY(), caster.getZ() + dzNormalised);
 
 			// Depends on the horizontal distance between the two entities and accounts for bullet drop,
 			// but of course if gravity is ignored throwable should be 0 since there is no bullet drop.

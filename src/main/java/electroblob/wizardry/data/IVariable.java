@@ -1,6 +1,7 @@
 package electroblob.wizardry.data;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiFunction;
@@ -45,7 +46,7 @@ public interface IVariable<T> {
 	/**
 	 * Writes this variable's value to the given {@link ByteBuf}.
 	 */
-	void write(ByteBuf buf, T value);
+	void write(FriendlyByteBuf buf, T value);
 
 	String getKey();
 
@@ -53,7 +54,7 @@ public interface IVariable<T> {
 	 *
 	 * Reads this variable's value from the given {@link ByteBuf}.
 	 */
-	T read(ByteBuf buf);
+	T read(FriendlyByteBuf buf);
 
 	/** If you're storing a lot of data, you can optionally implement this method to define a condition which, if
 	 * satisfied, will result in the data being removed from storage, reducing unnecessary syncing and saving. This
@@ -109,7 +110,7 @@ public interface IVariable<T> {
 		}
 
 		@Override
-		public void write(ByteBuf buf, T value){
+		public void write(FriendlyByteBuf buf, T value){
 			// NYI
 		}
 
@@ -119,7 +120,7 @@ public interface IVariable<T> {
 		}
 
 		@Override
-		public T read(ByteBuf buf){
+		public T read(FriendlyByteBuf buf){
 			return null; // NYI
 		}
 	}

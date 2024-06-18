@@ -41,7 +41,7 @@ public class Bubble extends SpellRay {
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.MAGIC), 1);
 				
 				EntityBubble bubble = new EntityBubble(world);
-				bubble.setPosition(target.getX(), target.getY(), target.getZ());
+				bubble.setPos(target.getX(), target.getY(), target.getZ());
 				bubble.setCaster(caster);
 				bubble.lifetime = ((int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
 				bubble.isDarkOrb = false;
@@ -67,7 +67,7 @@ public class Bubble extends SpellRay {
 	
 	@Override
 	protected void spawnParticle(Level world, double x, double y, double z, double vx, double vy, double vz){
-		world.spawnParticle(ParticleTypes.WATER_SPLASH, x, y, z, 0, 0, 0);
+		world.addParticle(ParticleTypes.SPLASH, x, y, z, 0, 0, 0);
 		ParticleBuilder.create(Type.MAGIC_BUBBLE).pos(x, y, z).spawn(world);
 	}
 

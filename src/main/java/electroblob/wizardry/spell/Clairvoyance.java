@@ -14,10 +14,12 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.EntityZombie;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.pathfinding.Path;
@@ -38,7 +40,7 @@ public class Clairvoyance extends Spell {
 	public static final int PARTICLE_MOVEMENT_INTERVAL = 45;
 
 	public static final IStoredVariable<BlockPos> LOCATION_KEY = IStoredVariable.StoredVariable.ofBlockPos("clairvoyancePos", Persistence.ALWAYS);
-	public static final IStoredVariable<Integer> DIMENSION_KEY = IStoredVariable.StoredVariable.ofInt("clairvoyanceDimension", Persistence.ALWAYS);
+	public static final IStoredVariable<String> DIMENSION_KEY = IStoredVariable.StoredVariable.ofString("clairvoyanceDimension", Persistence.ALWAYS);
 
 	public Clairvoyance(){
 		super("clairvoyance", SpellActions.POINT_UP, false);
@@ -56,25 +58,25 @@ public class Clairvoyance extends Spell {
 
 		if(data != null && !caster.isShiftKeyDown()){
 
-			Integer dimension = data.getVariable(DIMENSION_KEY);
+			String dimension = data.getVariable(DIMENSION_KEY);
 			BlockPos location = data.getVariable(LOCATION_KEY);
 
-			if(dimension != null && caster.dimension == dimension){
+			if(dimension != null && caster.level.dimension().location().getPath() == dimension){
 				if(location != null){
 
-					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
+					if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".searching"), true);
 
-					EntityZombie arbitraryZombie = new EntityZombie(world){
+					Zombie arbitraryZombie = new Zombie(world){
 						@Override
 						public float getBlockPathWeight(BlockPos pos){
 							return 0;
 						}
 					};
-					arbitraryZombie.getEntityAttribute(Attributes.FOLLOW_RANGE)
+					arbitraryZombie.getAttribute(Attributes.FOLLOW_RANGE)
 							.setBaseValue(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
-					arbitraryZombie.setPosition(caster.getX(), caster.getY(), caster.getZ());
+					arbitraryZombie.setPos(caster.getX(), caster.getY(), caster.getZ());
 					arbitraryZombie.setPathPriority(PathNodeType.WATER, 0.0F);
-					arbitraryZombie.onGround = true;
+					arbitraryZombie.setOnGround(true);
 
 					WizardryPathFinder pathfinder = new WizardryPathFinder(arbitraryZombie.getNavigator().getNodeProcessor());
 
@@ -100,13 +102,13 @@ public class Clairvoyance extends Spell {
 						}
 					}
 
-					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
+					if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".outofrange"), true);
 
 				}else{
-					if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
+					if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".undefined"), true);
 				}
 			}else{
-				if(!world.isClientSide) caster.sendStatusMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
+				if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 			}
 		}
 
@@ -161,13 +163,13 @@ public class Clairvoyance extends Spell {
 
 				if(data != null){
 
-					BlockPos pos = event.getPos().offset(event.getFace());
+					BlockPos pos = event.getPos().relative(event.getFace());
 
 					data.setVariable(LOCATION_KEY, pos);
-					data.setVariable(DIMENSION_KEY, event.getWorld().provider.getDimension());
+					data.setVariable(DIMENSION_KEY, event.getLevel().dimension().location().getPath());
 
-					if(!event.getWorld().isRemote){
-						event.getEntity().sendStatusMessage(
+					if(!event.getLevel().isClientSide){
+						event.getEntity().displayClientMessage(
 								Component.translatable("spell." + Spells.clairvoyance.getUnlocalisedName() + ".confirm", Spells.clairvoyance.getNameForTranslationFormatted()), true);
 					}
 

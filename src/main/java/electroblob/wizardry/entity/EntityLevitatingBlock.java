@@ -20,7 +20,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +36,7 @@ import java.util.List;
 import java.util.UUID;
 
 /** Custom extended version of {@link EntityFallingBlock} for use with the greater telekinesis spell. */
-public class EntityLevitatingBlock extends EntityFallingBlock implements IEntityAdditionalSpawnData {
+public class EntityLevitatingBlock extends FallingBlockEntity implements IEntityAdditionalSpawnData {
 
 	private static final Field fallTile;
 
