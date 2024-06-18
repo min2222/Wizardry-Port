@@ -1,24 +1,30 @@
 package electroblob.wizardry.entity.projectile;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
+import net.minecraft.world.phys.HitResult;
 
 public class EntitySmokeBomb extends EntityBomb {
 
 	public EntitySmokeBomb(Level world){
-		super(world);
+		this(WizardryEntities.SMOKE_BOMB.get(), world);
+	}
+	
+	public EntitySmokeBomb(EntityType<? extends EntityBomb> type, Level world){
+		super(type, world);
 	}
 
 	@Override
@@ -27,24 +33,24 @@ public class EntitySmokeBomb extends EntityBomb {
 	}
 
 	@Override
-	protected void onImpact(HitResult rayTrace){
+	protected void onHit(HitResult rayTrace){
 
 		// Particle effect
 		if(level.isClientSide){
 			
-			ParticleBuilder.create(Type.FLASH).pos(this.position()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(world);
+			ParticleBuilder.create(Type.FLASH).pos(this.position()).scale(5 * blastMultiplier).clr(0, 0, 0).spawn(level);
 			
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+			this.level.addParticle(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 						
 			for(int i = 0; i < 60 * blastMultiplier; i++){
 
 				float brightness = random.nextFloat() * 0.1f + 0.1f;
-				ParticleBuilder.create(Type.CLOUD, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
-						.clr(brightness, brightness, brightness).time(80 + this.random.nextInt(12)).shaded(true).spawn(world);
+				ParticleBuilder.create(Type.CLOUD, random, getX(), getY(), getZ(), 2*blastMultiplier, false)
+						.clr(brightness, brightness, brightness).time(80 + this.random.nextInt(12)).shaded(true).spawn(level);
 
 				brightness = random.nextFloat() * 0.3f;
-				ParticleBuilder.create(Type.DARK_MAGIC, rand, getX(), getY(), getZ(), 2*blastMultiplier, false)
-				.clr(brightness, brightness, brightness).spawn(world);
+				ParticleBuilder.create(Type.DARK_MAGIC, random, getX(), getY(), getZ(), 2*blastMultiplier, false)
+				.clr(brightness, brightness, brightness).spawn(level);
 			}
 		}
 
@@ -56,12 +62,12 @@ public class EntitySmokeBomb extends EntityBomb {
 			double range = Spells.smoke_bomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
-					this.getZ(), this.world);
+					this.getZ(), this.level);
 
 			int duration = Spells.smoke_bomb.getProperty(Spell.EFFECT_DURATION).intValue();
 
 			for(LivingEntity target : targets){
-				if(target != this.getThrower()){
+				if(target != this.getOwner()){
 					target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 				}
 			}

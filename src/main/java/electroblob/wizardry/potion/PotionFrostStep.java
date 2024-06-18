@@ -12,6 +12,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.enchantment.EnchantmentFrostWalker;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
@@ -30,8 +31,8 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 	private static final Field prevBlockPos = ObfuscationReflectionHelper.findField(LivingEntity.class, "field_184620_bC");
 
-	public PotionFrostStep(boolean isBadEffect, int liquidColour){
-		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost_step.png"));
+	public PotionFrostStep(MobEffectCategory category, int liquidColour){
+		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost_step.png"));
 		this.setPotionName("potion." + Wizardry.MODID + ":frost_step");
 	}
 
@@ -54,11 +55,11 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 		LivingEntity host = event.getEntity();
 
-		if(host.hasEffect(WizardryPotions.frost_step)){
+		if(host.hasEffect(WizardryPotions.FROST_STEP.get())){
 			// Mimics the behaviour of the frost walker enchantment itself
 			if(!host.level.isClientSide){
 
-				BlockPos currentPos = new BlockPos(host);
+				BlockPos currentPos = host.blockPosition();
 
 				try{
 
@@ -86,7 +87,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 	 * to turn lava to obsidian crust blocks instead. */
 	private static void freezeNearbyLava(LivingEntity living, Level world, BlockPos pos, int level){
 
-		if(living.onGround){
+		if(living.isOnGround()){
 
 			float f = (float)Math.min(16, 2 + level);
 			BlockPos.MutableBlockPos pos1 = new BlockPos.MutableBlockPos(0, 0, 0);

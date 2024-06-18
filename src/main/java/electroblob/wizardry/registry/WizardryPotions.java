@@ -106,12 +106,12 @@ public final class WizardryPotions {
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/fireskin.png")){
 			@Override
 			public void spawnCustomParticle(Level world, double x, double y, double z){
-				world.spawnParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+				world.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
 			}
 
 			@Override
-			public void performEffect(LivingEntity entitylivingbase, int strength){
-				entitylivingbase.extinguish(); // Stops melee mobs that are on fire from setting the player on fire,
+			public void applyEffectTick(LivingEntity entitylivingbase, int strength){
+				entitylivingbase.clearFire(); // Stops melee mobs that are on fire from setting the player on fire,
 				// without allowing the player to actually stand in fire or swim in lava without taking damage.
 			}
 		}); // 0xff2f02
@@ -139,12 +139,12 @@ public final class WizardryPotions {
 		registerPotion("sixth_sense", new PotionMagicEffect(MobEffectCategory.BENEFICIAL, 0xc6ff01,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/sixth_sense.png")){
 			@Override
-			public void performEffect(LivingEntity target, int strength){
+			public void applyEffectTick(LivingEntity target, int strength){
 				// Reset the shader (a bit dirty but both the potion expiry hooks are only fired server-side, and
 				// there's no point sending packets unnecessarily if we can just do this instead)
-				if(target.getActivePotionEffect(this).getDuration() <= 1 && target.level.isClientSide
-						&& target == net.minecraft.client.Minecraft.getMinecraft().player){
-					net.minecraft.client.Minecraft.getMinecraft().entityRenderer.stopUseShader();
+				if(target.getEffect(this).getDuration() <= 1 && target.level.isClientSide
+						&& target == net.minecraft.client.Minecraft.getInstance().player){
+					net.minecraft.client.Minecraft.getInstance().gameRenderer.shutdownEffect();
 				}
 			}
 		});
@@ -167,7 +167,7 @@ public final class WizardryPotions {
 		registerPotion("fear", new PotionMagicEffect(MobEffectCategory.HARMFUL, 0xbd0100,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/fear.png")));
 		
-		registerPotion("curse_of_soulbinding", new Curse(true, 0x0f000f,
+		registerPotion("curse_of_soulbinding", new Curse(MobEffectCategory.HARMFUL, 0x0f000f,
 				new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_soulbinding.png")){
 			@Override // We're not removing any attributes, but it's called when we want it to be so...
 			public void removeAttributesModifiersFromEntity(LivingEntity entity, net.minecraft.world.entity.ai.attributes.AbstractAttributeMap attributeMapIn, int amplifier){

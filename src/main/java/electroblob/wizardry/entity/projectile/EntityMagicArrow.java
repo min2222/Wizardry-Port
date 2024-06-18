@@ -1,5 +1,9 @@
 package electroblob.wizardry.entity.projectile;
 
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.UUID;
+
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardrySounds;
@@ -9,36 +13,35 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.RayTracer;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.IProjectile;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EntityEnderman;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.play.server.SPacketChangeGameState;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.math.*;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.UUID;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * This class was copied from EntityArrow in the 1.7.10 update as part of the overhaul and major cleanup of the code for
@@ -54,7 +57,7 @@ import java.util.UUID;
  * @author Electroblob
  */
 // TODO: Might be a good idea to have this implement OwnableEntity as well
-public abstract class EntityMagicArrow extends Entity implements IProjectile, IEntityAdditionalSpawnData {
+public abstract class EntityMagicArrow extends Projectile implements IEntityAdditionalSpawnData {
 
 	public static final double LAUNCH_Y_OFFSET = 0.1;
 	public static final int SEEKING_TIME = 15;
@@ -85,8 +88,8 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	public float damageMultiplier = 1.0f;
 
 	/** Creates a new projectile in the given world. */
-	public EntityMagicArrow(Level world){
-		super(world);
+	public EntityMagicArrow(EntityType<? extends Projectile> type, Level world){
+		super(type, world);
 		this.setSize(0.5F, 0.5F);
 	}
 	
@@ -98,23 +101,22 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		
 		this.setCaster(caster);
 		
-		this.setLocationAndAngles(caster.getX(), caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET,
-				caster.getZ(), caster.rotationYaw, caster.rotationPitch);
+		this.moveTo(caster.getX(), caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET,
+				caster.getZ(), caster.getYRot(), caster.getXRot());
 		
-		this.getX() -= (double)(Mth.cos(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
-		this.getY() -= 0.10000000149011612D;
-		this.getZ() -= (double)(Mth.sin(this.rotationYaw / 180.0F * (float)Math.PI) * 0.16F);
+		this.setPos(this.position().subtract((double)(Mth.cos(this.getYRot() / 180.0F * (float)Math.PI) * 0.16F), 0.10000000149011612D, (double)(Mth.sin(this.getYRot() / 180.0F * (float)Math.PI) * 0.16F)));
 		
-		this.setPosition(this.getX(), this.getY(), this.getZ());
+		this.setPos(this.getX(), this.getY(), this.getZ());
 		
 		// yOffset was set to 0 here, but that has been replaced by getYOffset(), which returns 0 in Entity anyway.
-		this.motionX = (double)(-Mth.sin(this.rotationYaw / 180.0F * (float)Math.PI)
-				* Mth.cos(this.rotationPitch / 180.0F * (float)Math.PI));
-		this.motionY = (double)(-Mth.sin(this.rotationPitch / 180.0F * (float)Math.PI));
-		this.motionZ = (double)(Mth.cos(this.rotationYaw / 180.0F * (float)Math.PI)
-				* Mth.cos(this.rotationPitch / 180.0F * (float)Math.PI));
+		double motionX = (double)(-Mth.sin(this.getYRot() / 180.0F * (float)Math.PI)
+				* Mth.cos(this.getXRot() / 180.0F * (float)Math.PI));
+		double motionY = (double)(-Mth.sin(this.getXRot() / 180.0F * (float)Math.PI));
+		double motionZ = (double)(Mth.cos(this.getYRot() / 180.0F * (float)Math.PI)
+				* Mth.cos(this.getXRot() / 180.0F * (float)Math.PI));
+		this.setDeltaMovement(motionX, motionY, motionZ);
 		
-		this.shoot(this.motionX, this.motionY, this.motionZ, speed * 1.5F, 1.0F);
+		this.shoot(this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z, speed * 1.5F, 1.0F);
 	}
 
 	/** Sets the shooter of the projectile to the given caster, positions the projectile at the given caster's eyes and
@@ -125,7 +127,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		
 		this.setCaster(caster);
 
-		this.getY() = caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET;
+		this.setPos(this.getX(), caster.getY() + (double)caster.getEyeHeight() - LAUNCH_Y_OFFSET, this.getZ());
 		double dx = target.getX() - caster.getX();
 		double dy = this.doGravity() ? target.getY() + (double)(target.getBbHeight() / 3.0f) - this.getY()
 				: target.getY() + (double)(target.getBbHeight() / 2.0f) - this.getY();
@@ -137,7 +139,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 			float pitch = (float)(-(Math.atan2(dy, horizontalDistance) * 180.0d / Math.PI));
 			double dxNormalised = dx / horizontalDistance;
 			double dzNormalised = dz / horizontalDistance;
-			this.setLocationAndAngles(caster.getX() + dxNormalised, this.getY(), caster.getZ() + dzNormalised, yaw, pitch);
+			this.moveTo(caster.getX() + dxNormalised, this.getY(), caster.getZ() + dzNormalised, yaw, pitch);
 			// yOffset was set to 0 here, but that has been replaced by getYOffset(), which returns 0 in Entity anyway.
 
 			// Depends on the horizontal distance between the two entities and accounts for bullet drop,
@@ -242,28 +244,32 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 		}
 
 		if(this.getCaster() == null && this.casterUUID != null){
-			Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
+			Entity entity = EntityUtils.getEntityByUUID(level, casterUUID);
 			if(entity instanceof LivingEntity){
 				this.caster = new WeakReference<>((LivingEntity)entity);
 			}
 		}
 
-		if(this.prevRotationPitch == 0.0F && this.prevRotationYaw == 0.0F){
-			float f = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-			this.prevRotationYaw = this.rotationYaw = (float)(Math.atan2(this.motionX, this.motionZ) * 180.0D
+		if(this.xRotO == 0.0F && this.yRotO == 0.0F){
+			float f = (float) Math.sqrt(this.getDeltaMovement().x * this.getDeltaMovement().x + this.getDeltaMovement().z * this.getDeltaMovement().z);
+			this.yRotO = (float)(Math.atan2(this.getDeltaMovement().x, this.getDeltaMovement().z) * 180.0D
 					/ Math.PI);
-			this.prevRotationPitch = this.rotationPitch = (float)(Math.atan2(this.motionY, (double)f) * 180.0D
+			this.setYRot((float)(Math.atan2(this.getDeltaMovement().x, this.getDeltaMovement().z) * 180.0D
+					/ Math.PI));
+			this.xRotO = (float)(Math.atan2(this.getDeltaMovement().y, (double)f) * 180.0D
 					/ Math.PI);
+			this.setXRot((float)(Math.atan2(this.getDeltaMovement().y, (double)f) * 180.0D
+					/ Math.PI));
 		}
 
 		BlockPos blockpos = new BlockPos(this.blockX, this.blockY, this.blockZ);
 		BlockState iblockstate = this.level.getBlockState(blockpos);
 
 		if(iblockstate.getMaterial() != Material.AIR){
-			AABB axisalignedbb = iblockstate.getCollisionBoundingBox(this.world, blockpos);
+			AABB axisalignedbb = iblockstate.getCollisionShape(this.level, blockpos).bounds();
 
 			if(axisalignedbb != Block.NULL_AABB
-					&& axisalignedbb.offset(blockpos).contains(new Vec3(this.getX(), this.getY(), this.getZ()))){
+					&& axisalignedbb.move(blockpos).contains(new Vec3(this.getX(), this.getY(), this.getZ()))){
 				this.inGround = true;
 			}
 		}
@@ -510,7 +516,7 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 
 	@Override
 	public void shoot(double x, double y, double z, float speed, float randomness){
-		float f2 = Math.sqrt(x * x + y * y + z * z);
+		float f2 = (float) Math.sqrt(x * x + y * y + z * z);
 		x /= (double)f2;
 		y /= (double)f2;
 		z /= (double)f2;
@@ -554,26 +560,26 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	// Data reading and writing
 
 	@Override
-	public void writeEntityToNBT(CompoundTag tag){
-		tag.setShort("xTile", (short)this.blockX);
-		tag.setShort("yTile", (short)this.blockY);
-		tag.setShort("zTile", (short)this.blockZ);
-		tag.setShort("life", (short)this.ticksInGround);
+	public void addAdditionalSaveData(CompoundTag tag){
+		tag.putShort("xTile", (short)this.blockX);
+		tag.putShort("yTile", (short)this.blockY);
+		tag.putShort("zTile", (short)this.blockZ);
+		tag.putShort("life", (short)this.ticksInGround);
 		if(this.stuckInBlock != null){
-			ResourceLocation resourcelocation = Block.REGISTRY.getNameForObject(this.stuckInBlock.getBlock());
-			tag.setString("inTile", resourcelocation == null ? "" : resourcelocation.toString());
+			ResourceLocation resourcelocation = ForgeRegistries.BLOCKS.getKey(this.stuckInBlock.getBlock());
+			tag.putString("inTile", resourcelocation == null ? "" : resourcelocation.toString());
 		}
-		tag.setByte("inData", (byte)this.inData);
-		tag.setByte("shake", (byte)this.arrowShake);
-		tag.setByte("inGround", (byte)(this.inGround ? 1 : 0));
-		tag.setFloat("damageMultiplier", this.damageMultiplier);
+		tag.putByte("inData", (byte)this.inData);
+		tag.putByte("shake", (byte)this.arrowShake);
+		tag.putByte("inGround", (byte)(this.inGround ? 1 : 0));
+		tag.putFloat("damageMultiplier", this.damageMultiplier);
 		if(this.getCaster() != null){
-			tag.setUniqueId("casterUUID", this.getCaster().getUUID());
+			tag.putUUID("casterUUID", this.getCaster().getUUID());
 		}
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag tag){
+	public void readAdditionalSaveData(CompoundTag tag){
 		this.blockX = tag.getShort("xTile");
 		this.blockY = tag.getShort("yTile");
 		this.blockZ = tag.getShort("zTile");
@@ -588,14 +594,14 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	}
 	
 	@Override
-	public void writeSpawnData(ByteBuf buffer){
-		if(this.getCaster() != null) buffer.writeInt(this.getCaster().getEntityId());
+	public void writeSpawnData(FriendlyByteBuf buffer){
+		if(this.getCaster() != null) buffer.writeInt(this.getCaster().getId());
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf buffer){
+	public void readSpawnData(FriendlyByteBuf buffer){
 		if(buffer.isReadable()) this.caster = new WeakReference<>(
-				(LivingEntity)this.level.getEntityByID(buffer.readInt()));
+				(LivingEntity)this.level.getEntity(buffer.readInt()));
 	}
 
 	// Miscellaneous overrides
@@ -616,10 +622,10 @@ public abstract class EntityMagicArrow extends Entity implements IProjectile, IE
 	}
 	
 	@Override
-	public SoundSource getSoundCategory(){
+	public SoundSource getSoundSource(){
 		return WizardrySounds.SPELLS;
 	}
 
 	@Override
-	protected void entityInit(){}
+	protected void defineSynchedData(){}
 }

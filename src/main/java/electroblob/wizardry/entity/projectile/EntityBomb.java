@@ -1,7 +1,8 @@
 package electroblob.wizardry.entity.projectile;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 /**
@@ -16,31 +17,31 @@ public abstract class EntityBomb extends EntityMagicProjectile {
 	/** The entity blast multiplier. This is now synced and saved centrally from {@link EntityBomb}. */
 	public float blastMultiplier = 1.0f;
 
-	public EntityBomb(Level world){
-		super(world);
+	public EntityBomb(EntityType<? extends EntityMagicProjectile> type, Level world){
+		super(type, world);
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf buffer){
+	public void writeSpawnData(FriendlyByteBuf buffer){
 		buffer.writeFloat(blastMultiplier);
 		super.writeSpawnData(buffer);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf buffer){
+	public void readSpawnData(FriendlyByteBuf buffer){
 		blastMultiplier = buffer.readFloat();
 		super.readSpawnData(buffer);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		blastMultiplier = nbttagcompound.getFloat("blastMultiplier");
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		nbttagcompound.putFloat("blastMultiplier", blastMultiplier);
 	}
 

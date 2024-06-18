@@ -1,6 +1,7 @@
 package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.MagicDamage;
@@ -8,24 +9,30 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class EntitySpark extends EntityMagicProjectile {
 
 	public EntitySpark(Level world){
-		super(world);
+		this(WizardryEntities.SPARK.get(), world);
+	}
+	
+	public EntitySpark(EntityType<? extends EntityMagicProjectile> type, Level world){
+		super(type, world);
 	}
 
 	@Override
-	protected void onImpact(HitResult rayTrace){
+	protected void onHit(HitResult rayTrace){
 		
-		Entity entityHit = rayTrace.entityHit;
+		Entity entityHit = rayTrace.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) rayTrace).getEntity() : null;
 
 		if(entityHit != null){
 
 			float damage = Spells.homing_spark.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
-			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getThrower(),
+			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getOwner(),
 					DamageType.SHOCK), damage);
 
 		}
@@ -38,7 +45,7 @@ public class EntitySpark extends EntityMagicProjectile {
 				double x = this.getX() + random.nextDouble() - 0.5;
 				double y = this.getY() + this.getBbHeight() / 2 + random.nextDouble() - 0.5;
 				double z = this.getZ() + random.nextDouble() - 0.5;
-				ParticleBuilder.create(Type.SPARK).pos(x, y, z).spawn(world);
+				ParticleBuilder.create(Type.SPARK).pos(x, y, z).spawn(level);
 			}
 		}
 
@@ -56,12 +63,12 @@ public class EntitySpark extends EntityMagicProjectile {
 	}
 
 	@Override
-	public boolean hasNoGravity(){
+	public boolean isNoGravity(){
 		return true;
 	}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 }

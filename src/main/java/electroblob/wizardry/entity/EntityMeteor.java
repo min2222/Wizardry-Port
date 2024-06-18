@@ -8,12 +8,13 @@ import electroblob.wizardry.spell.Meteor;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -40,7 +41,7 @@ public class EntityMeteor extends FallingBlockEntity {
 	}
 
 	@Override
-	public double getYOffset(){
+	public double getMyRidingOffset(){
 		return this.getBbHeight() / 2.0F;
 	}
 
@@ -54,85 +55,70 @@ public class EntityMeteor extends FallingBlockEntity {
 		// You'd think the best way to do this would be to call super and do all the exploding stuff in fall() instead.
 		// However, for some reason, fallTile is null on the client side, causing an NPE in super.tick()
 
-		this.prevgetX() = this.getX();
-		this.prevgetY() = this.getY();
-		this.prevgetZ() = this.getZ();
-		++this.fallTime;
-		this.motionY -= 0.1d; // 0.03999999910593033D;
-		this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
-		this.motionX *= 0.9800000190734863D;
-		this.motionY *= 0.9800000190734863D;
-		this.motionZ *= 0.9800000190734863D;
+		this.xo = this.getX();
+		this.yo = this.getY();
+		this.zo = this.getZ();
+		++this.time;
+		this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.1d, 0)); // 0.03999999910593033D;
+		this.move(MoverType.SELF, this.getDeltaMovement());
+		this.setDeltaMovement(this.getDeltaMovement().scale(0.9800000190734863D));
 
 		if(this.onGround){
 
 			if(!this.level.isClientSide){
-
-				this.motionX *= 0.699999988079071D;
-				this.motionZ *= 0.699999988079071D;
-				this.motionY *= -0.5D;
-				this.world.newExplosion(this, this.getX(), this.getY(), this.getZ(),
+				this.setDeltaMovement(this.getDeltaMovement().multiply(0.699999988079071D, -0.5D, 0.699999988079071D));
+				this.level.explode(this, this.getX(), this.getY(), this.getZ(),
 						Spells.meteor.getProperty(Meteor.BLAST_STRENGTH).floatValue() * blastMultiplier,
-						damageBlocks, damageBlocks);
+						damageBlocks, damageBlocks ? BlockInteraction.DESTROY : BlockInteraction.NONE);
 				this.discard();
 
 			}else{
-				EntityUtils.getEntitiesWithinRadius(15, getX(), getY(), getZ(), world, Player.class)
+				EntityUtils.getEntitiesWithinRadius(15, getX(), getY(), getZ(), level, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 10));
 			}
 		}
 
 	}
-
+	
 	@Override
-	public void fall(float distance, float damageMultiplier){
+	public boolean causeFallDamage(float p_149643_, float p_149644_, DamageSource p_149645_) {
 		// Don't need to do anything here, the meteor should have already exploded.
+		return false;
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return true;
 	}
 
 	@Override
-	public BlockState getBlock(){
+	public BlockState getBlockState(){
 		return WizardryBlocks.meteor.defaultBlockState(); // For some reason the superclass version returns null on the
 														// client
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public int getBrightnessForRender(){
-		return 15728880;
-	}
-
-	@Override
-	public float getBrightness(){
-		return 1.0F;
-	}
-
-	@Override
-	public boolean isInRangeToRenderDist(double distance){
+	public boolean shouldRenderAtSqrDistance(double distance){
 		return true;
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		blastMultiplier = nbttagcompound.getFloat("blastMultiplier");
 		damageBlocks = nbttagcompound.getBoolean("damageBlocks");
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setFloat("blastMultiplier", blastMultiplier);
-		nbttagcompound.setBoolean("damageBlocks", damageBlocks);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
+		nbttagcompound.putFloat("blastMultiplier", blastMultiplier);
+		nbttagcompound.putBoolean("damageBlocks", damageBlocks);
 	}
 	
 	@Override
-	public SoundSource getSoundCategory(){
+	public SoundSource getSoundSource(){
 		return WizardrySounds.SPELLS;
 	}
 

@@ -1,11 +1,13 @@
 package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.HitResult;
@@ -15,7 +17,11 @@ public class EntityDart extends EntityMagicArrow {
 	
 	/** Creates a new dart in the given world. */
 	public EntityDart(Level world){
-		super(world);
+		super(WizardryEntities.DART.get(), world);
+	}
+
+	public EntityDart(EntityType<? extends EntityMagicArrow> type, Level world){
+		super(type, world);
 	}
 
 	@Override public double getDamage(){ return Spells.dart.getProperty(Spell.DAMAGE).doubleValue(); }
@@ -40,7 +46,7 @@ public class EntityDart extends EntityMagicArrow {
 	@Override
 	public void tickInAir(){
 		if(this.level.isClientSide){
-			ParticleBuilder.create(Type.LEAF, this).time(10 + random.nextInt(5)).spawn(world);
+			ParticleBuilder.create(Type.LEAF, this).time(10 + random.nextInt(5)).spawn(level);
 		}
 	}
 
@@ -53,7 +59,7 @@ public class EntityDart extends EntityMagicArrow {
 	}
 
 	@Override
-	protected void entityInit(){}
+	protected void defineSynchedData(){}
 
 	@Override
 	public int getLifetime(){

@@ -20,7 +20,6 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.MinionDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
@@ -31,7 +30,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.monster.IMob;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -39,6 +38,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Interface for all summoned creatures. The code for summoned creatures has been overhauled in Wizardry 2.1, and this
@@ -210,16 +210,16 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 			}
 
 			// ...and is a mob, a summoned creature, a wizard...
-			if((target instanceof IMob || target instanceof ISummonedCreature
+			if((target instanceof Enemy || target instanceof ISummonedCreature
 					|| (target instanceof EntityWizard && !(getCaster() instanceof EntityWizard))
 					// ...or something that's attacking the owner...
 					|| (target instanceof Mob && ((Mob)target).getTarget() == getCaster())
 					// ...or in the whitelist...
 					|| Arrays.asList(Wizardry.settings.summonedCreatureTargetsWhitelist)
-					.contains(EntityList.getKey(target.getClass())))
+					.contains(ForgeRegistries.ENTITY_TYPES.getKey(target.getType())))
 					// ...and isn't in the blacklist...
 					&& !Arrays.asList(Wizardry.settings.summonedCreatureTargetsBlacklist)
-					.contains(EntityList.getKey(target.getClass()))){
+					.contains(ForgeRegistries.ENTITY_TYPES.getKey(target.getType()))){
 				// ...it can be attacked.
 				return true;
 			}
@@ -280,7 +280,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	 */
 	default void writeNBTDelegate(CompoundTag tagcompound){
 		if(this.getCaster() != null){
-			tagcompound.setUniqueId("casterUUID", this.getCaster().getUUID());
+			tagcompound.putUUID("casterUUID", this.getCaster().getUUID());
 		}
 		tagcompound.putInt("lifetime", getLifetime());
 	}
@@ -325,11 +325,11 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 			thisEntity.discard();
 		}
 
-		if(this.hasParticleEffect() && thisEntity.level.isClientSide && thisEntity.world.random.nextInt(8) == 0)
+		if(this.hasParticleEffect() && thisEntity.level.isClientSide && thisEntity.level.random.nextInt(8) == 0)
 			ParticleBuilder.create(Type.DARK_MAGIC)
-			.pos(thisEntity.getX(), thisEntity.getY() + thisEntity.world.random.nextDouble() * 1.5, thisEntity.getZ())
+			.pos(thisEntity.getX(), thisEntity.getY() + thisEntity.level.random.nextDouble() * 1.5, thisEntity.getZ())
 			.clr(0.1f, 0.0f, 0.0f)
-			.spawn(thisEntity.world);
+			.spawn(thisEntity.level);
 
 	}
 
@@ -387,18 +387,18 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 
 				// All summoned creatures are classified as magic, so it makes sense to do it this way.
 				if(event.getSource() instanceof IndirectEntityDamageSource){
-					newSource = new IndirectMinionDamage(event.getSource().damageType,
+					newSource = new IndirectMinionDamage(event.getSource().msgId,
 							event.getSource().getDirectEntity(), event.getSource().getEntity(), summoner, type,
 							isRetaliatory);
 				}else if(event.getSource() instanceof EntityDamageSource){
 					// Name is copied over so it uses the appropriate vanilla death message
-					newSource = new MinionDamage(event.getSource().damageType, event.getSource().getEntity(), summoner,
+					newSource = new MinionDamage(event.getSource().msgId, event.getSource().getEntity(), summoner,
 							type, isRetaliatory);
 				}
 
 				// Copy over any relevant 'attributes' the original DamageSource might have had.
 				if(event.getSource().isExplosion()) newSource.setExplosion();
-				if(event.getSource().isFireDamage()) newSource.setSecondsOnFireDamage();
+				if(event.getSource().isFire()) newSource.setIsFire();
 				if(event.getSource().isProjectile()) newSource.setProjectile();
 
 				// For some reason Minecraft calculates knockback relative to DamageSource#getEntity. In vanilla this
@@ -413,7 +413,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 					// (if it didn't revenge-target, do nothing)
 					if(event.getEntity().getLastHurtByMob() == summoner
 							&& event.getSource().getEntity() instanceof LivingEntity){
-						event.getEntity().setRevengeTarget((LivingEntity)event.getSource().getEntity());
+						event.getEntity().setLastHurtByMob((LivingEntity)event.getSource().getEntity());
 					}
 				}
 

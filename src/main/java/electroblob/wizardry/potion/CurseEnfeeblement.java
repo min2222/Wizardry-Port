@@ -36,10 +36,10 @@ public class CurseEnfeeblement extends Curse {
 		// Players are the only entities with natural regeneration
 		// This can't be done in performEffect as that method only gets called every 20 ticks or so
 		// Don't bother trying to prevent it unless the player is full enough
-		if(event.player.hasEffect(WizardryPotions.curse_of_enfeeblement) && event.player.getFoodStats().getFoodLevel() > 17){
+		if(event.player.hasEffect(WizardryPotions.CURSE_OF_ENFEEBLEMENT.get()) && event.player.getFoodData().getFoodLevel() > 17){
 			try{
 				// Constantly setting this to zero prevents natural regeneration
-				foodTimer.set(event.player.getFoodStats(), 0);
+				foodTimer.set(event.player.getFoodData(), 0);
 			}catch(IllegalAccessException e){
 				Wizardry.logger.error("Error setting player food timer: ", e);
 			}

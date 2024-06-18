@@ -2,24 +2,26 @@ package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.Mth;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.EntityGhast;
-import net.minecraft.world.entity.projectile.EntitySmallFireball;
+import net.minecraft.world.entity.projectile.SmallFireball;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -44,8 +46,12 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	protected int lifetime = 16;
 
 	public EntityMagicFireball(Level world){
-		super(world);
+		this(WizardryEntities.MAGIC_FIREBALL.get(), world);
 		this.setSize(0.5f, 0.5f);
+	}
+	
+	public EntityMagicFireball(EntityType<? extends EntityMagicProjectile> type, Level world){
+		super(type, world);
 	}
 
 	public void setDamage(float damage){
@@ -66,11 +72,11 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(HitResult rayTrace){
+	protected void onHit(HitResult rayTrace){
 
 		if(!level.isClientSide){
 
-			Entity entityHit = rayTrace.entityHit;
+			Entity entityHit = rayTrace.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) rayTrace).getEntity() : null;
 
 			if(entityHit != null){
 
@@ -85,11 +91,11 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 			}else{
 
-				BlockPos pos = rayTrace.getBlockPos().offset(rayTrace.sideHit);
+				BlockPos pos = ((BlockHitResult) rayTrace).getBlockPos().relative(((BlockHitResult) rayTrace).getDirection());
 
 				// Remember that canPlaceBlock should ALWAYS be the last thing that gets checked, or it risks other mods
 				// thinking the block was placed even when a later condition prevents it, which may have side-effects
-				if(this.world.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(thrower, world, pos)){
+				if(this.level.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(getOwner(), level, pos)){
 					this.level.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
 				}
 			}
@@ -101,7 +107,7 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	protected DamageSource getDamageSource(Entity entityHit){
-		return MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.FIRE).setProjectile();
+		return MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FIRE).setProjectile();
 	}
 
 	@Override
@@ -113,21 +119,21 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 			for(int i=0; i<5; i++){
 
-				double dx = (random.nextDouble() - 0.5) * width;
-				double dy = (random.nextDouble() - 0.5) * height + this.getBbHeight()/2 - 0.1; // -0.1 because flames aren't centred
-				double dz = (random.nextDouble() - 0.5) * width;
+				double dx = (random.nextDouble() - 0.5) * getBbWidth();
+				double dy = (random.nextDouble() - 0.5) * getBbHeight() + this.getBbHeight()/2 - 0.1; // -0.1 because flames aren't centred
+				double dz = (random.nextDouble() - 0.5) * getBbWidth();
 				double v = 0.06;
 				ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
-						.pos(this.position().add(dx - this.motionX/2, dy, dz - this.motionZ/2))
-						.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
+						.pos(this.position().add(dx - this.getDeltaMovement().x/2, dy, dz - this.getDeltaMovement().z/2))
+						.vel(-v * dx, -v * dy, -v * dz).scale(getBbWidth()*2).time(10).spawn(level);
 
 				if(tickCount > 1){
-					dx = (random.nextDouble() - 0.5) * width;
-					dy = (random.nextDouble() - 0.5) * height + this.getBbHeight() / 2 - 0.1;
-					dz = (random.nextDouble() - 0.5) * width;
+					dx = (random.nextDouble() - 0.5) * getBbWidth();
+					dy = (random.nextDouble() - 0.5) * getBbHeight() + this.getBbHeight() / 2 - 0.1;
+					dz = (random.nextDouble() - 0.5) * getBbWidth();
 					ParticleBuilder.create(ParticleBuilder.Type.MAGIC_FIRE)
-							.pos(this.position().add(dx - this.motionX, dy, dz - this.motionZ))
-							.vel(-v * dx, -v * dy, -v * dz).scale(width*2).time(10).spawn(world);
+							.pos(this.position().add(dx - this.getDeltaMovement().x, dy, dz - this.getDeltaMovement().z))
+							.vel(-v * dx, -v * dy, -v * dz).scale(getBbWidth()*2).time(10).spawn(level);
 				}
 			}
 		}
@@ -139,31 +145,29 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	public float getCollisionBorderSize(){
+	public float getPickRadius(){
 		return 1.0F;
 	}
 
 	@Override
 	public boolean hurt(DamageSource source, float amount){
 
-		if(this.isEntityInvulnerable(source)){
+		if(this.isInvulnerableTo(source)){
 			return false;
 
 		}else{
 
-			this.markVelocityChanged();
+			this.markHurt();
 
 			if(source.getEntity() != null){
 
-				Vec3 vec3d = source.getEntity().getLookVec();
+				Vec3 vec3d = source.getEntity().getLookAngle();
 
 				if(vec3d != null){
 
-					double speed = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+					double speed = Math.sqrt(getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y + getDeltaMovement().z * getDeltaMovement().z);
 
-					this.motionX = vec3d.x * speed;
-					this.motionY = vec3d.y * speed;
-					this.motionZ = vec3d.z * speed;
+					this.setDeltaMovement(vec3d.scale(speed));
 
 					this.lifetime = 160;
 
@@ -191,58 +195,56 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 	}
 
 	@Override
-	public boolean hasNoGravity(){
+	public boolean isNoGravity(){
 		return true;
 	}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf buffer){
+	public void writeSpawnData(FriendlyByteBuf buffer){
 		buffer.writeInt(lifetime);
 		super.writeSpawnData(buffer);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf buffer){
+	public void readSpawnData(FriendlyByteBuf buffer){
 		lifetime = buffer.readInt();
 		super.readSpawnData(buffer);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		lifetime = nbttagcompound.getInt("lifetime");
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		nbttagcompound.putInt("lifetime", lifetime);
 	}
 
 	@SubscribeEvent
 	public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event){
 		// Replaces all vanilla fireballs with wizardry ones
-		if(Wizardry.settings.replaceVanillaFireballs && event.getEntity() instanceof EntitySmallFireball){
+		if(Wizardry.settings.replaceVanillaFireballs && event.getEntity() instanceof SmallFireball){
 
 			event.setCanceled(true);
 
-			EntityMagicFireball fireball = new EntityMagicFireball(event.getWorld());
-			fireball.thrower = ((EntitySmallFireball)event.getEntity()).getOwner();
-			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
+			EntityMagicFireball fireball = new EntityMagicFireball(event.getLevel());
+			fireball.setOwner(((SmallFireball)event.getEntity()).getOwner());
+			fireball.setPos(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(5);
 			fireball.setBurnDuration(5);
 			fireball.setLifetime(40);
 
-			fireball.motionX = ((EntitySmallFireball)event.getEntity()).accelerationX * ACCELERATION_CONVERSION_FACTOR;
-			fireball.motionY = ((EntitySmallFireball)event.getEntity()).accelerationY * ACCELERATION_CONVERSION_FACTOR;
-			fireball.motionZ = ((EntitySmallFireball)event.getEntity()).accelerationZ * ACCELERATION_CONVERSION_FACTOR;
+			fireball.setDeltaMovement(((SmallFireball)event.getEntity()).xPower * ACCELERATION_CONVERSION_FACTOR, ((SmallFireball)event.getEntity()).yPower * ACCELERATION_CONVERSION_FACTOR, ((SmallFireball)event.getEntity()).zPower * ACCELERATION_CONVERSION_FACTOR);
 
-			event.getWorld().addFreshEntity(fireball);
+			event.getLevel().addFreshEntity(fireball);
 		}
 	}
 }

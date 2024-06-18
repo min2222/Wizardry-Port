@@ -197,33 +197,33 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityEmber>> EMBER = ENTITY_TYPES.register(createEntry(EntityEmber::new, 			"ember", 				TrackingType.PROJECTILE));
 	public static final RegistryObject<EntityType<EntityMagicFireball>> MAGIC_FIREBALL = ENTITY_TYPES.register(createEntry(EntityMagicFireball::new, 	"magic_fireball", 	TrackingType.PROJECTILE));
 	public static final RegistryObject<EntityType<EntityLargeMagicFireball>> LARGE_MAGIC_FIREBALL = ENTITY_TYPES.register(createEntry(EntityLargeMagicFireball::new, "large_magic_fireball", TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityIceball>> ICEBALL = ENTITY_TYPES.register(createEntry(EntityIceball::new, 			"iceball", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityIceball>> ICEBALL = ENTITY_TYPES.register(createEntry(EntityIceball::new, 			"iceball", MobCategory.MISC, TrackingType.PROJECTILE));
 
 	// These are effectively projectiles, but since they're bigger and start high up they need updating from further away
-	public static final RegistryObject<EntityType<EntityMeteor>> METEOR = ENTITY_TYPES.register(createEntry(EntityMeteor::new, 			"meteor")				.tracker(160, 3, true));
-	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = ENTITY_TYPES.register(createEntry(EntityHammer::new, 			"lightning_hammer")	.tracker(160, 3, true));
-	public static final RegistryObject<EntityType<EntityLevitatingBlock>> LEVITATING_BLOCK = ENTITY_TYPES.register(createEntry(EntityLevitatingBlock::new, 	"levitating_block")	.tracker(160, 3, true));
+	public static final RegistryObject<EntityType<EntityMeteor>> METEOR = ENTITY_TYPES.register(createEntry(EntityMeteor::new, 			"meteor", MobCategory.MISC, 160, 3, true));
+	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = ENTITY_TYPES.register(createEntry(EntityHammer::new, 			"lightning_hammer", MobCategory.MISC, 160, 3, true));
+	public static final RegistryObject<EntityType<EntityLevitatingBlock>> LEVITATING_BLOCK = ENTITY_TYPES.register(createEntry(EntityLevitatingBlock::new, 	"levitating_block", MobCategory.MISC, 160, 3, true));
 
 	// Constructs
-	public static final RegistryObject<EntityType<EntityBlackHole>> BLACK_HOLE = ENTITY_TYPES.register(createEntry(EntityBlackHole::new, 		"black_hole", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityBlizzard>> BLIZZARD = ENTITY_TYPES.register(createEntry(EntityBlizzard::new, 		"blizzard", 			TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityForcefield>> FORCEFIELD = ENTITY_TYPES.register(createEntry(EntityForcefield::new, 		"forcefield", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFireSigil>> FIRE_SIGIL = ENTITY_TYPES.register(createEntry(EntityFireSigil::new, 		"fire_sigil", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFrostSigil>> FROST_SIGIL = ENTITY_TYPES.register(createEntry(EntityFrostSigil::new, 		"frost_sigil", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityLightningSigil>> LIGHTNING_SIGIL = ENTITY_TYPES.register(createEntry(EntityLightningSigil::new, 	"lightning_sigil", 	TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityCombustionRune>> COMBUSTION_RUNE = ENTITY_TYPES.register(createEntry(EntityCombustionRune::new, 	"combustion_rune", 	TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFireRing>> RING_OF_FIRE = ENTITY_TYPES.register(createEntry(EntityFireRing::new, 		"ring_of_fire", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityHealAura>> HEALING_AURA = ENTITY_TYPES.register(createEntry(EntityHealAura::new, 		"healing_aura", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityDecay>> DECAY = ENTITY_TYPES.register(createEntry(EntityDecay::new, 			"decay", 				TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = ENTITY_TYPES.register(createEntry(EntityZombieSpawner::new, 	"zombie_spawner", 	TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityRadiantTotem>> RADIANT_TOTEM = ENTITY_TYPES.register(createEntry(EntityRadiantTotem::new, 	"radiant_totem", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityWitheringTotem>> WITHERING_TOTEM = ENTITY_TYPES.register(createEntry(EntityWitheringTotem::new, 	"withering_totem", 	TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityBlackHole>> BLACK_HOLE = ENTITY_TYPES.register(createEntry(EntityBlackHole::new, 		"black_hole", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityBlizzard>> BLIZZARD = ENTITY_TYPES.register(createEntry(EntityBlizzard::new, 		"blizzard", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityForcefield>> FORCEFIELD = ENTITY_TYPES.register(createEntry(EntityForcefield::new, 		"forcefield", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFireSigil>> FIRE_SIGIL = ENTITY_TYPES.register(createEntry(EntityFireSigil::new, 		"fire_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFrostSigil>> FROST_SIGIL = ENTITY_TYPES.register(createEntry(EntityFrostSigil::new, 		"frost_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityLightningSigil>> LIGHTNING_SIGIL = ENTITY_TYPES.register(createEntry(EntityLightningSigil::new, 	"lightning_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityCombustionRune>> COMBUSTION_RUNE = ENTITY_TYPES.register(createEntry(EntityCombustionRune::new, 	"combustion_rune", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFireRing>> RING_OF_FIRE = ENTITY_TYPES.register(createEntry(EntityFireRing::new, 		"ring_of_fire", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityHealAura>> HEALING_AURA = ENTITY_TYPES.register(createEntry(EntityHealAura::new, 		"healing_aura", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityDecay>> DECAY = ENTITY_TYPES.register(createEntry(EntityDecay::new, 			"decay", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = ENTITY_TYPES.register(createEntry(EntityZombieSpawner::new, 	"zombie_spawner", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityRadiantTotem>> RADIANT_TOTEM = ENTITY_TYPES.register(createEntry(EntityRadiantTotem::new, 	"radiant_totem", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityWitheringTotem>> WITHERING_TOTEM = ENTITY_TYPES.register(createEntry(EntityWitheringTotem::new, 	"withering_totem", MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones don't render, currently that makes no difference here but we might as well separate them
-	public static final RegistryObject<EntityType<EntityArrowRain>> ARROW_RAIN = ENTITY_TYPES.register(createEntry(EntityArrowRain::new, 		"arrow_rain", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = ENTITY_TYPES.register(createEntry(EntityEarthquake::new, 		"earthquake", 		TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityHailstorm>> HAILSTORM = ENTITY_TYPES.register(createEntry(EntityHailstorm::new, 		"hailstorm", 			TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = ENTITY_TYPES.register(createEntry(EntityStormcloud::new, 		"stormcloud", 		TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityArrowRain>> ARROW_RAIN = ENTITY_TYPES.register(createEntry(EntityArrowRain::new, 		"arrow_rain", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = ENTITY_TYPES.register(createEntry(EntityEarthquake::new, 		"earthquake", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityHailstorm>> HAILSTORM = ENTITY_TYPES.register(createEntry(EntityHailstorm::new, 		"hailstorm", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = ENTITY_TYPES.register(createEntry(EntityStormcloud::new, 		"stormcloud", MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones move, velocity updates are sent if that's not at constant velocity
 	public static final RegistryObject<EntityType<EntityShield>> SHIELD = ENTITY_TYPES.register(createEntry(EntityShield::new, "shield", MobCategory.MISC, 160, 10, true));

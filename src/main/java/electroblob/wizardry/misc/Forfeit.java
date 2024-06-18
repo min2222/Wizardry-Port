@@ -1,14 +1,35 @@
 package electroblob.wizardry.misc;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.function.BiConsumer;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.EntityMeteor;
-import electroblob.wizardry.entity.construct.*;
-import electroblob.wizardry.entity.living.*;
+import electroblob.wizardry.entity.construct.EntityArrowRain;
+import electroblob.wizardry.entity.construct.EntityBlackHole;
+import electroblob.wizardry.entity.construct.EntityBlizzard;
+import electroblob.wizardry.entity.construct.EntityHailstorm;
+import electroblob.wizardry.entity.construct.EntityIceSpike;
+import electroblob.wizardry.entity.construct.EntityLightningSigil;
+import electroblob.wizardry.entity.living.EntityBlazeMinion;
+import electroblob.wizardry.entity.living.EntityIceGiant;
+import electroblob.wizardry.entity.living.EntityIceWraith;
+import electroblob.wizardry.entity.living.EntityLightningWraith;
+import electroblob.wizardry.entity.living.EntityShadowWraith;
+import electroblob.wizardry.entity.living.EntityStormElemental;
+import electroblob.wizardry.entity.living.EntityVexMinion;
+import electroblob.wizardry.entity.living.EntityZombieMinion;
 import electroblob.wizardry.entity.projectile.EntityFirebomb;
 import electroblob.wizardry.entity.projectile.EntityMagicFireball;
 import electroblob.wizardry.event.SpellCastEvent;
@@ -16,36 +37,40 @@ import electroblob.wizardry.event.SpellCastEvent.Source;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
-import electroblob.wizardry.registry.*;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryAdvancementTriggers;
+import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryPotions;
+import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Banish;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties.Context;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
-import net.minecraft.world.entity.item.EntityFallingBlock;
-import net.minecraft.world.entity.passive.EntitySquid;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.animal.Squid;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.function.BiConsumer;
 
 /**
  * A {@code Forfeit} object represents a negative effect that may happen when a player attempts to cast an
@@ -170,7 +195,7 @@ public abstract class Forfeit {
 				Forfeit forfeit = getRandomForfeit(data.synchronisedRandom, event.getSpell().getTier(), event.getSpell().getElement());
 
 				if(forfeit == null){ // Should never happen, but just in case...
-					if(!event.getWorld().isRemote) player.sendMessage(Component.translatable("forfeit.ebwizardry:do_nothing"));
+					if(!event.getWorld().isClientSide) player.sendSystemMessage(Component.translatable("forfeit.ebwizardry:do_nothing"));
 					return;
 				}
 
@@ -179,7 +204,7 @@ public abstract class Forfeit {
 				ItemStack stack = player.getMainHandItem();
 
 				if(!(stack.getItem() instanceof ISpellCastingItem)){
-					stack = player.getOffHandItem();
+					stack = player.getOffhandItem();
 					if(!(stack.getItem() instanceof ISpellCastingItem)) stack = ItemStack.EMPTY;
 				}
 
@@ -197,7 +222,7 @@ public abstract class Forfeit {
 
 				EntityUtils.playSoundAtPlayer(player, forfeit.getSound(), WizardrySounds.SPELLS, 1, 1);
 
-				if(!event.getWorld().isRemote) player.sendMessage(
+				if(!event.getWorld().isClientSide) player.sendSystemMessage(
 						event.getSource() == SpellCastEvent.Source.WAND ? forfeit.getMessageForWand() : forfeit.getMessageForScroll());
 			}
 		}
@@ -209,40 +234,40 @@ public abstract class Forfeit {
 		add(Tier.NOVICE, Element.FIRE, create("burn_self", (w, p) -> p.setSecondsOnFire(5)));
 
 		add(Tier.APPRENTICE, Element.FIRE, create("fireball", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityMagicFireball fireball = new EntityMagicFireball(w);
-				Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(6));
-				fireball.setPosition(vec.x, vec.y, vec.z);
+				Vec3 vec = p.getEyePosition(1).add(p.getLookAngle().scale(6));
+				fireball.setPos(vec.x, vec.y, vec.z);
 				fireball.shoot(p.getX(), p.getY() + p.getEyeHeight(), p.getZ(), 1.5f, 1);
 				w.addFreshEntity(fireball);
 			}
 		}));
 
 		add(Tier.APPRENTICE, Element.FIRE, create("firebomb", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityFirebomb firebomb = new EntityFirebomb(w);
-				firebomb.setPosition(p.getX(), p.getY() + 5, p.getZ());
+				firebomb.setPos(p.getX(), p.getY() + 5, p.getZ());
 				w.addFreshEntity(firebomb);
 			}
 		}));
 
-		add(Tier.ADVANCED, Element.FIRE, create("explode", (w, p) -> w.createExplosion(null, p.getX(), p.getY(), p.getZ(), 1, false)));
+		add(Tier.ADVANCED, Element.FIRE, create("explode", (w, p) -> w.explode(null, p.getX(), p.getY(), p.getZ(), 1, BlockInteraction.NONE)));
 
 		add(Tier.ADVANCED, Element.FIRE, create("blazes", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 3; i++){
 					BlockPos pos = BlockUtils.findNearbyFloorSpace(p, 4, 2);
 					if(pos == null) break;
 					EntityBlazeMinion blaze = new EntityBlazeMinion(w);
-					blaze.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					blaze.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(blaze);
 				}
 			}
 		}));
 
 		add(Tier.MASTER, Element.FIRE, create("burn_surroundings", (w, p) -> {
-			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
-				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition(), 6);
+			if(!w.isClientSide && EntityUtils.canDamageBlocks(p, w)){
+				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.blockPosition(), 6);
 				for(BlockPos pos : sphere){
 					if(w.random.nextBoolean() && w.isEmptyBlock(pos) && BlockUtils.canPlaceBlock(p, w, pos))
 						w.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
@@ -251,70 +276,70 @@ public abstract class Forfeit {
 		}));
 
 		add(Tier.MASTER, Element.FIRE, create("meteors", (w, p) -> {
-			if(!w.isRemote) for(int i=0; i<5; i++) w.addFreshEntity(new EntityMeteor(w, p.getX() + w.random.nextDouble() * 16 - 8,
+			if(!w.isClientSide) for(int i=0; i<5; i++) w.addFreshEntity(new EntityMeteor(w, p.getX() + w.random.nextDouble() * 16 - 8,
 						p.getY() + 40 + w.random.nextDouble() * 30, p.getZ() + w.random.nextDouble() * 16 - 8,
 						1, EntityUtils.canDamageBlocks(p, w)));
 		}));
 
-		add(Tier.NOVICE, Element.ICE, create("freeze_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.frost, 200))));
+		add(Tier.NOVICE, Element.ICE, create("freeze_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 200))));
 
-		add(Tier.APPRENTICE, Element.ICE, create("freeze_self_2", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.frost, 300, 1))));
+		add(Tier.APPRENTICE, Element.ICE, create("freeze_self_2", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 300, 1))));
 
 		add(Tier.APPRENTICE, Element.ICE, create("ice_spikes", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 5; i++){
 					EntityIceSpike iceSpike = new EntityIceSpike(w);
 					double x = p.getX() + 2 - w.random.nextFloat() * 4;
 					double z = p.getZ() + 2 - w.random.nextFloat() * 4;
-					Integer y = BlockUtils.getNearestSurface(w, new BlockPos(x, p.getY(), z), EnumFacing.UP, 2, true,
-							BlockUtils.SurfaceCriteria.basedOn(Level::isBlockFullCube));
+					Integer y = BlockUtils.getNearestSurface(w, new BlockPos(x, p.getY(), z), Direction.UP, 2, true,
+							BlockUtils.SurfaceCriteria.basedOn((t, u) -> t.getBlockState(u).isCollisionShapeFullBlock(t, u)));
 					if(y == null) break;
-					iceSpike.setFacing(EnumFacing.UP);
-					iceSpike.setPosition(x, y, z);
+					iceSpike.setFacing(Direction.UP);
+					iceSpike.setPos(x, y, z);
 					w.addFreshEntity(iceSpike);
 				}
 			}
 		}));
 
 		add(Tier.ADVANCED, Element.ICE, create("blizzard", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityBlizzard blizzard = new EntityBlizzard(w);
-				blizzard.setPosition(p.getX(), p.getY(), p.getZ());
+				blizzard.setPos(p.getX(), p.getY(), p.getZ());
 				w.addFreshEntity(blizzard);
 			}
 		}));
 
 		add(Tier.ADVANCED, Element.ICE, create("ice_wraiths", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 3; i++){
 					BlockPos pos = BlockUtils.findNearbyFloorSpace(p, 4, 2);
 					if(pos == null) break;
 					EntityIceWraith iceWraith = new EntityIceWraith(w);
-					iceWraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					iceWraith.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(iceWraith);
 				}
 			}
 		}));
 
 		add(Tier.MASTER, Element.ICE, create("hailstorm", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityHailstorm hailstorm = new EntityHailstorm(w);
-				hailstorm.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
+				hailstorm.setPos(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
 				w.addFreshEntity(hailstorm);
 			}
 		}));
 
 		add(Tier.MASTER, Element.ICE, create("ice_giant", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityIceGiant iceGiant = new EntityIceGiant(w);
-				iceGiant.setPosition(p.getX() + p.getLookVec().x * 4, p.getY(), p.getZ() + p.getLookVec().z * 4);
+				iceGiant.setPos(p.getX() + p.getLookAngle().x * 4, p.getY(), p.getZ() + p.getLookAngle().z * 4);
 				w.addFreshEntity(iceGiant);
 			}
 		}));
 
 		add(Tier.NOVICE, Element.LIGHTNING, create("thunder", (w, p) -> {
-			p.addVelocity(-p.getLookVec().x, 0, -p.getLookVec().z);
-			if(w.isRemote) w.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, p.getX(), p.getY(), p.getZ(), 0, 0, 0);
+			p.push(-p.getLookAngle().x, 0, -p.getLookAngle().z);
+			if(w.isClientSide) w.addParticle(ParticleTypes.EXPLOSION, p.getX(), p.getY(), p.getZ(), 0, 0, 0);
 		}));
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("storm", (w, p) -> {
@@ -327,54 +352,59 @@ public abstract class Forfeit {
 		}));
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("lightning_sigils", (w, p) -> {
-			if(!w.isRemote){
-				for(EnumFacing direction : EnumFacing.HORIZONTALS){
-					BlockPos pos = p.getPosition().offset(direction, 2);
+			if(!w.isClientSide){
+				for(Direction direction : Direction.HORIZONTALS){
+					BlockPos pos = p.blockPosition().relative(direction, 2);
 					Integer y = BlockUtils.getNearestFloor(w, pos, 2);
 					if(y == null) continue;
 					EntityLightningSigil sigil = new EntityLightningSigil(w);
-					sigil.setPosition(pos.getX() + 0.5, y, pos.getZ() + 0.5);
+					sigil.setPos(pos.getX() + 0.5, y, pos.getZ() + 0.5);
 					w.addFreshEntity(sigil);
 				}
 			}
 		}));
 
-		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning", (w, p) -> w.addWeatherEffect(new EntityLightningBolt(w, p.getX(), p.getY(), p.getZ(), false))));
+		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning", (w, p) -> {
+			LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, w);
+			bolt.setVisualOnly(false);
+			bolt.setPos(p.getX(), p.getY(), p.getZ());
+			w.addFreshEntity(bolt);
+		}));
 
-		add(Tier.ADVANCED, Element.LIGHTNING, create("paralyse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.paralysis, 200))));
+		add(Tier.ADVANCED, Element.LIGHTNING, create("paralyse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.PARALYSIS.get(), 200))));
 
 		add(Tier.ADVANCED, Element.LIGHTNING, create("lightning_wraiths", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 3; i++){
 					BlockPos pos = BlockUtils.findNearbyFloorSpace(p, 4, 2);
 					if(pos == null) break;
 					EntityLightningWraith lightningWraith = new EntityLightningWraith(w);
-					lightningWraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					lightningWraith.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(lightningWraith);
 				}
 			}
 		}));
 
 		add(Tier.MASTER, Element.LIGHTNING, create("storm_elementals", (w, p) -> {
-			if(!w.isRemote){
-				for(EnumFacing direction : EnumFacing.HORIZONTALS){
-					BlockPos pos = p.getPosition().offset(direction, 3);
+			if(!w.isClientSide){
+				for(Direction direction : Direction.HORIZONTALS){
+					BlockPos pos = p.blockPosition().relative(direction, 3);
 					EntityStormElemental stormElemental = new EntityStormElemental(w);
-					stormElemental.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					stormElemental.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(stormElemental);
 				}
 			}
 		}));
 
-		add(Tier.NOVICE, Element.NECROMANCY, create("nausea", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 400))));
+		add(Tier.NOVICE, Element.NECROMANCY, create("nausea", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 400))));
 
 		add(Tier.APPRENTICE, Element.NECROMANCY, create("zombie_horde", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 3; i++){
 					BlockPos pos = BlockUtils.findNearbyFloorSpace(p, 4, 2);
 					if(pos == null) break;
 					EntityZombieMinion zombie = new EntityZombieMinion(w);
-					zombie.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					zombie.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(zombie);
 				}
 			}
@@ -385,20 +415,20 @@ public abstract class Forfeit {
 		add(Tier.MASTER, Element.NECROMANCY, create("cripple_self", (w, p) -> p.hurt(DamageSource.MAGIC, p.getHealth() - 1)));
 
 		add(Tier.MASTER, Element.NECROMANCY, create("shadow_wraiths", (w, p) -> {
-			if(!w.isRemote){
-				for(EnumFacing direction : EnumFacing.HORIZONTALS){
-					BlockPos pos = p.getPosition().offset(direction, 3);
+			if(!w.isClientSide){
+				for(Direction direction : Direction.HORIZONTALS){
+					BlockPos pos = p.blockPosition().relative(direction, 3);
 					EntityShadowWraith wraith = new EntityShadowWraith(w);
-					wraith.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+					wraith.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
 					w.addFreshEntity(wraith);
 				}
 			}
 		}));
 
 		add(Tier.NOVICE, Element.EARTH, create("snares", (w, p) -> {
-			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
-				for(EnumFacing direction : EnumFacing.HORIZONTALS){
-					BlockPos pos = p.getPosition().offset(direction);
+			if(!w.isClientSide && EntityUtils.canDamageBlocks(p, w)){
+				for(Direction direction : Direction.HORIZONTALS){
+					BlockPos pos = p.blockPosition().relative(direction);
 					if(BlockUtils.canBlockBeReplaced(w, pos) && BlockUtils.canPlaceBlock(p, w, pos))
 						w.setBlockAndUpdate(pos, WizardryBlocks.snare.defaultBlockState());
 				}
@@ -406,16 +436,16 @@ public abstract class Forfeit {
 		}));
 
 		add(Tier.NOVICE, Element.EARTH, create("squid", (w, p) -> {
-			if(!w.isRemote){
-				EntitySquid squid = new EntitySquid(w);
-				squid.setPosition(p.getX(), p.getY() + 3, p.getZ());
+			if(!w.isClientSide){
+				Squid squid = new Squid(EntityType.SQUID, w);
+				squid.setPos(p.getX(), p.getY() + 3, p.getZ());
 				w.addFreshEntity(squid);
 			}
 		}));
 
 		add(Tier.APPRENTICE, Element.EARTH, create("uproot_plants", (w, p) -> {
-			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
-				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition(), 5);
+			if(!w.isClientSide && EntityUtils.canDamageBlocks(p, w)){
+				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.blockPosition(), 5);
 				sphere.removeIf(pos -> !(w.getBlockState(pos).getBlock() instanceof IPlantable) || !BlockUtils.canBreakBlock(p, w, pos));
 				sphere.forEach(pos -> w.destroyBlock(pos, true));
 			}
@@ -424,32 +454,32 @@ public abstract class Forfeit {
 		add(Tier.APPRENTICE, Element.EARTH, create("poison_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.POISON, 400, 1))));
 
 		add(Tier.ADVANCED, Element.EARTH, create("flood", (w, p) -> {
-			if(!w.isRemote && EntityUtils.canDamageBlocks(p, w)){
-				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition().up(), 2);
+			if(!w.isClientSide && EntityUtils.canDamageBlocks(p, w)){
+				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.blockPosition().above(), 2);
 				sphere.removeIf(pos -> !BlockUtils.canBlockBeReplaced(w, pos, true) || !BlockUtils.canPlaceBlock(p, w, pos));
 				sphere.forEach(pos -> w.setBlockAndUpdate(pos, Blocks.WATER.defaultBlockState()));
 			}
 		}));
 
 		add(Tier.MASTER, Element.EARTH, create("bury_self", (w, p) -> {
-			if(!w.isRemote){
-				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.getPosition(), 4);
-				sphere.removeIf(pos -> !w.getBlockState(pos).isFullCube() || BlockUtils.isBlockUnbreakable(w, pos) || BlockUtils.canBreakBlock(p, w, pos));
+			if(!w.isClientSide){
+				List<BlockPos> sphere = BlockUtils.getBlockSphere(p.blockPosition(), 4);
+				sphere.removeIf(pos -> !w.getBlockState(pos).isCollisionShapeFullBlock(w, pos) || BlockUtils.isBlockUnbreakable(w, pos) || BlockUtils.canBreakBlock(p, w, pos));
 				sphere.forEach(pos -> {
-					EntityFallingBlock block = new EntityFallingBlock(w, pos.getX() + 0.5, pos.getY() + 0.5,
+					FallingBlockEntity block = new FallingBlockEntity(w, pos.getX() + 0.5, pos.getY() + 0.5,
 							pos.getZ() + 0.5, w.getBlockState(pos));
-					block.motionY = 0.3 * (4 - (p.getPosition().getY() - pos.getY()));
+					block.motionY = 0.3 * (4 - (p.blockPosition().getY() - pos.getY()));
 					w.addFreshEntity(block);
 				});
 			}
 		}));
 
 		add(Tier.NOVICE, Element.SORCERY, create("spill_inventory", (w, p) -> {
-			for(int i = 0; i < p.inventory.mainInventory.size(); i++){
-				ItemStack stack = p.inventory.mainInventory.get(i);
+			for(int i = 0; i < p.getInventory().items.size(); i++){
+				ItemStack stack = p.getInventory().items.get(i);
 				if(!stack.isEmpty()){
-					p.dropItem(stack, true, false);
-					p.inventory.mainInventory.set(i, ItemStack.EMPTY);
+					p.drop(stack, true, false);
+					p.getInventory().items.set(i, ItemStack.EMPTY);
 				}
 			}
 		}));
@@ -459,12 +489,12 @@ public abstract class Forfeit {
 		add(Tier.ADVANCED, Element.SORCERY, create("levitate_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200))));
 
 		add(Tier.ADVANCED, Element.SORCERY, create("vex_horde", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				for(int i = 0; i < 4; i++){
 					BlockPos pos = BlockUtils.findNearbyFloorSpace(p, 4, 2);
 					if(pos == null) break;
 					EntityVexMinion vex = new EntityVexMinion(w);
-					vex.setPosition(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
+					vex.setPos(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
 					w.addFreshEntity(vex);
 				}
 			}
@@ -472,15 +502,15 @@ public abstract class Forfeit {
 
 		add(Tier.MASTER, Element.SORCERY, create("black_hole", (w, p) -> {
 			EntityBlackHole blackHole = new EntityBlackHole(w);
-			Vec3 vec = p.getPositionEyes(1).add(p.getLookVec().scale(4));
-			blackHole.setPosition(vec.x, vec.y, vec.z);
+			Vec3 vec = p.getEyePosition(1).add(p.getLookAngle().scale(4));
+			blackHole.setPos(vec.x, vec.y, vec.z);
 			w.addFreshEntity(blackHole);
 		}));
 
 		add(Tier.MASTER, Element.SORCERY, create("arrow_rain", (w, p) -> {
-			if(!w.isRemote){
+			if(!w.isClientSide){
 				EntityArrowRain arrowRain = new EntityArrowRain(w);
-				arrowRain.setPosition(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
+				arrowRain.setPos(p.getX(), p.getY() + 5, p.getZ() - 3); // Subtract 3 from z because it's facing south (yaw 0)
 				w.addFreshEntity(arrowRain);
 			}
 		}));
@@ -490,11 +520,11 @@ public abstract class Forfeit {
 		add(Tier.NOVICE, Element.HEALING, create("damage_self", (w, p) -> p.hurt(DamageSource.MAGIC, 4)));
 
 		add(Tier.NOVICE, Element.HEALING, create("spill_armour", (w, p) -> {
-			for(int i = 0; i < p.inventory.armorInventory.size(); i++){
-				ItemStack stack = p.inventory.armorInventory.get(i);
+			for(int i = 0; i < p.getInventory().armor.size(); i++){
+				ItemStack stack = p.getInventory().armor.get(i);
 				if(!stack.isEmpty()){
-					p.dropItem(stack, true, false);
-					p.inventory.armorInventory.set(i, ItemStack.EMPTY);
+					p.drop(stack, true, false);
+					p.getInventory().armor.set(i, ItemStack.EMPTY);
 				}
 			}
 		}));
@@ -505,9 +535,9 @@ public abstract class Forfeit {
 
 		add(Tier.ADVANCED, Element.HEALING, create("weaken_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 600, 3))));
 
-		add(Tier.ADVANCED, Element.HEALING, create("jam_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.arcane_jammer, 300))));
+		add(Tier.ADVANCED, Element.HEALING, create("jam_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.ARCANE_JAMMER.get(), 300))));
 
-		add(Tier.MASTER, Element.HEALING, create("curse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.curse_of_undeath, Integer.MAX_VALUE))));
+		add(Tier.MASTER, Element.HEALING, create("curse_self", (w, p) -> p.addEffect(new MobEffectInstance(WizardryPotions.CURSE_OF_UNDEATH.get(), Integer.MAX_VALUE))));
 
 	}
 

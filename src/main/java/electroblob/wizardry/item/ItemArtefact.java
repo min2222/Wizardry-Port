@@ -1,6 +1,18 @@
 package electroblob.wizardry.item;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Streams;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.data.WizardData;
@@ -15,29 +27,55 @@ import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.event.SpellCastEvent.Source;
 import electroblob.wizardry.integration.DamageSafetyChecker;
 import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
-import electroblob.wizardry.registry.*;
-import electroblob.wizardry.spell.*;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryPotions;
+import electroblob.wizardry.registry.WizardrySounds;
+import electroblob.wizardry.registry.WizardryTabs;
+import electroblob.wizardry.spell.Banish;
+import electroblob.wizardry.spell.CurseOfSoulbinding;
+import electroblob.wizardry.spell.Disintegration;
+import electroblob.wizardry.spell.GreaterHeal;
+import electroblob.wizardry.spell.Heal;
+import electroblob.wizardry.spell.HealAlly;
+import electroblob.wizardry.spell.ImbueWeapon;
+import electroblob.wizardry.spell.LifeDrain;
+import electroblob.wizardry.spell.MindControl;
+import electroblob.wizardry.spell.PocketFurnace;
+import electroblob.wizardry.spell.ReplenishHunger;
+import electroblob.wizardry.spell.Resurrection;
+import electroblob.wizardry.spell.Satiety;
+import electroblob.wizardry.spell.Spell;
+import electroblob.wizardry.spell.SpellConjuration;
+import electroblob.wizardry.spell.SpellMinion;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.IElementalDamage;
+import electroblob.wizardry.util.InventoryUtils;
+import electroblob.wizardry.util.MagicDamage;
+import electroblob.wizardry.util.ParticleBuilder;
+import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.level.entity.IProjectile;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.IProjectile;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -47,17 +85,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Base class for all artefact items, which handles effects, textures and so on. The majority of artefacts are
@@ -290,7 +321,7 @@ public class ItemArtefact extends Item {
 		if(event.phase == TickEvent.Phase.START){
 
 			Player player = event.player;
-			Level world = player.world;
+			Level world = player.level;
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -347,7 +378,7 @@ public class ItemArtefact extends Item {
 					// This should be a chance per fall, so we can't just check fall distance is greater than 3 each tick
 					// Based on a stationary start and a gravity acceleration of 0.02 blocks/tick^2, at 3 blocks of fall
 					// distance the player should be falling at about 0.35b/t, so 0.5 blocks should be enough of a window
-					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.world.random.nextFloat() < 0.5f){
+					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.level.random.nextFloat() < 0.5f){
 						if(!WizardData.get(player).isCasting()) WizardData.get(player).startCastingContinuousSpell(Spells.glide, new SpellModifiers(), 600);
 					}else if(player.onGround){
 						WizardData data = WizardData.get(player);
@@ -457,14 +488,14 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.ring_storm){
 
-					if(event.getSpell().getElement() == Element.LIGHTNING && player.world.isThundering()){
+					if(event.getSpell().getElement() == Element.LIGHTNING && player.level.isThundering()){
 						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
 					}
 
 				}else if(artefact == WizardryItems.ring_full_moon){
 
-					if(event.getSpell().getElement() == Element.EARTH && !player.world.isDaytime()
-							&& player.world.provider.getMoonPhase(player.level.getWorldTime()) == 0){
+					if(event.getSpell().getElement() == Element.EARTH && !player.level.isDaytime()
+							&& player.level.provider.getMoonPhase(player.level.getWorldTime()) == 0){
 						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
 					}
 
@@ -560,14 +591,14 @@ public class ItemArtefact extends Item {
 
 			if(entityNBT.hasUUID(MindControl.NBT_KEY)){
 
-				Entity caster = EntityUtils.getEntityByUUID(entity.world, entityNBT.getUUID(MindControl.NBT_KEY));
+				Entity caster = EntityUtils.getEntityByUUID(entity.level, entityNBT.getUUID(MindControl.NBT_KEY));
 
 				if(caster instanceof Player){
 
 					if(isArtefactActive((Player)caster, WizardryItems.ring_mind_control)){
 
-						EntityUtils.getEntitiesWithinRadius(3, entity.getX(), entity.getY(), entity.getZ(), entity.world, Mob.class).stream()
-								.filter(e -> e.world.random.nextInt(10) == 0)
+						EntityUtils.getEntitiesWithinRadius(3, entity.getX(), entity.getY(), entity.getZ(), entity.level, Mob.class).stream()
+								.filter(e -> e.level.random.nextInt(10) == 0)
 								.filter(MindControl::canControl)
 								.filter(e -> AllyDesignationSystem.isValidTarget(caster, e))
 								.forEach(target -> MindControl.startControlling(target, (Player)caster,
@@ -606,7 +637,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_channeling){
 
-					if(player.world.random.nextFloat() < 0.3f && event.getSource() instanceof IElementalDamage
+					if(player.level.random.nextFloat() < 0.3f && event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.SHOCK){
 						event.setCanceled(true);
 						return;
@@ -628,7 +659,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_potential){
 
-					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
+					if(player.level.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 						&& event.getSource().getEntity() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getEntity();
@@ -636,23 +667,23 @@ public class ItemArtefact extends Item {
 						if(player.level.isClientSide){
 
 							ParticleBuilder.create(ParticleBuilder.Type.LIGHTNING).entity(event.getEntity())
-									.pos(0, event.getEntity().getBbHeight()/2, 0).target(target).spawn(player.world);
+									.pos(0, event.getEntity().getBbHeight()/2, 0).target(target).spawn(player.level);
 
-							ParticleBuilder.spawnShockParticles(player.world, target.getX(),
+							ParticleBuilder.spawnShockParticles(player.level, target.getX(),
 									target.getY() + target.getBbHeight()/2, target.getZ());
 						}
 
 						DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
 								MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
-						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.world.random.nextFloat() * 0.4F + 1.5F);
+						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.level.random.nextFloat() * 0.4F + 1.5F);
 
 					}
 
 				}else if(artefact == WizardryItems.amulet_lich){
 
-					if(!event.getSource().isUnblockable() && player.world.random.nextFloat() < 0.15f){
+					if(!event.getSource().isUnblockable() && player.level.random.nextFloat() < 0.15f){
 
-						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), player.world, Mob.class);
+						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), player.level, Mob.class);
 						nearbyMobs.removeIf(e -> !(e instanceof ISummonedCreature && ((ISummonedCreature)e).getCaster() == player));
 
 						if(!nearbyMobs.isEmpty()){
@@ -666,7 +697,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_banishing){
 
-					if(player.world.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
+					if(player.level.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 							&& event.getSource().getEntity() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getEntity();
@@ -675,7 +706,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_transience){
 
-					if(player.getHealth() <= 6 && player.world.random.nextFloat() < 0.25f){
+					if(player.getHealth() <= 6 && player.level.random.nextFloat() < 0.25f){
 						player.addEffect(new MobEffectInstance(WizardryPotions.transience, 300));
 						player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0, false, false));
 					}
@@ -687,7 +718,7 @@ public class ItemArtefact extends Item {
 
 			Player player = (Player)event.getSource().getEntity();
 			ItemStack mainhandItem = player.getMainHandItem();
-			Level world = player.world;
+			Level world = player.level;
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
@@ -748,7 +779,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.ring_shattering){
 
-					if(!player.level.isClientSide && player.world.random.nextFloat() < 0.15f
+					if(!player.level.isClientSide && player.level.random.nextFloat() < 0.15f
 							&& event.getEntity().getHealth() < 12f // Otherwise it's a bit overpowered!
 							&& event.getEntity().hasEffect(WizardryPotions.frost)
 							&& EntityUtils.isMeleeDamage(event.getSource())){
@@ -756,10 +787,10 @@ public class ItemArtefact extends Item {
 						event.setAmount(12f);
 
 						for(int i = 0; i < 8; i++){
-							double dx = event.getEntity().world.random.nextDouble() - 0.5;
-							double dy = event.getEntity().world.random.nextDouble() - 0.5;
-							double dz = event.getEntity().world.random.nextDouble() - 0.5;
-							EntityIceShard iceshard = new EntityIceShard(event.getEntity().world);
+							double dx = event.getEntity().level.random.nextDouble() - 0.5;
+							double dy = event.getEntity().level.random.nextDouble() - 0.5;
+							double dz = event.getEntity().level.random.nextDouble() - 0.5;
+							EntityIceShard iceshard = new EntityIceShard(event.getEntity().level);
 							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
 									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
 									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
@@ -767,7 +798,7 @@ public class ItemArtefact extends Item {
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;
 							iceshard.setCaster(player);
-							event.getEntity().world.addFreshEntity(iceshard);
+							event.getEntity().level.addFreshEntity(iceshard);
 						}
 					}
 
@@ -788,7 +819,7 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.ring_leeching){
 
 					// Best guess at necromancy spell damage: either it's wither damage...
-					if(player.world.random.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
+					if(player.level.random.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 							// ...or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
 							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
@@ -853,14 +884,14 @@ public class ItemArtefact extends Item {
 				if(artefact == WizardryItems.ring_combustion){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
-						event.getEntity().world.createExplosion(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
+						event.getEntity().level.createExplosion(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
 								event.getEntity().getZ(), 1.5f, false);
 					}
 
 				}else if(artefact == WizardryItems.ring_disintegration){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
-						Disintegration.spawnEmbers(event.getEntity().world, player, event.getEntity(),
+						Disintegration.spawnEmbers(event.getEntity().level, player, event.getEntity(),
 								Spells.disintegration.getProperty(Disintegration.EMBER_COUNT).intValue());
 					}
 
@@ -870,10 +901,10 @@ public class ItemArtefact extends Item {
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FROST){
 
 						for(int i = 0; i < 8; i++){
-							double dx = event.getEntity().world.random.nextDouble() - 0.5;
-							double dy = event.getEntity().world.random.nextDouble() - 0.5;
-							double dz = event.getEntity().world.random.nextDouble() - 0.5;
-							EntityIceShard iceshard = new EntityIceShard(event.getEntity().world);
+							double dx = event.getEntity().level.random.nextDouble() - 0.5;
+							double dy = event.getEntity().level.random.nextDouble() - 0.5;
+							double dz = event.getEntity().level.random.nextDouble() - 0.5;
+							EntityIceShard iceshard = new EntityIceShard(event.getEntity().level);
 							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
 									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
 									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
@@ -881,7 +912,7 @@ public class ItemArtefact extends Item {
 							iceshard.motionY = dy * 1.5;
 							iceshard.motionZ = dz * 1.5;
 							iceshard.setCaster(player);
-							event.getEntity().world.addFreshEntity(iceshard);
+							event.getEntity().level.addFreshEntity(iceshard);
 						}
 					}
 				}

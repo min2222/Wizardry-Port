@@ -1,5 +1,10 @@
 package electroblob.wizardry.entity;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
@@ -8,32 +13,28 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.NBTExtras;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BlockFalling;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.EntityFallingBlock;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BlockFalling;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.UUID;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /** Custom extended version of {@link EntityFallingBlock} for use with the greater telekinesis spell. */
 public class EntityLevitatingBlock extends FallingBlockEntity implements IEntityAdditionalSpawnData {
@@ -41,7 +42,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 	private static final Field fallTile;
 
 	static {
-		fallTile = ObfuscationReflectionHelper.findField(EntityFallingBlock.class, "field_175132_d");
+		fallTile = ObfuscationReflectionHelper.findField(FallingBlock.class, "field_175132_d");
 		fallTile.setAccessible(true);
 	}
 
@@ -83,55 +84,55 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 		}
 
 		if(this.getCaster() == null && this.casterUUID != null){
-			Entity entity = EntityUtils.getEntityByUUID(world, casterUUID);
+			Entity entity = EntityUtils.getEntityByUUID(level, casterUUID);
 			if(entity instanceof LivingEntity){
 				this.caster = new WeakReference<>((LivingEntity)entity);
 			}
 		}
 
-		if(getBlock() != null){
+		if(getBlockState() != null){
 
 			// === Copied from super ===
 
-			Block block = getBlock().getBlock();
+			Block block = getBlockState().getBlock();
 
-			if(getBlock().getMaterial() == Material.AIR){
+			if(getBlockState().getMaterial() == Material.AIR){
 				this.discard();
 
 			}else{
 
-				this.prevgetX() = this.getX();
-				this.prevgetY() = this.getY();
-				this.prevgetZ() = this.getZ();
+				this.xo = this.getX();
+				this.yo = this.getY();
+				this.zo = this.getZ();
 
-				if(this.fallTime++ == 0){
+				if(this.time++ == 0){
 
 					BlockPos blockpos = this.blockPosition();
 
 					if(this.level.getBlockState(blockpos).getBlock() == block){
-						this.level.setBlockToAir(blockpos);
+						this.level.setBlockAndUpdate(blockpos, Blocks.AIR.defaultBlockState());
 					}else if(!this.level.isClientSide){
 						this.discard();
 						return;
 					}
 				}
 
-				if(!this.hasNoGravity()){
-					this.motionY -= 0.03999999910593033D;
+				if(!this.isNoGravity()){
+					this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03999999910593033D, 0));
 				}
 
-				this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+				this.move(MoverType.SELF, this.getDeltaMovement());
 
 				if(!this.level.isClientSide){
 
 					BlockPos blockpos1 = this.blockPosition();
-					boolean isConcrete = getBlock().getBlock() == Blocks.CONCRETE_POWDER;
+					boolean isConcrete = getBlockState().getBlock() == Blocks.CONCRETE_POWDER;
 					boolean isConcreteInWater = isConcrete && this.level.getBlockState(blockpos1).getMaterial() == Material.WATER;
 					double d0 = this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ;
 
 					if(isConcrete && d0 > 1.0D){
 
-						HitResult raytraceresult = this.world.rayTraceBlocks(new Vec3(this.prevgetX(), this.prevgetY(), this.prevgetZ()), new Vec3(this.getX(), this.getY(), this.getZ()), true);
+						HitResult raytraceresult = this.level.clip(new Vec3(this.prevgetX(), this.prevgetY(), this.prevgetZ()), new Vec3(this.getX(), this.getY(), this.getZ()), true);
 
 						if(raytraceresult != null && this.level.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
@@ -141,7 +142,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 
 					if(!this.onGround && !isConcreteInWater){
 
-						if(this.fallTime > 100 && !this.level.isClientSide && (blockpos1.getY() < 1 || blockpos1.getY() > 256) || this.fallTime > 600){
+						if(this.time > 100 && !this.level.isClientSide && (blockpos1.getY() < 1 || blockpos1.getY() > 256) || this.time > 600){
 							this.discard();
 						}
 
@@ -149,7 +150,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 
 						BlockState iblockstate = this.level.getBlockState(blockpos1);
 
-						if(this.world.isEmptyBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
+						if(this.level.isEmptyBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
 							if(!isConcreteInWater && BlockFalling.canFallThrough(this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
 								this.onGround = false;
 								return;
@@ -166,38 +167,38 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 
 								this.discard(); // Moved inside the above if statement
 
-								if(this.world.mayPlace(block, blockpos1, true, Direction.UP, null)
-										&& (isConcreteInWater || !BlockFalling.canFallThrough(this.level.getBlockState(blockpos1.down())))
-										&& this.level.setBlockAndUpdate(blockpos1, getBlock(), 3)){
+								if(this.level.mayPlace(block, blockpos1, true, Direction.UP, null)
+										&& (isConcreteInWater || !FallingBlock.canFallThrough(this.level.getBlockState(blockpos1.below())))
+										&& this.level.setBlock(blockpos1, getBlockState(), 3)){
 
-									if(block instanceof BlockFalling){
-										((BlockFalling)block).onEndFalling(this.world, blockpos1, getBlock(), iblockstate);
+									if(block instanceof FallingBlock){
+										((FallingBlock)block).onEndFalling(this.level, blockpos1, getBlockState(), iblockstate);
 									}
 
-									if(this.tileEntityData != null && block.hasTileEntity(getBlock())){
+									if(this.blockData != null && block.defaultBlockState().hasBlockEntity()){
 
-										BlockEntity tileentity = this.level.getTileEntity(blockpos1);
+										BlockEntity tileentity = this.level.getBlockEntity(blockpos1);
 
 										if(tileentity != null){
 
 											CompoundTag nbttagcompound = tileentity.writeToNBT(new CompoundTag());
 
-											for(String s : this.tileEntityData.getKeySet()){
-												Tag nbtbase = this.tileEntityData.getTag(s);
+											for(String s : this.blockData.getAllKeys()){
+												Tag nbtbase = this.blockData.getCompound(s);
 
 												if(!"x".equals(s) && !"y".equals(s) && !"z".equals(s)){
 													NBTExtras.storeTagSafely(nbttagcompound, s, nbtbase.copy());
 												}
 											}
 
-											tileentity.readFromNBT(nbttagcompound);
+											tileentity.load(nbttagcompound);
 											tileentity.markDirty();
 										}
 									}
 
 								}else{
 									// Never drops the block, instead if it can't reattach to the world it breaks
-									world.playEvent(2001, this.getPosition(), Block.getStateId(getBlock()));
+									level.levelEvent(2001, this.blockPosition(), Block.getId(getBlockState()));
 								}
 							}
 						}
@@ -216,7 +217,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 
 		if(velocitySquared >= 0.2){
 
-			List<Entity> list = this.level.getEntitiesWithinAABBExcludingEntity(this, this.getBoundingBox());
+			List<Entity> list = this.level.getEntities(this, this.getBoundingBox());
 
 			for(Entity entity : list){
 
@@ -228,12 +229,12 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 					entity.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 							MagicDamage.DamageType.FORCE), damage);
 
-					double dx = -this.motionX;
+					double dx = -this.getDeltaMovement().x;
 					double dz;
-					for(dz = -this.motionZ; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random()) * 0.01D){
+					for(dz = -this.getDeltaMovement().z; dx * dx + dz * dz < 1.0E-4D; dz = (Math.random() - Math.random()) * 0.01D){
 						dx = (Math.random() - Math.random()) * 0.01D;
 					}
-					((LivingEntity)entity).knockBack(this, 0.6f, dx, dz);
+					((LivingEntity)entity).knockback(0.6f, dx, dz);
 				}
 			}
 		}
@@ -262,23 +263,23 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	protected void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		casterUUID = nbttagcompound.getUUID("casterUUID");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	protected void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		if(this.getCaster() != null){
-			nbttagcompound.setUniqueId("casterUUID", this.getCaster().getUUID());
+			nbttagcompound.putUUID("casterUUID", this.getCaster().getUUID());
 		}
-		nbttagcompound.setFloat("damageMultiplier", damageMultiplier);
+		nbttagcompound.putFloat("damageMultiplier", damageMultiplier);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf buf){
+	public void readSpawnData(FriendlyByteBuf buf){
 		if(buf.isReadable()){
 			Block block = Block.REGISTRY.getObjectById(buf.readInt());
 			try{
@@ -290,10 +291,10 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf buf){
-		if(getBlock() != null){
+	public void writeSpawnData(FriendlyByteBuf buf){
+		if(getBlockState() != null){
 			buf.writeInt(Block.REGISTRY.getIDForObject(getBlock().getBlock()));
-			buf.writeInt(getBlock().getBlock().getMetaFromState(getBlock()));
+			buf.writeInt(getBlockState().getBlock().getMetaFromState(getBlock()));
 		}
 	}
 }

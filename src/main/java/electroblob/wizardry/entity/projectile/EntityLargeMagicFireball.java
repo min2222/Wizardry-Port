@@ -7,16 +7,17 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.EntityGhast;
-import net.minecraft.world.entity.projectile.EntityLargeFireball;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * It's like {@link EntityMagicFireball}, but bigger... the wizardry version of vanilla's
@@ -54,22 +55,22 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 
 	@Override
 	protected DamageSource getDamageSource(Entity entityHit){
-		if(entityHit instanceof EntityGhast){
-			return MagicDamage.causeIndirectMagicDamage(this, this.getThrower(), DamageType.MAGIC).setProjectile();
+		if(entityHit instanceof Ghast){
+			return MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.MAGIC).setProjectile();
 		}else{
 			return super.getDamageSource(entityHit);
 		}
 	}
 
 	@Override
-	protected void onImpact(HitResult rayTrace){
+	protected void onHit(HitResult rayTrace){
 
 		if(!level.isClientSide){
-			boolean terrainDamage = EntityUtils.canDamageBlocks(this.getThrower(), world);
-			this.world.newExplosion(null, this.getX(), this.getY(), this.getZ(), getExplosionPower() * blastMultiplier, terrainDamage, terrainDamage);
+			boolean terrainDamage = EntityUtils.canDamageBlocks(this.getOwner(), level);
+			this.level.explode(null, this.getX(), this.getY(), this.getZ(), getExplosionPower() * blastMultiplier, terrainDamage, terrainDamage ? BlockInteraction.DESTROY : BlockInteraction.NONE);
 		}
 
-		super.onImpact(rayTrace);
+		super.onHit(rayTrace);
 	}
 
 	@Override
@@ -93,29 +94,27 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	@Override
 	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setFloat("blastMultiplier", blastMultiplier);
+		nbttagcompound.putFloat("blastMultiplier", blastMultiplier);
 	}
 
 	@SubscribeEvent
 	public static void onEntityJoinWorldEvent(EntityJoinLevelEvent event){
 		// Replaces all vanilla large fireballs with wizardry ones
-		if(Wizardry.settings.replaceVanillaFireballs && event.getEntity() instanceof EntityLargeFireball){
+		if(Wizardry.settings.replaceVanillaFireballs && event.getEntity() instanceof LargeFireball){
 
 			event.setCanceled(true);
 
-			EntityLargeMagicFireball fireball = new EntityLargeMagicFireball(event.getWorld());
-			fireball.thrower = ((EntityLargeFireball)event.getEntity()).getOwner();
-			fireball.setPosition(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
+			EntityLargeMagicFireball fireball = new EntityLargeMagicFireball(event.getLevel());
+			fireball.setOwner(((LargeFireball)event.getEntity()).getOwner());
+			fireball.setPos(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
 			fireball.setDamage(6);
 			// Don't set the burn duration because vanilla large fireballs don't set mobs on fire directly
-			fireball.setExplosionPower(((EntityLargeFireball)event.getEntity()).explosionPower);
+			fireball.setExplosionPower(((LargeFireball)event.getEntity()).explosionPower);
 			fireball.setLifetime(75);
 
-			fireball.motionX = ((EntityLargeFireball)event.getEntity()).accelerationX * ACCELERATION_CONVERSION_FACTOR;
-			fireball.motionY = ((EntityLargeFireball)event.getEntity()).accelerationY * ACCELERATION_CONVERSION_FACTOR;
-			fireball.motionZ = ((EntityLargeFireball)event.getEntity()).accelerationZ * ACCELERATION_CONVERSION_FACTOR;
+			fireball.setDeltaMovement(((LargeFireball)event.getEntity()).xPower * ACCELERATION_CONVERSION_FACTOR, ((LargeFireball)event.getEntity()).yPower * ACCELERATION_CONVERSION_FACTOR, ((LargeFireball)event.getEntity()).zPower * ACCELERATION_CONVERSION_FACTOR);
 
-			event.getWorld().addFreshEntity(fireball);
+			event.getLevel().addFreshEntity(fireball);
 		}
 	}
 }

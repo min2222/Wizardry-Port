@@ -1,11 +1,13 @@
 package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
@@ -13,7 +15,11 @@ public class EntityLightningArrow extends EntityMagicArrow {
 
 	/** Creates a new lightning arrow in the given world. */
 	public EntityLightningArrow(Level world){
-		super(world);
+		this(WizardryEntities.LIGHTNING_ARROW.get(), world);
+	}
+	
+	public EntityLightningArrow(EntityType<? extends EntityMagicArrow> type, Level world){
+		super(type, world);
 	}
 
 	@Override public double getDamage(){ return Spells.lightning_arrow.getProperty(Spell.DAMAGE).doubleValue(); }
@@ -31,7 +37,7 @@ public class EntityLightningArrow extends EntityMagicArrow {
 
 		if(level.isClientSide){
 			for(int j = 0; j < 8; j++){
-				ParticleBuilder.create(Type.SPARK, rand, getX(), getY() + height / 2, getZ(), 1, false).spawn(world);
+				ParticleBuilder.create(Type.SPARK, random, getX(), getY() + getBbHeight() / 2, getZ(), 1, false).spawn(level);
 			}
 		}
 		
@@ -49,11 +55,11 @@ public class EntityLightningArrow extends EntityMagicArrow {
 	@Override
 	public void tickInAir(){
 		if(level.isClientSide){
-			ParticleBuilder.create(Type.SPARK).pos(getX(), getY(), getZ()).spawn(world);
+			ParticleBuilder.create(Type.SPARK).pos(getX(), getY(), getZ()).spawn(level);
 		}
 	}
 
 	@Override
-	protected void entityInit(){}
+	protected void defineSynchedData(){}
 
 }

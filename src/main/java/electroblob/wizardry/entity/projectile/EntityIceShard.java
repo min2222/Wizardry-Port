@@ -1,6 +1,7 @@
 package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -9,16 +10,22 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 
 public class EntityIceShard extends EntityMagicArrow {
 
 	/** Creates a new ice shard in the given world. */
 	public EntityIceShard(Level world){
-		super(world);
+		this(WizardryEntities.ICE_SHARD.get(), world);
+	}
+	
+	public EntityIceShard(EntityType<? extends EntityMagicArrow> type, Level world){
+		super(type, world);
 	}
 
 	@Override public double getDamage(){ return Spells.ice_shard.getProperty(Spell.DAMAGE).floatValue(); }
@@ -31,14 +38,14 @@ public class EntityIceShard extends EntityMagicArrow {
 
 	@Override public boolean doDeceleration(){ return true; }
 
-	@Override public boolean canRenderOnFire(){ return false; }
+	@Override public boolean displayFireAnimation(){ return false; }
 
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
-			entityHit.addEffect(new MobEffectInstance(WizardryPotions.frost,
+			entityHit.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
 					Spells.ice_shard.getProperty(Spell.EFFECT_DURATION).intValue(),
 					Spells.ice_shard.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
@@ -51,12 +58,12 @@ public class EntityIceShard extends EntityMagicArrow {
 		// Adds a particle effect when the ice shard hits a block.
 		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
-			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0.75f, 1, 1).spawn(world);
+			Vec3 vec = hit.getLocation().add(new Vec3(((BlockHitResult) hit).getDirection().step()).scale(0.15));
+			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0.75f, 1, 1).spawn(level);
 			
 			for(int j = 0; j < 10; j++){
-				ParticleBuilder.create(Type.ICE, this.rand, this.getX(), this.getY(), this.getZ(), 0.5, true)
-				.time(20 + random.nextInt(10)).gravity(true).spawn(world);
+				ParticleBuilder.create(Type.ICE, this.random, this.getX(), this.getY(), this.getZ(), 0.5, true)
+				.time(20 + random.nextInt(10)).gravity(true).spawn(level);
 			}
 		}
 		// Parameters for sound: sound event name, volume, pitch.
@@ -65,6 +72,6 @@ public class EntityIceShard extends EntityMagicArrow {
 	}
 
 	@Override
-	protected void entityInit(){}
+	protected void defineSynchedData(){}
 
 }

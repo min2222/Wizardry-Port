@@ -1,9 +1,12 @@
 package electroblob.wizardry.entity.projectile;
 
+import java.util.Arrays;
+
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -11,14 +14,14 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-
-import java.util.Arrays;
 
 public class EntityForceArrow extends EntityMagicArrow {
 
@@ -27,7 +30,11 @@ public class EntityForceArrow extends EntityMagicArrow {
 
 	/** Creates a new force arrow in the given world. */
 	public EntityForceArrow(Level world){
-		super(world);
+		this(WizardryEntities.FORCE_ARROW.get(), world);
+	}
+	
+	public EntityForceArrow(EntityType<? extends EntityMagicArrow> type, Level world){
+		super(type, world);
 	}
 
 	public void setMana(int mana){
@@ -38,7 +45,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 	public void onEntityHit(LivingEntity entityHit){
 		this.playSound(WizardrySounds.ENTITY_FORCE_ARROW_HIT, 1.0F, 1.0F);
 		if(this.level.isClientSide)
-			ParticleBuilder.create(Type.FLASH).pos(getX(), getY(), getZ()).scale(1.3f).clr(0.75f, 1, 0.85f).spawn(world);
+			ParticleBuilder.create(Type.FLASH).pos(getX(), getY(), getZ()).scale(1.3f).clr(0.75f, 1, 0.85f).spawn(level);
 	}
 
 	@Override
@@ -63,7 +70,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 
 			Player player = (Player)getCaster();
 
-			if(!player.capabilities.isCreativeMode && ItemArtefact.isArtefactActive(player, WizardryItems.ring_mana_return)){
+			if(!player.getAbilities().instabuild && ItemArtefact.isArtefactActive(player, WizardryItems.ring_mana_return)){
 
 				for(ItemStack stack : InventoryUtils.getPrioritisedHotbarAndOffhand(player)){
 					if(stack.getItem() instanceof ISpellCastingItem && stack.getItem() instanceof IManaStoringItem
@@ -80,8 +87,8 @@ public class EntityForceArrow extends EntityMagicArrow {
 		this.playSound(WizardrySounds.ENTITY_FORCE_ARROW_HIT, 1.0F, 1.0F);
 		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3 vec = hit.hitVec.add(new Vec3(hit.sideHit.getDirectionVec()).scale(0.15));
-			ParticleBuilder.create(Type.FLASH).pos(vec).scale(1.3f).clr(0.75f, 1, 0.85f).spawn(world);
+			Vec3 vec = hit.getLocation().add(new Vec3(((BlockHitResult) hit).getDirection().step()).scale(0.15));
+			ParticleBuilder.create(Type.FLASH).pos(vec).scale(1.3f).clr(0.75f, 1, 0.85f).spawn(level);
 			//vec = hit.hitVec.add(new Vec3d(hit.sideHit.getDirectionVec()).scale(WizardryUtilities.ANTI_Z_FIGHTING_OFFSET));
 			//ParticleBuilder.create(Type.SCORCH).pos(vec).face(hit.sideHit).clr(0, 1, 0.5f).spawn(world);
 		}
@@ -113,7 +120,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 	}
 
 	@Override
-	protected void entityInit(){
+	protected void defineSynchedData(){
 		// auto generated
 	}
 

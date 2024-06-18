@@ -8,8 +8,9 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class EntityLightningDisc extends EntityMagicProjectile {
 	
@@ -20,19 +21,19 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 	}
 
 	@Override
-	protected void onImpact(HitResult result){
+	protected void onHit(HitResult result){
 		
-		Entity entityHit = result.entityHit;
+		Entity entityHit = result.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) result).getEntity() : null;
 
 		if(entityHit != null){
 			float damage = Spells.lightning_disc.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
-			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getThrower(),
+			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getOwner(),
 					DamageType.SHOCK), damage);
 		}
 
 		this.playSound(WizardrySounds.ENTITY_LIGHTNING_DISC_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 
-		if(result.typeOfHit == HitResult.Type.BLOCK) this.discard();
+		if(result.getType() == HitResult.Type.BLOCK) this.discard();
 	}
 
 	@Override
@@ -44,14 +45,12 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 		if(level.isClientSide){
 			for(int i = 0; i < 8; i++){
 				ParticleBuilder.create(Type.SPARK).pos(this.getX() + random.nextFloat() * 2 - 1,
-						this.getY(), this.getZ() + random.nextFloat() * 2 - 1).spawn(world);
+						this.getY(), this.getZ() + random.nextFloat() * 2 - 1).spawn(level);
 			}
 		}
 
 		// Cancels out the slowdown effect in EntityThrowable
-		this.motionX /= 0.99;
-		this.motionY /= 0.99;
-		this.motionZ /= 0.99;
+		this.setDeltaMovement(this.getDeltaMovement().x / 0.99, this.getDeltaMovement().y / 0.99, this.getDeltaMovement().z / 0.99);
 	}
 
 	@Override
@@ -65,12 +64,12 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 	}
 
 	@Override
-	public boolean hasNoGravity(){
+	public boolean isNoGravity(){
 		return true;
 	}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 }
