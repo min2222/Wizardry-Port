@@ -1,6 +1,9 @@
 package electroblob.wizardry.integration;
 
+import java.util.Set;
+
 import com.google.common.collect.ImmutableSet;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.world.damagesource.DamageSource;
@@ -8,8 +11,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.Set;
 
 /**
  * This class implements an 'if-all-else-fails' fix for cross-mod infinite looping caused by re-applying damage in
@@ -74,14 +75,14 @@ public final class DamageSafetyChecker {
 			}
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * target.level.loadedEntityList.size()){
+		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * target.level.getEntities().getAll().size()){
 			// This should never ever happen unless another mod is intercepting non-entity-based damage and damaging
 			// the same target.
 			logInterception(originalSourceName, true);
 			return false;
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * target.level.loadedEntityList.size()){
+		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * target.level.getEntities().getAll().size()){
 			// Sometimes this is unavoidable, it's neither mod's fault but without some kind of forge standard or
 			// universal cooperation there's no easy way to prevent it.
 			logInterception(originalSourceName, false);
@@ -105,7 +106,7 @@ public final class DamageSafetyChecker {
 	 * This means that if excessive looping is detected, the code will work as if the event was never intercepted.
 	 */
 	public static boolean attackEntitySafely(Entity target, DamageSource source, float damage, DamageSource originalSource, boolean knockback){
-		return attackEntitySafely(target, source, damage, originalSource.getDamageType(), originalSource, knockback);
+		return attackEntitySafely(target, source, damage, originalSource.getMsgId(), originalSource, knockback);
 	}
 
 	/**
@@ -145,7 +146,7 @@ public final class DamageSafetyChecker {
 	@SubscribeEvent
 	public static void tick(TickEvent event){
 		// We actually want this to fire on both sides, because attacks are common code.
-		if(event.phase == TickEvent.Phase.START && event.type == TickEvent.Type.WORLD){
+		if(event.phase == TickEvent.Phase.START && event.type == TickEvent.Type.LEVEL){
 			attacksThisTick = 0; // Reset the attack call counter
 		}
 	}

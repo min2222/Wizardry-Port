@@ -8,6 +8,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -16,6 +17,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityFlying;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
@@ -30,7 +32,7 @@ import net.minecraft.world.level.Level;
 
 public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
-	private static final EntityDataSerializer<Boolean> SPAWN_PARTICLES = SynchedEntityData.createKey(EntityZombieMinion.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> SPAWN_PARTICLES = SynchedEntityData.defineId(EntityZombieMinion.class, EntityDataSerializers.BOOLEAN);
 
 	// Field implementations
 	private int lifetime = -1;
@@ -43,15 +45,15 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new zombie minion in the given world. */
-	public EntityZombieMinion(Level world){
-		super(world);
-		this.experienceValue = 0;
+	public EntityZombieMinion(EntityType<? extends Zombie> type, Level world){
+		super(type, world);
+		this.xpReward = 0;
 	}
 
 	@Override
-	protected void entityInit(){
-		super.entityInit();
-		this.dataManager.register(SPAWN_PARTICLES, true);
+	protected void defineSynchedData(){
+		super.defineSynchedData();
+		this.entityData.define(SPAWN_PARTICLES, true);
 	}
 
 	// EntityZombie overrides (EntityZombie is a complex class so there are lots of these)

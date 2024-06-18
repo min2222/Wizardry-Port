@@ -1,27 +1,27 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.world.entity.monster.EntityVex;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
-
-public class EntityVexMinion extends EntityVex implements ISummonedCreature {
+public class EntityVexMinion extends Vex implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = -1;

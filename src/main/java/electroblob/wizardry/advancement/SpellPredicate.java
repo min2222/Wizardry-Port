@@ -72,7 +72,7 @@ public class SpellPredicate {
                 }
             }
 
-            Element[] elements = (Element[]) Elements.registry.get().getValues().toArray();
+            Element[] elements = (Element[]) Element.registry.get().getValues().toArray();
 
             if (jsonobject.has("elements")) {
                 try {

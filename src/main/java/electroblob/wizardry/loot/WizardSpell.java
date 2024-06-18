@@ -1,8 +1,11 @@
 package electroblob.wizardry.loot;
 
+import java.util.List;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISpellCaster;
 import electroblob.wizardry.item.ItemScroll;
@@ -10,13 +13,9 @@ import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
-import net.minecraft.world.storage.loot.functions.LootFunction;
-
-import java.util.List;
-import java.util.Random;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 /**
  * Loot function that allows spell books to select a random spell from the spells used by the ISpellCaster that dropped
@@ -25,14 +24,14 @@ import java.util.Random;
  * @author Electroblob
  * @since Wizardry 1.2
  */
-public class WizardSpell extends LootFunction {
+public class WizardSpell extends LootItemConditionalFunction {
 
-	protected WizardSpell(LootCondition[] conditions){
+	protected WizardSpell(LootItemCondition[] conditions){
 		super(conditions);
 	}
 
 	@Override
-	public ItemStack apply(ItemStack stack, Random random, LootContext context){
+	public ItemStack run(ItemStack stack, LootContext context){
 
 		if(!(stack.getItem() instanceof ItemSpellBook) && !(stack.getItem() instanceof ItemScroll)) Wizardry.logger
 				.warn("Applying the wizard_spell loot function to an item that isn't a spell book or scroll.");
@@ -53,10 +52,10 @@ public class WizardSpell extends LootFunction {
 		return stack;
 	}
 
-	public static class Serializer extends LootFunction.Serializer<WizardSpell> {
+	public static class Serializer extends LootItemConditionalFunction.Serializer<WizardSpell> {
 
 		public Serializer(){
-			super(new ResourceLocation(Wizardry.MODID, "wizard_spell"), WizardSpell.class);
+			super();
 		}
 
 		public void serialize(JsonObject object, WizardSpell function, JsonSerializationContext serializationContext){
@@ -64,7 +63,7 @@ public class WizardSpell extends LootFunction {
 		}
 
 		public WizardSpell deserialize(JsonObject object, JsonDeserializationContext deserializationContext,
-				LootCondition[] conditions){
+				LootItemCondition[] conditions){
 			return new WizardSpell(conditions);
 		}
 	}

@@ -1,5 +1,7 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -7,19 +9,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.world.entity.monster.EntityBlaze;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 
-import java.util.UUID;
-
-public class EntityBlazeMinion extends EntityBlaze implements ISummonedCreature {
+public class EntityBlazeMinion extends Blaze implements ISummonedCreature {
 
 	// Field implementations
 	private int lifetime = -1;

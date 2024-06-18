@@ -1,6 +1,7 @@
 package electroblob.wizardry.potion;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectCategory;
 
 /**
  * Same as {@link PotionMagicEffect}, but also implements {@link ICustomPotionParticles} to allow anonymous classes to
@@ -9,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public abstract class PotionMagicEffectParticles extends PotionMagicEffect implements ICustomPotionParticles {
 
-	public PotionMagicEffectParticles(boolean isBadEffect, int liquidColour, ResourceLocation texture){
-		super(isBadEffect, liquidColour, texture);
+	public PotionMagicEffectParticles(MobEffectCategory category, int liquidColour, ResourceLocation texture){
+		super(category, liquidColour, texture);
 	}
 
 }

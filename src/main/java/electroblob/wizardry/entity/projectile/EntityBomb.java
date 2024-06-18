@@ -41,7 +41,7 @@ public abstract class EntityBomb extends EntityMagicProjectile {
 	@Override
 	public void writeEntityToNBT(CompoundTag nbttagcompound){
 		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setFloat("blastMultiplier", blastMultiplier);
+		nbttagcompound.putFloat("blastMultiplier", blastMultiplier);
 	}
 
 }

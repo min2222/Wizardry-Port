@@ -3,7 +3,6 @@ package electroblob.wizardry;
 import java.io.File;
 import java.util.Calendar;
 
-import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Logger;
 
 import electroblob.wizardry.block.BlockBookshelf;
@@ -22,8 +21,10 @@ import electroblob.wizardry.misc.Forfeit;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryLoot;
+import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellNetworkIDSorter;
@@ -36,17 +37,19 @@ import electroblob.wizardry.worldgen.WorldGenObelisk;
 import electroblob.wizardry.worldgen.WorldGenShrine;
 import electroblob.wizardry.worldgen.WorldGenUndergroundLibraryRuins;
 import electroblob.wizardry.worldgen.WorldGenWizardTower;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkRegistry;
 
 /**
@@ -112,6 +115,12 @@ public class Wizardry {
 
 	// Location of the proxy code, used by Forge.
 	public static CommonProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+	
+	public Wizardry() {
+		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		WizardryEntities.ENTITY_TYPES.register(bus);
+		WizardryPotions.EFFECTS.register(bus);
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){

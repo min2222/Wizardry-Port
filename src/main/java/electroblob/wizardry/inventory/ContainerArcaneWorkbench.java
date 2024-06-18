@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -47,7 +48,7 @@ import java.util.stream.Collectors;
  * for consistency, just in case). The bookshelf slot delegates to a virtual slot on the client side (which is where
  * the search and sorting is done), and <i>then</i> the click is sent to the server.
  */
-public class ContainerArcaneWorkbench extends Container implements ISpellSortable {
+public class ContainerArcaneWorkbench extends AbstractContainerMenu implements ISpellSortable {
 
 	/** The arcane workbench tile entity associated with this container. */
 	public TileEntityArcaneWorkbench tileentity;

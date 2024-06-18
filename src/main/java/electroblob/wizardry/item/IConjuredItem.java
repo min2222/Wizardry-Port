@@ -1,25 +1,20 @@
 package electroblob.wizardry.item;
 
+import java.util.UUID;
+
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.spell.SpellConjuration;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * Allows wizardry to identify items that are conjured (and therefore need destroying if they leave the inventory)
@@ -37,19 +32,19 @@ public interface IConjuredItem {
 
 	/** Helper method for setting the duration multiplier (via NBT) for conjured items. */
 	static void setDurationMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTag(new CompoundTag());
+		if(!stack.hasTag()) stack.setTag(new CompoundTag());
 		stack.getTag().putFloat(DURATION_MULTIPLIER_KEY, multiplier);
 	}
 
 	/** Helper method for setting the damage multiplier (via NBT) for conjured items. */
 	static void setDamageMultiplier(ItemStack stack, float multiplier){
-		if(!stack.hasTagCompound()) stack.setTag(new CompoundTag());
+		if(!stack.hasTag()) stack.setTag(new CompoundTag());
 		stack.getTag().putFloat(DAMAGE_MULTIPLIER, multiplier);
 	}
 
 	/** Helper method for getting the damage multiplier (via NBT) for conjured items. */
 	static float getDamageMultiplier(ItemStack stack){
-		if(!stack.hasTagCompound()) return 1;
+		if(!stack.hasTag()) return 1;
 		return stack.getTag().getFloat(DAMAGE_MULTIPLIER);
 	}
 
@@ -63,7 +58,7 @@ public interface IConjuredItem {
 
 		float baseDuration = spell.getProperty(SpellConjuration.ITEM_LIFETIME).floatValue();
 
-		if(stack.hasTagCompound() && stack.getTag().contains(DURATION_MULTIPLIER_KEY)){
+		if(stack.hasTag() && stack.getTag().contains(DURATION_MULTIPLIER_KEY)){
 			return (int)(baseDuration * stack.getTag().getFloat(DURATION_MULTIPLIER_KEY));
 		}
 
@@ -81,19 +76,13 @@ public interface IConjuredItem {
 
 		final int frames = getAnimationFrames();
 
-		item.addPropertyOverride(new ResourceLocation("conjure"), new IItemPropertyGetter(){
-			@OnlyIn(Dist.CLIENT)
-			public float apply(ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity){
-				return stack.getItemDamage() < frames ? (float)stack.getItemDamage() / frames
-						: (float)(stack.getMaxDamage() - stack.getItemDamage()) / frames;
-			}
+		ItemProperties.register(item, new ResourceLocation("conjure"), (stack, p_174636_, p_174637_, p_174638_) -> {
+			return stack.getDamageValue() < frames ? (float)stack.getDamageValue() / frames
+					: (float)(stack.getMaxDamage() - stack.getDamageValue()) / frames;
 		});
-		item.addPropertyOverride(new ResourceLocation("conjuring"), new IItemPropertyGetter(){
-			@OnlyIn(Dist.CLIENT)
-			public float apply(ItemStack stack, @Nullable Level world, @Nullable LivingEntity entity){
-				return stack.getItemDamage() < frames
-						|| stack.getItemDamage() > stack.getMaxDamage() - frames ? 1.0F : 0.0F;
-			}
+		ItemProperties.register(item, new ResourceLocation("conjuring"), (stack, p_174636_, p_174637_, p_174638_) -> {
+			return stack.getDamageValue() < frames
+					|| stack.getDamageValue() > stack.getMaxDamage() - frames ? 1.0F : 0.0F;
 		});
 	}
 
@@ -106,7 +95,7 @@ public interface IConjuredItem {
 	/** Returns a blue colour to use for the durability bar for the given stack, so all items that use it as a timer
 	 * have the same colours. */
 	static int getTimerBarColour(ItemStack stack){
-		return DrawingUtils.mix(0x8bffe0, 0x2ed1e4, (float)stack.getItem().getDurabilityForDisplay(stack));
+		return DrawingUtils.mix(0x8bffe0, 0x2ed1e4, (float)stack.getItem().getBarColor(stack));
 	}
 
 	@SubscribeEvent
@@ -125,7 +114,7 @@ public interface IConjuredItem {
 		// Prevents conjured items being thrown by dragging and dropping outside the inventory.
 		if(event.getEntity().getItem().getItem() instanceof IConjuredItem){
 			event.setCanceled(true);
-			event.getPlayer().inventory.addItemStackToInventory(event.getEntity().getItem());
+			event.getPlayer().getInventory().add(event.getEntity().getItem());
 		}
 	}
 }

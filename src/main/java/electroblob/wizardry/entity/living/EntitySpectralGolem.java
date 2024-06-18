@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ai.EntityAIMoveTowardsTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.world.entity.ai.EntityAIWatchClosest;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.EntityIronGolem;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -32,7 +33,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
-public class EntitySpectralGolem extends EntityIronGolem implements ISummonedCreature {
+public class EntitySpectralGolem extends IronGolem implements ISummonedCreature {
 
 	private static final EntityDataSerializer<Boolean> SPAWN_PARTICLES = SynchedEntityData.createKey(EntitySpectralGolem.class, EntityDataSerializers.BOOLEAN);
 

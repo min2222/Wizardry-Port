@@ -1,28 +1,27 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIAttackMelee;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.EntityAISwimming;
-import net.minecraft.world.entity.monster.EntitySilverfish;
+import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 
-import java.util.UUID;
-
-public class EntitySilverfishMinion extends EntitySilverfish implements ISummonedCreature {
+public class EntitySilverfishMinion extends Silverfish implements ISummonedCreature {
 
 	public static final int MAX_GENERATIONS = 5;
 

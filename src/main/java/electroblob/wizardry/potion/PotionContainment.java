@@ -77,7 +77,7 @@ public class PotionContainment extends PotionMagicEffect {
 		// This is LAST-RESORT CLEANUP. It does NOT need checking every tick! We always check for the actual potion anyway.
 		if(event.getEntity().tickCount % 20 == 0 && event.getEntity().getPersistentData().contains(ENTITY_TAG)
 				&& !event.getEntity().hasEffect(WizardryPotions.containment)){
-			event.getEntity().getPersistentData().removeTag(ENTITY_TAG);
+			event.getEntity().getPersistentData().remove(ENTITY_TAG);
 		}
 	}
 
