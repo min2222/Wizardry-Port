@@ -151,7 +151,7 @@ public final class AllyDesignationSystem {
 		}
 
 		// Tests whether the target is a creature that was mind controlled by the attacker
-		if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.mind_control)){
+		if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.MIND_CONTROL.get())){
 
 			CompoundTag entityNBT = target.getPersistentData();
 
@@ -183,7 +183,7 @@ public final class AllyDesignationSystem {
 				// Tests whether the target is a creature that was summoned/tamed by an ally of the attacker
 				if(isOwnerAlly((Player)attacker, (OwnableEntity)target)) return false;
 
-			}else if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.mind_control)){
+			}else if(target instanceof Mob && ((LivingEntity)target).hasEffect(WizardryPotions.MIND_CONTROL.get())){
 				// Tests whether the target is a creature that was mind controlled by an ally of the attacker
 				CompoundTag entityNBT = target.getPersistentData();
 

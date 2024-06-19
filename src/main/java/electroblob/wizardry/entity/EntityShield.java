@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ISpellCastingItem;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Shield;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +12,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -22,16 +24,17 @@ public class EntityShield extends Entity {
 	public WeakReference<Player> player;
 
 	public EntityShield(Level world){
-		super(world);
+		this(WizardryEntities.SHIELD.get(), world);
 		this.noPhysics = true;
-		this.width = 1.2f;
-		this.getBbHeight() = 1.4f;
+	}
+	
+	public EntityShield(EntityType<EntityShield> type, Level world){
+		super(type, world);
+		this.noPhysics = true;
 	}
 
 	public EntityShield(Level par1World, Player player){
-		super(par1World);
-		this.width = 1.2f;
-		this.getBbHeight() = 1.4f;
+		this(WizardryEntities.SHIELD.get(), par1World);
 		this.player = new WeakReference<Player>(player);
 		this.noPhysics = true;
 		this.moveTo(player.getX() + player.getLookAngle().x,

@@ -15,22 +15,22 @@ public class MovingSoundSpellCharge extends MovingSoundEntity<LivingEntity> {
 	}
 
 	@Override
-	public void update(){
+	public void tick(){
 
-		if(source.isHandActive()){
+		if(source.isUsingItem()){
 
-			ItemStack stack = source.getActiveItemStack();
+			ItemStack stack = source.getUseItem();
 
 			if(stack.getItem() instanceof ISpellCastingItem){
 
-				if(source.getItemInUseMaxCount() < ((ISpellCastingItem)stack.getItem()).getCurrentSpell(stack).getChargeup()){
-					super.update();
+				if(source.getTicksUsingItem() < ((ISpellCastingItem)stack.getItem()).getCurrentSpell(stack).getChargeup()){
+					super.tick();
 					return;
 				}
 			}
 		}
 
-		this.donePlaying = true;
+		this.stop();
 	}
 
 }

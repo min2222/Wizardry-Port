@@ -1,5 +1,6 @@
 package electroblob.wizardry.util;
 
+import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;
@@ -35,6 +37,7 @@ import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -173,13 +176,22 @@ public final class EntityUtils {
 
 		if(id == null) return null; // It would return null eventually but there's no point even looking
 
-		for(Entity entity : world.getEntities().getAll()){
-			// This is a perfect example of where you need to use .equals() and not ==. For most applications,
-			// this was unnoticeable until world reload because the UUID instance or entity instance is stored.
-			// Fixed now though.
-			if(entity != null && entity.getUUID() != null && entity.getUUID().equals(id)){
-				return entity;
+		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
+		try 
+		{
+			LevelEntityGetter<Entity> list = (LevelEntityGetter<Entity>) m.invoke(world);
+			for(Entity entity : list.getAll()){
+				// This is a perfect example of where you need to use .equals() and not ==. For most applications,
+				// this was unnoticeable until world reload because the UUID instance or entity instance is stored.
+				// Fixed now though.
+				if(entity != null && entity.getUUID() != null && entity.getUUID().equals(id)){
+					return entity;
+				}
 			}
+		}
+		catch(Exception e)
+		{
+			
 		}
 		return null;
 	}

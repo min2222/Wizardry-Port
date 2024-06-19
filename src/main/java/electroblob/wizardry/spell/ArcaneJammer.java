@@ -56,7 +56,7 @@ public class ArcaneJammer extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 			if(!world.isClientSide){
-				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.arcane_jammer,
+				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.ARCANE_JAMMER.get(),
 						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 						getProperty(EFFECT_STRENGTH).intValue() + (int)((modifiers.get(SpellModifiers.POTENCY) - 1)
 								/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f)));
@@ -92,9 +92,9 @@ public class ArcaneJammer extends SpellRay {
 		// sequences of consecutive seeds, so let's clear it out first to get to a more changeable value
 		random.nextInt(2);
 
-		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.arcane_jammer)
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.ARCANE_JAMMER.get())
 				// Arcane jammer I has a 1/2 chance, level II has a 2/3 chance, and so on
-				&& random.nextInt(event.getCaster().getEffect(WizardryPotions.arcane_jammer).getAmplifier() + 2) > 0){
+				&& random.nextInt(event.getCaster().getEffect(WizardryPotions.ARCANE_JAMMER.get()).getAmplifier() + 2) > 0){
 
 			event.setCanceled(true);
 
@@ -125,7 +125,7 @@ public class ArcaneJammer extends SpellRay {
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		if(event.getEntity() instanceof SpellcasterIllager
-				&& event.getEntity().hasEffect(WizardryPotions.arcane_jammer)){
+				&& event.getEntity().hasEffect(WizardryPotions.ARCANE_JAMMER.get())){
 
 			((SpellcasterIllager)event.getEntity()).setSpellType(SpellcasterIllager.IllagerSpell.NONE);
 

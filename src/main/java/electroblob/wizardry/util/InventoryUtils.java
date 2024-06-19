@@ -1,22 +1,22 @@
 package electroblob.wizardry.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import electroblob.wizardry.legacy.IMetadata;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlot.Type;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
 import net.minecraft.world.level.Level;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Contains useful static methods for interacting with item stacks and entity inventories. These methods used to be part
@@ -141,7 +141,7 @@ public final class InventoryUtils {
 		return !stack1.isEmpty() && !stack2.isEmpty()
 				&& stack1.isStackable() && stack2.isStackable()
 				&& stack1.getItem() == stack2.getItem()
-				&& (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata())
+				&& (!((IMetadata) stack1.getItem()).getHasSubtypes(stack1) || ((IMetadata) stack1.getItem()).getMetadata(stack1) == ((IMetadata) stack2.getItem()).getMetadata(stack2))
 				&& ItemStack.isSameItemSameTags(stack1, stack2);
 	}
 

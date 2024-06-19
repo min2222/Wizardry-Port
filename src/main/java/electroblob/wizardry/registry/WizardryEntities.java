@@ -226,11 +226,11 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = ENTITY_TYPES.register(createEntry(EntityStormcloud::new, 		"stormcloud", MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones move, velocity updates are sent if that's not at constant velocity
-	public static final RegistryObject<EntityType<EntityShield>> SHIELD = ENTITY_TYPES.register(createEntry(EntityShield::new, "shield", MobCategory.MISC, 160, 10, true));
-	public static final RegistryObject<EntityType<EntityBubble>> BUBBLE = ENTITY_TYPES.register(createEntry(EntityBubble::new, "bubble", MobCategory.MISC, 160, 3, false));
-	public static final RegistryObject<EntityType<EntityTornado>> TORNADO = ENTITY_TYPES.register(createEntry(EntityTornado::new, "tornado", MobCategory.MISC, 160, 3, false));
-	public static final RegistryObject<EntityType<EntityIceSpike>> ICE_SPIKE = ENTITY_TYPES.register(createEntry(EntityIceSpike::new, "ice_spike", MobCategory.MISC, 160, 1, true));
-	public static final RegistryObject<EntityType<EntityBoulder>> BOULDER = ENTITY_TYPES.register(createEntry(EntityBoulder::new, "boulder", MobCategory.MISC, 160, 1, true)); // Vertical velocity is not constant
+	public static final RegistryObject<EntityType<EntityShield>> SHIELD = register("shield", createEntry(EntityShield::new, MobCategory.MISC, 160, 10, true).sized(1.2f, 1.4f));
+	public static final RegistryObject<EntityType<EntityBubble>> BUBBLE = register("bubble", createEntry(EntityBubble::new, MobCategory.MISC, 160, 3, false));
+	public static final RegistryObject<EntityType<EntityTornado>> TORNADO = register("tornado", createEntry(EntityTornado::new, MobCategory.MISC, 160, 3, false));
+	public static final RegistryObject<EntityType<EntityIceSpike>> ICE_SPIKE = register("ice_spike", createEntry(EntityIceSpike::new, MobCategory.MISC, 160, 1, true));
+	public static final RegistryObject<EntityType<EntityBoulder>> BOULDER = register("boulder", createEntry(EntityBoulder::new, MobCategory.MISC, 160, 1, true)); // Vertical velocity is not constant
 	public static final RegistryObject<EntityType<EntityIceBarrier>> ICE_BARRIER = register("ice_barrier", createEntry(EntityIceBarrier::new, MobCategory.MISC, 160, 1, true));
 
 	/**
