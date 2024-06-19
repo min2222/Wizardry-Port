@@ -1,17 +1,19 @@
 package electroblob.wizardry.entity.construct;
 
 import electroblob.wizardry.entity.ICustomHitbox;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHitbox {
 
@@ -20,8 +22,11 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	private int delay = 0;
 
 	public EntityIceBarrier(Level world){
-		super(world);
-		this.setSize(1.8f, 1.05f);
+		this(WizardryEntities.ICE_BARRIER.get(), world);
+	}
+	
+	public EntityIceBarrier(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 	}
 
 	public void setDelay(int delay){
@@ -30,13 +35,13 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public void setRotation(float yaw, float pitch){
-		super.setRotation(yaw, pitch);
-		float a = Mth.cos((float)Math.toRadians(rotationYaw));
-		float b = Mth.sin((float)Math.toRadians(rotationYaw));
-		double x = width/2 * a + THICKNESS/2 * b;
-		double z = width/2 * b + THICKNESS/2 * a;
-		setEntityBoundingBox(new AABB(this.getX() - x, this.getY(), this.getZ() - z, this.getX() + x, this.getY() + height, this.getZ() + z));
+	public void setRot(float yaw, float pitch){
+		super.setRot(yaw, pitch);
+		float a = Mth.cos((float)Math.toRadians(getYRot()));
+		float b = Mth.sin((float)Math.toRadians(getYRot()));
+		double x = getBbWidth()/2 * a + THICKNESS/2 * b;
+		double z = getBbWidth()/2 * b + THICKNESS/2 * a;
+		setBoundingBox(new AABB(this.getX() - x, this.getY(), this.getZ() - z, this.getX() + x, this.getY() + getBbHeight(), this.getZ() + z));
 	}
 
 	@Override
@@ -48,14 +53,14 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	public void tick(){
 
 		// Bit of a cheat but it's easier than trying to sync FrostBarrier#addConstructExtras
-		if(level.isClientSide && firstUpdate){
+		if(level.isClientSide && firstTick){
 			setSizeMultiplier(sizeMultiplier); // Do this first or it'll overwrite the bounding box
-			setRotation(rotationYaw, rotationPitch);
+			setRot(getYRot(), getXRot());
 		}
 
-		this.prevgetX() = getX();
-		this.prevgetY() = getY();
-		this.prevgetZ() = getZ();
+		this.xo = getX();
+		this.yo = getY();
+		this.zo = getZ();
 
 		if(!level.isClientSide){
 
@@ -69,18 +74,18 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 				extensionSpeed = 0.5 * sizeMultiplier;
 			}
 
-			this.move(MoverType.SELF, 0, extensionSpeed, 0);
+			this.move(MoverType.SELF, new Vec3(0, extensionSpeed, 0));
 		}
 
 		if(tickCount == delay + 1) this.playSound(WizardrySounds.ENTITY_ICE_BARRIER_EXTEND, 1, 1.5f);
 
 		super.tick();
 
-		Vec3 look = this.getLookVec();
+		Vec3 look = this.getLookAngle();
 
 		if(!level.isClientSide){
 
-			for(Entity entity : level.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().grow(2))){
+			for(Entity entity : level.getEntities(this, getBoundingBox().inflate(2))){
 
 				if(entity instanceof EntityMagicConstruct) continue;
 
@@ -90,13 +95,13 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 				// I've just fudged it by adding 1 to x and z
 				double perpendicularDist = getSignedPerpendicularDistance(entity.position().add(1, 0, 1));
 
-				if(Math.abs(perpendicularDist) < entity.width/2 + THICKNESS/2){
+				if(Math.abs(perpendicularDist) < entity.getBbWidth()/2 + THICKNESS/2){
 
 					double velocity = 0.25 * Math.signum(perpendicularDist);
-					entity.addVelocity(velocity * look.x, 0, velocity * look.z);
+					entity.push(velocity * look.x, 0, velocity * look.z);
 					// Player motion is handled on that player's client so needs packets
 					if(entity instanceof ServerPlayer){
-						((ServerPlayer)entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+						((ServerPlayer)entity).connection.send(new ClientboundSetEntityMotionPacket(entity));
 					}
 				}
 			}
@@ -105,7 +110,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	@Override
-	public boolean isBurning(){
+	public boolean isOnFire(){
 		return false;
 	}
 
@@ -121,14 +126,14 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 //	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbt){
-		super.readEntityFromNBT(nbt);
+	protected void readAdditionalSaveData(CompoundTag nbt){
+		super.readAdditionalSaveData(nbt);
 		delay = nbt.getInt("delay");
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbt){
-		super.writeEntityToNBT(nbt);
+	protected void addAdditionalSaveData(CompoundTag nbt){
+		super.addAdditionalSaveData(nbt);
 		nbt.putInt("delay", delay);
 	}
 
@@ -146,7 +151,7 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 //		world.spawnParticle(EnumParticleTypes.END_ROD, intercept.x, intercept.y, intercept.z, 0, 0, 0);
 
 		// If the point is within the hitbox (expanded by the fuzziness), it was a hit
-		return getBoundingBox().grow(fuzziness).contains(intercept) ? intercept : null;
+		return getBoundingBox().inflate(fuzziness).contains(intercept) ? intercept : null;
 	}
 
 	@Override
@@ -159,9 +164,9 @@ public class EntityIceBarrier extends EntityScaledConstruct implements ICustomHi
 	}
 
 	private double getSignedPerpendicularDistance(Vec3 point){
-		Vec3 look = this.getLookVec();
+		Vec3 look = this.getLookAngle();
 		Vec3 delta = new Vec3(point.x - this.getX(), 0, point.z - this.getZ());
-		return delta.dotProduct(look);
+		return delta.dot(look);
 	}
 
 }

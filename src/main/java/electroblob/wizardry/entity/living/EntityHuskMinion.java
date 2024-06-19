@@ -18,7 +18,7 @@ public class EntityHuskMinion extends EntityZombieMinion {
 	}
 
 	@Override
-	protected boolean shouldBurnInDay(){
+	protected boolean isSunSensitive(){
 		return false;
 	}
 

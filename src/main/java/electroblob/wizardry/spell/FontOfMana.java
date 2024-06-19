@@ -34,7 +34,7 @@ public class FontOfMana extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(target instanceof Player){ // Font of mana is only useful to players
-			target.addEffect(new MobEffectInstance(WizardryPotions.font_of_mana,
+			target.addEffect(new MobEffectInstance(WizardryPotions.FONT_OF_MANA.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					(int)(getProperty(EFFECT_STRENGTH).intValue() + (modifiers.get(SpellModifiers.POTENCY) - 1) * 2)));
 		}
@@ -52,10 +52,10 @@ public class FontOfMana extends SpellAreaEffect {
 	@SubscribeEvent(priority = EventPriority.LOW) // Doesn't really matter but there's no point processing it if casting is blocked
 	public static void onSpellCastPreEvent(SpellCastEvent.Pre event){
 		// Moved from ItemWand (quite why this wasn't done with modifiers before I don't know!)
-		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.font_of_mana)){
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.FONT_OF_MANA.get())){
 			// Dividing by this rather than setting it takes upgrades and font of mana into account simultaneously
 			event.getModifiers().set(WizardryItems.cooldown_upgrade, event.getModifiers().get(WizardryItems.cooldown_upgrade)
-					/ (2 + event.getCaster().getEffect(WizardryPotions.font_of_mana).getAmplifier()), false);
+					/ (2 + event.getCaster().getEffect(WizardryPotions.FONT_OF_MANA.get()).getAmplifier()), false);
 		}
 	}
 }

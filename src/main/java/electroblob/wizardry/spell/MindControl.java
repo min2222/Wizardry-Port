@@ -174,7 +174,7 @@ public class MindControl extends SpellRay {
 	/** Retrieves the given entity's controller and decides whether it needs to search for a target. */
 	private static void processTargeting(Level world, Mob entity, LivingEntity currentTarget){
 		
-		if(entity.hasEffect(WizardryPotions.mind_control) && MindControl.canControl(entity)){
+		if(entity.hasEffect(WizardryPotions.MIND_CONTROL.get()) && MindControl.canControl(entity)){
 
 			CompoundTag entityNBT = entity.getPersistentData();
 

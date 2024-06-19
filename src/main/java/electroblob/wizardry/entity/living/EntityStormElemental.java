@@ -30,11 +30,11 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	public EntityStormElemental(Level world){
 		super(world);
 		// For some reason this can't be in initEntityAI
-		this.tasks.addTask(0, this.spellAttackAI);
+		this.goalSelector.addGoal(0, this.spellAttackAI);
 	}
 
 	@Override
-	protected void initEntityAI(){
+	protected void registerGoals(){
 
 		this.tasks.addTask(1, new EntityAIAttackMelee(this, AISpeed, false));
 		this.tasks.addTask(2, new EntityAIWander(this, AISpeed));

@@ -41,7 +41,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
-			target.addEffect(new MobEffectInstance(WizardryPotions.empowerment,
+			target.addEffect(new MobEffectInstance(WizardryPotions.EMPOWERMENT.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}
@@ -62,11 +62,11 @@ public class EmpoweringPresence extends SpellAreaEffect {
 	@SubscribeEvent(priority = EventPriority.LOW) // Doesn't really matter but there's no point processing it if casting is blocked
 	public static void onSpellCastPreEvent(SpellCastEvent.Pre event){
 		// Empowerment stacks extra potency on top of the existing potency.
-		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.empowerment)
+		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.EMPOWERMENT.get())
 				&& !(event.getSpell() instanceof EmpoweringPresence)){ // Prevent exponential empowerment stacking!
 
 			float potency = 1 + Spells.empowering_presence.getProperty(POTENCY_PER_LEVEL).floatValue()
-					* (event.getCaster().getEffect(WizardryPotions.empowerment).getAmplifier() + 1);
+					* (event.getCaster().getEffect(WizardryPotions.EMPOWERMENT.get()).getAmplifier() + 1);
 
 			event.getModifiers().set(SpellModifiers.POTENCY,
 					event.getModifiers().get(SpellModifiers.POTENCY) * potency, true);

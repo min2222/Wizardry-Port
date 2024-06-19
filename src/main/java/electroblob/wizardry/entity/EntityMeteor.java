@@ -3,12 +3,14 @@ package electroblob.wizardry.entity;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Meteor;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
@@ -27,14 +29,16 @@ public class EntityMeteor extends FallingBlockEntity {
 	private boolean damageBlocks;
 
 	public EntityMeteor(Level world){
-		super(world);
-		// Superconstructor doesn't call this.
-		this.setSize(0.98F, 0.98F);
+		this(WizardryEntities.METEOR.get(), world);
+	}
+	
+	public EntityMeteor(EntityType<? extends FallingBlockEntity> type, Level world){
+		super(type, world);
 	}
 
 	public EntityMeteor(Level world, double x, double y, double z, float blastMultiplier, boolean damageBlocks){
 		super(world, x, y, z, WizardryBlocks.meteor.defaultBlockState());
-		this.motionY = -1.0D;
+		this.setDeltaMovement(this.getDeltaMovement().x, -1.0D, this.getDeltaMovement().z);
 		this.setSecondsOnFire(200);
 		this.blastMultiplier = blastMultiplier;
 		this.damageBlocks = damageBlocks;

@@ -7,18 +7,19 @@ import java.util.UUID;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.NBTExtras;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.EntityFallingBlock;
@@ -62,9 +63,11 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 	private int suspendTimer = 5;
 
 	public EntityLevitatingBlock(Level world){
-		super(world);
-		// EntityFallingBlock never uses this constructor so doesn't bother setting this, but we need to
-		this.setSize(0.98F, 0.98F);
+		this(WizardryEntities.LEVITATING_BLOCK.get(), world);
+	}
+	
+	public EntityLevitatingBlock(EntityType<? extends FallingBlockEntity> type, Level world){
+		super(type, world);
 	}
 
 	public EntityLevitatingBlock(Level world, double x, double y, double z, BlockState state){
@@ -205,9 +208,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 					}
 				}
 
-				this.motionX *= 0.9800000190734863D;
-				this.motionY *= 0.9800000190734863D;
-				this.motionZ *= 0.9800000190734863D;
+				this.setDeltaMovement(this.getDeltaMovement().scale(0.9800000190734863D));
 			}
 
 			// === End super copy ===

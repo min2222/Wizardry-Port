@@ -27,7 +27,7 @@ public class Containment extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		if(EntityUtils.isLiving(target)){
-			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.containment,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.CONTAINMENT.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}

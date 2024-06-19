@@ -160,13 +160,13 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void initGuiBits(){
-		mixedFontRenderer = new MixedFontRenderer(Minecraft.getMinecraft().gameSettings, new ResourceLocation("textures/font/ascii.png"),
-				Minecraft.getMinecraft().renderEngine, false);
+		mixedFontRenderer = new MixedFontRenderer(Minecraft.getInstance().gameSettings, new ResourceLocation("textures/font/ascii.png"),
+				Minecraft.getInstance().renderEngine, false);
 	}
 
 	@Override
 	public void registerResourceReloadListeners(){
-		IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+		IResourceManager manager = Minecraft.getInstance().getResourceManager();
 		if(manager instanceof IReloadableResourceManager){
 			((IReloadableResourceManager)manager).registerReloadListener(GuiSpellDisplay::loadSkins);
 			if (Wizardry.settings.loadHandbook)
@@ -176,7 +176,7 @@ public class ClientProxy extends CommonProxy {
 
 //	@Override
 //	public void registerSoundEventListener(){
-//		Minecraft.getMinecraft().getSoundHandler().addListener(ContinuousSpellSoundEntity::soundPlayed);
+//		Minecraft.getInstance().getSoundHandler().addListener(ContinuousSpellSoundEntity::soundPlayed);
 //	}
 
 	public void registerAtlasMarkers(){
@@ -203,34 +203,34 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public Level getTheWorld(){
-		return Minecraft.getMinecraft().world;
+		return Minecraft.getInstance().level;
 	}
 
 	@Override
 	public Player getThePlayer(){
-		return Minecraft.getMinecraft().player;
+		return Minecraft.getInstance().player;
 	}
 
 	@Override
 	public boolean isFirstPerson(Entity entity){
-		return entity == Minecraft.getMinecraft().getRenderViewEntity() && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
+		return entity == Minecraft.getInstance().getRenderViewEntity() && Minecraft.getInstance().gameSettings.thirdPersonView == 0;
 	}
 
 	@Override
 	public void playBlinkEffect(Player player){
-		if(Minecraft.getMinecraft().player == player) RenderBlinkEffect.playBlinkEffect();
+		if(Minecraft.getInstance().player == player) RenderBlinkEffect.playBlinkEffect();
 	}
 
 	@Override
 	public void shakeScreen(Player player, float intensity){
-		if(Minecraft.getMinecraft().player == player) ScreenShakeHandler.shakeScreen(intensity);
+		if(Minecraft.getInstance().player == player) ScreenShakeHandler.shakeScreen(intensity);
 	}
 
 	@Override
 	public void loadShader(Player player, ResourceLocation shader){
-		if(Minecraft.getMinecraft().player == player && Wizardry.settings.useShaders
-				&& !Minecraft.getMinecraft().entityRenderer.isShaderActive())
-			Minecraft.getMinecraft().entityRenderer.loadShader(shader);
+		if(Minecraft.getInstance().player == player && Wizardry.settings.useShaders
+				&& !Minecraft.getInstance().entityRenderer.isShaderActive())
+			Minecraft.getInstance().entityRenderer.loadShader(shader);
 	}
 
 	@Override
@@ -243,11 +243,11 @@ public class ClientProxy extends CommonProxy {
 
 		super.notifyBookshelfChange(world, pos);
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 
 		if(player.distanceToSqr(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
-			if(Minecraft.getMinecraft().currentScreen instanceof GuiLectern){
-				((GuiLectern)Minecraft.getMinecraft().currentScreen).refreshAvailableSpells();
+			if(Minecraft.getInstance().currentScreen instanceof GuiLectern){
+				((GuiLectern)Minecraft.getInstance().currentScreen).refreshAvailableSpells();
 			}
 		}
 	}
@@ -257,12 +257,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void playMovingSound(Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, boolean repeat){
-		Minecraft.getMinecraft().getSoundHandler().playSound(new MovingSoundEntity<>(entity, sound, category, volume, pitch, repeat));
+		Minecraft.getInstance().getSoundHandler().playSound(new MovingSoundEntity<>(entity, sound, category, volume, pitch, repeat));
 	}
 
 	@Override
 	public void playChargeupSound(LivingEntity entity){
-		Minecraft.getMinecraft().getSoundHandler().playSound(new MovingSoundSpellCharge(entity, WizardrySounds.ITEM_WAND_CHARGEUP, WizardrySounds.SPELLS, 2.5f, 1.4f, false));
+		Minecraft.getInstance().getSoundHandler().playSound(new MovingSoundSpellCharge(entity, WizardrySounds.ITEM_WAND_CHARGEUP, WizardrySounds.SPELLS, 2.5f, 1.4f, false));
 	}
 
 	@Override
@@ -285,7 +285,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public boolean shouldDisplayDiscovered(Spell spell, @Nullable ItemStack stack){
 
-		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		EntityPlayerSP player = Minecraft.getInstance().player;
 
 		if(player == null) return false;
 
@@ -293,10 +293,10 @@ public class ClientProxy extends CommonProxy {
 		// Weirdly, the gui is actually the only way of accessing the current IMerchant or their recipes, other than a
 		// brute-force search through all the entities in the world to find the merchant interacting with the player
 		// Since we only need this client-side anyway, we might as well go via the gui
-		if(Minecraft.getMinecraft().currentScreen instanceof GuiMerchant){
+		if(Minecraft.getInstance().currentScreen instanceof GuiMerchant){
 			// It doesn't actually matter if the recipe is selected or not, since the itemstack will only ever
 			// match one of them anyway - and we'd have to reflect into GuiMerchant to get the selected recipe
-			MerchantRecipeList recipes = ((GuiMerchant)Minecraft.getMinecraft().currentScreen).getMerchant().getRecipes(player);
+			MerchantRecipeList recipes = ((GuiMerchant)Minecraft.getInstance().currentScreen).getMerchant().getRecipes(player);
 			if(recipes != null && recipes.stream().anyMatch(r -> r.getItemToSell() == stack)){
 				// Spell books are always discovered when wizards are selling them
 				return true;
@@ -342,7 +342,7 @@ public class ClientProxy extends CommonProxy {
 
 		Spell spell = Spell.byMetadata(scroll.getItemDamage());
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 
 		boolean discovered = true;
 		// It seems that this method is called when the world is loading, before thePlayer has been initialised.
@@ -361,7 +361,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public double getConjuredBowDurability(ItemStack stack){
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 		if(player.getActiveItemStack() == stack){
 			return (double)(stack.getItemDamage() + (player.getItemInUseMaxCount())) / (double)stack.getMaxDamage();
 		}
@@ -375,7 +375,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void addMultiLineDescription(List<String> tooltip, String key, Style style, Object... args){
-		tooltip.addAll(Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(translate(key, style, args), TOOLTIP_WRAP_WIDTH));
+		tooltip.addAll(Minecraft.getInstance().fontRenderer.listFormattedStringToWidth(translate(key, style, args), TOOLTIP_WRAP_WIDTH));
 	}
 
 	// Particles
@@ -426,7 +426,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void spawnTornadoParticle(Level world, double x, double y, double z, double velX, double velZ, double radius, int maxAge,
                                      BlockState block, BlockPos pos){
-		Minecraft.getMinecraft().effectRenderer.addEffect(new ParticleTornado(world, maxAge, x, z, radius, y, velX, velZ, block).setBlockPos(pos));// , world.random.nextInt(6)));
+		Minecraft.getInstance().effectRenderer.addEffect(new ParticleTornado(world, maxAge, x, z, radius, y, velX, velZ, block).setBlockPos(pos));// , world.random.nextInt(6)));
 	}
 
 	// Packet Handlers
@@ -435,7 +435,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastSpellPacket(PacketCastSpell.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 		Entity caster = level.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
@@ -467,7 +467,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastSpellAtPosPacket(PacketCastSpellAtPos.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 		Spell spell = Spell.byNetworkID(message.spellID);
 
 		spell.cast(world, message.position.x, message.position.y, message.position.z, message.direction, 0, message.duration, message.modifiers);
@@ -482,7 +482,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleCastContinuousSpellPacket(PacketCastContinuousSpell.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 		Entity caster = level.getEntityByID(message.casterID);
 		Spell spell = Spell.byNetworkID(message.spellID);
 		// Should always be true
@@ -505,7 +505,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleNPCCastSpellPacket(PacketNPCCastSpell.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 		Entity caster = level.getEntityByID(message.casterID);
 		Entity target = message.targetID == -1 ? null : level.getEntityByID(message.targetID);
 		Spell spell = Spell.byNetworkID(message.spellID);
@@ -536,7 +536,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleDispenserCastSpellPacket(PacketDispenserCastSpell.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 
 		if(level.getTileEntity(message.pos) instanceof DispenserBlockEntity){ // Should always be true
 
@@ -567,7 +567,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleTransportationPacket(PacketTransportation.Message message){
 
-		Level world = Minecraft.getMinecraft().world;
+		Level world = Minecraft.getInstance().world;
 		BlockPos pos = message.destination;
 
 		Entity entity = level.getEntityByID(message.dismountEntityID);
@@ -607,7 +607,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handlePlayerSyncPacket(PacketPlayerSync.Message message){
 
-		WizardData data = WizardData.get(Minecraft.getMinecraft().player);
+		WizardData data = WizardData.get(Minecraft.getInstance().player);
 
 		if(data != null){
 
@@ -619,7 +619,7 @@ public class ClientProxy extends CommonProxy {
 			if(message.selectedMinionID == -1){
 				data.selectedMinion = null;
 			}else{
-				Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.selectedMinionID);
+				Entity entity = Minecraft.getInstance().level.getEntityByID(message.selectedMinionID);
 
 				if(entity instanceof ISummonedCreature){
 					data.selectedMinion = new WeakReference<>((ISummonedCreature)entity);
@@ -633,7 +633,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleGlyphDataPacket(PacketGlyphData.Message message){
 
-		SpellGlyphData data = SpellGlyphData.get(Minecraft.getMinecraft().world);
+		SpellGlyphData data = SpellGlyphData.get(Minecraft.getInstance().world);
 
 		data.randomNames = new HashMap<>();
 		data.randomDescriptions = new HashMap<>();
@@ -654,8 +654,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void handleEmitterDataPacket(PacketEmitterData.Message message){
-		message.emitters.forEach(e -> e.setWorld(Minecraft.getMinecraft().world)); // Do this as soon as possible!
-		SpellEmitterData data = SpellEmitterData.get(Minecraft.getMinecraft().world);
+		message.emitters.forEach(e -> e.setWorld(Minecraft.getInstance().world)); // Do this as soon as possible!
+		SpellEmitterData data = SpellEmitterData.get(Minecraft.getInstance().world);
 		// We shouldn't need to clear the emitters because when a player logs in or changes dimension the client world
 		// is wiped anyway, so the call to get() above should result in a fresh SpellEmitterData instance
 		message.emitters.forEach(data::add);
@@ -663,7 +663,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void handleClairvoyancePacket(PacketClairvoyance.Message message){
-		Clairvoyance.spawnPathPaticles(Minecraft.getMinecraft().world, message.path, message.durationMultiplier);
+		Clairvoyance.spawnPathPaticles(Minecraft.getInstance().world, message.path, message.durationMultiplier);
 	}
 
 	@Override
@@ -673,12 +673,12 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void handleResurrectionPacket(PacketResurrection.Message message){
-		Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.playerID);
+		Entity entity = Minecraft.getInstance().level.getEntityByID(message.playerID);
 		if(entity instanceof Player){
 			((Resurrection)Spells.resurrection).resurrect((Player)entity);
-			if(entity == Minecraft.getMinecraft().player){
-				Minecraft.getMinecraft().world.addFreshEntity(entity);
-				Minecraft.getMinecraft().displayGuiScreen(null);
+			if(entity == Minecraft.getInstance().player){
+				Minecraft.getInstance().world.addFreshEntity(entity);
+				Minecraft.getInstance().displayGuiScreen(null);
 			}
 		}
 		else Wizardry.logger.warn("Received a PacketResurrection, but the entity ID did not match any player");
@@ -687,7 +687,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handlePossessionPacket(PacketPossession.Message message){
 
-		Entity entity = Minecraft.getMinecraft().level.getEntityByID(message.playerID);
+		Entity entity = Minecraft.getInstance().level.getEntityByID(message.playerID);
 
 		if(entity instanceof Player){
 
@@ -696,11 +696,11 @@ public class ClientProxy extends CommonProxy {
 			if(message.targetID == -1){
 				((Possession)Spells.possession).endPossession(player);
 			}else{
-				Entity target = Minecraft.getMinecraft().level.getEntityByID(message.targetID);
+				Entity target = Minecraft.getInstance().level.getEntityByID(message.targetID);
 				if(target instanceof Mob){
 					((Possession)Spells.possession).possess(player, (Mob)target, message.duration);
 					player.sendStatusMessage(Component.translatable("spell." + Spells.possession.getRegistryName()
-							+ ".success", Minecraft.getMinecraft().gameSettings.keyBindSneak.getDisplayName()), true);
+							+ ".success", Minecraft.getInstance().gameSettings.keyBindSneak.getDisplayName()), true);
 				}
 				else Wizardry.logger.warn("Received a PacketPossession, but the target ID did not match any living entity");
 			}
@@ -710,7 +710,7 @@ public class ClientProxy extends CommonProxy {
 
 	public void handleConquerShrinePacket(PacketConquerShrine.Message message){
 
-		BlockEntity tileEntity = Minecraft.getMinecraft().level.getTileEntity(new BlockPos(message.x, message.y, message.z));
+		BlockEntity tileEntity = Minecraft.getInstance().level.getTileEntity(new BlockPos(message.x, message.y, message.z));
 
 		if(tileEntity instanceof TileEntityShrineCore){
 			((TileEntityShrineCore)tileEntity).conquer();

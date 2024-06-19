@@ -12,6 +12,7 @@ import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
@@ -32,7 +33,8 @@ public class WizardSpell extends LootItemConditionalFunction {
 
 	@Override
 	public ItemStack run(ItemStack stack, LootContext context){
-
+		
+		RandomSource random = context.getRandom();
 		if(!(stack.getItem() instanceof ItemSpellBook) && !(stack.getItem() instanceof ItemScroll)) Wizardry.logger
 				.warn("Applying the wizard_spell loot function to an item that isn't a spell book or scroll.");
 

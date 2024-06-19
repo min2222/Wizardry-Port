@@ -45,7 +45,7 @@ public class EntityBlizzard extends EntityScaledConstruct {
 		if(!this.level.isClientSide){
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.getX(), this.getY(),
-					this.getZ(), this.world);
+					this.getZ(), this.level);
 
 			for(LivingEntity target : targets){
 
@@ -63,21 +63,21 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 				// All entities are slowed, even the caster (except those immune to frost effects)
 				if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-					target.addEffect(new MobEffectInstance(WizardryPotions.frost, 20, 0));
+					target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 20, 0));
 			}
 			
 		}else{
 			
 			for(int i=0; i<6; i++){
 				double speed = (random.nextBoolean() ? 1 : -1) * (0.1 + 0.05 * random.nextDouble());
-				ParticleBuilder.create(Type.SNOW).pos(this.getX(), this.getY() + random.nextDouble() * height, this.getZ()).vel(0, 0, 0)
-				.time(100).scale(2).spin(random.nextDouble() * (radius - 0.5) + 0.5, speed).shaded(true).spawn(world);
+				ParticleBuilder.create(Type.SNOW).pos(this.getX(), this.getY() + random.nextDouble() * getBbHeight(), this.getZ()).vel(0, 0, 0)
+				.time(100).scale(2).spin(random.nextDouble() * (radius - 0.5) + 0.5, speed).shaded(true).spawn(level);
 			}
 
 			for(int i=0; i<3; i++){
 				double speed = (random.nextBoolean() ? 1 : -1) * (0.05 + 0.02 * random.nextDouble());
-				ParticleBuilder.create(Type.CLOUD).pos(this.getX(), this.getY() + random.nextDouble() * (height - 0.5), this.getZ())
-						.clr(0xffffff).shaded(true).spin(random.nextDouble() * (radius - 1) + 0.5, speed).spawn(world);
+				ParticleBuilder.create(Type.CLOUD).pos(this.getX(), this.getY() + random.nextDouble() * (getBbHeight() - 0.5), this.getZ())
+						.clr(0xffffff).shaded(true).spin(random.nextDouble() * (radius - 1) + 0.5, speed).spawn(level);
 			}
 		}
 	}

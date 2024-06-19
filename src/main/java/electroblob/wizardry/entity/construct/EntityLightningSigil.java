@@ -1,6 +1,9 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
@@ -9,11 +12,11 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityLightningSigil extends EntityScaledConstruct {
 
@@ -21,7 +24,12 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 	public static final String SECONDARY_MAX_TARGETS = "secondary_max_targets";
 
 	public EntityLightningSigil(Level world){
-		super(world);
+		this(WizardryEntities.LIGHTNING_SIGIL.get(), world);
+		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+	}
+	
+	public EntityLightningSigil(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 
@@ -39,16 +47,14 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 			this.discard();
 		}
 
-		List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2, this.getX(), this.getY(),
-				this.getZ(), this.getBbHeight(), this.world);
+		List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.getBbWidth()/2, this.getX(), this.getY(),
+				this.getZ(), this.getBbHeight(), this.level);
 
 		for(LivingEntity target : targets){
 
 			if(this.isValidTarget(target)){
 
-				double velX = target.motionX;
-				double velY = target.motionY;
-				double velZ = target.motionZ;
+				Vec3 velocity = target.getDeltaMovement();
 
 				// Only works if target is actually damaged to account for hurtResistantTime
 				if(target.hurt(getCaster() != null ? MagicDamage.causeIndirectMagicDamage(this, getCaster(),
@@ -56,9 +62,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 						.floatValue() * damageMultiplier)){
 
 					// Removes knockback
-					target.motionX = velX;
-					target.motionY = velY;
-					target.motionZ = velZ;
+					target.setDeltaMovement(velocity);
 
 					this.playSound(WizardrySounds.ENTITY_LIGHTNING_SIGIL_TRIGGER, 1.0f, 1.0f);
 
@@ -66,7 +70,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 					double seekerRange = Spells.lightning_sigil.getProperty(SECONDARY_RANGE).doubleValue();
 
 					List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(seekerRange,
-							target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), world);
+							target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), level);
 
 					for(int j = 0; j < Math.min(secondaryTargets.size(),
 							Spells.lightning_sigil.getProperty(SECONDARY_MAX_TARGETS).floatValue()); j++){
@@ -78,15 +82,15 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 							if(level.isClientSide){
 								
 								ParticleBuilder.create(Type.LIGHTNING).entity(target)
-								.pos(0, target.getBbHeight()/2, 0).target(secondaryTarget).spawn(world);
+								.pos(0, target.getBbHeight()/2, 0).target(secondaryTarget).spawn(level);
 								
-								ParticleBuilder.spawnShockParticles(world, secondaryTarget.getX(),
+								ParticleBuilder.spawnShockParticles(level, secondaryTarget.getX(),
 										secondaryTarget.getY() + secondaryTarget.getBbHeight() / 2,
 										secondaryTarget.getZ());
 							}
 
 							secondaryTarget.playSound(WizardrySounds.ENTITY_LIGHTNING_SIGIL_TRIGGER, 1.0F,
-									world.random.nextFloat() * 0.4F + 1.5F);
+									level.random.nextFloat() * 0.4F + 1.5F);
 
 							secondaryTarget.hurt(
 									MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK),
@@ -101,19 +105,19 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 		}
 
 		if(this.level.isClientSide && this.random.nextInt(15) == 0){
-			double radius = (0.5 + random.nextDouble() * 0.3) * width/2;
+			double radius = (0.5 + random.nextDouble() * 0.3) * getBbWidth()/2;
 			float angle = random.nextFloat() * (float)Math.PI * 2;
 			ParticleBuilder.create(Type.SPARK)
 			.pos(this.getX() + radius * Mth.cos(angle), this.getY() + 0.1, this.getZ() + radius * Mth.sin(angle))
-			.spawn(world);
+			.spawn(level);
 		}
 	}
 
 	@Override
-	protected void entityInit(){}
+	protected void defineSynchedData(){}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 

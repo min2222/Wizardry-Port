@@ -39,22 +39,22 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 
 			if(!level.isClientSide){
 
-				EntityZombieMinion zombie = spawnHusks ? new EntityHuskMinion(world) : new EntityZombieMinion(world);
+				EntityZombieMinion zombie = spawnHusks ? new EntityHuskMinion(level) : new EntityZombieMinion(level);
 
-				zombie.setPosition(this.getX() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE, this.getY(),
+				zombie.setPos(this.getX() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE, this.getY(),
 						this.getZ() + (random.nextDouble() * 2 - 1) * MAX_NUDGE_DISTANCE);
 				zombie.setCaster(this.getCaster());
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
 				zombie.setLifetime(Spells.zombie_apocalypse.getProperty(SpellMinion.MINION_LIFETIME).intValue());
-				AttributeInstance attribute = zombie.getEntityAttribute(Attributes.ATTACK_DAMAGE);
-				attribute.applyModifier(new AttributeModifier(SpellMinion.POTENCY_ATTRIBUTE_MODIFIER,
+				AttributeInstance attribute = zombie.getAttribute(Attributes.ATTACK_DAMAGE);
+				attribute.addTransientModifier(new AttributeModifier(SpellMinion.POTENCY_ATTRIBUTE_MODIFIER,
 						damageMultiplier - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 				zombie.setHealth(zombie.getMaxHealth()); // Need to set this because we may have just modified the value
-				zombie.hurtResistantTime = 30; // Prevent fall damage
+				zombie.invulnerableTime = 30; // Prevent fall damage
 				zombie.hideParticles(); // Hide spawn particles or they pop out the top of the hidden box
 
-				world.addFreshEntity(zombie);
+				level.addFreshEntity(zombie);
 			}
 
 			spawnTimer += Spells.zombie_apocalypse.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + random.nextInt(20);

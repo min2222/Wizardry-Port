@@ -1,5 +1,8 @@
 package electroblob.wizardry.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.command.SpellEmitter;
 import electroblob.wizardry.packet.PacketEmitterData;
@@ -7,21 +10,18 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 /**
  * Class responsible for storing and keeping track of {@link SpellEmitter}s. Each world has its own instance of
@@ -33,7 +33,7 @@ import java.util.List;
  * @author Electroblob
  */
 @Mod.EventBusSubscriber
-public class SpellEmitterData extends WorldSavedData {
+public class SpellEmitterData extends SavedData {
 
 	public static final String NAME = Wizardry.MODID + "_spell_emitters";
 
@@ -80,7 +80,7 @@ public class SpellEmitterData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(CompoundTag nbt){
-		emitterTags = nbt.getTagList("emitters", Constants.NBT.TAG_COMPOUND);
+		emitterTags = nbt.getList("emitters", Tag.TAG_COMPOUND);
 	}
 
 	private void loadEmitters(Level world){
@@ -105,16 +105,16 @@ public class SpellEmitterData extends WorldSavedData {
 	}
 
 	@SubscribeEvent
-	public static void tick(TickEvent.WorldTickEvent event){
+	public static void tick(TickEvent.LevelTickEvent event){
 		if(!event.level.isClientSide && event.phase == TickEvent.Phase.END){
-			update(event.world);
+			update(event.level);
 		}
 	}
 
 	@SubscribeEvent
-	public static void onWorldLoadEvent(WorldEvent.Load event){
+	public static void onWorldLoadEvent(LevelEvent.Load event){
 		// Called to initialise the spell emitter data when a world loads, if it isn't already.
-		SpellEmitterData.get(event.getWorld());
+		SpellEmitterData.get(event.getLevel());
 	}
 
 	@SubscribeEvent

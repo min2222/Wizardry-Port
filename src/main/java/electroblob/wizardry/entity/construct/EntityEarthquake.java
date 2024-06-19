@@ -11,8 +11,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.EntityFallingBlock;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.Level;
 
@@ -46,22 +48,22 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				BlockPos pos = new BlockPos(x, y, z);
 
-				if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isEmptyBlock(pos) && world.isBlockNormalCube(pos, false)
+				if(!BlockUtils.isBlockUnbreakable(level, pos) && !level.isEmptyBlock(pos) && level.isBlockNormalCube(pos, false)
 						// Checks that the block above is not solid, since this causes the falling sand to vanish.
-						&& !world.isBlockNormalCube(pos.up(), false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){
+						&& !level.isBlockNormalCube(pos.above(), false) && BlockUtils.canBreakBlock(getCaster(), level, pos)){
 
 					// Falling blocks do the setting block to air themselves.
-					EntityFallingBlock fallingblock = new EntityFallingBlock(world, x + 0.5, y + 0.5, z + 0.5,
+					FallingBlockEntity fallingblock = new FallingBlockEntity(level, x + 0.5, y + 0.5, z + 0.5,
 							level.getBlockState(new BlockPos(x, y, z)));
 					fallingblock.motionY = 0.3;
-					world.addFreshEntity(fallingblock);
+					level.addFreshEntity(fallingblock);
 				}
 			}
 
 		}
 
 		List<LivingEntity> targets = EntityUtils
-				.getLivingWithinRadius((this.tickCount * speed) + 1.5, this.getX(), this.getY(), this.getZ(), world);
+				.getLivingWithinRadius((this.tickCount * speed) + 1.5, this.getX(), this.getY(), this.getZ(), level);
 
 		// In this particular instance, the caster is completely unaffected because they will always be in the
 		// centre.
@@ -70,7 +72,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 		for(LivingEntity target : targets){
 
 			// Searches in a 1 wide ring.
-			if(this.getDistance(target) > (this.tickCount * speed) + 0.5 && target.getY() < this.getY() + 1
+			if(this.distanceTo(target) > (this.tickCount * speed) + 0.5 && target.getY() < this.getY() + 1
 					&& target.getY() > this.getY() - 1){
 
 				// Knockback must be removed in this instance, or the target will fall into the floor.
@@ -91,7 +93,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				// Player motion is handled on that player's client so needs packets
 				if(target instanceof ServerPlayer){
-					((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+					((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 				}
 			}
 		}

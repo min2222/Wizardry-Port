@@ -1,26 +1,28 @@
 package electroblob.wizardry.advancement;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import electroblob.wizardry.worldgen.WorldGenWizardryStructure;
-import net.minecraft.advancements.ICriterionTrigger;
-import net.minecraft.advancements.PlayerAdvancements;
-import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.JsonUtils;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonObject;
+
+import electroblob.wizardry.worldgen.WorldGenWizardryStructure;
+import net.minecraft.advancements.CriterionTrigger;
+import net.minecraft.advancements.critereon.AbstractCriterionTriggerInstance;
+import net.minecraft.advancements.critereon.DeserializationContext;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.PlayerAdvancements;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.GsonHelper;
+
 /** Copied from PositionTrigger and modified to work with wizardry's structures. The majority of any
  * ICriterionTrigger class is just boilerplate, and this is no exception. */
-public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Instance> {
+public class StructureTrigger implements CriterionTrigger<StructureTrigger.Instance> {
 
 	private final ResourceLocation id;
 	private final Map<PlayerAdvancements, StructureTrigger.Listeners> listeners = Maps.newHashMap();
@@ -33,7 +35,8 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		return this.id;
 	}
 
-	public void addListener(PlayerAdvancements advancements, Listener<StructureTrigger.Instance> listener){
+	@Override
+	public void addPlayerListener(PlayerAdvancements advancements, Listener<StructureTrigger.Instance> listener){
 
 		StructureTrigger.Listeners listeners = this.listeners.get(advancements);
 
@@ -45,7 +48,8 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		listeners.add(listener);
 	}
 
-	public void removeListener(PlayerAdvancements advancements, Listener<StructureTrigger.Instance> listener){
+	@Override
+	public void removePlayerListener(PlayerAdvancements advancements, Listener<StructureTrigger.Instance> listener){
 
 		StructureTrigger.Listeners listeners = this.listeners.get(advancements);
 
@@ -58,12 +62,14 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		}
 	}
 
-	public void removeAllListeners(PlayerAdvancements advancements){
+	@Override
+	public void removePlayerListeners(PlayerAdvancements advancements){
 		this.listeners.remove(advancements);
 	}
 
-	public StructureTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context){
-		return new StructureTrigger.Instance(this.id, JsonUtils.getString(json, "structure_type"));
+	@Override
+	public StructureTrigger.Instance createInstance(JsonObject json, DeserializationContext context){
+		return new StructureTrigger.Instance(this.id, GsonHelper.getAsString(json, "structure_type"), json, context);
 	}
 
 	public void trigger(ServerPlayer player){
@@ -71,7 +77,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 		StructureTrigger.Listeners listeners = this.listeners.get(player.getAdvancements());
 
 		if(listeners != null){
-			listeners.trigger(player.getServerWorld(), player.getX(), player.getY(), player.getZ());
+			listeners.trigger(player.getLevel(), player.getX(), player.getY(), player.getZ());
 		}
 	}
 
@@ -79,8 +85,8 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 
 		private final WorldGenWizardryStructure structureType;
 
-		public Instance(ResourceLocation criterionIn, String name){
-			super(criterionIn);
+		public Instance(ResourceLocation criterionIn, String name, JsonObject json, DeserializationContext context){
+			super(criterionIn, EntityPredicate.Composite.fromJson(json, name, context));
 			this.structureType = WorldGenWizardryStructure.byName(name);
 		}
 
@@ -116,7 +122,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 
 			for(Listener<StructureTrigger.Instance> listener : this.listeners){
 
-				if(listener.getCriterionInstance().test(world, x, y, z)){
+				if(listener.getTriggerInstance().test(world, x, y, z)){
 
 					if(list == null){
 						list = Lists.newArrayList();
@@ -128,7 +134,7 @@ public class StructureTrigger implements ICriterionTrigger<StructureTrigger.Inst
 
 			if(list != null){
 				for(Listener<StructureTrigger.Instance> listener : list){
-					listener.grantCriterion(this.playerAdvancements);
+					listener.run(this.playerAdvancements);
 				}
 			}
 		}

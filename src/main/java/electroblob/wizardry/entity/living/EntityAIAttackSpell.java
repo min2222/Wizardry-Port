@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIBase;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -25,7 +26,7 @@ import java.util.List;
  * @param <T> The type of entity that this AI belongs to; must both extend EntityLiving <i>and</i> implement ISpellCaster
  */
 // Mmmm generics...
-public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends EntityAIBase {
+public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 
 	/** The entity the AI instance has been applied to. Thanks to type parameters, methods from both EntityLiving and
 	 * ISummonedCreature may be invoked on this field. */

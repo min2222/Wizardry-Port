@@ -1,28 +1,58 @@
 package electroblob.wizardry.constants;
 
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 
-import javax.annotation.Nullable;
-
-public enum Element implements StringRepresentable {
+@Mod.EventBusSubscriber
+public class Element {
 
 	/** The 'default' element, with {@link electroblob.wizardry.registry.Spells#magic_missile magic missile} being its
 	 * only spell. */
-	MAGIC(new Style().setColor(ChatFormatting.GRAY), "magic"),
-	FIRE(new Style().setColor(ChatFormatting.DARK_RED), "fire"),
-	ICE(new Style().setColor(ChatFormatting.AQUA), "ice"),
-	LIGHTNING(new Style().setColor(ChatFormatting.DARK_AQUA), "lightning"),
-	NECROMANCY(new Style().setColor(ChatFormatting.DARK_PURPLE), "necromancy"),
-	EARTH(new Style().setColor(ChatFormatting.DARK_GREEN), "earth"),
-	SORCERY(new Style().setColor(ChatFormatting.GREEN), "sorcery"),
-	HEALING(new Style().setColor(ChatFormatting.YELLOW), "healing");
+	public static final Element MAGIC = new Element(Style.EMPTY.withColor(ChatFormatting.GRAY), "magic");
+	public static final Element FIRE = new Element(Style.EMPTY.withColor(ChatFormatting.DARK_RED), "fire");
+	public static final Element ICE = new Element(Style.EMPTY.withColor(ChatFormatting.AQUA), "ice");
+	public static final Element LIGHTNING = new Element(Style.EMPTY.withColor(ChatFormatting.DARK_AQUA), "lightning");
+	public static final Element NECROMANCY = new Element(Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE), "necromancy");
+	public static final Element EARTH = new Element(Style.EMPTY.withColor(ChatFormatting.DARK_GREEN), "earth");
+	public static final Element SORCERY = new Element(Style.EMPTY.withColor(ChatFormatting.GREEN), "sorcery");
+	public static final Element HEALING = new Element(Style.EMPTY.withColor(ChatFormatting.YELLOW), "healing");
+	
+    public static Supplier<IForgeRegistry<Element>> registry = null;
+    
+    @SubscribeEvent
+    public static void createRegistry(NewRegistryEvent event) {
+        RegistryBuilder<Element> builder = new RegistryBuilder<>();
+        builder.setName(new ResourceLocation(Wizardry.MODID, "element"));
+        builder.setIDRange(0, 5000);
+        registry = event.create(builder);
+    }
+    
+    @SubscribeEvent
+    public static void register(RegisterEvent event) {
+        event.register(registry.get().getRegistryKey(), helper -> {
+            helper.register("magic", MAGIC);
+            helper.register("fire", FIRE);
+            helper.register("ice", ICE);
+            helper.register("lightning", LIGHTNING);
+            helper.register("necromancy", NECROMANCY);
+            helper.register("earth", EARTH);
+            helper.register("sorcery", SORCERY);
+            helper.register("healing", HEALING);
+        });
+    }
 
 	/** Display colour for this element */
 	private final Style colour;
@@ -31,11 +61,11 @@ public enum Element implements StringRepresentable {
 	/** The {@link ResourceLocation} for this element's 8x8 icon (displayed in the arcane workbench GUI) */
 	private final ResourceLocation icon;
 
-	Element(Style colour, String name){
+	public Element(Style colour, String name){
 		this(colour, name, Wizardry.MODID);
 	}
 
-	Element(Style colour, String name, String modid){
+	public Element(Style colour, String name, String modid){
 		this.colour = colour;
 		this.unlocalisedName = name;
 		this.icon = new ResourceLocation(modid, "textures/gui/container/element_icon_" + unlocalisedName + ".png");
@@ -45,7 +75,7 @@ public enum Element implements StringRepresentable {
 	 * element exists. */
 	public static Element fromName(String name){
 
-		for(Element element : values()){
+		for(Element element : registry.get().getValues()){
 			if(element.unlocalisedName.equals(name)) return element;
 		}
 
@@ -57,7 +87,7 @@ public enum Element implements StringRepresentable {
 	@Nullable
 	public static Element fromName(String name, @Nullable Element fallback){
 
-		for(Element element : values()){
+		for(Element element : registry.get().getValues()){
 			if(element.unlocalisedName.equals(name)) return element;
 		}
 
@@ -85,7 +115,6 @@ public enum Element implements StringRepresentable {
 	}
 
 	/** Returns this element's unlocalised name. Also used as the serialised string in block properties. */
-	@Override
 	public String getName(){
 		return unlocalisedName;
 	}

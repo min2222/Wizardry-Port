@@ -1,7 +1,10 @@
 package electroblob.wizardry.entity.construct;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 
 /**
@@ -17,9 +20,11 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 
 	/** The size multiplier for this construct, usually determined by the blast modifier the spell was cast with. */
 	protected float sizeMultiplier = 1;
+    protected EntityDimensions size = EntityDimensions.scalable(this.getBbWidth(), this.getBbHeight());
 
-	public EntityScaledConstruct(Level world){
-		super(world);
+	public EntityScaledConstruct(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
+        this.refreshDimensions();
 	}
 
 	public float getSizeMultiplier(){
@@ -28,7 +33,16 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 
 	public void setSizeMultiplier(float sizeMultiplier){
 		this.sizeMultiplier = sizeMultiplier;
-		setSize(shouldScaleWidth() ? width * sizeMultiplier : width, shouldScaleHeight() ? height * sizeMultiplier : height);
+		setSize(shouldScaleWidth() ? getBbWidth() * sizeMultiplier : getBbWidth(), shouldScaleHeight() ? getBbHeight() * sizeMultiplier : getBbHeight());
+	}
+	
+	public void setSize(float width, float height) {
+		this.size = EntityDimensions.scalable(width, height);
+	}
+
+	@Override
+	public EntityDimensions getDimensions(Pose p_19975_) {
+		return this.size;
 	}
 
 	/** Returns true if the width of this entity's bounding box should be scaled by the size multiplier on creation. */
@@ -42,26 +56,26 @@ public abstract class EntityScaledConstruct extends EntityMagicConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbt){
-		super.readEntityFromNBT(nbt);
+	protected void readAdditionalSaveData(CompoundTag nbt){
+		super.readAdditionalSaveData(nbt);
 		setSizeMultiplier(nbt.getFloat("sizeMultiplier"));
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbt){
-		super.writeEntityToNBT(nbt);
+	protected void addAdditionalSaveData(CompoundTag nbt){
+		super.addAdditionalSaveData(nbt);
 		nbt.putFloat("sizeMultiplier", sizeMultiplier);
 
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data){
+	public void readSpawnData(FriendlyByteBuf data){
 		super.readSpawnData(data);
 		setSizeMultiplier(data.readFloat()); // Set the width correctly on the client side
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf data){
+	public void writeSpawnData(FriendlyByteBuf data){
 		super.writeSpawnData(data);
 		data.writeFloat(sizeMultiplier);
 	}

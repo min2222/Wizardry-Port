@@ -32,7 +32,7 @@ public class EntityIceSpike extends EntityMagicConstruct {
 		float pitch = (GeometryUtils.getPitch(facing) - 90) * (float)Math.PI/180;
 		Vec3 min = this.position().add(new Vec3(-width/2, 0, -width/2).rotatePitch(pitch).rotateYaw(yaw));
 		Vec3 max = this.position().add(new Vec3(width/2, height, width/2).rotatePitch(pitch).rotateYaw(yaw));
-		this.setEntityBoundingBox(new AABB(min.x, min.y, min.z, max.x, max.y, max.z));
+		this.setBoundingBox(new AABB(min.x, min.y, min.z, max.x, max.y, max.z));
 	}
 
 	public Direction getFacing(){

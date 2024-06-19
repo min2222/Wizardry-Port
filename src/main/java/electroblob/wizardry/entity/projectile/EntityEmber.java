@@ -25,7 +25,6 @@ public class EntityEmber extends EntityMagicProjectile {
 		this(WizardryEntities.EMBER.get(), world);
 		this.setOwner(caster);
 		extraLifetime = random.nextInt(30);
-		this.setSize(0.1f, 0.1f);
 	}
 
 	@Override

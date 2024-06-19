@@ -18,7 +18,6 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvent;

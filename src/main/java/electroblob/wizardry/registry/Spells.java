@@ -7,6 +7,7 @@ import electroblob.wizardry.entity.projectile.*;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.spell.*;
 import net.minecraft.world.entity.projectile.EntitySnowball;
+import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -260,7 +261,7 @@ public final class Spells {
 		}.addProperties(Spell.DAMAGE).soundValues(1, 1.4f, 0.4f));
 		registry.register(new Ignite());
 		registry.register(new Freeze());
-		registry.register(new SpellThrowable<>("snowball", EntitySnowball::new).npcSelector((e, o) -> o).soundValues(0.5f, 0.4f, 0.2f)); // Let's spare wizards the pain of the snowball spell
+		registry.register(new SpellThrowable<>("snowball", Snowball::new).npcSelector((e, o) -> o).soundValues(0.5f, 0.4f, 0.2f)); // Let's spare wizards the pain of the snowball spell
 		registry.register(new Arc());
 		registry.register(new SpellProjectile<>("thunderbolt", EntityThunderbolt::new).addProperties(Spell.DAMAGE, EntityThunderbolt.KNOCKBACK_STRENGTH).soundValues(0.8f, 0.9f, 0.2f));
 		registry.register(new SummonZombie());

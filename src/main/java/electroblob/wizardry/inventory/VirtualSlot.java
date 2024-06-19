@@ -1,8 +1,8 @@
 package electroblob.wizardry.inventory;
 
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,15 +23,15 @@ public class VirtualSlot extends Slot {
 	/** Allows the virtual slot to remember what was last stored in it, so items can be put back in the same place. */
 	private ItemStack prevStack; // For now this doesn't persist over GUI close
 
-	public VirtualSlot(IInventory inventory, int index){
+	public VirtualSlot(Container inventory, int index){
 		super(inventory, index, -999, -999);
 		if(!(inventory instanceof BlockEntity)) throw new IllegalArgumentException("Inventory must be a tile entity!");
 		this.tileEntity = (BlockEntity)inventory;
-		this.prevStack = getStack().copy(); // We MUST copy the stack or it will get changed from elsewhere later!
+		this.prevStack = getItem().copy(); // We MUST copy the stack or it will get changed from elsewhere later!
 	}
 
 	@Override
-	public boolean isEnabled(){
+	public boolean isActive(){
 		return false; // Virtual slots are never displayed
 	}
 
@@ -41,35 +41,37 @@ public class VirtualSlot extends Slot {
 
 	/** Returns true if this slot is valid, i.e. the tile entity still exists. */
 	public boolean isValid(){
-		return !tileEntity.isInvalid();
+		return !tileEntity.isRemoved();
 	}
 
 	// Normally the container decides if a stack is valid, but that's not going to work here
 	@Override
-	public boolean isItemValid(ItemStack stack){
+	public boolean mayPlace(ItemStack stack){
 		// getSlotIndex() is required here, NOT slotNumber (which is only populated when the slot is added to a
 		// container - the javadoc is wrong, it has nothing to do with inventories)
-		return isValid() && inventory.isItemValidForSlot(getSlotIndex(), stack);
+		return isValid() && container.canPlaceItem(getSlotIndex(), stack);
 	}
 
 	@Override
-	public boolean canTakeStack(Player playerIn){
-		return isValid() && super.canTakeStack(playerIn);
+	public boolean mayPickup(Player playerIn){
+		return isValid() && super.mayPickup(playerIn);
 	}
 
 	@Override
-	public ItemStack onTake(Player player, ItemStack stack){
-		return isValid() ? super.onTake(player, stack) : ItemStack.EMPTY;
+	public void onTake(Player player, ItemStack stack){
+		if(isValid()) {
+			super.onTake(player, stack);
+		}
 	}
 
 	@Override
-	public void onSlotChanged(){
-		super.onSlotChanged();
-		if(this.getHasStack()) this.prevStack = this.getItem().copy(); // Ignore stack removal (insertion of empty stacks)
+	public void setChanged(){
+		super.setChanged();
+		if(this.hasItem()) this.prevStack = this.getItem().copy(); // Ignore stack removal (insertion of empty stacks)
 	}
 
 	@Override
-	public ItemStack getStack(){
+	public ItemStack getItem(){
 		return isValid() ? super.getItem() : ItemStack.EMPTY;
 	}
 
@@ -81,14 +83,14 @@ public class VirtualSlot extends Slot {
 	@Override
 	public void set(ItemStack stack){
 		if(isValid()){
-			if(inventory instanceof TileEntityBookshelf) ((TileEntityBookshelf)inventory).sync();
+			if(container instanceof TileEntityBookshelf) ((TileEntityBookshelf)container).sync();
 			super.set(stack);
 		}
 	}
 
 	@Override
 	public ItemStack remove(int amount){
-		if(isValid() && inventory instanceof TileEntityBookshelf) ((TileEntityBookshelf)inventory).sync();
+		if(isValid() && container instanceof TileEntityBookshelf) ((TileEntityBookshelf)container).sync();
 		return isValid() ? super.remove(amount) : ItemStack.EMPTY;
 	}
 

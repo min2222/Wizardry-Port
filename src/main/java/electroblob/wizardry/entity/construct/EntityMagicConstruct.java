@@ -9,12 +9,14 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.network.NetworkHooks;
 
 /**
  * This class is for all inanimate magical constructs which are not projectiles. Generally speaking, subclasses of this
@@ -45,11 +48,11 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	/** The damage multiplier for this construct, determined by the wand with which it was cast. */
 	public float damageMultiplier = 1.0f;
 
-	public EntityMagicConstruct(Level world){
-		super(world);
+	public EntityMagicConstruct(EntityType<? extends Entity> type, Level world){
+		super(type, world);
 		this.getBbHeight() = 1.0f;
 		this.width = 1.0f;
-		this.noClip = true;
+		this.noPhysics = true;
 	}
 
 	// Overrides the original to stop the entity moving when it intersects stuff. The default arrow does this to allow
@@ -94,34 +97,34 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	}
 
 	@Override
-	protected void entityInit(){
+	protected void defineSynchedData(){
 		// We could leave this unimplemented, but since the majority of subclasses don't use it, let's make it optional
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbttagcompound){
+	protected void readAdditionalSaveData(CompoundTag nbttagcompound){
 		if(nbttagcompound.hasUUID("casterUUID")) casterUUID = nbttagcompound.getUUID("casterUUID");
 		lifetime = nbttagcompound.getInt("lifetime");
 		damageMultiplier = nbttagcompound.getFloat("damageMultiplier");
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbttagcompound){
+	protected void addAdditionalSaveData(CompoundTag nbttagcompound){
 		if(casterUUID != null){
-			nbttagcompound.setUniqueId("casterUUID", casterUUID);
+			nbttagcompound.putUUID("casterUUID", casterUUID);
 		}
 		nbttagcompound.putInt("lifetime", lifetime);
-		nbttagcompound.setFloat("damageMultiplier", damageMultiplier);
+		nbttagcompound.putFloat("damageMultiplier", damageMultiplier);
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf data){
+	public void writeSpawnData(FriendlyByteBuf data){
 		data.writeInt(lifetime);
-		data.writeInt(getCaster() == null ? -1 : getCaster().getEntityId());
+		data.writeInt(getCaster() == null ? -1 : getCaster().getId());
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data){
+	public void readSpawnData(FriendlyByteBuf data){
 
 		lifetime = data.readInt();
 
@@ -130,7 +133,7 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 		if(id == -1){
 			setCaster(null);
 		}else{
-			Entity entity = level.getEntityByID(id);
+			Entity entity = level.getEntity(id);
 			if(entity instanceof LivingEntity){
 				setCaster((LivingEntity)entity);
 			}else{
@@ -159,7 +162,7 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	@Nullable
 	public LivingEntity getCaster(){ // Kept despite the above method because it returns an EntityLivingBase
 
-		Entity entity = EntityUtils.getEntityByUUID(world, getOwnerUUID());
+		Entity entity = EntityUtils.getEntityByUUID(level, getOwnerUUID());
 
 		if(entity != null && !(entity instanceof LivingEntity)){ // Should never happen
 			Wizardry.logger.warn("{} has a non-living owner!", this);
@@ -182,17 +185,22 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	}
 	
 	@Override
-	public SoundSource getSoundCategory(){
+	public SoundSource getSoundSource(){
 		return WizardrySounds.SPELLS;
 	}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 
 	@Override
 	public boolean isPushedByWater(){
 		return false;
+	}
+	
+	@Override
+	public Packet<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

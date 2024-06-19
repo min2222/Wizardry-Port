@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.world.WorldEvent;
@@ -25,7 +26,7 @@ import java.util.*;
  * @since Wizardry 1.1
  */
 @Mod.EventBusSubscriber
-public class SpellGlyphData extends WorldSavedData {
+public class SpellGlyphData extends SavedData {
 
 	public static final String NAME = Wizardry.MODID + "_glyphData";
 
@@ -53,7 +54,7 @@ public class SpellGlyphData extends WorldSavedData {
 				randomDescriptions.put(spell, generateRandomDescription(world.rand));
 		}
 
-		this.markDirty();
+		this.setDirty();
 	}
 
 	private String generateRandomName(Random random){

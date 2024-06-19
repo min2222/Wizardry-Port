@@ -60,7 +60,7 @@ public class CurseOfSoulbinding extends SpellRay {
 				// Return false if soulbinding failed (e.g. if the target is already soulbound)
 				if(getSoulboundCreatures(data).add(target.getUUID())){
 					// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, Integer.MAX_VALUE));
+					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.CURSE_OF_SOULBINDING.get(), Integer.MAX_VALUE));
 				}else{
 					return false;
 				}
@@ -103,7 +103,7 @@ public class CurseOfSoulbinding extends SpellRay {
 
 					Entity entity = EntityUtils.getEntityByUUID(player.level, iterator.next());
 
-					if (entity == null || (entity instanceof LivingEntity && !((LivingEntity) entity).hasEffect(WizardryPotions.curse_of_soulbinding))) {
+					if (entity == null || (entity instanceof LivingEntity && !((LivingEntity) entity).hasEffect(WizardryPotions.CURSE_OF_SOULBINDING.get()))) {
 						iterator.remove();
 					} else if (entity instanceof LivingEntity) {
 						// Retaliatory effect

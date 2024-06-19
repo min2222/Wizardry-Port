@@ -5,6 +5,7 @@ import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.ResourceLocation;
@@ -17,8 +18,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class PotionFrost extends PotionMagicEffect implements ICustomPotionParticles {
 
-	public PotionFrost(boolean isBadEffect, int liquidColour){
-		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost.png"));
+	public PotionFrost(MobEffectCategory category, int liquidColour){
+		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost.png"));
 		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
 		this.setPotionName("potion." + Wizardry.MODID + ":frost");
 		// With -0.5 as the 'amount', frost 1 slows the entity down by a half and frost 2 roots it to the spot

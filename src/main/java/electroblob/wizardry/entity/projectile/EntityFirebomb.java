@@ -3,6 +3,7 @@ package electroblob.wizardry.entity.projectile;
 import java.util.List;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
@@ -12,6 +13,7 @@ import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -20,7 +22,11 @@ import net.minecraft.world.phys.HitResult;
 public class EntityFirebomb extends EntityBomb {
 
 	public EntityFirebomb(Level world){
-		super(world);
+		this(WizardryEntities.FIREBOMB.get(), world);
+	}
+	
+	public EntityFirebomb(EntityType<? extends EntityBomb> type, Level world){
+		super(type, world);
 	}
 
 	@Override

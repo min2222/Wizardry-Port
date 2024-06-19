@@ -25,7 +25,6 @@ public class EntityIceball extends EntityMagicProjectile {
 
 	public EntityIceball(Level world){
 		this(WizardryEntities.ICEBALL.get(), world);
-		this.setSize(0.5f, 0.5f);
 	}
 	
 	public EntityIceball(EntityType<? extends EntityMagicProjectile> type, Level world){

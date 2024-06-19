@@ -28,7 +28,7 @@ public class CurseOfEnfeeblement extends SpellRay {
 
 		if(EntityUtils.isLiving(target)){
 			// This will actually run out in the end, but only if you leave Minecraft running for 3.4 years
-			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.curse_of_enfeeblement,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.CURSE_OF_ENFEEBLEMENT.get(),
 					Integer.MAX_VALUE, getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			// Reduce the target's health to its new max health if necessary
 			if(((LivingEntity)target).getHealth() > ((LivingEntity)target).getMaxHealth()){

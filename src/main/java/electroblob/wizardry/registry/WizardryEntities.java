@@ -127,103 +127,103 @@ public class WizardryEntities {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, Wizardry.MODID);
 
 	// Vanilla summoned creatures
-	public static final RegistryObject<EntityType<EntityZombieMinion>> ZOMBIE_MINION = ENTITY_TYPES.register(createEntry(EntityZombieMinion::new, "zombie_minion", MobCategory.MONSTER, TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityHuskMinion>> HUSK_MINION = ENTITY_TYPES.register(createEntry(EntityHuskMinion::new, "husk_minion", MobCategory.MONSTER, TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntitySkeletonMinion>> SKELETON_MINION = ENTITY_TYPES.register(createEntry(EntitySkeletonMinion::new, "skeleton_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityStrayMinion>> STRAY_MINION = ENTITY_TYPES.register(createEntry(EntityStrayMinion::new, "stray_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntitySpiderMinion>> SPIDER_MINION = ENTITY_TYPES.register(createEntry(EntitySpiderMinion::new, "spider_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityBlazeMinion>> BLAZE_MINION = ENTITY_TYPES.register(createEntry(EntityBlazeMinion::new, "blaze_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityWitherSkeletonMinion>> WITHER_SKELETON_MINION = ENTITY_TYPES.register(createEntry(EntityWitherSkeletonMinion::new, "wither_skeleton_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntitySilverfishMinion>> SILVERFISH_MINION = ENTITY_TYPES.register(createEntry(EntitySilverfishMinion::new, "silverfish_minion", TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityVexMinion>> VEX_MINION = ENTITY_TYPES.register(createEntry(EntityVexMinion::new, "vex_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityZombieMinion>> ZOMBIE_MINION = register("zombie_minion", createEntry(EntityZombieMinion::new, MobCategory.MONSTER, TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityHuskMinion>> HUSK_MINION = register("husk_minion", createEntry(EntityHuskMinion::new, MobCategory.MONSTER, TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntitySkeletonMinion>> SKELETON_MINION = register("skeleton_minion", createEntry(EntitySkeletonMinion::new, MobCategory.MONSTER, TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityStrayMinion>> STRAY_MINION = register(createEntry(EntityStrayMinion::new, "stray_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntitySpiderMinion>> SPIDER_MINION = register(createEntry(EntitySpiderMinion::new, "spider_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityBlazeMinion>> BLAZE_MINION = register(createEntry(EntityBlazeMinion::new, "blaze_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityWitherSkeletonMinion>> WITHER_SKELETON_MINION = register(createEntry(EntityWitherSkeletonMinion::new, "wither_skeleton_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntitySilverfishMinion>> SILVERFISH_MINION = register(createEntry(EntitySilverfishMinion::new, "silverfish_minion", TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityVexMinion>> VEX_MINION = register(createEntry(EntityVexMinion::new, "vex_minion", TrackingType.LIVING));
 
 	// Custom summoned creatures
-	public static final RegistryObject<EntityType<EntityIceWraith>> ICE_WRAITH = ENTITY_TYPES.register(createEntry(EntityIceWraith::new, "ice_wraith", TrackingType.LIVING).egg(0xaafaff, 0x001ce1)
+	public static final RegistryObject<EntityType<EntityIceWraith>> ICE_WRAITH = register(createEntry(EntityIceWraith::new, "ice_wraith", TrackingType.LIVING).egg(0xaafaff, 0x001ce1)
 			.spawn(EnumCreatureType.MONSTER, Wizardry.settings.iceWraithSpawnRate, 1, 1, ForgeRegistries.BIOMES.getValues().stream()
 					.filter(b -> !Arrays.asList(Wizardry.settings.mobSpawnBiomeBlacklist).contains(b.getRegistryName())
 							&& BiomeDictionary.hasType(b, BiomeDictionary.Type.SNOWY)
 							&& !BiomeDictionary.hasType(b, BiomeDictionary.Type.FOREST))
 					.collect(Collectors.toSet())));
 
-	public static final RegistryObject<EntityType<EntityLightningWraith>> LIGHTNING_WRAITH = ENTITY_TYPES.register(createEntry(EntityLightningWraith::new, 	"lightning_wraith", 	TrackingType.LIVING).egg(0x35424b, 0x27b9d9)
+	public static final RegistryObject<EntityType<EntityLightningWraith>> LIGHTNING_WRAITH = register(createEntry(EntityLightningWraith::new, 	"lightning_wraith", 	TrackingType.LIVING).egg(0x35424b, 0x27b9d9)
 			.spawn(EnumCreatureType.MONSTER, Wizardry.settings.lightningWraithSpawnRate, 1, 1, ForgeRegistries.BIOMES.getValuesCollection().stream()
 				.filter(b -> !Arrays.asList(Wizardry.settings.mobSpawnBiomeBlacklist).contains(b.getRegistryName()))
 				.collect(Collectors.toSet())));
 
-	public static final RegistryObject<EntityType<EntitySpiritWolf>> SPIRIT_WOLF = ENTITY_TYPES.register(createEntry(EntitySpiritWolf::new, 		"spirit_wolf", 		TrackingType.LIVING).egg(0xbcc2e8, 0x5464c6));
-	public static final RegistryObject<EntityType<EntitySpiritHorse>> SPIRIT_HORSE = ENTITY_TYPES.register(createEntry(EntitySpiritHorse::new, 		"spirit_horse", 		TrackingType.LIVING).egg(0x5464c6, 0xbcc2e8));
-	public static final RegistryObject<EntityType<EntityPhoenix>> PHOENIX = ENTITY_TYPES.register(createEntry(EntityPhoenix::new, 			"phoenix", 			TrackingType.LIVING).egg(0xff4900, 0xfde535));
-	public static final RegistryObject<EntityType<EntityIceGiant>> ICE_GIANT = ENTITY_TYPES.register(createEntry(EntityIceGiant::new, 		"ice_giant", 			TrackingType.LIVING).egg(0x5bacd9, 0xeffaff));
-	public static final RegistryObject<EntityType<EntitySpectralGolem>> SPECTRAL_GOLEM = ENTITY_TYPES.register(createEntry(EntitySpectralGolem::new,	"spectral_golem",		TrackingType.LIVING).egg(0x5bacd9, 0xeffaff));
+	public static final RegistryObject<EntityType<EntitySpiritWolf>> SPIRIT_WOLF = register(createEntry(EntitySpiritWolf::new, 		"spirit_wolf", 		TrackingType.LIVING).egg(0xbcc2e8, 0x5464c6));
+	public static final RegistryObject<EntityType<EntitySpiritHorse>> SPIRIT_HORSE = register(createEntry(EntitySpiritHorse::new, 		"spirit_horse", 		TrackingType.LIVING).egg(0x5464c6, 0xbcc2e8));
+	public static final RegistryObject<EntityType<EntityPhoenix>> PHOENIX = register(createEntry(EntityPhoenix::new, 			"phoenix", 			TrackingType.LIVING).egg(0xff4900, 0xfde535));
+	public static final RegistryObject<EntityType<EntityIceGiant>> ICE_GIANT = register(createEntry(EntityIceGiant::new, 		"ice_giant", 			TrackingType.LIVING).egg(0x5bacd9, 0xeffaff));
+	public static final RegistryObject<EntityType<EntitySpectralGolem>> SPECTRAL_GOLEM = register(createEntry(EntitySpectralGolem::new,	"spectral_golem",		TrackingType.LIVING).egg(0x5bacd9, 0xeffaff));
 
-	public static final RegistryObject<EntityType<EntityMagicSlime>> MAGIC_SLIME = ENTITY_TYPES.register(createEntry(EntityMagicSlime::new, 		"magic_slime", 		TrackingType.LIVING));
-	public static final RegistryObject<EntityType<EntityDecoy>> DECOY = ENTITY_TYPES.register(createEntry(EntityDecoy::new, 			"decoy", 				TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityMagicSlime>> MAGIC_SLIME = register(createEntry(EntityMagicSlime::new, 		"magic_slime", 		TrackingType.LIVING));
+	public static final RegistryObject<EntityType<EntityDecoy>> DECOY = register(createEntry(EntityDecoy::new, 			"decoy", 				TrackingType.LIVING));
 
 	// These two are only made of particles, so we can afford a lower update frequency
-	public static final RegistryObject<EntityType<EntityShadowWraith>> SHADOW_WRAITH = ENTITY_TYPES.register(createEntry(EntityShadowWraith::new, 	"shadow_wraith")		.tracker(80, 10, true).egg(0x11071c, 0x421384));
-	public static final RegistryObject<EntityType<EntityStormElemental>> STORM_ELEMENTAL = ENTITY_TYPES.register(createEntry(EntityStormElemental::new, 	"storm_elemental")	.tracker(80, 10, true).egg(0x162128, 0x135279));
+	public static final RegistryObject<EntityType<EntityShadowWraith>> SHADOW_WRAITH = register(createEntry(EntityShadowWraith::new, 	"shadow_wraith")		.tracker(80, 10, true).egg(0x11071c, 0x421384));
+	public static final RegistryObject<EntityType<EntityStormElemental>> STORM_ELEMENTAL = register(createEntry(EntityStormElemental::new, 	"storm_elemental")	.tracker(80, 10, true).egg(0x162128, 0x135279));
 
 	// Other living entities
-	public static final RegistryObject<EntityType<EntityWizard>> WIZARD = ENTITY_TYPES.register(createEntry(EntityWizard::new, 			"wizard", 			TrackingType.LIVING).egg(0x19295e, 0xee9312));
-	public static final RegistryObject<EntityType<EntityEvilWizard>> EVIL_WIZARD = ENTITY_TYPES.register(createEntry(EntityEvilWizard::new, 		"evil_wizard", 		TrackingType.LIVING).egg(0x290404, 0xee9312)
+	public static final RegistryObject<EntityType<EntityWizard>> WIZARD = register(createEntry(EntityWizard::new, 			"wizard", 			TrackingType.LIVING).egg(0x19295e, 0xee9312));
+	public static final RegistryObject<EntityType<EntityEvilWizard>> EVIL_WIZARD = register(createEntry(EntityEvilWizard::new, 		"evil_wizard", 		TrackingType.LIVING).egg(0x290404, 0xee9312)
 			// For reference: 5, 1, 1 are the parameters for the witch in vanilla
 			.spawn(EnumCreatureType.MONSTER, Wizardry.settings.evilWizardSpawnRate, 1, 1, ForgeRegistries.BIOMES.getValues().stream()
 					.filter(b -> !Arrays.asList(Wizardry.settings.mobSpawnBiomeBlacklist).contains(b.getRegistryName()))
 					.collect(Collectors.toSet())));
-	public static final RegistryObject<EntityType<EntityRemnant>> REMNANT = ENTITY_TYPES.register(createEntry(EntityRemnant::new, 			"remnant", 			TrackingType.LIVING).egg(0x414141, 0xe5daae));
+	public static final RegistryObject<EntityType<EntityRemnant>> REMNANT = register(createEntry(EntityRemnant::new, 			"remnant", 			TrackingType.LIVING).egg(0x414141, 0xe5daae));
 
 	// Directed projectiles
-	public static final RegistryObject<EntityType<EntityMagicMissile>> MAGIC_MISSILE = ENTITY_TYPES.register(createEntry(EntityMagicMissile::new, 	"magic_missile", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityIceShard>> ICE_SHARD = ENTITY_TYPES.register(createEntry(EntityIceShard::new, 		"ice_shard", 			TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityLightningArrow>> LIGHTNING_ARROW = ENTITY_TYPES.register(createEntry(EntityLightningArrow::new, 	"lightning_arrow", 	TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityForceArrow>> FORCE_ARROW = ENTITY_TYPES.register(createEntry(EntityForceArrow::new, 		"force_arrow", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityDart>> DART = ENTITY_TYPES.register(createEntry(EntityDart::new, 			"dart", 				TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityIceLance>> ICE_LANCE = ENTITY_TYPES.register(createEntry(EntityIceLance::new, 		"ice_lance", 			TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityFlamecatcherArrow>> FLAMECATCHER_ARROW = ENTITY_TYPES.register(createEntry(EntityFlamecatcherArrow::new, "flamecatcher_arrow", TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityConjuredArrow>> CONJURED_ARROW = ENTITY_TYPES.register(createEntry(EntityConjuredArrow::new, "conjured_arrow", TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityMagicMissile>> MAGIC_MISSILE = register(createEntry(EntityMagicMissile::new, 	"magic_missile", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityIceShard>> ICE_SHARD = register(createEntry(EntityIceShard::new, 		"ice_shard", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityLightningArrow>> LIGHTNING_ARROW = register(createEntry(EntityLightningArrow::new, 	"lightning_arrow", 	TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityForceArrow>> FORCE_ARROW = register(createEntry(EntityForceArrow::new, 		"force_arrow", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityDart>> DART = register(createEntry(EntityDart::new, 			"dart", 				TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityIceLance>> ICE_LANCE = register(createEntry(EntityIceLance::new, 		"ice_lance", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityFlamecatcherArrow>> FLAMECATCHER_ARROW = register(createEntry(EntityFlamecatcherArrow::new, "flamecatcher_arrow", TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityConjuredArrow>> CONJURED_ARROW = register(createEntry(EntityConjuredArrow::new, "conjured_arrow", TrackingType.PROJECTILE));
 
 	// Directionless projectiles
-	public static final RegistryObject<EntityType<EntityFirebomb>> FIREBOMB = ENTITY_TYPES.register(createEntry(EntityFirebomb::new, 		"firebomb", 			TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityPoisonBomb>> POISON_BOMB = ENTITY_TYPES.register(createEntry(EntityPoisonBomb::new, 		"poison_bomb", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntitySparkBomb>> SPARK_BOMB = ENTITY_TYPES.register(createEntry(EntitySparkBomb::new, 		"spark_bomb", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntitySmokeBomb>> SMOKE_BOMB = ENTITY_TYPES.register(createEntry(EntitySmokeBomb::new, 		"smoke_bomb", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityIceCharge>> ICE_CHARGE = ENTITY_TYPES.register(createEntry(EntityIceCharge::new, 		"ice_charge", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityForceOrb>> FORCE_ORB = ENTITY_TYPES.register(createEntry(EntityForceOrb::new, 		"force_orb", 			TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntitySpark>> SPARK = ENTITY_TYPES.register(createEntry(EntitySpark::new, 			"spark", 				TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityDarknessOrb>> DARKNESS_ORB = ENTITY_TYPES.register(createEntry(EntityDarknessOrb::new, 		"darkness_orb", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityFirebolt>> FIREBOLT = ENTITY_TYPES.register(createEntry(EntityFirebolt::new, 		"firebolt", 			TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityThunderbolt>> THUNDERBOLT = ENTITY_TYPES.register(createEntry(EntityThunderbolt::new, 		"thunderbolt", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityLightningDisc>> LIGHTNING_DISC = ENTITY_TYPES.register(createEntry(EntityLightningDisc::new, 	"lightning_disc", 	TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityEmber>> EMBER = ENTITY_TYPES.register(createEntry(EntityEmber::new, 			"ember", 				TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityMagicFireball>> MAGIC_FIREBALL = ENTITY_TYPES.register(createEntry(EntityMagicFireball::new, 	"magic_fireball", 	TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityLargeMagicFireball>> LARGE_MAGIC_FIREBALL = ENTITY_TYPES.register(createEntry(EntityLargeMagicFireball::new, "large_magic_fireball", TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityIceball>> ICEBALL = ENTITY_TYPES.register(createEntry(EntityIceball::new, 			"iceball", MobCategory.MISC, TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityFirebomb>> FIREBOMB = register(createEntry(EntityFirebomb::new, 		"firebomb", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityPoisonBomb>> POISON_BOMB = register(createEntry(EntityPoisonBomb::new, 		"poison_bomb", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntitySparkBomb>> SPARK_BOMB = register(createEntry(EntitySparkBomb::new, 		"spark_bomb", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntitySmokeBomb>> SMOKE_BOMB = register(createEntry(EntitySmokeBomb::new, 		"smoke_bomb", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityIceCharge>> ICE_CHARGE = register(createEntry(EntityIceCharge::new, 		"ice_charge", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityForceOrb>> FORCE_ORB = register(createEntry(EntityForceOrb::new, 		"force_orb", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntitySpark>> SPARK = register(createEntry(EntitySpark::new, 			"spark", 				TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityDarknessOrb>> DARKNESS_ORB = register(createEntry(EntityDarknessOrb::new, 		"darkness_orb", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityFirebolt>> FIREBOLT = register(createEntry(EntityFirebolt::new, 		"firebolt", 			TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityThunderbolt>> THUNDERBOLT = register(createEntry(EntityThunderbolt::new, 		"thunderbolt", 		TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityLightningDisc>> LIGHTNING_DISC = register(createEntry(EntityLightningDisc::new, 	"lightning_disc", 	TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityEmber>> EMBER = register("ember", createEntry(EntityEmber::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(0.1f, 0.1f));
+	public static final RegistryObject<EntityType<EntityMagicFireball>> MAGIC_FIREBALL = register("magic_fireball", createEntry(EntityMagicFireball::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(0.5f, 0.5f));
+	public static final RegistryObject<EntityType<EntityLargeMagicFireball>> LARGE_MAGIC_FIREBALL = register("large_magic_fireball", createEntry(EntityLargeMagicFireball::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(1, 1));
+	public static final RegistryObject<EntityType<EntityIceball>> ICEBALL = register("iceball", createEntry(EntityIceball::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(0.5f, 0.5f));
 
 	// These are effectively projectiles, but since they're bigger and start high up they need updating from further away
-	public static final RegistryObject<EntityType<EntityMeteor>> METEOR = ENTITY_TYPES.register(createEntry(EntityMeteor::new, 			"meteor", MobCategory.MISC, 160, 3, true));
-	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = ENTITY_TYPES.register(createEntry(EntityHammer::new, 			"lightning_hammer", MobCategory.MISC, 160, 3, true));
-	public static final RegistryObject<EntityType<EntityLevitatingBlock>> LEVITATING_BLOCK = ENTITY_TYPES.register(createEntry(EntityLevitatingBlock::new, 	"levitating_block", MobCategory.MISC, 160, 3, true));
+	public static final RegistryObject<EntityType<EntityMeteor>> METEOR = register("meteor", createEntry(EntityMeteor::new, MobCategory.MISC, 160, 3, true).sized(0.98F, 0.98F));
+	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = register("lightning_hammer", createEntry(EntityHammer::new, MobCategory.MISC, 160, 3, true));
+	public static final RegistryObject<EntityType<EntityLevitatingBlock>> LEVITATING_BLOCK = register("levitating_block", createEntry(EntityLevitatingBlock::new, MobCategory.MISC, 160, 3, true).sized(0.98F, 0.98F));
 
 	// Constructs
-	public static final RegistryObject<EntityType<EntityBlackHole>> BLACK_HOLE = ENTITY_TYPES.register(createEntry(EntityBlackHole::new, 		"black_hole", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityBlizzard>> BLIZZARD = ENTITY_TYPES.register(createEntry(EntityBlizzard::new, 		"blizzard", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityForcefield>> FORCEFIELD = ENTITY_TYPES.register(createEntry(EntityForcefield::new, 		"forcefield", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFireSigil>> FIRE_SIGIL = ENTITY_TYPES.register(createEntry(EntityFireSigil::new, 		"fire_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFrostSigil>> FROST_SIGIL = ENTITY_TYPES.register(createEntry(EntityFrostSigil::new, 		"frost_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityLightningSigil>> LIGHTNING_SIGIL = ENTITY_TYPES.register(createEntry(EntityLightningSigil::new, 	"lightning_sigil", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityCombustionRune>> COMBUSTION_RUNE = ENTITY_TYPES.register(createEntry(EntityCombustionRune::new, 	"combustion_rune", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityFireRing>> RING_OF_FIRE = ENTITY_TYPES.register(createEntry(EntityFireRing::new, 		"ring_of_fire", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityHealAura>> HEALING_AURA = ENTITY_TYPES.register(createEntry(EntityHealAura::new, 		"healing_aura", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityDecay>> DECAY = ENTITY_TYPES.register(createEntry(EntityDecay::new, 			"decay", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = ENTITY_TYPES.register(createEntry(EntityZombieSpawner::new, 	"zombie_spawner", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityRadiantTotem>> RADIANT_TOTEM = ENTITY_TYPES.register(createEntry(EntityRadiantTotem::new, 	"radiant_totem", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityWitheringTotem>> WITHERING_TOTEM = ENTITY_TYPES.register(createEntry(EntityWitheringTotem::new, 	"withering_totem", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityBlackHole>> BLACK_HOLE = register("black_hole", createEntry(EntityBlackHole::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityBlizzard>> BLIZZARD = register("blizzard", createEntry(EntityBlizzard::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityForcefield>> FORCEFIELD = register("forcefield", createEntry(EntityForcefield::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFireSigil>> FIRE_SIGIL = register("fire_sigil", createEntry(EntityFireSigil::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFrostSigil>> FROST_SIGIL = register("frost_sigil", createEntry(EntityFrostSigil::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityLightningSigil>> LIGHTNING_SIGIL = register("lightning_sigil", createEntry(EntityLightningSigil::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityCombustionRune>> COMBUSTION_RUNE = register("combustion_rune", createEntry(EntityCombustionRune::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityFireRing>> RING_OF_FIRE = register("ring_of_fire", createEntry(EntityFireRing::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityHealAura>> HEALING_AURA = register("healing_aura", createEntry(EntityHealAura::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityDecay>> DECAY = register("decay", createEntry(EntityDecay::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = register("zombie_spawner", createEntry(EntityZombieSpawner::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityRadiantTotem>> RADIANT_TOTEM = register("radiant_totem", createEntry(EntityRadiantTotem::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityWitheringTotem>> WITHERING_TOTEM = register("withering_totem", createEntry(EntityWitheringTotem::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones don't render, currently that makes no difference here but we might as well separate them
-	public static final RegistryObject<EntityType<EntityArrowRain>> ARROW_RAIN = ENTITY_TYPES.register(createEntry(EntityArrowRain::new, 		"arrow_rain", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = ENTITY_TYPES.register(createEntry(EntityEarthquake::new, 		"earthquake", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityHailstorm>> HAILSTORM = ENTITY_TYPES.register(createEntry(EntityHailstorm::new, 		"hailstorm", MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = ENTITY_TYPES.register(createEntry(EntityStormcloud::new, 		"stormcloud", MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityArrowRain>> ARROW_RAIN = register("arrow_rain", createEntry(EntityArrowRain::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = register("earthquake", createEntry(EntityEarthquake::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityHailstorm>> HAILSTORM = register("hailstorm", createEntry(EntityHailstorm::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = register("stormcloud", createEntry(EntityStormcloud::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones move, velocity updates are sent if that's not at constant velocity
 	public static final RegistryObject<EntityType<EntityShield>> SHIELD = register("shield", createEntry(EntityShield::new, MobCategory.MISC, 160, 10, true).sized(1.2f, 1.4f));
@@ -231,7 +231,7 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityTornado>> TORNADO = register("tornado", createEntry(EntityTornado::new, MobCategory.MISC, 160, 3, false));
 	public static final RegistryObject<EntityType<EntityIceSpike>> ICE_SPIKE = register("ice_spike", createEntry(EntityIceSpike::new, MobCategory.MISC, 160, 1, true));
 	public static final RegistryObject<EntityType<EntityBoulder>> BOULDER = register("boulder", createEntry(EntityBoulder::new, MobCategory.MISC, 160, 1, true)); // Vertical velocity is not constant
-	public static final RegistryObject<EntityType<EntityIceBarrier>> ICE_BARRIER = register("ice_barrier", createEntry(EntityIceBarrier::new, MobCategory.MISC, 160, 1, true));
+	public static final RegistryObject<EntityType<EntityIceBarrier>> ICE_BARRIER = register("ice_barrier", createEntry(EntityIceBarrier::new, MobCategory.MISC, 160, 1, true).sized(1.8f, 1.05f));
 
 	/**
 	 * Private helper method that simplifies the parts of an {@link EntityEntry} that are common to all entities.

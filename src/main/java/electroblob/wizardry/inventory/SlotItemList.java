@@ -1,6 +1,6 @@
 package electroblob.wizardry.inventory;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,17 +16,19 @@ public class SlotItemList extends Slot {
 	private final Item[] items;
 	private int stackLimit;
 
-	public SlotItemList(IInventory inventory, int index, int x, int y, int stackLimit, Item... allowedItems){
+	public SlotItemList(Container inventory, int index, int x, int y, int stackLimit, Item... allowedItems){
 		super(inventory, index, x, y);
 		this.items = allowedItems;
 		this.stackLimit = stackLimit;
 	}
 
-	public int getSlotStackLimit(){
+	@Override
+	public int getMaxStackSize(){
 		return stackLimit;
 	}
 
-	public boolean isItemValid(ItemStack stack){
+	@Override
+	public boolean mayPlace(ItemStack stack){
 
 		for(Item item : items){
 			if(stack.getItem() == item){

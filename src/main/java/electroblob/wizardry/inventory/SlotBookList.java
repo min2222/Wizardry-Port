@@ -1,8 +1,8 @@
 package electroblob.wizardry.inventory;
 
 import electroblob.wizardry.item.ItemSpellBook;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.world.item.ItemStack;
 
 public class SlotBookList extends SlotItemClassList {
@@ -12,7 +12,7 @@ public class SlotBookList extends SlotItemClassList {
 	 * list slot starts at 0). */
 	private final int listIndex;
 
-	public SlotBookList(IInventory inventory, int index, int x, int y, ContainerArcaneWorkbench container, int listIndex){
+	public SlotBookList(Container inventory, int index, int x, int y, ContainerArcaneWorkbench container, int listIndex){
 		super(inventory, index, x, y, 64, ItemSpellBook.class);
 		this.container = container;
 		this.listIndex = listIndex;
@@ -29,19 +29,19 @@ public class SlotBookList extends SlotItemClassList {
 	}
 
 	@Override
-	public ItemStack getStack(){
+	public ItemStack getItem(){
 		return hasDelegate() ? getDelegate().getItem() : ItemStack.EMPTY; // Delegate item lookup to virtual slot
 	}
 
 	// This doesn't depend on the client-side search and sorting stuff so it can be done in here
 	@Override
-	public boolean isItemValid(ItemStack stack){
+	public boolean mayPlace(ItemStack stack){
 		// It's valid if there is a virtual slot that will accept it
-		return container.getBookshelfSlots().stream().anyMatch(s -> s.isItemValid(stack));
+		return container.getBookshelfSlots().stream().anyMatch(s -> s.mayPlace(stack));
 	}
 
 	@Override
-	public boolean isEnabled(){
+	public boolean isActive(){
 		return container.hasBookshelves();
 	}
 
@@ -54,13 +54,8 @@ public class SlotBookList extends SlotItemClassList {
 	}
 
 	@Override
-	public boolean canTakeStack(Player player){
+	public boolean mayPickup(Player player){
 		return false;
-	}
-
-	@Override
-	public ItemStack onTake(Player player, ItemStack stack){
-		return stack;
 	}
 
 	@Override

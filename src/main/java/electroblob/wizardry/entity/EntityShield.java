@@ -28,7 +28,7 @@ public class EntityShield extends Entity {
 		this.noPhysics = true;
 	}
 	
-	public EntityShield(EntityType<EntityShield> type, Level world){
+	public EntityShield(EntityType<? extends Entity> type, Level world){
 		super(type, world);
 		this.noPhysics = true;
 	}

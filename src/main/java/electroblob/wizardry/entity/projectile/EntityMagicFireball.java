@@ -47,7 +47,6 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 	public EntityMagicFireball(Level world){
 		this(WizardryEntities.MAGIC_FIREBALL.get(), world);
-		this.setSize(0.5f, 0.5f);
 	}
 	
 	public EntityMagicFireball(EntityType<? extends EntityMagicProjectile> type, Level world){

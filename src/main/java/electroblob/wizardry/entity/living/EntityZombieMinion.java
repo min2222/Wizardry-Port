@@ -9,16 +9,15 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
@@ -59,10 +58,10 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	// EntityZombie overrides (EntityZombie is a complex class so there are lots of these)
 
 	@Override
-	protected void applyEntityAI(){
-		this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
+	protected void registerGoals(){
+		this.goalSelector.addGoal(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
+		this.targetSelector.addGoal(1, new EntityAIHurtByTarget(this, false));
+		this.targetSelector.addGoal(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
@@ -76,8 +75,8 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(LivingEntity entity){
-		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
+	public void setLastHurtByMob(LivingEntity entity){
+		if(this.shouldRevengeTarget(entity)) super.setLastHurtByMob(entity);
 	}
 
 	@Override
@@ -88,10 +87,10 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	@Override
 	public void onSpawn(){
-		if(this.dataManager.get(SPAWN_PARTICLES)) this.spawnParticleEffect();
-		if(shouldBurnInDay() && getCaster() instanceof Player
+		if(this.entityData.get(SPAWN_PARTICLES)) this.spawnParticleEffect();
+		if(isSunSensitive() && getCaster() instanceof Player
 				&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_undead_helmets)){
-			setItemStackToSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+			setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 	}
 
@@ -103,7 +102,7 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	private void spawnParticleEffect(){
 		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.SMOKE_LARGE, this.getX() + this.random.nextFloat() - 0.5f,
+				this.level.addParticle(ParticleTypes.LARGE_SMOKE, this.getX() + this.random.nextFloat() - 0.5f,
 						this.getY() + this.random.nextFloat() * 2, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
@@ -116,11 +115,11 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	@Override
 	public boolean hasAnimation(){
-		return this.dataManager.get(SPAWN_PARTICLES) || this.tickCount > 20;
+		return this.entityData.get(SPAWN_PARTICLES) || this.tickCount > 20;
 	}
 
 	public void hideParticles(){
-		this.dataManager.set(SPAWN_PARTICLES, false);
+		this.entityData.set(SPAWN_PARTICLES, false);
 	}
 
 	@Override
@@ -131,14 +130,14 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
 	}
 
@@ -161,16 +160,16 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
+	public boolean canAttack(LivingEntity entityType){
 		// Returns true unless the given entity type is a flying entity.
-		return !EntityFlying.class.isAssignableFrom(entityType);
+		return !(entityType instanceof FlyingMob);
 	}
 
 	@Override
 	public Component getDisplayName(){
 		if(getCaster() != null){
 			return Component.translatable(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
-					Component.translatable("entity." + this.getEntityString() + ".name"));
+					Component.translatable("entity." + this.getEncodeId() + ".name"));
 		}else{
 			return super.getDisplayName();
 		}

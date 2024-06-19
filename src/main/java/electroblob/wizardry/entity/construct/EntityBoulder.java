@@ -16,6 +16,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -120,8 +121,8 @@ public class EntityBoulder extends EntityScaledConstruct {
 	 */
 	private boolean smashBlocks(List<BlockPos> blocks, boolean breakIfTooHard){
 
-		if(blocks.removeIf(p -> level.getBlockState(p).getBlock().getExplosionResistance(world, p, this, null) > 3
-				|| (!level.isClientSide && !BlockUtils.canBreakBlock(getCaster(), world, p)))){
+		if(blocks.removeIf(p -> level.getBlockState(p).getBlock().getExplosionResistance(level, p, this, null) > 3
+				|| (!level.isClientSide && !BlockUtils.canBreakBlock(getCaster(), level, p)))){
 			// If any of the blocks were not breakable, the boulder is smashed
 			if(breakIfTooHard){
 				this.despawn();
@@ -132,10 +133,10 @@ public class EntityBoulder extends EntityScaledConstruct {
 		}else{
 
 			if(!level.isClientSide){
-				blocks.forEach(p -> world.destroyBlock(p, false));
+				blocks.forEach(p -> level.destroyBlock(p, false));
 				if(--hitsRemaining <= 0) this.despawn();
 			}else{
-				world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
+				level.playLocalSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 			}
 		}
 
@@ -157,11 +158,11 @@ public class EntityBoulder extends EntityScaledConstruct {
 				double x = getX() + (random.nextDouble() - 0.5) * width;
 				double y = getY() + random.nextDouble() * height;
 				double z = getZ() + (random.nextDouble() - 0.5) * width;
-				world.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - getX()) * 0.1,
+				level.spawnParticle(ParticleTypes.BLOCK_DUST, x, y, z, (x - getX()) * 0.1,
 						(y - getY() + height / 2) * 0.1, (z - getZ()) * 0.1, Block.getStateId(Blocks.DIRT.defaultBlockState()));
 			}
 
-			world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
+			level.playLocalSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_BREAK_BLOCK, SoundSource.BLOCKS, 1, 1, false);
 		}
 
 		super.despawn();
@@ -170,7 +171,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 	@Override
 	public void move(MoverType type, double x, double y, double z){
 		super.move(type, x, y, z);
-		this.rotationPitch += Math.toDegrees(Math.sqrt(x*x + y*y + z*z) / (width/2)); // That's how we roll
+		this.rotationPitch += Math.toDegrees(Math.sqrt(x*x + y*y + z*z) / (getBbWidth()/2)); // That's how we roll
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class EntityBoulder extends EntityScaledConstruct {
 		super.fall(distance, damageMultiplier);
 
 		// Floor smashing
-		if(EntityUtils.canDamageBlocks(getCaster(), world) && distance > 3){
+		if(EntityUtils.canDamageBlocks(getCaster(), level) && distance > 3){
 			AABB box = getBoundingBox().offset(velX, motionY, velZ);
 			List<BlockPos> cuboid = Lists.newArrayList(BlockPos.getAllInBox(Mth.floor(box.minX), Mth.floor(box.minY),
 					Mth.floor(box.minZ), Mth.floor(box.maxX), Mth.floor(box.maxY), Mth.floor(box.maxZ)));
@@ -198,14 +199,14 @@ public class EntityBoulder extends EntityScaledConstruct {
 				BlockState block = level.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block.getBlock() != Blocks.AIR){
-					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
-							particleX - this.getX(), 0, particleZ - this.getZ(), Block.getStateId(block));
+					level.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, block), particleX, this.getY(), particleZ,
+							particleX - this.getX(), 0, particleZ - this.getZ());
 				}
 			}
 
 			// Other landing effects
 			if(distance > 1.2){
-				world.playSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_LAND, SoundSource.BLOCKS, Math.min(2, distance / 4), 1, false);
+				level.playLocalSound(getX(), getY(), getZ(), WizardrySounds.ENTITY_BOULDER_LAND, SoundSource.BLOCKS, Math.min(2, distance / 4), 1, false);
 				shakeNearbyPlayers();
 //				EntityUtils.getEntitiesWithinRadius(Math.min(12, distance * 2), getX(), getY(), getZ(), world, EntityPlayer.class)
 //						.forEach(p -> Wizardry.proxy.shakeScreen(p, Math.min(12, distance * 2)));
@@ -216,11 +217,6 @@ public class EntityBoulder extends EntityScaledConstruct {
 	@Override
 	public boolean canBeCollidedWith(){
 		return true;
-	}
-
-	@Override
-	public AABB getCollisionBoundingBox(){
-		return this.getBoundingBox();
 	}
 
 	@Override

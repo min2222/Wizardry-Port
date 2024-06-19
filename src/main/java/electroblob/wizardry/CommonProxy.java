@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -323,8 +324,8 @@ public class CommonProxy {
 	/** Notifies nearby players of a bookshelf change, causing any lectern or arcane workbench GUI (client-side) or
 	 * container (both sides) to refresh its linked bookshelves (does not send packets). */
 	public void notifyBookshelfChange(Level world, BlockPos pos){
-		for(Player player : world.playerEntities){
-			if(player.distanceToSqr(pos) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
+		for(Player player : world.players()){
+			if(player.distanceToSqr(Vec3.atCenterOf(pos)) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
 				if(player.openContainer instanceof ContainerArcaneWorkbench){
 					((ContainerArcaneWorkbench)player.openContainer).refreshBookshelfSlots();
 				}

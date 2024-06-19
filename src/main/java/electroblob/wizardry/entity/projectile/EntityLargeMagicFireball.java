@@ -2,14 +2,16 @@ package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.LargeFireball;
 import net.minecraft.world.level.Explosion.BlockInteraction;
@@ -36,8 +38,11 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	protected float explosionPower = -1;
 
 	public EntityLargeMagicFireball(Level world){
-		super(world);
-		this.setSize(1, 1);
+		this(WizardryEntities.LARGE_MAGIC_FIREBALL.get(), world);
+	}
+	
+	public EntityLargeMagicFireball(EntityType<? extends EntityMagicFireball> type, Level world){
+		super(type, world);
 	}
 
 	public void setExplosionPower(float explosionPower){
@@ -74,26 +79,26 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf buffer){
+	public void writeSpawnData(FriendlyByteBuf buffer){
 		buffer.writeFloat(blastMultiplier);
 		super.writeSpawnData(buffer);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf buffer){
+	public void readSpawnData(FriendlyByteBuf buffer){
 		blastMultiplier = buffer.readFloat();
 		super.readSpawnData(buffer);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		blastMultiplier = nbttagcompound.getFloat("blastMultiplier");
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		nbttagcompound.putFloat("blastMultiplier", blastMultiplier);
 	}
 
