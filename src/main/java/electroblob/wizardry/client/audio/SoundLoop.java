@@ -56,8 +56,8 @@ public abstract class SoundLoop implements ITickable {
 	@Override
 	public void update(){
 		// Check every tick if the start sound is done playing and if so, start the loop sound
-		if(!looping && !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(dummyStart)){
-			Minecraft.getMinecraft().getSoundHandler().playSound(loop);
+		if(!looping && !Minecraft.getInstance().getSoundHandler().isSoundPlaying(dummyStart)){
+			Minecraft.getInstance().getSoundHandler().playSound(loop);
 			looping = true;
 		}
 	}
@@ -66,7 +66,7 @@ public abstract class SoundLoop implements ITickable {
 	 * subclasses or externally depending on the implementation. */
 	// For continuous spell sounds it's internally
 	public void endLoop(){
-		Minecraft.getMinecraft().getSoundHandler().playSound(end);
+		Minecraft.getInstance().getSoundHandler().playSound(end);
 		// Can't modify activeLoops directly since we'll probably be calling this method from update(), which is
 		// during iteration of activeLoops so it could cause a ConcurrentModificationException
 		this.markForRemoval();
@@ -79,9 +79,9 @@ public abstract class SoundLoop implements ITickable {
 
 	/** Stops the start and loop sounds immediately. */
 	protected void stopStartAndLoop(){
-		Minecraft.getMinecraft().getSoundHandler().stopSound(dummyStart);
-		Minecraft.getMinecraft().getSoundHandler().stopSound(start);
-		Minecraft.getMinecraft().getSoundHandler().stopSound(loop);
+		Minecraft.getInstance().getSoundHandler().stopSound(dummyStart);
+		Minecraft.getInstance().getSoundHandler().stopSound(start);
+		Minecraft.getInstance().getSoundHandler().stopSound(loop);
 	}
 
 	// Static methods
@@ -89,8 +89,8 @@ public abstract class SoundLoop implements ITickable {
 	public static void addLoop(SoundLoop loop){
 		activeLoops.add(loop);
 		// Do this here rather than in the constructor in case someone wants to play the loop later or reuse it
-		Minecraft.getMinecraft().getSoundHandler().playSound(loop.dummyStart);
-		Minecraft.getMinecraft().getSoundHandler().playDelayedSound(loop.start, 2); // 1 seems to be insufficient
+		Minecraft.getInstance().getSoundHandler().playSound(loop.dummyStart);
+		Minecraft.getInstance().getSoundHandler().playDelayedSound(loop.start, 2); // 1 seems to be insufficient
 	}
 
 	@SubscribeEvent

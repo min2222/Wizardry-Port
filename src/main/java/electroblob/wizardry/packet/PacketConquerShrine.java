@@ -19,7 +19,7 @@ public class PacketConquerShrine implements IMessageHandler<PacketConquerShrine.
 		if(ctx.side.isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> Wizardry.proxy.handleConquerShrinePacket(message));
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleConquerShrinePacket(message));
 		}
 
 		return null;

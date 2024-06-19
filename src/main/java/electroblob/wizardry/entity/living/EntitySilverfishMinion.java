@@ -127,15 +127,15 @@ public class EntitySilverfishMinion extends Silverfish implements ISummonedCreat
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
 		nbttagcompound.putInt("generation", this.generation);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
 		this.generation = nbttagcompound.getInt("generation");
 	}

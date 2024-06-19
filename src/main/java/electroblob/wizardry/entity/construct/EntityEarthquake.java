@@ -1,30 +1,33 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.spell.Earthquake;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityFallingBlock;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled construct, the size is controlled by time
 
 	public EntityEarthquake(Level world){
-		super(world);
-		setSize(1, 1); // This one probably should be small
+		this(WizardryEntities.EARTHQUAKE.get(), world);
+	}
+	
+	public EntityEarthquake(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
 	}
 
 	public void tick(){
@@ -33,7 +36,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 		double speed = Spells.earthquake.getProperty(Earthquake.SPREAD_SPEED).doubleValue();
 
-		if(!level.isClientSide && EntityUtils.canDamageBlocks(getCaster(), world)){
+		if(!level.isClientSide && EntityUtils.canDamageBlocks(getCaster(), level)){
 
 			// The further the earthquake is going to spread, the finer the angle increments.
 			for(float angle = 0; angle < 2 * Math.PI; angle += Math.PI / (lifetime * 1.5)){
@@ -48,14 +51,14 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 				BlockPos pos = new BlockPos(x, y, z);
 
-				if(!BlockUtils.isBlockUnbreakable(level, pos) && !level.isEmptyBlock(pos) && level.isBlockNormalCube(pos, false)
+				if(!BlockUtils.isBlockUnbreakable(level, pos) && !level.isEmptyBlock(pos) && level.getBlockState(pos).isCollisionShapeFullBlock(level, pos)
 						// Checks that the block above is not solid, since this causes the falling sand to vanish.
-						&& !level.isBlockNormalCube(pos.above(), false) && BlockUtils.canBreakBlock(getCaster(), level, pos)){
+						&& !level.getBlockState(pos.above()).isCollisionShapeFullBlock(level, pos.above()) && BlockUtils.canBreakBlock(getCaster(), level, pos)){
 
 					// Falling blocks do the setting block to air themselves.
 					FallingBlockEntity fallingblock = new FallingBlockEntity(level, x + 0.5, y + 0.5, z + 0.5,
 							level.getBlockState(new BlockPos(x, y, z)));
-					fallingblock.motionY = 0.3;
+					fallingblock.setDeltaMovement(fallingblock.getDeltaMovement().x, 0.3, fallingblock.getDeltaMovement().z);
 					level.addFreshEntity(fallingblock);
 				}
 			}
@@ -76,8 +79,8 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 					&& target.getY() > this.getY() - 1){
 
 				// Knockback must be removed in this instance, or the target will fall into the floor.
-				double motionX = target.motionX;
-				double motionZ = target.motionZ;
+				double motionX = target.getDeltaMovement().x;
+				double motionZ = target.getDeltaMovement().z;
 
 				if(this.isValidTarget(target)){
 					target.hurt(
@@ -87,9 +90,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 				}
 
 				// All targets are thrown, even those immune to the damage, so they don't fall into the ground.
-				target.motionX = motionX;
-				target.motionY = 0.8; // Throws target into the air.
-				target.motionZ = motionZ;
+				target.setDeltaMovement(motionX, 0.8, motionZ);// Throws target into the air.
 
 				// Player motion is handled on that player's client so needs packets
 				if(target instanceof ServerPlayer){

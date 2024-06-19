@@ -221,7 +221,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 	public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
 
 		GlStateManager.color(1, 1, 1, 1);
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getInstance().renderEngine.bindTexture(texture);
 
 		// Coordinates of the top left corner of the main GUI
 		int left = arcaneWorkbenchContainer.hasBookshelves() ? guiLeft + BOOKSHELF_UI_WIDTH : guiLeft;
@@ -370,7 +370,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 		GlStateManager.color(1, 1, 1, 1);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getInstance().renderEngine.bindTexture(texture);
 
 		// Fixes the bug that caused the slot highlight to render opaque. I don't know why it works, it just works!
 		GlStateManager.disableBlend();
@@ -441,7 +441,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 				IMessage msg = new PacketControlInput.Message(PacketControlInput.ControlType.APPLY_BUTTON);
 				WizardryPacketHandler.net.sendToServer(msg);
 				// Sound
-				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(
+				Minecraft.getInstance().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(
 						WizardrySounds.BLOCK_ARCANE_WORKBENCH_SPELLBIND, 1));
 				// Animation
 				animationTimer = 20;
@@ -452,7 +452,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 				IMessage msg = new PacketControlInput.Message(PacketControlInput.ControlType.CLEAR_BUTTON);
 				WizardryPacketHandler.net.sendToServer(msg);
 				// Sound
-				Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(
+				Minecraft.getInstance().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(
 						WizardrySounds.BLOCK_ARCANE_WORKBENCH_SPELLBIND, 0.8f));
 				// Animation
 				animationTimer = 20;
@@ -864,7 +864,7 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 			Spell spell = getSpell(stack);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(Wizardry.proxy.shouldDisplayDiscovered(spell, null)
+			Minecraft.getInstance().renderEngine.bindTexture(Wizardry.proxy.shouldDisplayDiscovered(spell, null)
 					? spell.getElement().getIcon() : Element.MAGIC.getIcon());
 
 			if(shouldFlash(stack)){

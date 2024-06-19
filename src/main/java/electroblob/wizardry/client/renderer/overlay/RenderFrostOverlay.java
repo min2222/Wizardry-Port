@@ -23,7 +23,7 @@ public class RenderFrostOverlay {
 
 		if(event.getType() == RenderGameOverlayEvent.ElementType.HELMET){
 
-			if(Minecraft.getMinecraft().player.hasEffect(WizardryPotions.frost)){
+			if(Minecraft.getInstance().player.hasEffect(WizardryPotions.frost)){
 
 				OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 				GlStateManager.color(1, 1, 1, 1);

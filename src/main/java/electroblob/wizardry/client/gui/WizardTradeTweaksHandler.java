@@ -48,7 +48,7 @@ public class WizardTradeTweaksHandler {
 
 		if(event.getGui() instanceof GuiMerchant){
 
-			MerchantRecipeList recipes = ((GuiMerchant)event.getGui()).getMerchant().getRecipes(Minecraft.getMinecraft().player);
+			MerchantRecipeList recipes = ((GuiMerchant)event.getGui()).getMerchant().getRecipes(Minecraft.getInstance().player);
 
 			if(recipes == null) return;
 
@@ -68,7 +68,7 @@ public class WizardTradeTweaksHandler {
 
 			GuiMerchant gui = (GuiMerchant)event.getGuiContainer();
 			// Note that gui.getMerchant() returns an NpcMerchant, not an EntityWizard.
-			MerchantRecipeList trades = gui.getMerchant().getRecipes(Minecraft.getMinecraft().player);
+			MerchantRecipeList trades = gui.getMerchant().getRecipes(Minecraft.getInstance().player);
 
 			if(trades == null) return;
 
@@ -97,7 +97,7 @@ public class WizardTradeTweaksHandler {
 
 					if(recipe != null && recipe.getItemToSell().getItem() instanceof ItemSpellBook){
 
-						Player player = Minecraft.getMinecraft().player;
+						Player player = Minecraft.getInstance().player;
 						Spell spell = Spell.byMetadata(recipe.getItemToSell().getMetadata());
 
 						if(Wizardry.settings.discoveryMode && !player.isCreative() && Wizardry.proxy.shouldDisplayDiscovered(spell, recipe.getItemToSell())
@@ -108,7 +108,7 @@ public class WizardTradeTweaksHandler {
 
 							RenderHelper.enableGUIStandardItemLighting();
 							GlStateManager.color(1, 1, 1);
-							Minecraft.getMinecraft().renderEngine.bindTexture(NEW_SPELL_ICON);
+							Minecraft.getInstance().renderEngine.bindTexture(NEW_SPELL_ICON);
 
 							int frame = Math.max(player.tickCount / ANIMATION_FRAME_TIME % ANIMATION_PERIOD - (ANIMATION_PERIOD - ANIMATION_FRAMES), 0);
 							DrawingUtils.drawTexturedRect(x, y, 0, frame * ICON_HEIGHT, ICON_WIDTH, ICON_HEIGHT, ICON_WIDTH, ICON_HEIGHT * ANIMATION_FRAMES);
@@ -120,7 +120,7 @@ public class WizardTradeTweaksHandler {
 //
 //						if(mouseX >= x + 1 && mouseX < x + w + 1 && mouseY >= y - 1 && mouseY < y + h + 1){
 //							GuiUtils.drawHoveringText(Collections.singletonList("You haven't discovered this spell yet"), mouseX,
-//									mouseY, gui.width, gui.getBbHeight(), 150, Minecraft.getMinecraft().fontRenderer);
+//									mouseY, gui.width, gui.getBbHeight(), 150, Minecraft.getInstance().fontRenderer);
 //						}
 						}
 					}

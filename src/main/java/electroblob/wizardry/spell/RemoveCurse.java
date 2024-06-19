@@ -20,14 +20,14 @@ public class RemoveCurse extends SpellBuff {
 	@Override
 	protected boolean applyEffects(LivingEntity caster, SpellModifiers modifiers){
 
-		if(!caster.getActivePotionEffects().isEmpty()){
+		if(!caster.getActiveEffects().isEmpty()){
 
 			boolean flag = false;
 
-			for(MobEffectInstance effect : new ArrayList<>(caster.getActivePotionEffects())){ // Get outta here, CMEs
+			for(MobEffectInstance effect : new ArrayList<>(caster.getActiveEffects())){ // Get outta here, CMEs
 				// The PotionEffect version (as opposed to Potion) does not call cleanup callbacks
-				if(effect.getPotion() instanceof Curse){
-					caster.removePotionEffect(effect.getPotion());
+				if(effect.getEffect() instanceof Curse){
+					caster.removeEffect(effect.getEffect());
 					flag = true;
 				}
 			}

@@ -7,9 +7,11 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.level.block.BlockBush;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
@@ -22,16 +24,13 @@ import java.util.Random;
 
 // Extending BlockBush allows me to remove nearly everything from this class.
 @Mod.EventBusSubscriber
-public class BlockCrystalFlower extends BlockBush {
+public class BlockCrystalFlower extends BushBlock {
 
 	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.5F - 0.2f, 0.0F, 0.5F - 0.2f, 0.5F + 0.2f,
 			0.2f * 3.0F, 0.5F + 0.2f);
 
-	public BlockCrystalFlower(Material par2Material){
-		super(par2Material);
-		this.setLightLevel(0.5f);
-		this.setTickRandomly(true);
-		this.setSoundType(SoundType.PLANT);
+	public BlockCrystalFlower(){
+		super(BlockBehaviour.Properties.of(Material.PLANT).instabreak().lightLevel((state) -> (int)7.5).randomTicks().sound(SoundType.CROP));
 	}
 
 	@Override

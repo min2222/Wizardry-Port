@@ -193,7 +193,7 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityDarknessOrb>> DARKNESS_ORB = register(createEntry(EntityDarknessOrb::new, 		"darkness_orb", 		TrackingType.PROJECTILE));
 	public static final RegistryObject<EntityType<EntityFirebolt>> FIREBOLT = register(createEntry(EntityFirebolt::new, 		"firebolt", 			TrackingType.PROJECTILE));
 	public static final RegistryObject<EntityType<EntityThunderbolt>> THUNDERBOLT = register(createEntry(EntityThunderbolt::new, 		"thunderbolt", 		TrackingType.PROJECTILE));
-	public static final RegistryObject<EntityType<EntityLightningDisc>> LIGHTNING_DISC = register(createEntry(EntityLightningDisc::new, 	"lightning_disc", 	TrackingType.PROJECTILE));
+	public static final RegistryObject<EntityType<EntityLightningDisc>> LIGHTNING_DISC = register("lightning_disc", createEntry(EntityLightningDisc::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(2.0f, 0.5f));
 	public static final RegistryObject<EntityType<EntityEmber>> EMBER = register("ember", createEntry(EntityEmber::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(0.1f, 0.1f));
 	public static final RegistryObject<EntityType<EntityMagicFireball>> MAGIC_FIREBALL = register("magic_fireball", createEntry(EntityMagicFireball::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(0.5f, 0.5f));
 	public static final RegistryObject<EntityType<EntityLargeMagicFireball>> LARGE_MAGIC_FIREBALL = register("large_magic_fireball", createEntry(EntityLargeMagicFireball::new, MobCategory.MISC, TrackingType.PROJECTILE).sized(1, 1));
@@ -201,7 +201,7 @@ public class WizardryEntities {
 
 	// These are effectively projectiles, but since they're bigger and start high up they need updating from further away
 	public static final RegistryObject<EntityType<EntityMeteor>> METEOR = register("meteor", createEntry(EntityMeteor::new, MobCategory.MISC, 160, 3, true).sized(0.98F, 0.98F));
-	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = register("lightning_hammer", createEntry(EntityHammer::new, MobCategory.MISC, 160, 3, true));
+	public static final RegistryObject<EntityType<EntityHammer>> LIGHTNING_HAMMER = register("lightning_hammer", createEntry(EntityHammer::new, MobCategory.MISC, 160, 3, true).sized(1.0f, 1.9F));
 	public static final RegistryObject<EntityType<EntityLevitatingBlock>> LEVITATING_BLOCK = register("levitating_block", createEntry(EntityLevitatingBlock::new, MobCategory.MISC, 160, 3, true).sized(0.98F, 0.98F));
 
 	// Constructs
@@ -214,14 +214,14 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityCombustionRune>> COMBUSTION_RUNE = register("combustion_rune", createEntry(EntityCombustionRune::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 	public static final RegistryObject<EntityType<EntityFireRing>> RING_OF_FIRE = register("ring_of_fire", createEntry(EntityFireRing::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 	public static final RegistryObject<EntityType<EntityHealAura>> HEALING_AURA = register("healing_aura", createEntry(EntityHealAura::new, MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityDecay>> DECAY = register("decay", createEntry(EntityDecay::new, MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = register("zombie_spawner", createEntry(EntityZombieSpawner::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityDecay>> DECAY = register("decay", createEntry(EntityDecay::new, MobCategory.MISC, TrackingType.CONSTRUCT).sized(2.0f, 0.2f));
+	public static final RegistryObject<EntityType<EntityZombieSpawner>> ZOMBIE_SPAWNER = register("zombie_spawner", createEntry(EntityZombieSpawner::new, MobCategory.MISC, TrackingType.CONSTRUCT).sized(4, 2));
 	public static final RegistryObject<EntityType<EntityRadiantTotem>> RADIANT_TOTEM = register("radiant_totem", createEntry(EntityRadiantTotem::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 	public static final RegistryObject<EntityType<EntityWitheringTotem>> WITHERING_TOTEM = register("withering_totem", createEntry(EntityWitheringTotem::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 
 	// These ones don't render, currently that makes no difference here but we might as well separate them
 	public static final RegistryObject<EntityType<EntityArrowRain>> ARROW_RAIN = register("arrow_rain", createEntry(EntityArrowRain::new, MobCategory.MISC, TrackingType.CONSTRUCT));
-	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = register("earthquake", createEntry(EntityEarthquake::new, MobCategory.MISC, TrackingType.CONSTRUCT));
+	public static final RegistryObject<EntityType<EntityEarthquake>> EARTHQUAKE = register("earthquake", createEntry(EntityEarthquake::new, MobCategory.MISC, TrackingType.CONSTRUCT).sized(1, 1));
 	public static final RegistryObject<EntityType<EntityHailstorm>> HAILSTORM = register("hailstorm", createEntry(EntityHailstorm::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 	public static final RegistryObject<EntityType<EntityStormcloud>> STORMCLOUD = register("stormcloud", createEntry(EntityStormcloud::new, MobCategory.MISC, TrackingType.CONSTRUCT));
 
@@ -229,7 +229,7 @@ public class WizardryEntities {
 	public static final RegistryObject<EntityType<EntityShield>> SHIELD = register("shield", createEntry(EntityShield::new, MobCategory.MISC, 160, 10, true).sized(1.2f, 1.4f));
 	public static final RegistryObject<EntityType<EntityBubble>> BUBBLE = register("bubble", createEntry(EntityBubble::new, MobCategory.MISC, 160, 3, false));
 	public static final RegistryObject<EntityType<EntityTornado>> TORNADO = register("tornado", createEntry(EntityTornado::new, MobCategory.MISC, 160, 3, false));
-	public static final RegistryObject<EntityType<EntityIceSpike>> ICE_SPIKE = register("ice_spike", createEntry(EntityIceSpike::new, MobCategory.MISC, 160, 1, true));
+	public static final RegistryObject<EntityType<EntityIceSpike>> ICE_SPIKE = register("ice_spike", createEntry(EntityIceSpike::new, MobCategory.MISC, 160, 1, true).sized(0.5f, 1.0f));
 	public static final RegistryObject<EntityType<EntityBoulder>> BOULDER = register("boulder", createEntry(EntityBoulder::new, MobCategory.MISC, 160, 1, true)); // Vertical velocity is not constant
 	public static final RegistryObject<EntityType<EntityIceBarrier>> ICE_BARRIER = register("ice_barrier", createEntry(EntityIceBarrier::new, MobCategory.MISC, 160, 1, true).sized(1.8f, 1.05f));
 

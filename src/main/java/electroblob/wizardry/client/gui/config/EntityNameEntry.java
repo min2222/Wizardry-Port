@@ -54,7 +54,7 @@ public class EntityNameEntry extends StringEntry {
 			Map<Object, String> map = ForgeRegistries.ENTITIES.getEntries().stream().collect(
 					Collectors.<Entry<ResourceLocation, EntityEntry>, Object, String>toMap(e -> e.getValue().getClass(),
 							e -> e.getValue().getName()));
-			Minecraft.getMinecraft().displayGuiScreen(
+			Minecraft.getInstance().displayGuiScreen(
 					new GuiSelectString(this.owningScreen, configElement, index, map, this.getValue(), true));
 			owningEntryList.recalculateState();
 			return true;

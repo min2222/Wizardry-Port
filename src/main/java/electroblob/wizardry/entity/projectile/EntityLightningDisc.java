@@ -1,6 +1,7 @@
 package electroblob.wizardry.entity.projectile;
 
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.MagicDamage;
@@ -8,6 +9,7 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -15,9 +17,11 @@ import net.minecraft.world.phys.HitResult;
 public class EntityLightningDisc extends EntityMagicProjectile {
 	
 	public EntityLightningDisc(Level world){
-		super(world);
-		this.width = 2.0f;
-		this.getBbHeight() = 0.5f;
+		this(WizardryEntities.LIGHTNING_DISC.get(), world);
+	}
+	
+	public EntityLightningDisc(EntityType<? extends EntityMagicProjectile> type, Level world) {
+		super(type, world);
 	}
 
 	@Override

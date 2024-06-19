@@ -256,7 +256,7 @@ public class GuiWizardHandbook extends Screen {
 		int left = this.width / 2 - GUI_WIDTH / 2;
 		int top = this.getBbHeight() / 2 - GUI_HEIGHT / 2;
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getInstance().renderEngine.bindTexture(texture);
 
 		GlStateManager.color(1, 1, 1, 1);
 
@@ -309,7 +309,7 @@ public class GuiWizardHandbook extends Screen {
 
 		// Bookmark
 		GlStateManager.color(1, 1, 1, 1);
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getInstance().renderEngine.bindTexture(texture);
 
 		if(currentPage == singleToDoublePage(sections.get(bookmarkSection).startPage) + bookmarkPage){
 			// If the current page is the bookmarked page, the (invisible) bookmark button is disabled
@@ -474,10 +474,10 @@ public class GuiWizardHandbook extends Screen {
 
 		try{
 			handbookFile = manager.getResource(new ResourceLocation(Wizardry.MODID, "texts/handbook_"
-					+ Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode() + ".json"));
+					+ Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getLanguageCode() + ".json"));
 		}catch(Exception e){
 
-			Wizardry.logger.info("Wizard handbook JSON file missing for the current language (" + Minecraft.getMinecraft()
+			Wizardry.logger.info("Wizard handbook JSON file missing for the current language (" + Minecraft.getInstance()
 					.getLanguageManager().getCurrentLanguage() + "). Using default (English-US) instead.");
 
 			try{
@@ -494,10 +494,10 @@ public class GuiWizardHandbook extends Screen {
 			Wizardry.logger.info("Registering addon Wizard's Handbook contents for " + modid);
 			try{
 				handbookFile = manager.getResource(new ResourceLocation(modid, "texts/handbook_"
-						+ Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode() + ".json"));
+						+ Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getLanguageCode() + ".json"));
 			}catch(Exception e){
 
-				Wizardry.logger.info("Wizard handbook JSON file missing for the current language (" + Minecraft.getMinecraft()
+				Wizardry.logger.info("Wizard handbook JSON file missing for the current language (" + Minecraft.getInstance()
 						.getLanguageManager().getCurrentLanguage() + "). Using default (English-US) instead.");
 
 				try{

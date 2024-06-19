@@ -5,17 +5,19 @@ import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class Telekinesis extends SpellRay {
 
@@ -63,8 +65,8 @@ public class Telekinesis extends SpellRay {
 			
 			BlockState blockstate = world.getBlockState(pos);
 	
-			if(blockstate.getBlock().onBlockActivated(world, pos, blockstate, (Player)caster, InteractionHand.MAIN_HAND,
-					side, 0, 0, 0)){
+			if(blockstate.use(world, (Player)caster, InteractionHand.MAIN_HAND,
+					new BlockHitResult(origin, side, pos, false)) == InteractionResult.SUCCESS){
 				return true;
 			}
 		}

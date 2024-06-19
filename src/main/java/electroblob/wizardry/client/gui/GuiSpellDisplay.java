@@ -128,7 +128,7 @@ public class GuiSpellDisplay {
 
 		if(!Wizardry.settings.showSpellHUD && !Wizardry.settings.showChargeMeter) return; // Optimisation
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 
 		if(player.isSpectator()) return; // Spectators shouldn't have the spell HUD!
 
@@ -173,8 +173,8 @@ public class GuiSpellDisplay {
 	private static void renderChargeMeter(Player player, ItemStack wand, int width, int height, float partialTicks){
 
 		if(!Wizardry.settings.showChargeMeter) return;
-		if(Minecraft.getMinecraft().gameSettings.showDebugInfo) return; // Don't show charge meter in the debug screen
-		if(Minecraft.getMinecraft().gameSettings.thirdPersonView != 0) return; // Don't show in third person
+		if(Minecraft.getInstance().gameSettings.showDebugInfo) return; // Don't show charge meter in the debug screen
+		if(Minecraft.getInstance().gameSettings.thirdPersonView != 0) return; // Don't show in third person
 		if(wand != player.getActiveItemStack()) return; // Don't show when using the other held item
 
 		if(!(wand.getItem() instanceof ISpellCastingItem)) throw new IllegalArgumentException("The given stack must contain an ISpellCastingItem!");
@@ -196,7 +196,7 @@ public class GuiSpellDisplay {
 		float charge = (player.getItemInUseMaxCount() + partialTicks) / chargeup;
 		if(charge > 1) return; // Done charging
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(CHARGE_METER);
+		Minecraft.getInstance().renderEngine.bindTexture(CHARGE_METER);
 
 		int x1 = width/2 - CHARGE_METER_WIDTH/2;
 		int y = height/2 - CHARGE_METER_HEIGHT/2;
@@ -328,7 +328,7 @@ public class GuiSpellDisplay {
 	
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingTickEvent event){
-		if(event.getEntity() == Minecraft.getMinecraft().player){ // Makes sure this only gets called once each tick.
+		if(event.getEntity() == Minecraft.getInstance().player){ // Makes sure this only gets called once each tick.
 			if(switchTimer > 0) switchTimer--;
 			else if(switchTimer < 0) switchTimer++;
 		}
@@ -449,13 +449,13 @@ public class GuiSpellDisplay {
 		/** Creates a new skin with the given texture and reads its values from the given metadata json file. */
 		public Skin(ResourceLocation texture, ResourceLocation metadata){
 			
-			mc = Minecraft.getMinecraft();
+			mc = Minecraft.getInstance();
 			
 			this.texture = texture;
 			
 			try {
 				// This time we only want the highest priority file
-				IResource metadataFile = Minecraft.getMinecraft().getResourceManager().getResource(metadata);
+				IResource metadataFile = Minecraft.getInstance().getResourceManager().getResource(metadata);
 				BufferedReader reader = new BufferedReader(new InputStreamReader(metadataFile.getInputStream(), StandardCharsets.UTF_8));
 					
 				JsonElement je = gson.fromJson(reader, JsonElement.class);
@@ -570,7 +570,7 @@ public class GuiSpellDisplay {
 			int y1 = flipY && mirrorY ? y + spellIconInsetY : y - spellIconInsetY - SPELL_ICON_SIZE;
 
 			if(jammed){
-				random.setSeed(Minecraft.getMinecraft().level.getTotalWorldTime() / 2);
+				random.setSeed(Minecraft.getInstance().level.getTotalWorldTime() / 2);
 				DrawingUtils.drawGlitchRect(random, x1, y1, 0, 0, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, false, false);
 			}else{
 				DrawingUtils.drawTexturedRect(x1, y1, 0, 0, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE, SPELL_ICON_SIZE);

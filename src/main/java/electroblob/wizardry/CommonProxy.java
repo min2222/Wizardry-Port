@@ -293,7 +293,7 @@ public class CommonProxy {
 	public void loadShader(Player player, ResourceLocation shader){}
 	
 	/**
-	 * Gets the client-side world using {@code Minecraft.getMinecraft().world}. <b>Only to be called client side!</b>
+	 * Gets the client-side world using {@code Minecraft.getInstance().world}. <b>Only to be called client side!</b>
 	 * Returns null on the server side.
 	 */
 	public Level getTheWorld(){
@@ -301,7 +301,7 @@ public class CommonProxy {
 	}
 
 	/**
-	 * Gets the client-side player using Minecraft.getMinecraft().player. <b>Only to be called client side!</b> Returns
+	 * Gets the client-side player using Minecraft.getInstance().player. <b>Only to be called client side!</b> Returns
 	 * null on the server side.
 	 */
 	public Player getThePlayer(){

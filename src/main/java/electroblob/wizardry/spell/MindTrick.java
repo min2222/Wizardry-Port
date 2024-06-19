@@ -46,7 +46,7 @@ public class MindTrick extends SpellRay {
 				}else if(target instanceof Mob){
 
 					((Mob)target).setTarget(null);
-					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.mind_trick,
+					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.MIND_TRICK.get(),
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
 				}
 				
@@ -82,8 +82,8 @@ public class MindTrick extends SpellRay {
 			// doesn't crash the game with a ConcurrentModificationException. If you think about it, mind trick only
 			// ought to be cancelled if something attacks the entity since potions, drowning, cacti etc. don't affect the
 			// targeting.
-			if(event.getEntity().hasEffect(WizardryPotions.mind_trick)){
-				event.getEntity().removeEffect(WizardryPotions.mind_trick);
+			if(event.getEntity().hasEffect(WizardryPotions.MIND_TRICK.get())){
+				event.getEntity().removeEffect(WizardryPotions.MIND_TRICK.get());
 			}
 		}
 	}
@@ -92,8 +92,8 @@ public class MindTrick extends SpellRay {
 	public static void onLivingSetAttackTargetEvent(LivingSetAttackTargetEvent event){
 		// Mind trick
 		// If the target is null already, no need to set it to null, or infinite loops will occur.
-		if((event.getEntity().hasEffect(WizardryPotions.mind_trick)
-				|| event.getEntity().hasEffect(WizardryPotions.fear))
+		if((event.getEntity().hasEffect(WizardryPotions.MIND_TRICK.get())
+				|| event.getEntity().hasEffect(WizardryPotions.FEAR.get()))
 				&& event.getEntity() instanceof Mob && event.getTarget() != null){
 			((Mob)event.getEntity()).setTarget(null);
 		}

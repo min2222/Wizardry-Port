@@ -245,7 +245,7 @@ public class GuiLectern extends GuiSpellInfo implements ISpellSortable {
 			Spell spell = index < matchingSpells.size() ? matchingSpells.get(index) : Spells.none;
 			boolean discovered = Wizardry.proxy.shouldDisplayDiscovered(spell, null);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(discovered ? spell.getIcon() : Spells.none.getIcon());
+			Minecraft.getInstance().renderEngine.bindTexture(discovered ? spell.getIcon() : Spells.none.getIcon());
 
 			int row = i % SPELL_COLUMNS;
 			int column = (i / SPELL_COLUMNS) % SPELL_ROWS;

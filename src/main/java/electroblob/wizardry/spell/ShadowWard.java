@@ -68,7 +68,7 @@ public class ShadowWard extends Spell {
 		
 		if(event.getSource() != null && event.getSource().getEntity() instanceof LivingEntity){
 
-			if(EntityUtils.isCasting(event.getEntity(), Spells.shadow_ward) && !event.getSource().isUnblockable()
+			if(EntityUtils.isCasting(event.getEntity(), Spells.shadow_ward) && !event.getSource().isBypassArmor()
 					&& !(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).isRetaliatory())){
 
 				event.setCanceled(true);
@@ -80,7 +80,7 @@ public class ShadowWard extends Spell {
 				//event.getEntity().hurt(
 				//		MagicDamage.causeDirectMagicDamage(event.getSource().getEntity(), DamageType.MAGIC, true), event.getAmount() * 0.5f);
 				DamageSafetyChecker.attackEntitySafely(event.getEntity(), DamageSource.MAGIC, event.getAmount()
-						* (1 - reflectedFraction), event.getSource().getDamageType());
+						* (1 - reflectedFraction), event.getSource().getMsgId());
 				event.getSource().getEntity().hurt(MagicDamage.causeDirectMagicDamage(
 						event.getEntity(), DamageType.MAGIC, true), event.getAmount() * reflectedFraction);
 			}

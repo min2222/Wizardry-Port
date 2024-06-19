@@ -33,7 +33,7 @@ public class MarkSacrifice extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
 		if(EntityUtils.isLiving(target)){
-			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.mark_of_sacrifice,
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.MARK_OF_SACRIFICE.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
@@ -60,11 +60,11 @@ public class MarkSacrifice extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
-		MobEffectInstance effect = event.getEntity().getEffect(WizardryPotions.mark_of_sacrifice);
+		MobEffectInstance effect = event.getEntity().getEffect(WizardryPotions.MARK_OF_SACRIFICE.get());
 
 		if(effect != null && event.getSource().isMagic()){
 			event.setAmount(event.getAmount() * (1 + (1 + effect.getAmplifier()) * DAMAGE_INCREASE_PER_LEVEL));
-			event.getEntity().removeEffect(WizardryPotions.mark_of_sacrifice);
+			event.getEntity().removeEffect(WizardryPotions.MARK_OF_SACRIFICE.get());
 		}
 	}
 

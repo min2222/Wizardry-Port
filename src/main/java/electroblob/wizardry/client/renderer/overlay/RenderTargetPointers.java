@@ -31,7 +31,7 @@ public class RenderTargetPointers {
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 
-		Minecraft mc = Minecraft.getMinecraft();
+		Minecraft mc = Minecraft.getInstance();
 		WizardData data = WizardData.get(mc.player);
 		RenderManager renderManager = event.getRenderer().getRenderManager();
 

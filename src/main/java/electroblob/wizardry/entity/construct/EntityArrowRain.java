@@ -2,14 +2,21 @@ package electroblob.wizardry.entity.construct;
 
 import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 public class EntityArrowRain extends EntityScaledConstruct {
 
 	public EntityArrowRain(Level world){
-		super(world);
+		this(WizardryEntities.ARROW_RAIN.get(), world);
+		setSize(Spells.arrow_rain.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
+	}
+	
+	public EntityArrowRain(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 		setSize(Spells.arrow_rain.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}
 
@@ -30,9 +37,7 @@ public class EntityArrowRain extends EntityScaledConstruct {
 
 			EntityConjuredArrow arrow = new EntityConjuredArrow(level, x, y, z);
 
-			arrow.motionX = Mth.cos((float)Math.toRadians(this.getYRot() + 90));
-			arrow.motionY = -0.6;
-			arrow.motionZ = Mth.sin((float)Math.toRadians(this.getYRot() + 90));
+			arrow.setDeltaMovement(Mth.cos((float)Math.toRadians(this.getYRot() + 90)), -0.6, Mth.sin((float)Math.toRadians(this.getYRot() + 90)));
 
 			arrow.setOwner(this.getCaster());
 			arrow.setBaseDamage(7.0d * damageMultiplier);

@@ -1,25 +1,25 @@
 package electroblob.wizardry.inventory;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Supplier;
-
-public class ContainerBookshelf extends Container {
+public class ContainerBookshelf extends AbstractContainerMenu {
 
 	private static final Set<Item> validItems = new HashSet<>();
 

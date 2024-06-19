@@ -85,7 +85,7 @@ public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
 			if(oldStack.getItem() == newStack.getItem() && !slotChanged)
 			// This code should only run on the client side, so using Minecraft is ok.
 				// Why the heck was this here?
-					//&& !net.minecraft.client.Minecraft.getMinecraft().player.isHandActive())
+					//&& !net.minecraft.client.Minecraft.getInstance().player.isHandActive())
 				return false;
 		}
 

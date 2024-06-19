@@ -1,9 +1,12 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.ItemLightningHammer;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.LightningHammer;
@@ -13,24 +16,24 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class EntityHammer extends EntityMagicConstruct {
 
@@ -40,32 +43,25 @@ public class EntityHammer extends EntityMagicConstruct {
 	public boolean spin = false;
 
 	public EntityHammer(Level world){
-		super(world);
-		this.setSize(1.0f, 1.9F);
-		this.motionX = 0.0D;
-		this.motionY = 0.0D;
-		this.motionZ = 0.0D;
-		this.noClip = false;
+		this(WizardryEntities.LIGHTNING_HAMMER.get(), world);
+		this.setDeltaMovement(Vec3.ZERO);
+		this.noPhysics = false;
+	}
+	
+	public EntityHammer(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
+		this.setDeltaMovement(Vec3.ZERO);
+		this.noPhysics = false;
 	}
 
 	@Override
-	public boolean isBurning(){
+	public boolean isOnFire(){
 		return false;
 	}
 
 	@Override
 	public boolean canBeCollidedWith(){
 		return true;
-	}
-
-	@Override
-	public AABB getCollisionBoundingBox(){
-		return this.getBoundingBox();
-	}
-
-	@Override
-	public void applyEntityCollision(Entity entity){
-		super.applyEntityCollision(entity);
 	}
 
 	@Override
@@ -81,32 +77,28 @@ public class EntityHammer extends EntityMagicConstruct {
 		if(this.level.isClientSide && this.tickCount % 3 == 0){
 			ParticleBuilder.create(Type.SPARK)
 					.pos(this.getX() - 0.5d + random.nextDouble(), this.getY() + 2 * random.nextDouble(), this.getZ() - 0.5d + random.nextDouble())
-					.spawn(world);
+					.spawn(level);
 		}
 
-		this.prevgetX() = this.getX();
-		this.prevgetY() = this.getY();
-		this.prevgetZ() = this.getZ();
+		this.xo = this.getX();
+		this.yo = this.getY();
+		this.zo = this.getZ();
 		++this.fallTime;
-		this.motionY -= 0.03999999910593033D;
-		this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
-		this.motionX *= 0.9800000190734863D;
-		this.motionY *= 0.9800000190734863D;
-		this.motionZ *= 0.9800000190734863D;
+		this.setDeltaMovement(this.getDeltaMovement().subtract(0, 0.03999999910593033D, 0));
+		this.move(MoverType.SELF, this.getDeltaMovement());
+		this.setDeltaMovement(this.getDeltaMovement().scale(0.9800000190734863D));
 
 		if(this.onGround){
 
-			this.motionX *= 0.699999988079071D;
-			this.motionZ *= 0.699999988079071D;
-			this.motionY *= -0.5D;
+			this.setDeltaMovement(this.getDeltaMovement().multiply(0.699999988079071D, -0.5D, 0.699999988079071D));
 
-			this.rotationPitch = 0;
+			this.setXRot(0);
 			this.spin = false;
 
 			double seekerRange = Spells.lightning_hammer.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.getX(),
-					this.getY() + 1, this.getZ(), world);
+					this.getY() + 1, this.getZ(), level);
 
 			int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue();
 			while(targets.size() > maxTargets) targets.remove(targets.size() - 1);
@@ -118,9 +110,9 @@ public class EntityHammer extends EntityMagicConstruct {
 
 					if(level.isClientSide){
 
-						ParticleBuilder.create(Type.LIGHTNING).pos(getX(), getY() + height - 0.1, getZ()) .target(target).spawn(world);
+						ParticleBuilder.create(Type.LIGHTNING).pos(getX(), getY() + getBbHeight() - 0.1, getZ()) .target(target).spawn(level);
 
-						ParticleBuilder.spawnShockParticles(world, target.getX(),
+						ParticleBuilder.spawnShockParticles(level, target.getX(),
 								target.getY() + target.getBbHeight(), target.getZ());
 					}
 
@@ -140,9 +132,9 @@ public class EntityHammer extends EntityMagicConstruct {
 
 		}else{
 
-			if(spin) this.setRotation(this.rotationYaw, this.rotationPitch + 15);
+			if(spin) this.setRot(this.getYRot(), this.getXRot() + 15);
 
-			List<Entity> collided = level.getEntitiesInAABBexcluding(this, this.getCollisionBoundingBox(), e -> e instanceof LivingEntity);
+			List<Entity> collided = level.getEntities(this, this.getBoundingBox(), e -> e instanceof LivingEntity);
 
 			float damage = Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
@@ -159,14 +151,14 @@ public class EntityHammer extends EntityMagicConstruct {
 		this.playSound(WizardrySounds.ENTITY_HAMMER_EXPLODE, 1.0F, 1.0f);
 
 		if(this.level.isClientSide){
-			this.world.spawnParticle(ParticleTypes.EXPLOSION_LARGE, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
+			this.level.addParticle(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 0, 0, 0);
 		}
 
 		super.despawn();
 	}
-
+	
 	@Override
-	public void fall(float distance, float damageMultiplier){
+	public void checkFallDamage(double distance, boolean onGround, BlockState state, BlockPos pos){
 
 		if(level.isClientSide){
 
@@ -177,30 +169,32 @@ public class EntityHammer extends EntityMagicConstruct {
 				BlockState block = level.getBlockState(new BlockPos(this.getX(), this.getY() - 2, this.getZ()));
 
 				if(block != null){
-					world.spawnParticle(ParticleTypes.BLOCK_DUST, particleX, this.getY(), particleZ,
-							particleX - this.getX(), 0, particleZ - this.getZ(), Block.getStateId(block));
+					level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), particleX, this.getY(), particleZ,
+							particleX - this.getX(), 0, particleZ - this.getZ());
 				}
 			}
 
 			if(this.fallDistance > 10){
-				EntityUtils.getEntitiesWithinRadius(10, getX(), getY(), getZ(), world, Player.class)
+				EntityUtils.getEntitiesWithinRadius(10, getX(), getY(), getZ(), level, Player.class)
 						.forEach(p -> Wizardry.proxy.shakeScreen(p, 6));
 			}
 
 		}else{
 			// Just to check the hammer has actually fallen from the sky, rather than the block under it being broken.
 			if(this.fallDistance > 10){
-				EntityLightningBolt entitylightning = new EntityLightningBolt(world, this.getX(), this.getY(), this.getZ(),
-						false);
-				world.addWeatherEffect(entitylightning);
+				LightningBolt entitylightning = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
+				entitylightning.setPos(this.position());
+				entitylightning.setVisualOnly(false);
+				level.addFreshEntity(entitylightning);
 			}
 
 			this.playSound(WizardrySounds.ENTITY_HAMMER_LAND, 1.0F, 0.6f);
 		}
+		super.checkFallDamage(distance, onGround, state, pos);
 	}
 
 	@Override
-	public boolean processInitialInteract(Player player, InteractionHand hand){
+	public InteractionResult interact(Player player, InteractionHand hand){
 
 		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
 				&& player.getMainHandItem().isEmpty() && tickCount > 10){
@@ -208,29 +202,29 @@ public class EntityHammer extends EntityMagicConstruct {
 			this.discard();
 
 			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
-			if(!hammer.hasTagCompound()) hammer.setTag(new CompoundTag());
+			if(!hammer.hasTag()) hammer.setTag(new CompoundTag());
 			hammer.getTag().putInt(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
-			hammer.setItemDamage(tickCount);
+			hammer.setDamageValue(tickCount);
 			hammer.getTag().putFloat(ItemLightningHammer.DAMAGE_MULTIPLIER_NBT_KEY, damageMultiplier);
 
-			player.setHeldItem(InteractionHand.MAIN_HAND, hammer);
-			return true;
+			player.setItemInHand(InteractionHand.MAIN_HAND, hammer);
+			return InteractionResult.SUCCESS;
 
 		}else{
-			return super.processInitialInteract(player, hand);
+			return super.interact(player, hand);
 		}
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setByte("Time", (byte)this.fallTime);
-		nbttagcompound.setBoolean("Spin", spin);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
+		nbttagcompound.putByte("Time", (byte)this.fallTime);
+		nbttagcompound.putBoolean("Spin", spin);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		this.fallTime = nbttagcompound.getByte("Time") & 255;
 		this.spin = nbttagcompound.getBoolean("Spin");
 	}
@@ -238,19 +232,19 @@ public class EntityHammer extends EntityMagicConstruct {
 	// Need to sync the caster so they don't have particles spawned at them
 
 	@Override
-	public void writeSpawnData(ByteBuf data){
+	public void writeSpawnData(FriendlyByteBuf data){
 		super.writeSpawnData(data);
 		data.writeBoolean(spin);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data){
+	public void readSpawnData(FriendlyByteBuf data){
 		super.readSpawnData(data);
 		spin = data.readBoolean();
 	}
 
 	@Override
-	public boolean isInRangeToRenderDist(double distance){
+	public boolean shouldRenderAtSqrDistance(double distance){
 		return true;
 	}
 }

@@ -82,7 +82,7 @@ class Section {
 	 */
 	boolean isUnlocked(){
 
-		if(Minecraft.getMinecraft().player.isCreative()) return true;
+		if(Minecraft.getInstance().player.isCreative()) return true;
 		if(!Wizardry.settings.handbookProgression) return true; // Always unlocked if handbook progression is off
 		if(triggers == null) return true; // If no triggers were defined, the section is unlocked from the start
 
@@ -142,7 +142,7 @@ class Section {
 
 					if(line.startsWith(GuiWizardHandbook.FORMAT_MARKER + GuiWizardHandbook.RULER_TAG)){
 						GlStateManager.color(1, 1, 1, 1);
-						Minecraft.getMinecraft().renderEngine.bindTexture(GuiWizardHandbook.texture);
+						Minecraft.getInstance().renderEngine.bindTexture(GuiWizardHandbook.texture);
 						DrawingUtils.drawTexturedRect(x-1, y-1, 0, GuiWizardHandbook.GUI_HEIGHT, GuiWizardHandbook.PAGE_WIDTH + 2, 9, GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT);
 					}else{
 						int lx = centreX ? x + GuiWizardHandbook.PAGE_WIDTH / 2 - font.getStringWidth(line) / 2 : x;
@@ -299,7 +299,7 @@ class Section {
 						String suffix = "";
 
 						// Account for trailing punctuation, except in languages that don't use spaces such as Chinese
-						boolean spaceless = SPACELESS_LANGUAGES.contains(Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage() == null ? "en_us" : Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode());
+						boolean spaceless = SPACELESS_LANGUAGES.contains(Minecraft.getInstance().getLanguageManager().getCurrentLanguage() == null ? "en_us" : Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getLanguageCode());
 						if(!spaceless) paragraph.substring(linkEnd).split("\\s", 2)[0].substring(1); // substring(1) to remove the @
 
 						// The index of the single page currently being formatted, relative to the section
@@ -447,7 +447,7 @@ class Section {
 		// Only shows the toast when the section was locked before and is now unlocked
 		if(!this.unlocked && !completed.isEmpty() && showToasts && Wizardry.settings.handbookProgression){
 			// Mmmmm toast...
-			Minecraft minecraft = Minecraft.getMinecraft();
+			Minecraft minecraft = Minecraft.getInstance();
 			minecraft.getToastGui().add(new HandbookToast(this));
 			this.isNew = true;
 		}

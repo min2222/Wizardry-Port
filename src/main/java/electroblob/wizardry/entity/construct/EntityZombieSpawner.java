@@ -3,12 +3,14 @@ package electroblob.wizardry.entity.construct;
 import electroblob.wizardry.entity.living.EntityHuskMinion;
 import electroblob.wizardry.entity.living.EntityZombieMinion;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.SpellMinion;
 import electroblob.wizardry.spell.ZombieApocalypse;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -24,8 +26,11 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 	private int spawnTimer = 10;
 
 	public EntityZombieSpawner(Level world){
-		super(world);
-		this.setSize(4, 2);
+		super(WizardryEntities.ZOMBIE_SPAWNER.get(), world);
+	}
+	
+	public EntityZombieSpawner(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
 	}
 
 	@Override
@@ -66,7 +71,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 
 			for(double r = 1.5; r < 4; r += 0.2){
 				ParticleBuilder.create(Type.CLOUD).clr(b-=0.02, 0, 0).pos(getX(), getY() - 0.3, getZ()).scale(0.5f / (float)r)
-						.spin(r, 0.02/r * (1 + world.random.nextDouble())).spawn(world);
+						.spin(r, 0.02/r * (1 + level.random.nextDouble())).spawn(level);
 			}
 
 		}
@@ -74,20 +79,15 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 	}
 
 	@Override
-	public boolean shouldRenderInPass(int pass){
-		return super.shouldRenderInPass(pass);
-	}
-
-	@Override
-	protected void writeEntityToNBT(CompoundTag nbt){
-		super.writeEntityToNBT(nbt);
+	protected void addAdditionalSaveData(CompoundTag nbt){
+		super.addAdditionalSaveData(nbt);
 		nbt.putInt("spawnTimer", spawnTimer);
-		nbt.setBoolean("spawnHusks", spawnHusks);
+		nbt.putBoolean("spawnHusks", spawnHusks);
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbt){
-		super.readEntityFromNBT(nbt);
+	protected void readAdditionalSaveData(CompoundTag nbt){
+		super.readAdditionalSaveData(nbt);
 		this.spawnTimer = nbt.getInt("spawnTimer");
 		this.spawnHusks = nbt.getBoolean("spawnHusks");
 	}

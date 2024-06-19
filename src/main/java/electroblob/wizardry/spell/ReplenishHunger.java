@@ -28,10 +28,10 @@ public class ReplenishHunger extends SpellBuff {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(caster.getFoodStats().needFood()){
+		if(caster.getFoodData().needsFood()){
 			int foodAmount = (int)(getProperty(HUNGER_POINTS).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			// Fixed issue #6: Changed to addStats, since setFoodLevel is client-side only
-			caster.getFoodStats().addStats(foodAmount, getProperty(SATURATION_MODIFIER).floatValue());
+			caster.getFoodData().eat(foodAmount, getProperty(SATURATION_MODIFIER).floatValue());
 			return super.cast(world, caster, hand, ticksInUse, modifiers);
 		}
 		

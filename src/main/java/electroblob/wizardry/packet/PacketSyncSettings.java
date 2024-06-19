@@ -28,7 +28,7 @@ public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
 		if(ctx.side.isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// any more than necessary.
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> copySettings(message));
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> copySettings(message));
 		}
 
 		return null;

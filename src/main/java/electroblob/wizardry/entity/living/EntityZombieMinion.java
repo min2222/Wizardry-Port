@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -22,6 +23,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -44,6 +48,11 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	@Override public void setOwnerId(UUID uuid){ this.casterUUID = uuid; }
 
 	/** Creates a new zombie minion in the given world. */
+	public EntityZombieMinion(Level world){
+		this(WizardryEntities.ZOMBIE_MINION.get(), world);
+		this.xpReward = 0;
+	}
+	
 	public EntityZombieMinion(EntityType<? extends Zombie> type, Level world){
 		super(type, world);
 		this.xpReward = 0;
@@ -59,9 +68,9 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	@Override
 	protected void registerGoals(){
-		this.goalSelector.addGoal(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
-		this.targetSelector.addGoal(1, new EntityAIHurtByTarget(this, false));
-		this.targetSelector.addGoal(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
+		this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, false));
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 

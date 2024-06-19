@@ -282,8 +282,8 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbt){
-		super.writeEntityToNBT(nbt);
+	public void addAdditionalSaveData(CompoundTag nbt){
+		super.addAdditionalSaveData(nbt);
 		Element element = this.getElement();
 		nbt.putInt("element", element == null ? 0 : element.ordinal());
 		nbt.putInt("skin", this.textureIndex);
@@ -293,8 +293,8 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbt){
-		super.readEntityFromNBT(nbt);
+	public void readAdditionalSaveData(CompoundTag nbt){
+		super.readAdditionalSaveData(nbt);
 		this.setElement(Element.values()[nbt.getInt("element")]);
 		this.textureIndex = nbt.getInt("skin");
 		this.spells = (List<Spell>)NBTExtras.NBTToList(nbt.getTagList("spells", NBT.TAG_INT),

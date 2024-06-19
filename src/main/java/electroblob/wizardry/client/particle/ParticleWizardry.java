@@ -128,7 +128,7 @@ public abstract class ParticleWizardry extends Particle {
 		// Deals with the textures
 		if(textures.length > 0){
 			
-			sprites = Arrays.stream(textures).map(t -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(
+			sprites = Arrays.stream(textures).map(t -> Minecraft.getInstance().getTextureMapBlocks().getAtlasSprite(
 					t.toString())).collect(Collectors.toList()).toArray(new TextureAtlasSprite[0]);
 			
 			this.setParticleTexture(sprites[0]);

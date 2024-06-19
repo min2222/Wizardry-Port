@@ -79,7 +79,7 @@ public final class CustomSoundCategory {
 		// Replace the map in the GameSettings.class
 		// >> Electroblob: Fully qualified names, because this class gets loaded on both sides
 		ObfuscationReflectionHelper.setPrivateValue(net.minecraft.client.settings.GameSettings.class,
-				net.minecraft.client.Minecraft.getMinecraft().gameSettings, soundLevels, SRG_soundLevels);
+				net.minecraft.client.Minecraft.getInstance().gameSettings, soundLevels, SRG_soundLevels);
 	}
 
 }

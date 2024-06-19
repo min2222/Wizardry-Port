@@ -124,7 +124,7 @@ public class FrostBarrier extends Spell {
 		barrier.setCaster(caster);
 		barrier.lifetime = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 		barrier.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-		barrier.setRotation((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.getXRot());
+		barrier.setRot((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.getXRot());
 		barrier.setSizeMultiplier(scale);
 		barrier.setDelay(1 + 3 * index); // Delay 0 seems to move it down 1 block, no idea why
 

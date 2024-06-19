@@ -120,6 +120,9 @@ public class Wizardry {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		WizardryEntities.ENTITY_TYPES.register(bus);
 		WizardryPotions.EFFECTS.register(bus);
+		WizardryItems.ITEMS.register(bus);
+		WizardryBlocks.BLOCKS.register(bus);
+		WizardryBlocks.BLOCK_ENTITIES.register(bus);
 	}
 
 	@EventHandler

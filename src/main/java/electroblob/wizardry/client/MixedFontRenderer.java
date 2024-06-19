@@ -31,11 +31,11 @@ public class MixedFontRenderer extends Font {
 			String section = string.substring(0, string.indexOf('#'));
 
 			if(sga){
-				l += Minecraft.getMinecraft().standardGalacticFontRenderer.drawString(section, x, y, colour, shadow);
-				x += Minecraft.getMinecraft().standardGalacticFontRenderer.getStringWidth(section);
+				l += Minecraft.getInstance().standardGalacticFontRenderer.drawString(section, x, y, colour, shadow);
+				x += Minecraft.getInstance().standardGalacticFontRenderer.getStringWidth(section);
 			}else{
-				l += Minecraft.getMinecraft().fontRenderer.drawString(section, x, y, colour, shadow);
-				x += Minecraft.getMinecraft().fontRenderer.getStringWidth(section);
+				l += Minecraft.getInstance().fontRenderer.drawString(section, x, y, colour, shadow);
+				x += Minecraft.getInstance().fontRenderer.getStringWidth(section);
 			}
 
 			string = string.substring(string.indexOf('#') + 1);
@@ -43,9 +43,9 @@ public class MixedFontRenderer extends Font {
 		}
 
 		if(sga){
-			l += Minecraft.getMinecraft().standardGalacticFontRenderer.drawString(string, x, y, colour, shadow);
+			l += Minecraft.getInstance().standardGalacticFontRenderer.drawString(string, x, y, colour, shadow);
 		}else{
-			l += Minecraft.getMinecraft().fontRenderer.drawString(string, x, y, colour, shadow);
+			l += Minecraft.getInstance().fontRenderer.drawString(string, x, y, colour, shadow);
 		}
 
 		return l;
@@ -63,9 +63,9 @@ public class MixedFontRenderer extends Font {
 			String section = string.substring(0, string.indexOf('#'));
 
 			if(sga){
-				l += Minecraft.getMinecraft().standardGalacticFontRenderer.getStringWidth(section);
+				l += Minecraft.getInstance().standardGalacticFontRenderer.getStringWidth(section);
 			}else{
-				l += Minecraft.getMinecraft().fontRenderer.getStringWidth(section);
+				l += Minecraft.getInstance().fontRenderer.getStringWidth(section);
 			}
 
 			string = string.substring(string.indexOf('#') + 1);
@@ -73,9 +73,9 @@ public class MixedFontRenderer extends Font {
 		}
 
 		if(sga){
-			l += Minecraft.getMinecraft().standardGalacticFontRenderer.getStringWidth(string);
+			l += Minecraft.getInstance().standardGalacticFontRenderer.getStringWidth(string);
 		}else{
-			l += Minecraft.getMinecraft().fontRenderer.getStringWidth(string);
+			l += Minecraft.getInstance().fontRenderer.getStringWidth(string);
 		}
 
 		return l;
@@ -86,10 +86,10 @@ public class MixedFontRenderer extends Font {
 	public void drawSplitString(String string, int x, int y, int width, int colour){
 
 		if(string.contains("#")){
-			Minecraft.getMinecraft().standardGalacticFontRenderer.drawSplitString(string.substring(1), x, y, width,
+			Minecraft.getInstance().standardGalacticFontRenderer.drawSplitString(string.substring(1), x, y, width,
 					colour);
 		}else{
-			Minecraft.getMinecraft().fontRenderer.drawSplitString(string, x, y, width, colour);
+			Minecraft.getInstance().fontRenderer.drawSplitString(string, x, y, width, colour);
 		}
 	}
 

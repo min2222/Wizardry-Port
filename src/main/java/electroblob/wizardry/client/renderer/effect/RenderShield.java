@@ -29,9 +29,9 @@ public class RenderShield {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 		// Only render in first person
-		if(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0){
+		if(Minecraft.getInstance().gameSettings.thirdPersonView == 0){
 
-			Player player = Minecraft.getMinecraft().player;
+			Player player = Minecraft.getInstance().player;
 
 			if(WizardData.get(player).getVariable(Shield.SHIELD_KEY) != null && EntityUtils.isCasting(player, Spells.shield)){
 
@@ -71,7 +71,7 @@ public class RenderShield {
 
 				Tessellator tessellator = Tessellator.getInstance();
 
-				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+				Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 
 				render(tessellator);
 
@@ -143,7 +143,7 @@ public class RenderShield {
 
 			Tessellator tessellator = Tessellator.getInstance();
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+			Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 
 			render(tessellator);
 

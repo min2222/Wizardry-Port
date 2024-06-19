@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.NetworkHooks;
 
 /**
@@ -50,8 +51,6 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 
 	public EntityMagicConstruct(EntityType<? extends Entity> type, Level world){
 		super(type, world);
-		this.getBbHeight() = 1.0f;
-		this.width = 1.0f;
 		this.noPhysics = true;
 	}
 
@@ -59,9 +58,9 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	// it to stick in blocks.
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void setPositionAndRotationDirect(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport){
-		this.setPosition(x, y, z);
-		this.setRotation(yaw, pitch);
+	public void lerpTo(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport){
+		this.setPos(x, y, z);
+		this.setRot(yaw, pitch);
 	}
 
 	public void tick(){
@@ -75,7 +74,7 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	}
 
 	@Override
-	public InteractionResult applyPlayerInteraction(Player player, Vec3 vec, InteractionHand hand){
+	public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand){
 
 		// Permanent constructs can now be dispelled by sneak-right-clicking
 		if(lifetime == -1 && getCaster() == player && player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof ISpellCastingItem){
@@ -83,7 +82,7 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 			return InteractionResult.SUCCESS;
 		}
 
-		return super.applyPlayerInteraction(player, vec, hand);
+		return super.interactAt(player, vec, hand);
 	}
 
 	/**
@@ -195,7 +194,12 @@ public abstract class EntityMagicConstruct extends Entity implements OwnableEnti
 	}
 
 	@Override
-	public boolean isPushedByWater(){
+	public boolean isPushedByFluid(){
+		return false;
+	}
+	
+	@Override
+	public boolean isPushedByFluid(FluidType type) {
 		return false;
 	}
 	

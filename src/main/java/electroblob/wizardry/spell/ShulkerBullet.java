@@ -10,7 +10,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +67,7 @@ public class ShulkerBullet extends Spell {
 			List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(range, x, y, z, world);
 
 			possibleTargets.remove(caster);
-			possibleTargets.removeIf(t -> t instanceof EntityArmorStand);
+			possibleTargets.removeIf(t -> t instanceof ArmorStand);
 
 			if(possibleTargets.isEmpty()) return false;
 
@@ -76,25 +78,25 @@ public class ShulkerBullet extends Spell {
 
 			// Y axis because the player is always upright
 			if(caster != null){
-				world.addFreshEntity(new EntityShulkerBullet(world, caster, target, direction.getAxis()));
+				world.addFreshEntity(new net.minecraft.world.entity.projectile.ShulkerBullet(world, caster, target, direction.getAxis()));
 			}else{
 				// Can't use the normal constructor because it doesn't accept null for the owner
-				EntityShulkerBullet bullet = new EntityShulkerBullet(world);
-				bullet.setLocationAndAngles(x, y, z, bullet.getYRot(), bullet.rotationPitch);
+				net.minecraft.world.entity.projectile.ShulkerBullet bullet = new net.minecraft.world.entity.projectile.ShulkerBullet(EntityType.SHULKER_BULLET, world);
+				bullet.moveTo(x, y, z, bullet.getYRot(), bullet.getXRot());
 
 				// Where there's a will there's a way...
 				CompoundTag nbt = new CompoundTag();
-				bullet.writeToNBT(nbt);
-				nbt.putInt("Dir", direction.getIndex());
-				BlockPos pos = new BlockPos(target);
-				CompoundTag targetTag = NbtUtils.createUUIDTag(target.getUUID());
+				bullet.save(nbt);
+				nbt.putInt("Dir", direction.get3DDataValue());
+				BlockPos pos = target.blockPosition();
+				CompoundTag targetTag = NbtUtils.createUUID(target.getUUID());
 				targetTag.putInt("X", pos.getX());
 				targetTag.putInt("Y", pos.getY());
 				targetTag.putInt("Z", pos.getZ());
 				NBTExtras.storeTagSafely(nbt, "Target", targetTag);
-				bullet.readFromNBT(nbt); // LOL I just modified private fields without reflection
+				bullet.load(nbt); // LOL I just modified private fields without reflection
 
-				bullet.getPersistentData().setFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
+				bullet.getPersistentData().putFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));
 
 				world.addFreshEntity(bullet);
 			}

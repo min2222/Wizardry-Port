@@ -55,7 +55,7 @@ public class Intimidate extends SpellAreaEffect {
 			CompoundTag entityNBT = target.getPersistentData();
 			if(entityNBT != null) entityNBT.putUUID(NBT_KEY, caster.getUUID());
 
-			target.addEffect(new MobEffectInstance(WizardryPotions.fear,
+			target.addEffect(new MobEffectInstance(WizardryPotions.FEAR.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}
@@ -120,7 +120,7 @@ public class Intimidate extends SpellAreaEffect {
 	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		// No need to do this every tick either
-		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.fear)
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.FEAR.get())
 				&& event.getEntity() instanceof PathfinderMob){
 
 			CompoundTag entityNBT = event.getEntity().getPersistentData();
@@ -132,7 +132,7 @@ public class Intimidate extends SpellAreaEffect {
 
 				if(caster instanceof LivingEntity){
 					double distance = BASE_AVOID_DISTANCE + AVOID_DISTANCE_PER_LEVEL
-							* event.getEntity().getEffect(WizardryPotions.fear).getAmplifier();
+							* event.getEntity().getEffect(WizardryPotions.FEAR.get()).getAmplifier();
 					runAway(creature, (LivingEntity)caster, distance);
 				}
 			}

@@ -22,7 +22,7 @@ public class HandbookToast implements IToast {
 
     public IToast.Visibility draw(GuiToast toastGui, long delta){
 
-        toastGui.getMinecraft().getTextureManager().bindTexture(TEXTURE_TOASTS);
+        toastGui.getInstance().getTextureManager().bindTexture(TEXTURE_TOASTS);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F);
         toastGui.drawTexturedModalRect(0, 0, 0, 32, 160, 32);
@@ -36,17 +36,17 @@ public class HandbookToast implements IToast {
 
         int c = firstPart ? -11534256 : -16777216;
 
-        List<String> list = toastGui.getMinecraft().fontRenderer.listFormattedStringToWidth(s, 125);
+        List<String> list = toastGui.getInstance().fontRenderer.listFormattedStringToWidth(s, 125);
 
-        int h = 16 - list.size() * toastGui.getMinecraft().fontRenderer.FONT_HEIGHT / 2;
+        int h = 16 - list.size() * toastGui.getInstance().fontRenderer.FONT_HEIGHT / 2;
 
         for(String line : list){
-            toastGui.getMinecraft().fontRenderer.drawString(line, 30, h, c | a);
-            h += toastGui.getMinecraft().fontRenderer.FONT_HEIGHT;
+            toastGui.getInstance().fontRenderer.drawString(line, 30, h, c | a);
+            h += toastGui.getInstance().fontRenderer.FONT_HEIGHT;
         }
 
         RenderHelper.enableGUIStandardItemLighting();
-        toastGui.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(null, new ItemStack(WizardryItems.wizard_handbook), 8, 8);
+        toastGui.getInstance().getRenderItem().renderItemAndEffectIntoGUI(null, new ItemStack(WizardryItems.wizard_handbook), 8, 8);
 
         return delta >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
     }

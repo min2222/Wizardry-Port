@@ -92,7 +92,7 @@ public class RenderArcaneWorkbench extends TileEntitySpecialRenderer<TileEntityA
 			GlStateManager.translate(0.0F, 0.0F, 0.56f + 0.05f * Mth.sin((tileentity.timer + partialTicks)/15));//(float)tileentity.yOffset / 5000.0F + 0.55f);
 			GlStateManager.scale(0.75F, 0.75F, 0.75F);
 			// This is what the item frame uses so it's definitely what we want.
-			Minecraft.getMinecraft().getRenderItem().renderItem(stack, TransformType.FIXED);
+			Minecraft.getInstance().getRenderItem().renderItem(stack, TransformType.FIXED);
 			GlStateManager.popMatrix();
 		}
 	}

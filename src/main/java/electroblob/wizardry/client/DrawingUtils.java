@@ -242,7 +242,7 @@ public final class DrawingUtils {
 	 */
 	public static void drawItemAndTooltip(GuiContainer gui, ItemStack stack, int x, int y, int mouseX, int mouseY, boolean tooltip){
 	
-		RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+		RenderItem renderItem = Minecraft.getInstance().getRenderItem();
 		GlStateManager.pushMatrix();
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
@@ -253,7 +253,7 @@ public final class DrawingUtils {
 	
 		if(!stack.isEmpty()){
 			renderItem.renderItemAndEffectIntoGUI(stack, x, y);
-			renderItem.renderItemOverlays(Minecraft.getMinecraft().fontRenderer, stack, x, y);
+			renderItem.renderItemOverlays(Minecraft.getInstance().fontRenderer, stack, x, y);
 	
 			if(tooltip){
 				gui.drawHoveringText(gui.getItemToolTip(stack), mouseX + gui.getXSize()/2 - gui.width/2,

@@ -65,7 +65,7 @@ public final class WizardryPotions {
 	public static final RegistryObject<MobEffect> CURSE_OF_UNDEATH = placeholder();
 	public static final RegistryObject<MobEffect> CONTAINMENT = placeholder();
 	public static final RegistryObject<MobEffect> FROST_STEP = placeholder();
-	public static final RegistryObject<MobEffect> MARK_OF_SARCRIFICE = placeholder();
+	public static final RegistryObject<MobEffect> MARK_OF_SACRIFICE = placeholder();
 	public static final RegistryObject<MobEffect> MIRAGE = placeholder();
 	public static final RegistryObject<MobEffect> OAKFLESH = placeholder();
 	public static final RegistryObject<MobEffect> IRONFLESH = placeholder();

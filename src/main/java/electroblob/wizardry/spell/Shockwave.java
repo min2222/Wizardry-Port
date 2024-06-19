@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
@@ -100,7 +101,7 @@ public class Shockwave extends SpellAreaEffect {
 			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();
 
-			BlockState block = level.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
+			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
 				world.addParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
@@ -110,7 +111,7 @@ public class Shockwave extends SpellAreaEffect {
 
 		ParticleBuilder.create(Type.SPHERE).pos(origin.add(0, 0.1, 0)).scale((float)radius * 0.8f).clr(0.8f, 0.9f, 1).spawn(world);
 
-		world.addParticle(ParticleTypes.EXPLOSION_LARGE, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
+		world.addParticle(ParticleTypes.EXPLOSION, origin.x, origin.y + 0.1, origin.z, 0, 0, 0);
 	}
 
 }

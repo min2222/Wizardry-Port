@@ -51,8 +51,8 @@ public class GuiButtonResurrect extends GuiButton {
 	@SubscribeEvent
 	public static void onGuiScreenInitEvent(GuiScreenEvent.InitGuiEvent event){
 
-		if(event.getGui() instanceof GuiGameOver && ItemArtefact.isArtefactActive(Minecraft.getMinecraft().player, WizardryItems.amulet_resurrection)
-				&& InventoryUtils.getHotbar(Minecraft.getMinecraft().player).stream().anyMatch(s -> Resurrection.canStackResurrect(s, Minecraft.getMinecraft().player))){
+		if(event.getGui() instanceof GuiGameOver && ItemArtefact.isArtefactActive(Minecraft.getInstance().player, WizardryItems.amulet_resurrection)
+				&& InventoryUtils.getHotbar(Minecraft.getInstance().player).stream().anyMatch(s -> Resurrection.canStackResurrect(s, Minecraft.getInstance().player))){
 
 			event.getButtonList().add(new GuiButtonResurrect(event.getButtonList().size(), event.getGui().width / 2 - 100,
 					event.getGui().getBbHeight() / 4 + 120, "spell." + Spells.resurrection.getRegistryName() + ".button"));
@@ -65,18 +65,18 @@ public class GuiButtonResurrect extends GuiButton {
 
 		if(event.getGui() instanceof GuiGameOver){
 
-			ItemStack stack = InventoryUtils.getHotbar(Minecraft.getMinecraft().player).stream()
-					.filter(s -> Resurrection.canStackResurrect(s, Minecraft.getMinecraft().player)).findFirst().orElse(null);
+			ItemStack stack = InventoryUtils.getHotbar(Minecraft.getInstance().player).stream()
+					.filter(s -> Resurrection.canStackResurrect(s, Minecraft.getInstance().player)).findFirst().orElse(null);
 
 			if(stack != null){
 
 				if(event.getButton() instanceof GuiButtonResurrect && timeSinceDeath >= 0){
 					// Cast resurrection on the client player and notify the server to do the same
 					// ISpellCastingItem#canCast already checked in Resurrection#canStackResurrect
-					((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, Minecraft.getMinecraft().player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
+					((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, Minecraft.getInstance().player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.RESURRECT_BUTTON));
 
-				}else if(!Minecraft.getMinecraft().level.getGameRules().getBoolean("keepInventory")){
+				}else if(!Minecraft.getInstance().level.getGameRules().getBoolean("keepInventory")){
 					// Any other button drops the wand (N.B. this should be inside the stack != null check or it'll send
 					// packets unnecessarily and generate incorrect warnings
 					WizardryPacketHandler.net.sendToServer(new PacketControlInput.Message(PacketControlInput.ControlType.CANCEL_RESURRECT));

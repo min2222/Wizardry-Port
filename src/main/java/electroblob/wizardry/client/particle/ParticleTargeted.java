@@ -84,7 +84,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 
 		// Translates the particle a short distance in front of the entity
 		if(this.entity != null && this.shouldApplyOriginOffset()){
-			if(this.entity != viewer || Minecraft.getMinecraft().gameSettings.thirdPersonView != 0){
+			if(this.entity != viewer || Minecraft.getInstance().gameSettings.thirdPersonView != 0){
 				Vec3 look = entity.getLook(partialTicks).scale(THIRD_PERSON_AXIAL_OFFSET);
 				x += look.x;
 				y += look.y;

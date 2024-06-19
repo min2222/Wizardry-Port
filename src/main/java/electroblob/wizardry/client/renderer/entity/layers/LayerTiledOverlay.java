@@ -222,9 +222,9 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 	@SuppressWarnings("unchecked")
 	public static <T extends LivingEntity> void initialiseLayers(Class<T> entityType, Function<RenderLivingBase<T>, LayerRenderer<? extends T>> layerFactory){
 
-		for(Class<? extends Entity> c : Minecraft.getMinecraft().getRenderManager().entityRenderMap.keySet()){
+		for(Class<? extends Entity> c : Minecraft.getInstance().getRenderManager().entityRenderMap.keySet()){
 			if(entityType.isAssignableFrom(c)){
-				Render<T> renderer = Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(c);
+				Render<T> renderer = Minecraft.getInstance().getRenderManager().getEntityClassRenderObject(c);
 				if(renderer instanceof RenderLivingBase<?>){ // Should always be true
 					// For some reason IntelliJ is quite happy with this cast, even without suppress warnings
 					// Instinct suggests Java shouldn't be happy casting to RenderLivingBase<T> but somehow it works
@@ -235,7 +235,7 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 
 		// Players have a separate renderer map
 		if(entityType.isAssignableFrom(Player.class)){
-			for(RenderPlayer renderer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()){
+			for(RenderPlayer renderer : Minecraft.getInstance().getRenderManager().getSkinMap().values()){
 				renderer.addLayer(layerFactory.apply((RenderLivingBase<T>)renderer)); // This does need suppress warnings
 			}
 		}

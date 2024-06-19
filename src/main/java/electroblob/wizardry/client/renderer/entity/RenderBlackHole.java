@@ -131,7 +131,7 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 		// Renders the aura effect
 
 		// This counteracts the reverse rotation behaviour when in front f5 view. Vanilla now has this fix too.
-		float yaw = Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? this.renderManager.playerViewX
+		float yaw = Minecraft.getInstance().gameSettings.thirdPersonView == 2 ? this.renderManager.playerViewX
 				: -this.renderManager.playerViewX;
 		GlStateManager.rotate(180.0F - this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(yaw, 1.0F, 0.0F, 0.0F);

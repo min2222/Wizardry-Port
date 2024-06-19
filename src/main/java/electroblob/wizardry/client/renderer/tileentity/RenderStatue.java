@@ -51,7 +51,7 @@ public class RenderStatue extends TileEntitySpecialRenderer<TileEntityStatue> {
 			if(!statue.isIce) statue.creature.setInvisible(true);
 			// Setting the last parameter to true prevents the debug bounding box from rendering.
 			// For some reason, passing in the partialTicks causes the entity to spin round really fast
-			Minecraft.getMinecraft().getRenderManager().renderEntity(statue.creature, 0, 0, 0, 0, 0, true);
+			Minecraft.getInstance().getRenderManager().renderEntity(statue.creature, 0, 0, 0, 0, 0, true);
 			if(!statue.isIce) statue.creature.setInvisible(false);
 
 			GlStateManager.popMatrix();

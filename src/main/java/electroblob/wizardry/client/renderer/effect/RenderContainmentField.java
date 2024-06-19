@@ -38,7 +38,7 @@ public class RenderContainmentField {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 
 		if(player.hasEffect(WizardryPotions.containment)){
 
@@ -65,7 +65,7 @@ public class RenderContainmentField {
 
 			GlStateManager.color(1, 1, 1, 1);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
+			Minecraft.getInstance().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
 
 			Tessellator tessellator = Tessellator.getInstance();
 

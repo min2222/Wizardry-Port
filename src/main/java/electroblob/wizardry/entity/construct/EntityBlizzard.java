@@ -1,6 +1,9 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -9,17 +12,23 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class EntityBlizzard extends EntityScaledConstruct {
 
 	public EntityBlizzard(Level world){
-		super(world);
+		this(WizardryEntities.BLIZZARD.get(), world);
+		// TODO: Set the size properly and do whatever forcefield does to allow block and entity interaction inside it
+		// 		 (Probably need to do this for several others too)
+		setSize(Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);
+	}
+	
+	public EntityBlizzard(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 		// TODO: Set the size properly and do whatever forcefield does to allow block and entity interaction inside it
 		// 		 (Probably need to do this for several others too)
 		setSize(Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);

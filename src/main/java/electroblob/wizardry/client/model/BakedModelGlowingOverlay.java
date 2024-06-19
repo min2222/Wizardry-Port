@@ -124,7 +124,7 @@ public class BakedModelGlowingOverlay implements IBakedModel {
 
 		UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(newFormat);
 
-		VertexLighterFlat trans = new VertexLighterFlat(Minecraft.getMinecraft().getBlockColors()) {
+		VertexLighterFlat trans = new VertexLighterFlat(Minecraft.getInstance().getBlockColors()) {
 			@Override
 			protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z){
 				lightmap[0] = light;

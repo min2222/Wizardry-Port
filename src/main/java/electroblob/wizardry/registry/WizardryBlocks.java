@@ -1,19 +1,50 @@
 package electroblob.wizardry.registry;
 
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.block.*;
-import electroblob.wizardry.tileentity.*;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
+import electroblob.wizardry.block.BlockArcaneWorkbench;
+import electroblob.wizardry.block.BlockBookshelf;
+import electroblob.wizardry.block.BlockCrystal;
+import electroblob.wizardry.block.BlockCrystalFlower;
+import electroblob.wizardry.block.BlockCrystalFlowerPot;
+import electroblob.wizardry.block.BlockCrystalOre;
+import electroblob.wizardry.block.BlockDryFrostedIce;
+import electroblob.wizardry.block.BlockGildedWood;
+import electroblob.wizardry.block.BlockImbuementAltar;
+import electroblob.wizardry.block.BlockLectern;
+import electroblob.wizardry.block.BlockMagicLight;
+import electroblob.wizardry.block.BlockObsidianCrust;
+import electroblob.wizardry.block.BlockPedestal;
+import electroblob.wizardry.block.BlockPermafrost;
+import electroblob.wizardry.block.BlockReceptacle;
+import electroblob.wizardry.block.BlockRunestone;
+import electroblob.wizardry.block.BlockSnare;
+import electroblob.wizardry.block.BlockSpectral;
+import electroblob.wizardry.block.BlockStatue;
+import electroblob.wizardry.block.BlockThorns;
+import electroblob.wizardry.block.BlockTransportationStone;
+import electroblob.wizardry.block.BlockVanishingCobweb;
+import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
+import electroblob.wizardry.tileentity.TileEntityBookshelf;
+import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
+import electroblob.wizardry.tileentity.TileEntityLectern;
+import electroblob.wizardry.tileentity.TileEntityPlayerSave;
+import electroblob.wizardry.tileentity.TileEntityReceptacle;
+import electroblob.wizardry.tileentity.TileEntityShrineCore;
+import electroblob.wizardry.tileentity.TileEntityStatue;
+import electroblob.wizardry.tileentity.TileEntityThorns;
+import electroblob.wizardry.tileentity.TileEntityTimer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Class responsible for defining, storing and registering all of wizardry's blocks. Also handles registry of the
@@ -22,7 +53,6 @@ import javax.annotation.Nonnull;
  * @author Electroblob
  * @since Wizardry 2.1
  */
-@ObjectHolder(Wizardry.MODID)
 @Mod.EventBusSubscriber
 public final class WizardryBlocks {
 
@@ -34,15 +64,14 @@ public final class WizardryBlocks {
 	// Anything set to use the material 'air' will not render, even with a TESR!
 
 	// setSoundType should be public, but in this particular version it isn't... which is a bit of a pain.
+	
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, Wizardry.MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, Wizardry.MODID);
 
-	@Nonnull
-	@SuppressWarnings("ConstantConditions")
-	private static <T> T placeholder(){ return null; }
-
-	public static final Block arcane_workbench = placeholder();
-	public static final Block crystal_ore = placeholder();
-	public static final Block crystal_flower = placeholder();
-	public static final Block transportation_stone = placeholder();
+    public static final RegistryObject<Block> ARCANE_WORKBENCH = BLOCKS.register("arcane_workbench", () -> new BlockArcaneWorkbench());
+    public static final RegistryObject<Block> CRYSTAL_ORE = BLOCKS.register("crystal_ore", () -> new BlockCrystalOre());
+    public static final RegistryObject<Block> CRYSTAL_FLOWER = BLOCKS.register("crystal_flower", () -> new BlockCrystalFlower());
+	public static final Block TRANSPORTATION_STONE = placeholder();
 	public static final Block crystal_block = placeholder();
 
 	public static final Block petrified_stone = placeholder();
@@ -145,21 +174,5 @@ public final class WizardryBlocks {
 		registerBlock(registry, "receptacle", 			new BlockReceptacle());
 		registerBlock(registry, "imbuement_altar", 		new BlockImbuementAltar());
 
-	}
-
-	/** Called from the preInit method in the main mod class to register all the tile entities. */
-	public static void registerTileEntities(){
-		// Nope, these still don't have their own registry...
-		GameRegistry.registerTileEntity(TileEntityArcaneWorkbench.class, 	new ResourceLocation(Wizardry.MODID, "arcane_workbench"));
-		GameRegistry.registerTileEntity(TileEntityStatue.class, 			new ResourceLocation(Wizardry.MODID, "petrified_stone"));
-		GameRegistry.registerTileEntity(TileEntityMagicLight.class, 		new ResourceLocation(Wizardry.MODID, "magic_light"));
-		GameRegistry.registerTileEntity(TileEntityTimer.class, 				new ResourceLocation(Wizardry.MODID, "timer"));
-		GameRegistry.registerTileEntity(TileEntityPlayerSave.class, 		new ResourceLocation(Wizardry.MODID, "player_save"));
-		GameRegistry.registerTileEntity(TileEntityThorns.class, 			new ResourceLocation(Wizardry.MODID, "player_save_timed"));
-		GameRegistry.registerTileEntity(TileEntityShrineCore.class, 		new ResourceLocation(Wizardry.MODID, "shrine_core"));
-		GameRegistry.registerTileEntity(TileEntityBookshelf.class, 			new ResourceLocation(Wizardry.MODID, "bookshelf"));
-		GameRegistry.registerTileEntity(TileEntityLectern.class, 			new ResourceLocation(Wizardry.MODID, "lectern"));
-		GameRegistry.registerTileEntity(TileEntityReceptacle.class, 		new ResourceLocation(Wizardry.MODID, "receptacle"));
-		GameRegistry.registerTileEntity(TileEntityImbuementAltar.class, 	new ResourceLocation(Wizardry.MODID, "imbuement_altar"));
 	}
 }

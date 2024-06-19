@@ -239,7 +239,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		ItemStack remainder = ItemStack.EMPTY;
 		Slot slot = this.slots.get(clickedSlotId);
 
-		if(slot != null && slot.getHasStack()){
+		if(slot != null && slot.hasItem()){
 
 			ItemStack stack = slot.getItem(); // The stack that was there originally
 			remainder = stack.copy(); // A copy of that stack
@@ -307,7 +307,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 	@Nullable
 	private int[] findSlotRangeForItem(ItemStack stack){
 
-		if(this.getSlot(0).isItemValid(stack)){ // Spell books
+		if(this.getSlot(0).mayPlace(stack)){ // Spell books
 
 			ItemStack centreStack = getSlot(CENTRE_SLOT).getItem();
 
@@ -321,13 +321,13 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 				}
 			}
 
-		}else if(getSlot(CRYSTAL_SLOT).isItemValid(stack)){
+		}else if(getSlot(CRYSTAL_SLOT).mayPlace(stack)){
 			return new int[]{CRYSTAL_SLOT, CRYSTAL_SLOT};
 
-		}else if(getSlot(CENTRE_SLOT).isItemValid(stack)){
+		}else if(getSlot(CENTRE_SLOT).mayPlace(stack)){
 			return new int[]{CENTRE_SLOT, CENTRE_SLOT};
 
-		}else if(getSlot(UPGRADE_SLOT).isItemValid(stack)){
+		}else if(getSlot(UPGRADE_SLOT).mayPlace(stack)){
 			return new int[]{UPGRADE_SLOT, UPGRADE_SLOT};
 		}
 
@@ -383,7 +383,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		// Finally add all other empty slots (these will be the ones that used to contain something else)
 		slots.addAll(bookshelfSlots.stream().filter(s -> !s.getHasStack()).collect(Collectors.toList()));
 
-		slots.removeIf(s -> !s.isItemValid(stack)); // Should never be true, but just in case...
+		slots.removeIf(s -> !s.mayPlace(stack)); // Should never be true, but just in case...
 
 		// Now we have a set of slots in order of priority to try merging into
 		// We already know the stack will fit, so it's simply a question of distributing it
@@ -518,7 +518,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 	public void updateActiveBookshelfSlots(){
 		activeBookshelfSlots = bookshelfSlots.stream().filter(s -> s.isValid() && !s.getItem().isEmpty()
 				// Slot 0 is a convenient way of testing if the item is a valid spell book
-				&& this.getSlot(0).isItemValid(s.getItem())
+				&& this.getSlot(0).mayPlace(s.getItem())
 				&& Spell.byMetadata(s.getItem().getMetadata()).matches(searchText))
 				// TODO: This doesn't account for non-spell book items at the moment
 				.sorted(Comparator.comparing(s -> Spell.byMetadata(s.getItem().getMetadata()),

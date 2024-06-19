@@ -66,10 +66,10 @@ public abstract class GuiSpellInfo extends Screen {
 		GlStateManager.color(1, 1, 1, 1); // Just in case
 
 		// Draws spell illustration on opposite page, underneath the book so it shows through the hole.
-		Minecraft.getMinecraft().renderEngine.bindTexture(discovered ? getSpell().getIcon() : Spells.none.getIcon());
+		Minecraft.getInstance().renderEngine.bindTexture(discovered ? getSpell().getIcon() : Spells.none.getIcon());
 		DrawingUtils.drawTexturedRect(left + 146, top + 20, 0, 0, 128, 128, 128, 128);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(getTexture());
+		Minecraft.getInstance().renderEngine.bindTexture(getTexture());
 		DrawingUtils.drawTexturedRect(left, top, 0, 0, xSize, ySize, textureWidth, textureHeight);
 	}
 

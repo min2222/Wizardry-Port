@@ -152,7 +152,7 @@ public abstract class WorldGenWizardryStructure implements IWorldGenerator {
 			ResourceLocation structureFile = getStructureFile(random);
 
 			Template template = level.getSaveHandler().getStructureTemplateManager().getTemplate(
-					level.getMinecraftServer(), structureFile);
+					level.getInstanceServer(), structureFile);
 
 			BlockPos size = template.getSize();
 

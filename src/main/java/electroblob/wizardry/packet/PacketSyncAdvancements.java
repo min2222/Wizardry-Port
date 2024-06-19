@@ -20,7 +20,7 @@ public class PacketSyncAdvancements implements IMessageHandler<PacketSyncAdvance
 		if(ctx.side.isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> Wizardry.proxy.handleAdvancementSyncPacket(message));
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleAdvancementSyncPacket(message));
 		}
 
 		return null;

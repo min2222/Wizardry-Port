@@ -142,7 +142,7 @@ class CraftingRecipe {
 	private static void renderCraftingRecipe(Font font, RenderItem itemRenderer, int x, int y, @Nullable IRecipe recipe){
 
 		GlStateManager.color(1, 1, 1, 1);
-		Minecraft.getMinecraft().renderEngine.bindTexture(GuiWizardHandbook.texture);
+		Minecraft.getInstance().renderEngine.bindTexture(GuiWizardHandbook.texture);
 
 		DrawingUtils.drawTexturedRect(x, y, TEXTURE_INSET_X, TEXTURE_INSET_Y, WIDTH, HEIGHT, GuiWizardHandbook.TEXTURE_WIDTH, GuiWizardHandbook.TEXTURE_HEIGHT);
 

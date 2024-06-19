@@ -34,8 +34,8 @@ public class RenderSigil extends Render<EntityMagicConstruct> {
 		// Makes the sigil invisible to enemies of the player that created it
 		if(this.invisibleToEnemies){
 			// Unfortunately we can't access the caster's allies if they're not online, it only works the other way round
-			if(entity.getCaster() != Minecraft.getMinecraft().player && entity.getCaster() instanceof Player
-					&& !AllyDesignationSystem.isPlayerAlly((Player)entity.getCaster(), Minecraft.getMinecraft().player)){
+			if(entity.getCaster() != Minecraft.getInstance().player && entity.getCaster() instanceof Player
+					&& !AllyDesignationSystem.isPlayerAlly((Player)entity.getCaster(), Minecraft.getInstance().player)){
 				return;
 			}
 		}

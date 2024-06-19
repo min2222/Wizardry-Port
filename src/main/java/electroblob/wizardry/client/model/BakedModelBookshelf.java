@@ -27,7 +27,7 @@ public class BakedModelBookshelf implements IBakedModel {
 	@Override
 	public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, long rand){
 
-		IBakedModel fallback = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel();
+		IBakedModel fallback = Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel();
 		if(state == null) return fallback.getQuads(null, side, rand);
 
 		// It took me waaay too long to realise I needed a new list here

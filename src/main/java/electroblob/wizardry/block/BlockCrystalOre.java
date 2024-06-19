@@ -1,24 +1,23 @@
 package electroblob.wizardry.block;
 
+import java.util.Random;
+
 import electroblob.wizardry.registry.WizardryItems;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-
-import java.util.Random;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 
 public class BlockCrystalOre extends Block {
 
-	public BlockCrystalOre(Material material){
-		super(material);
-		this.setSoundType(SoundType.STONE);
-		setResistance(5.0F);
+	public BlockCrystalOre(){
+		super(BlockBehaviour.Properties.of(Material.STONE).sound(SoundType.STONE).strength(3, 5).requiresCorrectToolForDrops());
 		setHarvestLevel("pickaxe", 2);
 	}
 

@@ -382,8 +382,8 @@ public class Possession extends SpellRay {
 			player.capabilities.isFlying = false;
 		}
 
-		if(player.world.isClientSide && player == net.minecraft.client.Minecraft.getMinecraft().player){
-			net.minecraft.client.Minecraft.getMinecraft().entityRenderer.stopUseShader();
+		if(player.world.isClientSide && player == net.minecraft.client.Minecraft.getInstance().player){
+			net.minecraft.client.Minecraft.getInstance().entityRenderer.stopUseShader();
 			Wizardry.proxy.playBlinkEffect(player);
 		}
 

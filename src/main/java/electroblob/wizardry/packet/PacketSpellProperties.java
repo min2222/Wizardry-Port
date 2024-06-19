@@ -19,7 +19,7 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 		// Just to make sure that the side is correct
 		if(ctx.side.isClient()){
 
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> {
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> {
 				for(int i=0; i<message.propertiesArray.length; i++){
 					Spell.byNetworkID(i).setPropertiesClient(message.propertiesArray[i]);
 				}

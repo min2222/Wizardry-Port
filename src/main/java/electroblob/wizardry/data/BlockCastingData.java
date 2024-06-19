@@ -174,8 +174,8 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 //	// Only called client-side
 //	@SubscribeEvent
 //	public static void onClientTickEvent(TickEvent.ClientTickEvent event){
-//		World world = net.minecraft.client.Minecraft.getMinecraft().world;
-//		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getMinecraft().isGamePaused()
+//		World world = net.minecraft.client.Minecraft.getInstance().world;
+//		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getInstance().isGamePaused()
 //				&& world != null){
 //			this.update();
 //		}

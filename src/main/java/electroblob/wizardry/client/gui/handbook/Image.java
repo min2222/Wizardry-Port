@@ -76,7 +76,7 @@ class Image {
 		// Images
 		for(int[] instance : instances){
 			if(GuiWizardHandbook.singleToDoublePage(instance[0]) == doublePage){
-				Minecraft.getMinecraft().renderEngine.bindTexture(location);
+				Minecraft.getInstance().renderEngine.bindTexture(location);
 				GlStateManager.color(1, 1, 1, 1);
 				DrawingUtils.drawTexturedRect(left + instance[1], top + instance[2], u, v, width, height, textureWidth, textureHeight);
 				font.drawString("\u00A7o" + caption, left + instance[1] +  width/ 2 - font.getStringWidth(caption)/2,
@@ -86,7 +86,7 @@ class Image {
 
 		if(border){
 			// Borders - do this after all the images are drawn so we only have to bind the handbook texture again once
-			Minecraft.getMinecraft().renderEngine.bindTexture(GuiWizardHandbook.texture);
+			Minecraft.getInstance().renderEngine.bindTexture(GuiWizardHandbook.texture);
 			GlStateManager.color(1, 1, 1, 1);
 			for(int[] instance : instances){
 				if(GuiWizardHandbook.singleToDoublePage(instance[0]) == doublePage){

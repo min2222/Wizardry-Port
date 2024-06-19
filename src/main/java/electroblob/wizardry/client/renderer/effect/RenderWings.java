@@ -46,7 +46,7 @@ public class RenderWings {
 			GlStateManager.rotate(-player.renderYawOffset, 0, 1, 0);
 			// GlStateManager.rotate(180, 1, 0, 0);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+			Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
 

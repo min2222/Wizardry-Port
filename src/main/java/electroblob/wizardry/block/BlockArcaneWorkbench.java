@@ -3,37 +3,40 @@ package electroblob.wizardry.block;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
-import net.minecraft.world.level.block.BlockContainer;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockFaceShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class BlockArcaneWorkbench extends BlockContainer {
+public class BlockArcaneWorkbench extends BaseEntityBlock {
 
-	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
+	private static final VoxelShape AABB = Shapes.create(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
 
 	public BlockArcaneWorkbench(){
-		super(Material.ROCK);
-		this.setLightLevel(0.8f);
+        super(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().destroyTime(1.0f).lightLevel((p_152688_) -> 12));
 	}
 
 	@Override
-	public net.minecraft.world.phys.AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
+	public VoxelShape getShape(BlockState state, BlockGetter source, BlockPos pos, CollisionContext ctx){
 		return AABB;
 	}
 
 	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new TileEntityArcaneWorkbench();
 	}
 

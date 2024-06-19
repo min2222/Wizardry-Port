@@ -86,7 +86,7 @@ public class ParticleBuff extends ParticleWizardry {
 
 		RenderHelper.disableStandardItemLighting();
 
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+		Minecraft.getInstance().getTextureManager().bindTexture(TEXTURE);
 
 		buffer.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
 

@@ -335,7 +335,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@Override
 	public void addInformation(ItemStack stack, Level world, List<String> text, net.minecraft.client.util.ITooltipFlag advanced){
 
-		Player player = net.minecraft.client.Minecraft.getMinecraft().player;
+		Player player = net.minecraft.client.Minecraft.getInstance().player;
 		if (player == null) { return; }
 		// +0.5f is necessary due to the error in the way floats are calculated.
 		if(element != null) text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.buff",

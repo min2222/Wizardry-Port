@@ -34,7 +34,7 @@ public class RenderBlinkEffect {
 	@SubscribeEvent
 	public static void onPlayerTickEvent(TickEvent.PlayerTickEvent event){
 
-		if(event.player == Minecraft.getMinecraft().player && event.phase == TickEvent.Phase.END){
+		if(event.player == Minecraft.getInstance().player && event.phase == TickEvent.Phase.END){
 
 			if(Wizardry.settings.blinkEffect){
 				if(blinkEffectTimer > 0) blinkEffectTimer--;

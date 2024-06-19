@@ -43,13 +43,13 @@ public class Transience extends Spell {
 			Wizardry.proxy.playBlinkEffect(caster);
 		}
 
-		if(!caster.hasEffect(WizardryPotions.transience)){
+		if(!caster.hasEffect(WizardryPotions.TRANSIENCE.get())){
 
 			if(!world.isClientSide){
 
 				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
 
-				caster.addEffect(new MobEffectInstance(WizardryPotions.transience, duration, 0));
+				caster.addEffect(new MobEffectInstance(WizardryPotions.TRANSIENCE.get(), duration, 0));
 				caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, 0, false, false));
 
 				this.playSound(world, caster, ticksInUse, duration, modifiers);
@@ -64,13 +64,13 @@ public class Transience extends Spell {
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		if(event.getSource() != null){
 			// Prevents all blockable damage while transience is active
-			if(event.getEntity().hasEffect(WizardryPotions.transience)
+			if(event.getEntity().hasEffect(WizardryPotions.TRANSIENCE.get())
 					&& event.getSource() != DamageSource.OUT_OF_WORLD){
 				event.setCanceled(true);
 			}
 			// Prevents transient entities from causing any damage
 			if(event.getSource().getEntity() instanceof LivingEntity
-					&& ((LivingEntity)event.getSource().getEntity()).hasEffect(WizardryPotions.transience)){
+					&& ((LivingEntity)event.getSource().getEntity()).hasEffect(WizardryPotions.TRANSIENCE.get())){
 				event.setCanceled(true);
 			}
 		}
@@ -79,14 +79,14 @@ public class Transience extends Spell {
 	@SubscribeEvent
 	public static void onPlayerInteractEvent(PlayerInteractEvent event){
 		// Prevents transient players from interacting with the world in any way
-		if(event.isCancelable() && event.getEntity().hasEffect(WizardryPotions.transience)){
+		if(event.isCancelable() && event.getEntity().hasEffect(WizardryPotions.TRANSIENCE.get())){
 			event.setCanceled(true);
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPotionAddedEvent(MobEffectEvent.Added event){
-		if(event.getEntity().level.isClientSide && event.getEffectInstance().getEffect() == WizardryPotions.transience
+		if(event.getEntity().level.isClientSide && event.getEffectInstance().getEffect() == WizardryPotions.TRANSIENCE.get()
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());

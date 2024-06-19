@@ -200,7 +200,7 @@ public abstract class GuiButtonHyperlink extends GuiButton {
 
 			if(!target.isUnlocked()) return GuiWizardHandbook.colours.get("text");
 
-			if(!hovered && target.isNew() && !Minecraft.getMinecraft().player.isCreative()){
+			if(!hovered && target.isNew() && !Minecraft.getInstance().player.isCreative()){
 
 				int c = GuiWizardHandbook.colours.get("new_section");
 				int d = GuiWizardHandbook.colours.get("hyperlink");

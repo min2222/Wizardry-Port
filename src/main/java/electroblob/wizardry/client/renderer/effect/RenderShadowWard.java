@@ -27,9 +27,9 @@ public class RenderShadowWard {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 		// Only render in first person
-		if(Minecraft.getMinecraft().gameSettings.thirdPersonView == 0){
+		if(Minecraft.getInstance().gameSettings.thirdPersonView == 0){
 
-			Player player = Minecraft.getMinecraft().player;
+			Player player = Minecraft.getInstance().player;
 
 			if(EntityUtils.isCasting(player, Spells.shadow_ward)){
 
@@ -46,7 +46,7 @@ public class RenderShadowWard {
 				GlStateManager.rotate(-player.rotationYaw, 0, 1, 0);
 				GlStateManager.rotate(player.rotationPitch, 1, 0, 0);
 
-				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+				Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 
 				GlStateManager.pushMatrix();
 
@@ -107,7 +107,7 @@ public class RenderShadowWard {
 			GlStateManager.rotate(180, 0, 1, 0);
 			GlStateManager.rotate(-player.renderYawOffset, 0, 1, 0);
 
-			Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+			Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();

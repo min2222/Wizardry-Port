@@ -175,7 +175,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	@Override
 	default void readSpawnData(FriendlyByteBuf buffer){
 		int id = buffer.readInt();
-		// We're on the client side here, so we can safely use Minecraft.getMinecraft().world via proxies.
+		// We're on the client side here, so we can safely use Minecraft.getInstance().world via proxies.
 		if(id > -1){
 			Entity entity = Wizardry.proxy.getTheWorld().getEntity(id);
 			if(entity instanceof LivingEntity) setCaster((LivingEntity)entity);
@@ -232,7 +232,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	 * Returns a entity selector to be passed into AI methods. Normally, this should not be overridden, but it is
 	 * possible for implementors to override this in order to do something special when selecting a target.
 	 */
-	default Predicate<Entity> getTargetSelector(){
+	default Predicate<LivingEntity> getTargetSelector(){
 		return entity -> !entity.isInvisible() && (getCaster() == null ? entity instanceof Player &&
 				!((Player)entity).isCreative() : isValidTarget(entity));
 	}
@@ -275,8 +275,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	// Delegates
 
 	/**
-	 * Implementors should call this from writeEntityToNBT. Can be overridden as long as super is called, but there's
-	 * very little point in doing that since anything extra could just be added to writeEntityToNBT anyway.
+	 * Implementors should call this from addAdditionalSaveData. Can be overridden as long as super is called, but there's
+	 * very little point in doing that since anything extra could just be added to addAdditionalSaveData anyway.
 	 */
 	default void writeNBTDelegate(CompoundTag tagcompound){
 		if(this.getCaster() != null){
@@ -286,8 +286,8 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	}
 
 	/**
-	 * Implementors should call this from readEntityFromNBT. Can be overridden as long as super is called, but there's
-	 * very little point in doing that since anything extra could just be added to readEntityFromNBT anyway.
+	 * Implementors should call this from readAdditionalSaveData. Can be overridden as long as super is called, but there's
+	 * very little point in doing that since anything extra could just be added to readAdditionalSaveData anyway.
 	 */
 	default void readNBTDelegate(CompoundTag tagcompound){
 		this.setOwnerId(tagcompound.getUUID("casterUUID"));

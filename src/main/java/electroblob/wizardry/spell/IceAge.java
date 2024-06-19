@@ -61,7 +61,7 @@ public class IceAge extends SpellAreaEffect {
 				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
 		}else if(target instanceof Player){
-			target.addEffect(new MobEffectInstance(WizardryPotions.frost,
+			target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
 					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
 					getProperty(EFFECT_STRENGTH).intValue()));
 		}

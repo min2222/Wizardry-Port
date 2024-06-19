@@ -1,23 +1,26 @@
 package electroblob.wizardry.entity.construct;
 
+import java.lang.ref.WeakReference;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Entrapment;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.lang.ref.WeakReference;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber
 public class EntityBubble extends EntityMagicConstruct {
@@ -27,11 +30,15 @@ public class EntityBubble extends EntityMagicConstruct {
 	private WeakReference<LivingEntity> rider;
 
 	public EntityBubble(Level world){
-		super(world);
+		this(WizardryEntities.BUBBLE.get(), world);
+	}
+	
+	public EntityBubble(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
 	}
 
 	@Override
-	public double getMountedYOffset(){
+	public double getPassengersRidingOffset(){
 		return 0.1;
 	}
 
@@ -47,20 +54,20 @@ public class EntityBubble extends EntityMagicConstruct {
 		// Synchronises the rider field
 		if((this.rider == null || this.rider.get() == null)
 				&& EntityUtils.getRider(this) instanceof LivingEntity
-				&& !EntityUtils.getRider(this).isDead){
+				&& EntityUtils.getRider(this).isAlive()){
 			this.rider = new WeakReference<>((LivingEntity)EntityUtils.getRider(this));
 		}
 
 		// Prevents dismounting
 		if(EntityUtils.getRider(this) == null && this.rider != null && this.rider.get() != null
-				&& !this.rider.get().isDead){
+				&& this.rider.get().isAlive()){
 			this.rider.get().startRiding(this);
 		}
 
 		// Stops the bubble bursting instantly.
 		if(this.tickCount < 1 && !isDarkOrb) ((LivingEntity)EntityUtils.getRider(this)).hurtTime = 0;
 
-		this.move(MoverType.SELF, 0, 0.03, 0);
+		this.move(MoverType.SELF, new Vec3(0, 0.03, 0));
 
 		if(isDarkOrb){
 
@@ -76,10 +83,10 @@ public class EntityBubble extends EntityMagicConstruct {
 			}
 
 			for(int i = 0; i < 5; i++){
-				this.world.spawnParticle(ParticleTypes.PORTAL,
-						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+				this.level.addParticle(ParticleTypes.PORTAL,
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth(),
 						this.getY() + this.random.nextDouble() * (double)this.getBbHeight() + 0.5d,
-						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth(),
 						(this.random.nextDouble() - 0.5D) * 2.0D, -this.random.nextDouble(),
 						(this.random.nextDouble() - 0.5D) * 2.0D);
 			}
@@ -101,32 +108,32 @@ public class EntityBubble extends EntityMagicConstruct {
 	@Override
 	public void despawn(){
 		if(EntityUtils.getRider(this) != null){
-			((LivingEntity)EntityUtils.getRider(this)).dismountEntity(this);
+			((LivingEntity)EntityUtils.getRider(this)).stopRiding();
 		}
 		if(!this.isDarkOrb) this.playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
 		super.despawn();
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	protected void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		isDarkOrb = nbttagcompound.getBoolean("isDarkOrb");
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setBoolean("isDarkOrb", isDarkOrb);
+	protected void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
+		nbttagcompound.putBoolean("isDarkOrb", isDarkOrb);
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf data){
+	public void writeSpawnData(FriendlyByteBuf data){
 		super.writeSpawnData(data);
 		data.writeBoolean(this.isDarkOrb);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data){
+	public void readSpawnData(FriendlyByteBuf data){
 		super.readSpawnData(data);
 		this.isDarkOrb = data.readBoolean();
 	}
@@ -134,10 +141,10 @@ public class EntityBubble extends EntityMagicConstruct {
 	@SubscribeEvent
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 		// Bursts bubble when the creature inside takes damage
-		if(event.getEntity().getRidingEntity() instanceof EntityBubble
-				&& !((EntityBubble)event.getEntity().getRidingEntity()).isDarkOrb){
-			event.getEntity().getRidingEntity().playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
-			event.getEntity().getRidingEntity().discard();
+		if(event.getEntity().getVehicle() instanceof EntityBubble
+				&& !((EntityBubble)event.getEntity().getVehicle()).isDarkOrb){
+			event.getEntity().getVehicle().playSound(WizardrySounds.ENTITY_BUBBLE_POP, 1.5f, 1.0f);
+			event.getEntity().getVehicle().discard();
 		}
 	}
 

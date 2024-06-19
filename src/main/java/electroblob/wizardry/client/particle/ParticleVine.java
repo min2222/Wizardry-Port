@@ -86,7 +86,7 @@ public class ParticleVine extends ParticleTargeted {
 
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-			TextureAtlasSprite leaf = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(
+			TextureAtlasSprite leaf = Minecraft.getInstance().getTextureMapBlocks().getAtlasSprite(
 					LEAF_TEXTURES[random.nextInt(LEAF_TEXTURES.length)].toString());
 
 			float w = 16 * THICKNESS * scale;

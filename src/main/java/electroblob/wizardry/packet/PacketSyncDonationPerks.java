@@ -23,7 +23,7 @@ public class PacketSyncDonationPerks implements IMessageHandler<PacketSyncDonati
 		if(ctx.side.isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> DonationPerksHandler.setElements(message.elements));
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> DonationPerksHandler.setElements(message.elements));
 		}
 
 		return null;

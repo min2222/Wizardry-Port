@@ -41,7 +41,7 @@ public class Shield extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		caster.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 10,
+		caster.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 10,
 				getProperty(EFFECT_STRENGTH).intValue(), false, false));
 
 		if(WizardData.get(caster).getVariable(SHIELD_KEY) == null){

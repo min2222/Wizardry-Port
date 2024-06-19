@@ -1,6 +1,9 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -8,21 +11,23 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class EntityDecay extends EntityMagicConstruct {
 
 	public int textureIndex;
 
 	public EntityDecay(Level world){
-		super(world);
+		this(WizardryEntities.DECAY.get(), world);
 		textureIndex = this.random.nextInt(10);
-		this.getBbHeight() = 0.2f;
-		this.width = 2.0f;
+	}
+	
+	public EntityDecay(EntityType<? extends EntityMagicConstruct> type, Level world){
+		super(type, world);
+		textureIndex = this.random.nextInt(10);
 	}
 
 	@Override
@@ -35,15 +40,15 @@ public class EntityDecay extends EntityMagicConstruct {
 					0.6F + random.nextFloat() * 0.15F);
 
 		if(!this.level.isClientSide){
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.width/2f, this.getX(), this.getY(),
-					this.getZ(), this.getBbHeight(), this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(this.getBbWidth()/2f, this.getX(), this.getY(),
+					this.getZ(), this.getBbHeight(), this.level);
 			for(LivingEntity target : targets){
 				if(target != this.getCaster()){
 					// If this check wasn't here the potion would be reapplied every tick and hence the entity would be
 					// damaged each tick.
 					// In this case, we do want particles to be shown.
-					if(!target.hasEffect(WizardryPotions.decay))
-						target.addEffect(new MobEffectInstance(WizardryPotions.decay,
+					if(!target.hasEffect(WizardryPotions.DECAY.get()))
+						target.addEffect(new MobEffectInstance(WizardryPotions.DECAY.get(),
 								Spells.decay.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
 				}
 			}
@@ -57,12 +62,12 @@ public class EntityDecay extends EntityMagicConstruct {
 			ParticleBuilder.create(Type.DARK_MAGIC)
 			.pos(this.getX() + radius * Mth.cos(angle), this.getY(), this.getZ() + radius * Mth.sin(angle))
 			.clr(brightness, 0, brightness + 0.1f)
-			.spawn(world);
+			.spawn(level);
 		}
 	}
 
 	@Override
-	public boolean isInRangeToRenderDist(double distance){
+	public boolean shouldRenderAtSqrDistance(double distance){
 		return true;
 	}
 	

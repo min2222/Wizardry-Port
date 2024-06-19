@@ -36,14 +36,14 @@ public class WizardryControlHandler {
 
 		if(Wizardry.proxy instanceof ClientProxy){
 
-			Player player = Minecraft.getMinecraft().player;
+			Player player = Minecraft.getInstance().player;
 
 			if(player != null){
 
 				ItemStack wand = getWandInUse(player);
 				if(wand == null) return;
 
-				if(ClientProxy.NEXT_SPELL.isKeyDown() && Minecraft.getMinecraft().inGameHasFocus){
+				if(ClientProxy.NEXT_SPELL.isKeyDown() && Minecraft.getInstance().inGameHasFocus){
 					if(!NkeyPressed){
 						NkeyPressed = true;
 						selectNextSpell(wand);
@@ -52,7 +52,7 @@ public class WizardryControlHandler {
 					NkeyPressed = false;
 				}
 
-				if(ClientProxy.PREVIOUS_SPELL.isKeyDown() && Minecraft.getMinecraft().inGameHasFocus){
+				if(ClientProxy.PREVIOUS_SPELL.isKeyDown() && Minecraft.getInstance().inGameHasFocus){
 					if(!BkeyPressed){
 						BkeyPressed = true;
 						// Packet building
@@ -63,7 +63,7 @@ public class WizardryControlHandler {
 				}
 
 				for(int i = 0; i < ClientProxy.SPELL_QUICK_ACCESS.length; i++){
-					if(ClientProxy.SPELL_QUICK_ACCESS[i].isKeyDown() && Minecraft.getMinecraft().inGameHasFocus){
+					if(ClientProxy.SPELL_QUICK_ACCESS[i].isKeyDown() && Minecraft.getInstance().inGameHasFocus){
 						if(!quickAccessKeyPressed[i]){
 							quickAccessKeyPressed[i] = true;
 							// Packet building
@@ -82,11 +82,11 @@ public class WizardryControlHandler {
 	@SubscribeEvent
 	public static void onMouseEvent(MouseEvent event){
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 		ItemStack wand = getWandInUse(player);
 		if(wand == null) return;
 
-		if(Minecraft.getMinecraft().inGameHasFocus && !wand.isEmpty() && event.getDwheel() != 0 && player.isShiftKeyDown()
+		if(Minecraft.getInstance().inGameHasFocus && !wand.isEmpty() && event.getDwheel() != 0 && player.isShiftKeyDown()
 				&& Wizardry.settings.shiftScrolling){
 
 			event.setCanceled(true);
@@ -121,7 +121,7 @@ public class WizardryControlHandler {
 		// GUI switch animation
 		((ISpellCastingItem)wand.getItem()).selectNextSpell(wand); // Makes sure the spell is set immediately for the client
 		GuiSpellDisplay.playSpellSwitchAnimation(true);
-		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
+		Minecraft.getInstance().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
 	}
 	
 	private static void selectPreviousSpell(ItemStack wand){
@@ -131,7 +131,7 @@ public class WizardryControlHandler {
 		// GUI switch animation
 		((ISpellCastingItem)wand.getItem()).selectPreviousSpell(wand); // Makes sure the spell is set immediately for the client
 		GuiSpellDisplay.playSpellSwitchAnimation(false);
-		Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
+		Minecraft.getInstance().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
 	}
 
 	private static void selectSpell(ItemStack wand, int index){
@@ -142,7 +142,7 @@ public class WizardryControlHandler {
 			WizardryPacketHandler.net.sendToServer(msg);
 
 			GuiSpellDisplay.playSpellSwitchAnimation(true); // This will do, it's only an animation
-			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
+			Minecraft.getInstance().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(WizardrySounds.ITEM_WAND_SWITCH_SPELL, 1));
 		}
 	}
 

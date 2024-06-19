@@ -121,14 +121,14 @@ public class RenderDonationPerks {
 
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(FLARE_TEXTURE);
+		Minecraft.getInstance().renderEngine.bindTexture(FLARE_TEXTURE);
 
 		// This counteracts the reverse rotation behaviour when in front f5 view.
 		// Fun fact: this is a bug with vanilla too! Look at a snowball in front f5 view, for example.
-		float yaw = Minecraft.getMinecraft().gameSettings.thirdPersonView == 2
-				? Minecraft.getMinecraft().getRenderManager().playerViewX
-				: -Minecraft.getMinecraft().getRenderManager().playerViewX;
-		GlStateManager.rotate(180.0F - Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+		float yaw = Minecraft.getInstance().gameSettings.thirdPersonView == 2
+				? Minecraft.getInstance().getRenderManager().playerViewX
+				: -Minecraft.getInstance().getRenderManager().playerViewX;
+		GlStateManager.rotate(180.0F - Minecraft.getInstance().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
 		GlStateManager.rotate(yaw, 1.0F, 0.0F, 0.0F);
 
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -162,7 +162,7 @@ public class RenderDonationPerks {
 
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(CUBE_TEXTURES[player.tickCount % CUBE_TEXTURES.length]);
+		Minecraft.getInstance().renderEngine.bindTexture(CUBE_TEXTURES[player.tickCount % CUBE_TEXTURES.length]);
 
 		Vec3[] vertices = GeometryUtils.getVertices(new AABB(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5));
 

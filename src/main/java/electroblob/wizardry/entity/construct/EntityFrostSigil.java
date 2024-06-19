@@ -1,6 +1,9 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -10,17 +13,21 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-
-import java.util.List;
 
 public class EntityFrostSigil extends EntityScaledConstruct {
 
 	public EntityFrostSigil(Level world){
-		super(world);
+		this(WizardryEntities.FROST_SIGIL.get(), world);
+		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+	}
+	
+	public EntityFrostSigil(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 
@@ -36,8 +43,8 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 
 		if(!this.level.isClientSide){
 
-			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(width/2, this.getX(), this.getY(),
-					this.getZ(), this.getBbHeight(), this.world);
+			List<LivingEntity> targets = EntityUtils.getLivingWithinCylinder(getBbWidth()/2, this.getX(), this.getY(),
+					this.getZ(), this.getBbHeight(), this.level);
 
 			for(LivingEntity target : targets){
 
@@ -49,7 +56,7 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 							* damageMultiplier);
 
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-						target.addEffect(new MobEffectInstance(WizardryPotions.frost,
+						target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
 								Spells.frost_sigil.getProperty(Spell.EFFECT_DURATION).intValue(),
 								Spells.frost_sigil.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
@@ -60,17 +67,17 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 				}
 			}
 		}else if(this.random.nextInt(15) == 0){
-			double radius = (0.5 + random.nextDouble() * 0.3) * width/2;
+			double radius = (0.5 + random.nextDouble() * 0.3) * getBbWidth()/2;
 			float angle = random.nextFloat() * (float)Math.PI * 2;
 			ParticleBuilder.create(Type.SNOW)
 			.pos(this.getX() + radius * Mth.cos(angle), this.getY() + 0.1, this.getZ() + radius * Mth.sin(angle))
 			.vel(0, 0, 0) // Required since default for snow is not stationary
-			.spawn(world);
+			.spawn(level);
 		}
 	}
 
 	@Override
-	public boolean canRenderOnFire(){
+	public boolean displayFireAnimation(){
 		return false;
 	}
 

@@ -34,8 +34,8 @@ public class RenderArcaneLock {
 	@SubscribeEvent
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 
-		Player player = Minecraft.getMinecraft().player;
-		Level world = Minecraft.getMinecraft().world;
+		Player player = Minecraft.getInstance().player;
+		Level world = Minecraft.getInstance().world;
 		Vec3 origin = player.getPositionEyes(event.getPartialTicks());
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
@@ -69,7 +69,7 @@ public class RenderArcaneLock {
 
 					GlStateManager.color(1, 1, 1, 1);
 
-					Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
+					Minecraft.getInstance().renderEngine.bindTexture(TEXTURES[(player.tickCount % (TEXTURES.length * 2))/2]);
 
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 				}

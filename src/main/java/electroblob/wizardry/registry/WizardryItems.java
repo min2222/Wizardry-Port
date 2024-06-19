@@ -1,5 +1,8 @@
 package electroblob.wizardry.registry;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
@@ -7,36 +10,61 @@ import electroblob.wizardry.entity.projectile.EntityFirebomb;
 import electroblob.wizardry.entity.projectile.EntityPoisonBomb;
 import electroblob.wizardry.entity.projectile.EntitySmokeBomb;
 import electroblob.wizardry.entity.projectile.EntitySparkBomb;
-import electroblob.wizardry.item.*;
+import electroblob.wizardry.item.ItemArcaneTome;
+import electroblob.wizardry.item.ItemArmourUpgrade;
+import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.item.ItemBlankScroll;
+import electroblob.wizardry.item.ItemBlockMultiTextured;
+import electroblob.wizardry.item.ItemCrystal;
+import electroblob.wizardry.item.ItemCrystalFlower;
+import electroblob.wizardry.item.ItemFirebomb;
+import electroblob.wizardry.item.ItemFlamecatcher;
+import electroblob.wizardry.item.ItemFlamingAxe;
+import electroblob.wizardry.item.ItemFrostAxe;
+import electroblob.wizardry.item.ItemIdentificationScroll;
+import electroblob.wizardry.item.ItemLightningHammer;
+import electroblob.wizardry.item.ItemManaFlask;
+import electroblob.wizardry.item.ItemPoisonBomb;
+import electroblob.wizardry.item.ItemPurifyingElixir;
+import electroblob.wizardry.item.ItemScroll;
+import electroblob.wizardry.item.ItemSmokeBomb;
+import electroblob.wizardry.item.ItemSparkBomb;
+import electroblob.wizardry.item.ItemSpectralArmour;
+import electroblob.wizardry.item.ItemSpectralBow;
+import electroblob.wizardry.item.ItemSpectralDust;
+import electroblob.wizardry.item.ItemSpectralPickaxe;
+import electroblob.wizardry.item.ItemSpectralSword;
+import electroblob.wizardry.item.ItemSpellBook;
+import electroblob.wizardry.item.ItemWand;
+import electroblob.wizardry.item.ItemWandUpgrade;
+import electroblob.wizardry.item.ItemWizardArmour;
 import electroblob.wizardry.item.ItemWizardArmour.ArmourClass;
+import electroblob.wizardry.item.ItemWizardHandbook;
 import electroblob.wizardry.misc.BehaviourSpellDispense;
 import electroblob.wizardry.registry.WizardryTabs.CreativeTabListed;
 import electroblob.wizardry.registry.WizardryTabs.CreativeTabSorted;
+import net.minecraft.dispenser.BehaviorProjectileDispense;
+import net.minecraft.dispenser.IPosition;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.IProjectile;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item.ToolMaterial;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BlockDispenser;
 import net.minecraft.world.level.block.BlockPlanks;
-import net.minecraft.dispenser.BehaviorProjectileDispense;
-import net.minecraft.dispenser.IPosition;
-import net.minecraft.world.entity.IProjectile;
-import net.minecraft.world.item.Item.ToolMaterial;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.tileentity.BannerPattern;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Locale;
 
 /**
  * Class responsible for defining, storing and registering all of wizardry's items. Also registers the ItemBlocks for
@@ -45,7 +73,6 @@ import java.util.Locale;
  * @author Electroblob
  * @since Wizardry 2.1
  */
-@ObjectHolder(Wizardry.MODID)
 @Mod.EventBusSubscriber
 public final class WizardryItems {
 
@@ -70,9 +97,7 @@ public final class WizardryItems {
 
 	}
 
-	@Nonnull
-	@SuppressWarnings("ConstantConditions")
-	private static <T> T placeholder(){ return null; }
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Wizardry.MODID);
 
 	// This is the most concise way I can think of to register the items. Really, I'd prefer it if there was only one
 	// point where all the items were listed, but that's not possible within the current system unless you use an array,

@@ -1,9 +1,12 @@
 package electroblob.wizardry.entity.construct;
 
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.EntityLevitatingBlock;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
@@ -11,23 +14,24 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityFallingBlock;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
 
 public class EntityBlackHole extends EntityScaledConstruct {
 
@@ -39,7 +43,21 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	public int[] randomiser2;
 
 	public EntityBlackHole(Level world){
-		super(world);
+		this(WizardryEntities.BLACK_HOLE.get(), world);
+		float r = Spells.black_hole.getProperty(Spell.EFFECT_RADIUS).floatValue();
+		setSize(r * 2, r);
+		randomiser = new int[30];
+		for(int i = 0; i < randomiser.length; i++){
+			randomiser[i] = this.random.nextInt(10);
+		}
+		randomiser2 = new int[30];
+		for(int i = 0; i < randomiser2.length; i++){
+			randomiser2[i] = this.random.nextInt(10);
+		}
+	}
+	
+	public EntityBlackHole(EntityType<? extends EntityScaledConstruct> type, Level world){
+		super(type, world);
 		float r = Spells.black_hole.getProperty(Spell.EFFECT_RADIUS).floatValue();
 		setSize(r * 2, r);
 		randomiser = new int[30];
@@ -53,17 +71,17 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	}
 
 	@Override
-	protected void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	protected void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		randomiser = nbttagcompound.getIntArray("randomiser");
 		randomiser2 = nbttagcompound.getIntArray("randomiser2");
 	}
 
 	@Override
-	protected void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
-		nbttagcompound.setIntArray("randomiser", randomiser);
-		nbttagcompound.setIntArray("randomiser2", randomiser2);
+	protected void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
+		nbttagcompound.putIntArray("randomiser", randomiser);
+		nbttagcompound.putIntArray("randomiser2", randomiser2);
 	}
 
 	public void tick(){
@@ -79,7 +97,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 				// (double)this.width, this.getY() + this.random.nextDouble() * (double)this.getBbHeight() - 0.75D, this.getZ() +
 				// (this.random.nextDouble() - 0.5D) * (double)this.width, (this.random.nextDouble() - 0.5D) * 2.0D,
 				// -this.random.nextDouble(), (this.random.nextDouble() - 0.5D) * 2.0D);
-				this.world.spawnParticle(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(),
+				this.level.addParticle(ParticleTypes.PORTAL, this.getX(), this.getY(), this.getZ(),
 						(this.random.nextDouble() - 0.5D) * 4.0D, (this.random.nextDouble() - 0.5D) * 4.0D - 1,
 						(this.random.nextDouble() - 0.5D) * 4.0D);
 			}
@@ -95,7 +113,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 			double radius = 2 * getBbHeight() * sizeMultiplier;
 
-			boolean suckInBlocks = getCaster() instanceof Player && EntityUtils.canDamageBlocks(getCaster(), world)
+			boolean suckInBlocks = getCaster() instanceof Player && EntityUtils.canDamageBlocks(getCaster(), level)
 					&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_black_hole);
 
 			if(suckInBlocks){
@@ -106,19 +124,19 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 				for(BlockPos pos : sphere){
 
-					if(random.nextInt(Math.max(1, (int)this.distanceToSqr(pos) * 3)) == 0){
+					if(random.nextInt(Math.max(1, (int)this.distanceToSqr(Vec3.atCenterOf(pos)) * 3)) == 0){
 
-						if(!BlockUtils.isBlockUnbreakable(world, pos) && !world.isEmptyBlock(pos)
-								&& world.isBlockNormalCube(pos, false) && BlockUtils.canBreakBlock(getCaster(), world, pos)){
+						if(!BlockUtils.isBlockUnbreakable(level, pos) && !level.isEmptyBlock(pos)
+								&& level.getBlockState(pos).isCollisionShapeFullBlock(level, pos) && BlockUtils.canBreakBlock(getCaster(), level, pos)){
 							// Checks that the block above is not solid, since this causes the falling block to vanish.
 //							&& !world.isBlockNormalCube(pos.up(), false)){
 
-							EntityFallingBlock fallingBlock = new EntityLevitatingBlock(world, pos.getX() + 0.5,
+							FallingBlockEntity fallingBlock = new EntityLevitatingBlock(level, pos.getX() + 0.5,
 									pos.getY() + 0.5, pos.getZ() + 0.5, level.getBlockState(pos));
 //							fallingBlock.noClip = true;
-							fallingBlock.fallTime = 1; // Prevent it from trying to delete the block itself
-							world.addFreshEntity(fallingBlock);
-							level.setBlockToAir(pos);
+							fallingBlock.time = 1; // Prevent it from trying to delete the block itself
+							level.addFreshEntity(fallingBlock);
+							level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 
 							if(++blocksUnhooked >= BLOCK_UNHOOK_LIMIT) break; // Lag prevention
 						}
@@ -128,9 +146,9 @@ public class EntityBlackHole extends EntityScaledConstruct {
 			}
 
 			List<Entity> targets = EntityUtils.getEntitiesWithinRadius(radius, this.getX(), this.getY(),
-					this.getZ(), this.world, Entity.class);
+					this.getZ(), this.level, Entity.class);
 
-			targets.removeIf(t -> !(t instanceof LivingEntity || (suckInBlocks && t instanceof EntityFallingBlock)));
+			targets.removeIf(t -> !(t instanceof LivingEntity || (suckInBlocks && t instanceof FallingBlockEntity)));
 
 			for(Entity target : targets){
 
@@ -144,37 +162,37 @@ public class EntityBlackHole extends EntityScaledConstruct {
 						if(target instanceof EntityLevitatingBlock) ((EntityLevitatingBlock)target).suspend();
 
 						// Sucks the target in
-						if(this.getX() > target.getX() && target.motionX < 1){
-							target.motionX += SUCTION_STRENGTH;
-						}else if(this.getX() < target.getX() && target.motionX > -1){
-							target.motionX -= SUCTION_STRENGTH;
+						if(this.getX() > target.getX() && target.getDeltaMovement().x < 1){
+							target.setDeltaMovement(target.getDeltaMovement().add(SUCTION_STRENGTH, 0, 0));
+						}else if(this.getX() < target.getX() && target.getDeltaMovement().x > -1){
+							target.setDeltaMovement(target.getDeltaMovement().subtract(SUCTION_STRENGTH, 0, 0));
 						}
 
-						if(this.getY() > target.getY() && target.motionY < 1){
-							target.motionY += SUCTION_STRENGTH;
-						}else if(this.getY() < target.getY() && target.motionY > -1){
-							target.motionY -= SUCTION_STRENGTH;
+						if(this.getY() > target.getY() && target.getDeltaMovement().y < 1){
+							target.setDeltaMovement(target.getDeltaMovement().add(0, SUCTION_STRENGTH, 0));
+						}else if(this.getY() < target.getY() && target.getDeltaMovement().y > -1){
+							target.setDeltaMovement(target.getDeltaMovement().subtract(0, SUCTION_STRENGTH, 0));
 						}
 
-						if(this.getZ() > target.getZ() && target.motionZ < 1){
-							target.motionZ += SUCTION_STRENGTH;
-						}else if(this.getZ() < target.getZ() && target.motionZ > -1){
-							target.motionZ -= SUCTION_STRENGTH;
+						if(this.getZ() > target.getZ() && target.getDeltaMovement().z < 1){
+							target.setDeltaMovement(target.getDeltaMovement().add(0, 0, SUCTION_STRENGTH));
+						}else if(this.getZ() < target.getZ() && target.getDeltaMovement().z > -1){
+							target.setDeltaMovement(target.getDeltaMovement().subtract(0, 0, SUCTION_STRENGTH));
 						}
 
 						// Player motion is handled on that player's client so needs packets
 						if(target instanceof ServerPlayer){
-							((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+							((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 						}
 					}
 
-					if(this.getDistance(target) <= 2){
+					if(this.distanceTo(target) <= 2){
 						// Damages the target if it is close enough, or destroys it if it's a block
-						if(target instanceof EntityFallingBlock){
+						if(target instanceof FallingBlockEntity){
 							target.playSound(WizardrySounds.ENTITY_BLACK_HOLE_BREAK_BLOCK, 0.5f,
 									(random.nextFloat() - random.nextFloat()) * 0.2f + 1);
-							BlockState state = ((EntityFallingBlock)target).getBlock();
-							if(state != null) world.playEvent(2001, new BlockPos(target), Block.getStateId(state));
+							BlockState state = ((FallingBlockEntity)target).getBlockState();
+							if(state != null) level.levelEvent(2001, target.blockPosition(), Block.getId(state));
 							target.discard();
 
 						}else{
@@ -194,13 +212,8 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public boolean isInRangeToRenderDist(double distance){
+	public boolean shouldRenderAtSqrDistance(double distance){
 		return true;
-	}
-
-	@Override
-	public boolean shouldRenderInPass(int pass){
-		return pass == 1;
 	}
 
 }

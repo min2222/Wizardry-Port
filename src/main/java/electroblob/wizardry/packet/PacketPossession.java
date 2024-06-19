@@ -19,7 +19,7 @@ public class PacketPossession implements IMessageHandler<PacketPossession.Messag
 
 		// Just to make sure that the side is correct
 		if(ctx.side.isClient()){
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> Wizardry.proxy.handlePossessionPacket(message));
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handlePossessionPacket(message));
 		}
 
 		return null;

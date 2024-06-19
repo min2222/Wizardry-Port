@@ -41,7 +41,7 @@ public class RenderSixthSense {
 
 		if(event.getType() == RenderGameOverlayEvent.ElementType.HELMET){
 
-			if(Minecraft.getMinecraft().player.hasEffect(WizardryPotions.sixth_sense)){
+			if(Minecraft.getInstance().player.hasEffect(WizardryPotions.sixth_sense)){
 
 				OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 				GlStateManager.color(1, 1, 1, 1);
@@ -58,7 +58,7 @@ public class RenderSixthSense {
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 
-		Minecraft mc = Minecraft.getMinecraft();
+		Minecraft mc = Minecraft.getInstance();
 		RenderManager renderManager = event.getRenderer().getRenderManager();
 
 		if(mc.player.hasEffect(WizardryPotions.sixth_sense) && !(event.getEntity() instanceof EntityArmorStand)

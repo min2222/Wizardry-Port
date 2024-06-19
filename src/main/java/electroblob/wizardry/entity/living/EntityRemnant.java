@@ -185,15 +185,15 @@ public class EntityRemnant extends Mob {
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbt){
-		super.readEntityFromNBT(nbt);
+	public void readAdditionalSaveData(CompoundTag nbt){
+		super.readAdditionalSaveData(nbt);
 		this.setElement(Element.values()[nbt.getInt("Element")]);
 		if(nbt.contains("BoundOrigin")) boundOrigin = NbtUtils.readBlockPos(nbt.getCompoundTag("BoundOrigin"));
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbt){
-		super.writeEntityToNBT(nbt);
+	public void addAdditionalSaveData(CompoundTag nbt){
+		super.addAdditionalSaveData(nbt);
 		nbt.putInt("Element", this.getElement().ordinal());
 		if(boundOrigin != null) nbt.setTag("BoundOrigin", NbtUtils.writeBlockPos(boundOrigin));
 	}

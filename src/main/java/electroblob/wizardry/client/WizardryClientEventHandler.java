@@ -55,22 +55,22 @@ public final class WizardryClientEventHandler {
 	@SubscribeEvent
 	public static void onPlayerTickEvent(TickEvent.PlayerTickEvent event){
 
-		if(event.player == Minecraft.getMinecraft().player && event.phase == TickEvent.Phase.END){
+		if(event.player == Minecraft.getInstance().player && event.phase == TickEvent.Phase.END){
 
 			// Reset shaders if their respective potions aren't active
 			// This is a player so the potion effects are synced by vanilla
-			if(Minecraft.getMinecraft().entityRenderer.getShaderGroup() != null){ // IntelliJ is wrong, this can be null
+			if(Minecraft.getInstance().entityRenderer.getShaderGroup() != null){ // IntelliJ is wrong, this can be null
 
-				String activeShader = Minecraft.getMinecraft().entityRenderer.getShaderGroup().getShaderGroupName();
+				String activeShader = Minecraft.getInstance().entityRenderer.getShaderGroup().getShaderGroupName();
 
-				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.slow_time))
-						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.sixth_sense))
-						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getMinecraft().player.hasEffect(WizardryPotions.transience))){
+				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.slow_time))
+						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.sixth_sense))
+						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.transience))){
 
 					if(activeShader.equals(SixthSense.SHADER.toString())
 					|| activeShader.equals(Transience.SHADER.toString())) RenderBlinkEffect.playBlinkEffect();
 
-					Minecraft.getMinecraft().entityRenderer.stopUseShader();
+					Minecraft.getInstance().entityRenderer.stopUseShader();
 				}
 			}
 		}
@@ -81,9 +81,9 @@ public final class WizardryClientEventHandler {
 	@SubscribeEvent
 	public static void onClientTickEvent(TickEvent.ClientTickEvent event){
 
-		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getMinecraft().isGamePaused()){
+		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getInstance().isGamePaused()){
 
-			Level world = net.minecraft.client.Minecraft.getMinecraft().world;
+			Level world = net.minecraft.client.Minecraft.getInstance().world;
 
 			if(world == null) return;
 
@@ -110,13 +110,13 @@ public final class WizardryClientEventHandler {
 	public static void onMouseEvent(MouseEvent event){
 
 		// Prevents the player looking around when paralysed
-		if(Minecraft.getMinecraft().player.hasEffect(WizardryPotions.paralysis)
-				&& Minecraft.getMinecraft().inGameHasFocus){
+		if(Minecraft.getInstance().player.hasEffect(WizardryPotions.paralysis)
+				&& Minecraft.getInstance().inGameHasFocus){
 			event.setCanceled(true);
-			Minecraft.getMinecraft().player.prevRotationYaw = 0;
-			Minecraft.getMinecraft().player.prevRotationPitch = 0;
-			Minecraft.getMinecraft().player.rotationYaw = 0;
-			Minecraft.getMinecraft().player.rotationPitch = 0;
+			Minecraft.getInstance().player.prevRotationYaw = 0;
+			Minecraft.getInstance().player.prevRotationPitch = 0;
+			Minecraft.getInstance().player.rotationYaw = 0;
+			Minecraft.getInstance().player.rotationPitch = 0;
 
 		}
 	}
@@ -148,13 +148,13 @@ public final class WizardryClientEventHandler {
 	public static void onRenderHandEvent(RenderHandEvent event){
 
 		// Hide the player's empty hand in first-person when possessing
-		Mob victim = Possession.getPossessee(Minecraft.getMinecraft().player);
+		Mob victim = Possession.getPossessee(Minecraft.getInstance().player);
 
 		if(victim != null){
 
-			victim.rotationYawHead = Minecraft.getMinecraft().player.rotationYaw;
+			victim.rotationYawHead = Minecraft.getInstance().player.rotationYaw;
 
-			if(Minecraft.getMinecraft().player.getMainHandItem().isEmpty()){
+			if(Minecraft.getInstance().player.getMainHandItem().isEmpty()){
 				event.setCanceled(true);
 			}
 		}
@@ -197,7 +197,7 @@ public final class WizardryClientEventHandler {
 		GlStateManager.disableDepth();
 		GlStateManager.depthMask(false);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getInstance().renderEngine.bindTexture(texture);
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();

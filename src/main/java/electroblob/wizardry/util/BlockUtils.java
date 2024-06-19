@@ -296,7 +296,7 @@ public final class BlockUtils {
 
 		if(world.isOutsideBuildHeight(pos)) return -1;
 
-		Player fakeplayer = FakePlayerFactory.getMinecraft((ServerLevel)world);
+		Player fakeplayer = FakePlayerFactory.getInstance((ServerLevel)world);
 
 		if(breaker instanceof Player){
 			// This line *should* trigger bukkit plugin hooks

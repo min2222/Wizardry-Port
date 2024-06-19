@@ -25,7 +25,7 @@ public class PacketNPCCastSpell implements IMessageHandler<Message, IMessage> {
 		if(ctx.side.isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(new Runnable(){
+			net.minecraft.client.Minecraft.getInstance().addScheduledTask(new Runnable(){
 				@Override
 				public void run(){
 					Wizardry.proxy.handleNPCCastSpellPacket(message);

@@ -127,7 +127,7 @@ public class MindControl extends SpellRay {
 
 	public static void startControlling(Mob target, LivingEntity controller, int duration){
 		target.getPersistentData().putUUID(NBT_KEY, controller.getUUID());
-		target.addEffect(new MobEffectInstance(WizardryPotions.mind_control, duration, 0));
+		target.addEffect(new MobEffectInstance(WizardryPotions.MIND_CONTROL.get(), duration, 0));
 	}
 
 	/**
@@ -206,7 +206,7 @@ public class MindControl extends SpellRay {
 		// Of course, in survival this code is unlikely to be used much because the entity will always try to target the
 		// player and hence will rarely have no target.
 		// No need to do it every tick either!
-		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.mind_control)
+		if(event.getEntity().tickCount % 50 == 0 && event.getEntity().hasEffect(WizardryPotions.MIND_CONTROL.get())
 				&& event.getEntity() instanceof Mob){
 			
 			Mob entity = (Mob)event.getEntity();
@@ -238,7 +238,7 @@ public class MindControl extends SpellRay {
 	}
 
 	private static void onEffectEnd(MobEffectInstance effect, Entity entity){
-		if(effect != null && effect.getEffect() == WizardryPotions.mind_control && entity instanceof Mob){
+		if(effect != null && effect.getEffect() == WizardryPotions.MIND_CONTROL.get() && entity instanceof Mob){
 			((Mob)entity).setTarget(null); // End effect
 			((Mob)entity).setLastHurtByMob(null); // End effect
 		}

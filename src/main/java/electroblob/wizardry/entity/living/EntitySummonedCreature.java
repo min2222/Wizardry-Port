@@ -94,14 +94,14 @@ public abstract class EntitySummonedCreature extends PathfinderMob implements IS
 	}
 
 	@Override
-	public void writeEntityToNBT(CompoundTag nbttagcompound){
-		super.writeEntityToNBT(nbttagcompound);
+	public void addAdditionalSaveData(CompoundTag nbttagcompound){
+		super.addAdditionalSaveData(nbttagcompound);
 		this.writeNBTDelegate(nbttagcompound);
 	}
 
 	@Override
-	public void readEntityFromNBT(CompoundTag nbttagcompound){
-		super.readEntityFromNBT(nbttagcompound);
+	public void readAdditionalSaveData(CompoundTag nbttagcompound){
+		super.readAdditionalSaveData(nbttagcompound);
 		this.readNBTDelegate(nbttagcompound);
 	}
 

@@ -65,7 +65,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, block), particleX, origin.y,
+				world.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), particleX, origin.y,
 						particleZ, particleX - origin.x, 0, particleZ - origin.z);
 			}
 		}

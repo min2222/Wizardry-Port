@@ -18,19 +18,19 @@ public class ScreenShakeHandler {
 	public static void shakeScreen(float intensity){
 		if(Wizardry.settings.screenShake){
 			screenShakeCounter = (int)(intensity / SHAKINESS);
-			Minecraft.getMinecraft().player.rotationPitch -= intensity * 0.5f; // Start halfway down
+			Minecraft.getInstance().player.rotationPitch -= intensity * 0.5f; // Start halfway down
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerTickEvent(TickEvent.PlayerTickEvent event){
 
-		if(event.player == Minecraft.getMinecraft().player && event.phase == TickEvent.Phase.END){
+		if(event.player == Minecraft.getInstance().player && event.phase == TickEvent.Phase.END){
 
 			if(Wizardry.settings.screenShake){
 				if(screenShakeCounter > 0){
 					float magnitude = screenShakeCounter * SHAKINESS;
-					Minecraft.getMinecraft().player.rotationPitch += screenShakeCounter % 2 == 0 ? magnitude : -magnitude;
+					Minecraft.getInstance().player.rotationPitch += screenShakeCounter % 2 == 0 ? magnitude : -magnitude;
 					screenShakeCounter--;
 				}
 			}else{

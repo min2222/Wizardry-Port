@@ -90,7 +90,7 @@ public class PlayerAnimator {
 
 		if(!areAnimationsEnabled()) return;
 
-		for(RenderPlayer renderer : Minecraft.getMinecraft().getRenderManager().getSkinMap().values()){
+		for(RenderPlayer renderer : Minecraft.getInstance().getRenderManager().getSkinMap().values()){
 			loadLayersForRenderer(renderer);
 		}
 	}
@@ -207,7 +207,7 @@ public class PlayerAnimator {
 
 		if(!areAnimationsEnabled()) return;
 
-		LocalPlayer player = Minecraft.getMinecraft().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 
 		UseAnim action = event.getItemStack().getItemUseAction();
 
@@ -218,7 +218,7 @@ public class PlayerAnimator {
 			GlStateManager.translate((float)i * 0.56F, -0.52F + event.getEquipProgress() * -0.6F, -0.72F);
 		}
 
-		updateModels(player, Minecraft.getMinecraft().getRenderManager().getEntityRenderObject(player), event.getPartialTicks(), true);
+		updateModels(player, Minecraft.getInstance().getRenderManager().getEntityRenderObject(player), event.getPartialTicks(), true);
 	}
 
 	@SubscribeEvent
@@ -226,8 +226,8 @@ public class PlayerAnimator {
 
 		if(!areAnimationsEnabled()) return;
 
-//		boolean firstPerson = event.getEntity() == Minecraft.getMinecraft().player
-//				&& Minecraft.getMinecraft().gameSettings.thirdPersonView == 0;
+//		boolean firstPerson = event.getEntity() == Minecraft.getInstance().player
+//				&& Minecraft.getInstance().gameSettings.thirdPersonView == 0;
 
 		updateModels(event.getEntity(), event.getRenderer(), event.getPartialRenderTick(), false);
 	}

@@ -38,9 +38,9 @@ public class RenderTransportationUI {
 	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
 
 		// Only render in first person
-		if(Minecraft.getMinecraft().gameSettings.thirdPersonView != 0) return;
+		if(Minecraft.getInstance().gameSettings.thirdPersonView != 0) return;
 
-		Player player = Minecraft.getMinecraft().player;
+		Player player = Minecraft.getInstance().player;
 
 		ItemStack stack = player.getMainHandItem();
 		if(!(stack.getItem() instanceof ISpellCastingItem)){
@@ -61,7 +61,7 @@ public class RenderTransportationUI {
 			GlStateManager.pushMatrix();
 
 			Vec3 origin = player.getPositionEyes(event.getPartialTicks());
-			GlStateManager.translate(0, origin.y - Minecraft.getMinecraft().getRenderManager().viewergetY(), 0);
+			GlStateManager.translate(0, origin.y - Minecraft.getInstance().getRenderManager().viewergetY(), 0);
 
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder buffer = tessellator.getBuffer();
@@ -80,7 +80,7 @@ public class RenderTransportationUI {
 				GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				GlStateManager.color(1, 1, 1, 1);
 
-				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+				Minecraft.getInstance().renderEngine.bindTexture(TEXTURE);
 
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
@@ -89,14 +89,14 @@ public class RenderTransportationUI {
 				// The icon lines up perfectly if you render it at actual distance, otherwise view bobbing messes things up
 				// However, if that's outside the render distance it won't render at all! To fudge our way around this
 				// problem, we're capping the distance to just below the render distance and adjusting the scale accordingly
-				double distanceCap = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 - 8;
+				double distanceCap = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16 - 8;
 				double displayDist = Math.min(distance, distanceCap);
 				double factor = displayDist/distance;
 
 				GlStateManager.translate(position.x * factor, position.y * factor, position.z * factor);
 
-				GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-				GlStateManager.rotate(Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+				GlStateManager.rotate(-Minecraft.getInstance().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+				GlStateManager.rotate(Minecraft.getInstance().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
 
 				// Get the angle between the player's look vector and the direction of the stone circle
 				double angle = Transportation.getLookDeviationAngle(player, location.pos, event.getPartialTicks());
@@ -120,9 +120,9 @@ public class RenderTransportationUI {
 
 				if(location == target){
 					String label = location.pos.getX() + ", " + location.pos.getY() + ", " + location.pos.getZ();
-					drawLabel(Minecraft.getMinecraft().fontRenderer, label, (float)(position.x * factor),
+					drawLabel(Minecraft.getInstance().fontRenderer, label, (float)(position.x * factor),
 							(float)(position.y * factor + iconSize*1.5f), (float)(position.z * factor), (float)displayDist * 0.2f, 0,
-							Minecraft.getMinecraft().getRenderManager().playerViewY, Minecraft.getMinecraft().getRenderManager().playerViewX);
+							Minecraft.getInstance().getRenderManager().playerViewY, Minecraft.getInstance().getRenderManager().playerViewX);
 				}
 			}
 

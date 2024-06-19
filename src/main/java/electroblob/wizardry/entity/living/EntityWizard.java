@@ -405,9 +405,9 @@ public class EntityWizard extends PathfinderMob implements INpc, IMerchant, ISpe
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound nbt){
+	public void addAdditionalSaveData(NBTTagCompound nbt){
 
-		super.writeEntityToNBT(nbt);
+		super.addAdditionalSaveData(nbt);
 
 		if(this.trades != null){
 			NBTExtras.storeTagSafely(nbt, "trades", this.trades.getRecipiesAsTags());
@@ -424,9 +424,9 @@ public class EntityWizard extends PathfinderMob implements INpc, IMerchant, ISpe
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound nbt){
+	public void readAdditionalSaveData(NBTTagCompound nbt){
 
-		super.readEntityFromNBT(nbt);
+		super.readAdditionalSaveData(nbt);
 
 		if(nbt.contains("trades")){
 			NBTTagCompound nbttagcompound1 = nbt.getCompoundTag("trades");
