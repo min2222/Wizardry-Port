@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,7 +59,7 @@ public class RenderSixthSense {
 	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
 
 		Minecraft mc = Minecraft.getInstance();
-		RenderManager renderManager = event.getRenderer().getRenderManager();
+		Context renderManager = event.getRenderer().getRenderManager();
 
 		if(mc.player.hasEffect(WizardryPotions.sixth_sense) && !(event.getEntity() instanceof EntityArmorStand)
 				&& event.getEntity() != mc.player && mc.player.getActivePotionEffect(WizardryPotions.sixth_sense) != null

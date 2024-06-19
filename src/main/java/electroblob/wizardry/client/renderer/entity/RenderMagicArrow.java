@@ -5,15 +5,15 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
-public class RenderMagicArrow extends Render<EntityMagicArrow> {
+public class RenderMagicArrow extends EntityRenderer<EntityMagicArrow> {
 
 	private final ResourceLocation texture;
 	private boolean blend;
@@ -21,8 +21,8 @@ public class RenderMagicArrow extends Render<EntityMagicArrow> {
 	private double length = 8.0, width = 2.0;
 	private int pixelsLong = 16, pixelsWide = 5;
 
-	public RenderMagicArrow(RenderManager renderManager, ResourceLocation texture, boolean blend, double length,
-			double width, int pixelsLong, int pixelsWide, boolean renderEnds){
+	public RenderMagicArrow(Context renderManager, ResourceLocation texture, boolean blend, double length,
+                            double width, int pixelsLong, int pixelsWide, boolean renderEnds){
 		super(renderManager);
 		this.texture = texture;
 		this.blend = blend;
@@ -114,7 +114,7 @@ public class RenderMagicArrow extends Render<EntityMagicArrow> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityMagicArrow arrow){
+	public ResourceLocation getTextureLocation(EntityMagicArrow arrow){
 		return texture;
 	}
 }

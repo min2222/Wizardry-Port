@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -16,11 +16,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import org.lwjgl.opengl.GL11;
 
-public class RenderFireRing extends Render<EntityFireRing> {
+public class RenderFireRing extends EntityRenderer<EntityFireRing> {
 
 	private final ResourceLocation texture;
 
-	public RenderFireRing(RenderManager renderManager, ResourceLocation texture){
+	public RenderFireRing(Context renderManager, ResourceLocation texture){
 		super(renderManager);
 		this.texture = texture;
 	}
@@ -173,7 +173,7 @@ public class RenderFireRing extends Render<EntityFireRing> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityFireRing entity){
+	public ResourceLocation getTextureLocation(EntityFireRing entity){
 		return null;
 	}
 

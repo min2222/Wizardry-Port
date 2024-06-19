@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.model.ModelWizard;
 import electroblob.wizardry.entity.living.EntityEvilWizard;
 import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.resources.ResourceLocation;
 
@@ -13,7 +13,7 @@ public class RenderEvilWizard extends RenderBiped<EntityEvilWizard> {
 
 	static final ResourceLocation[] TEXTURES = new ResourceLocation[6];
 
-	public RenderEvilWizard(RenderManager renderManager){
+	public RenderEvilWizard(Context renderManager){
 
 		super(renderManager, new ModelWizard(), 0.5F);
 
@@ -25,7 +25,7 @@ public class RenderEvilWizard extends RenderBiped<EntityEvilWizard> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityEvilWizard wizard){
+	public ResourceLocation getTextureLocation(EntityEvilWizard wizard){
 		return TEXTURES[wizard.textureIndex];
 	}
 

@@ -4,17 +4,17 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.model.ModelHammer;
 import electroblob.wizardry.entity.construct.EntityHammer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
-public class RenderHammer extends Render<EntityHammer> {
+public class RenderHammer extends EntityRenderer<EntityHammer> {
 
 	private static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/lightning_hammer.png");
 	private ModelHammer model = new ModelHammer();
 
-	public RenderHammer(RenderManager renderManager){
+	public RenderHammer(EntityRendererProvider.Context renderManager){
 		super(renderManager);
 	}
 
@@ -35,7 +35,7 @@ public class RenderHammer extends Render<EntityHammer> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityHammer entity){
+	public ResourceLocation getTextureLocation(EntityHammer entity){
 		return texture;
 	}
 

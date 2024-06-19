@@ -5,17 +5,17 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.client.model.ModelBoulder;
 import electroblob.wizardry.entity.construct.EntityBoulder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
-public class RenderBoulder extends Render<EntityBoulder> {
+public class RenderBoulder extends EntityRenderer<EntityBoulder> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/boulder.png");
 
 	private ModelBoulder model = new ModelBoulder();
 
-	public RenderBoulder(RenderManager manager){
+	public RenderBoulder(EntityRendererProvider.Context manager){
 		super(manager);
 	}
 
@@ -44,7 +44,7 @@ public class RenderBoulder extends Render<EntityBoulder> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityBoulder entity){
+	public ResourceLocation getTextureLocation(EntityBoulder entity){
 		return TEXTURE;
 	}
 

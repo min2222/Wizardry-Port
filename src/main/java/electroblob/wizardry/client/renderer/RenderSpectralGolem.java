@@ -1,23 +1,27 @@
 package electroblob.wizardry.client.renderer;
 
-import electroblob.wizardry.Wizardry;
-import net.minecraft.client.model.ModelIronGolem;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.world.entity.animal.IronGolem;
-import net.minecraft.world.entity.monster.EntityIronGolem;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.entity.living.EntitySpectralGolem;
+import net.minecraft.client.model.IronGolemModel;
+import net.minecraft.client.model.ModelIronGolem;
+import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.monster.EntityIronGolem;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 @OnlyIn(Dist.CLIENT)
-public class RenderSpectralGolem extends RenderLiving<EntityIronGolem>
+public class RenderSpectralGolem extends MobRenderer<EntitySpectralGolem, IronGolemModel<EntitySpectralGolem>>
 {
     private static final ResourceLocation SPECTRAL_GOLEM_TEXTURES = new ResourceLocation(Wizardry.MODID, "textures/entity/spectral_golem.png");
 
-    public RenderSpectralGolem(RenderManager renderManagerIn)
+    public RenderSpectralGolem(EntityRendererProvider.Context renderManagerIn)
     {
         super(renderManagerIn, new ModelIronGolem(), 0.5F);
     }
@@ -25,7 +29,7 @@ public class RenderSpectralGolem extends RenderLiving<EntityIronGolem>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(IronGolem entity)
+    public ResourceLocation getTextureLocation(IronGolem entity)
     {
         return SPECTRAL_GOLEM_TEXTURES;
     }

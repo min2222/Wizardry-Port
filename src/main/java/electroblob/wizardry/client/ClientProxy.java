@@ -761,14 +761,14 @@ public class ClientProxy extends CommonProxy {
 		// An anonymous class in a lambda expression! No point writing a separate class really, is there?
 		RenderingRegistry.registerEntityRenderingHandler(EntityLightningWraith.class, manager -> new RenderBlaze(manager){
 			@Override
-			protected ResourceLocation getEntityTexture(EntityBlaze entity){
+			public ResourceLocation getTextureLocation(EntityBlaze entity){
 				return LIGHTNING_WRAITH_TEXTURE;
 			}
 		});
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityIceWraith.class, manager -> new RenderBlaze(manager){
 			@Override
-			protected ResourceLocation getEntityTexture(EntityBlaze entity){
+			public ResourceLocation getTextureLocation(EntityBlaze entity){
 				return ICE_WRAITH_TEXTURE;
 			}
 		});

@@ -8,21 +8,21 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.lwjgl.opengl.GL11;
 
-public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
+public class RenderZombieSpawner extends EntityRenderer<EntityZombieSpawner> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/zombie_spawner.png");
 
 	private static final Vec3[] HIDDEN_BOX = GeometryUtils.getVertices(new AABB(-1, 0, -1, 1, 2.5, 1));
 
-	public RenderZombieSpawner(RenderManager renderManager){
+	public RenderZombieSpawner(Context renderManager){
 		super(renderManager);
 	}
 
@@ -94,7 +94,7 @@ public class RenderZombieSpawner extends Render<EntityZombieSpawner> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityZombieSpawner entity){
+	public ResourceLocation getTextureLocation(EntityZombieSpawner entity){
 		return TEXTURE;
 	}
 

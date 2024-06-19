@@ -5,8 +5,8 @@ import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.client.renderer.RayHelper;
 import electroblob.wizardry.entity.construct.EntityBlackHole;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -15,7 +15,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RenderBlackHole extends Render<EntityBlackHole> {
+public class RenderBlackHole extends EntityRenderer<EntityBlackHole> {
 
 	// TODO: Remove RayHelper and the ray texture entirely and use colours with depth mask off (like imbuement altar)
 	private static final ResourceLocation RAY_TEXTURE = new ResourceLocation(Wizardry.MODID,
@@ -23,7 +23,7 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 	private static final ResourceLocation CENTRE_TEXTURE = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/black_hole/centre.png");
 
-	public RenderBlackHole(RenderManager renderManager){
+	public RenderBlackHole(EntityRendererProvider.Context renderManager){
 		super(renderManager);
 	}
 
@@ -159,7 +159,7 @@ public class RenderBlackHole extends Render<EntityBlackHole> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityBlackHole entity){
+	public ResourceLocation getTextureLocation(EntityBlackHole entity){
 		return RAY_TEXTURE;
 	}
 

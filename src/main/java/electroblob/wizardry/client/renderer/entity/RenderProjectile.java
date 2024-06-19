@@ -6,21 +6,21 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
-public class RenderProjectile extends Render<EntityMagicProjectile> {
+public class RenderProjectile extends EntityRenderer<EntityMagicProjectile> {
 
 	private float scale;
 	private boolean blend = false;
 
 	private final ResourceLocation texture;
 
-	public RenderProjectile(RenderManager renderManager, float scale, ResourceLocation texture, boolean doBlending){
+	public RenderProjectile(Context renderManager, float scale, ResourceLocation texture, boolean doBlending){
 		super(renderManager);
 		this.scale = scale;
 		this.texture = texture;
@@ -79,7 +79,7 @@ public class RenderProjectile extends Render<EntityMagicProjectile> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityMagicProjectile par1Entity){
+	public ResourceLocation getTextureLocation(EntityMagicProjectile par1Entity){
 		return texture;
 	}
 }

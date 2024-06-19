@@ -6,18 +6,18 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class RenderIceSpike extends Render<EntityIceSpike> {
+public class RenderIceSpike extends EntityRenderer<EntityIceSpike> {
 
 	private static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/ice_spike.png");
 
-	public RenderIceSpike(RenderManager renderManager){
+	public RenderIceSpike(Context renderManager){
 		super(renderManager);
 	}
 
@@ -78,7 +78,7 @@ public class RenderIceSpike extends Render<EntityIceSpike> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityIceSpike entity){
+	public ResourceLocation getTextureLocation(EntityIceSpike entity){
 		return texture;
 	}
 

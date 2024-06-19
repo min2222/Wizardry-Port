@@ -5,18 +5,18 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
-public class RenderForcefield extends Render<EntityForcefield> {
+public class RenderForcefield extends EntityRenderer<EntityForcefield> {
 
 	private static final float EXPANSION_TIME = 3;
 
-	public RenderForcefield(RenderManager renderManager){
+	public RenderForcefield(Context renderManager){
 		super(renderManager);
 	}
 
@@ -66,7 +66,7 @@ public class RenderForcefield extends Render<EntityForcefield> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityForcefield entity){
+	public ResourceLocation getTextureLocation(EntityForcefield entity){
 		return null;
 	}
 

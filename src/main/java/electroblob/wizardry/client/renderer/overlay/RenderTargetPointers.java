@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +33,7 @@ public class RenderTargetPointers {
 
 		Minecraft mc = Minecraft.getInstance();
 		WizardData data = WizardData.get(mc.player);
-		RenderManager renderManager = event.getRenderer().getRenderManager();
+		Context renderManager = event.getRenderer().getRenderManager();
 
 		ItemStack wand = mc.player.getMainHandItem();
 

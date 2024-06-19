@@ -3,9 +3,9 @@ package electroblob.wizardry.client.renderer.entity;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.EntityDecoy;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -18,10 +18,10 @@ public class RenderDecoy extends RenderBiped<EntityDecoy> {
 
 	private static final ResourceLocation steveTextures = new ResourceLocation("textures/entity/steve.png");
 
-	private static final Method getEntityTexture = ObfuscationReflectionHelper.findMethod(Render.class, "func_110775_a",
+	private static final Method getEntityTexture = ObfuscationReflectionHelper.findMethod(EntityRenderer.class, "func_110775_a",
 			ResourceLocation.class, Entity.class); // Generic parameter T is erased to Entity at runtime.
 
-	public RenderDecoy(RenderManager manager){
+	public RenderDecoy(Context manager){
 		super(manager, new ModelBiped(0.0f), 0.5f);
 	}
 
@@ -90,7 +90,7 @@ public class RenderDecoy extends RenderBiped<EntityDecoy> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityDecoy entity){
+	public ResourceLocation getTextureLocation(EntityDecoy entity){
 		if(entity.getCaster() != null){
 			try{
 				return (ResourceLocation)getEntityTexture

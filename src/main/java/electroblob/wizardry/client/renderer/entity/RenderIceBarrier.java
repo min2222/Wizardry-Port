@@ -4,17 +4,17 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.model.ModelIceBarrier;
 import electroblob.wizardry.entity.construct.EntityIceBarrier;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 
-public class RenderIceBarrier extends Render<EntityIceBarrier> {
+public class RenderIceBarrier extends EntityRenderer<EntityIceBarrier> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/ice_barrier.png");
 
 	private ModelIceBarrier model = new ModelIceBarrier();
 
-	public RenderIceBarrier(RenderManager manager){
+	public RenderIceBarrier(Context manager){
 		super(manager);
 	}
 
@@ -38,7 +38,7 @@ public class RenderIceBarrier extends Render<EntityIceBarrier> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityIceBarrier entity){
+	public ResourceLocation getTextureLocation(EntityIceBarrier entity){
 		return TEXTURE;
 	}
 

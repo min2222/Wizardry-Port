@@ -4,20 +4,20 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.model.ModelRemnant;
 import electroblob.wizardry.entity.living.EntityRemnant;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 
-public class RenderRemnant extends Render<EntityRemnant> {
+public class RenderRemnant extends EntityRenderer<EntityRemnant> {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/remnant.png");
 
 	private final ModelRemnant model;
 
-	public RenderRemnant(RenderManager manager){
+	public RenderRemnant(Context manager){
 		super(manager);
 		model = new ModelRemnant();
 	}
@@ -68,7 +68,7 @@ public class RenderRemnant extends Render<EntityRemnant> {
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(EntityRemnant entity){
+	public ResourceLocation getTextureLocation(EntityRemnant entity){
 		return TEXTURE;
 	}
 

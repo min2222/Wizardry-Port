@@ -4,8 +4,8 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.model.ModelIceGiant;
 import electroblob.wizardry.entity.living.EntityIceGiant;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.RenderLiving;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.resources.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)
@@ -14,12 +14,12 @@ public class RenderIceGiant extends RenderLiving<EntityIceGiant> {
 	private static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/ice_giant.png");
 
-	public RenderIceGiant(RenderManager renderManager){
+	public RenderIceGiant(EntityRendererProvider.Context renderManager){
 		super(renderManager, new ModelIceGiant(), 0.5F);
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityIceGiant entity){
+	public ResourceLocation getTextureLocation(EntityIceGiant entity){
 		return texture;
 	}
 

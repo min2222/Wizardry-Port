@@ -5,18 +5,18 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class RenderLightningDisc extends Render<EntityLightningDisc> {
+public class RenderLightningDisc extends EntityRenderer<EntityLightningDisc> {
 
 	private final ResourceLocation texture;
 	private float scale = 1.0f;
 
-	public RenderLightningDisc(RenderManager renderManager, ResourceLocation texture, float scale){
+	public RenderLightningDisc(EntityRendererProvider.Context renderManager, ResourceLocation texture, float scale){
 		super(renderManager);
 		this.texture = texture;
 		this.scale = scale;
@@ -74,7 +74,7 @@ public class RenderLightningDisc extends Render<EntityLightningDisc> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityLightningDisc entity){
+	public ResourceLocation getTextureLocation(EntityLightningDisc entity){
 		return null;
 	}
 

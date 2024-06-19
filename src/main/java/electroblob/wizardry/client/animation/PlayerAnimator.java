@@ -10,7 +10,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
@@ -133,7 +133,7 @@ public class PlayerAnimator {
 		playerLayerModels.put(renderer, models);
 	}
 
-	private static void updateModels(Player player, Render<?> renderer, float partialTicks, boolean firstPerson){
+	private static void updateModels(Player player, EntityRenderer<?> renderer, float partialTicks, boolean firstPerson){
 
 		// Lazy-load models from custom renderers (some mods assign their custom renderers in postInit, so they might
 		// not be picked up from PlayerAnimator#init)

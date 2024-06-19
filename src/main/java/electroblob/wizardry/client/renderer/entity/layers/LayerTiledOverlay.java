@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
@@ -224,7 +224,7 @@ public abstract class LayerTiledOverlay<T extends LivingEntity> implements Layer
 
 		for(Class<? extends Entity> c : Minecraft.getInstance().getRenderManager().entityRenderMap.keySet()){
 			if(entityType.isAssignableFrom(c)){
-				Render<T> renderer = Minecraft.getInstance().getRenderManager().getEntityClassRenderObject(c);
+				EntityRenderer<T> renderer = Minecraft.getInstance().getRenderManager().getEntityClassRenderObject(c);
 				if(renderer instanceof RenderLivingBase<?>){ // Should always be true
 					// For some reason IntelliJ is quite happy with this cast, even without suppress warnings
 					// Instinct suggests Java shouldn't be happy casting to RenderLivingBase<T> but somehow it works

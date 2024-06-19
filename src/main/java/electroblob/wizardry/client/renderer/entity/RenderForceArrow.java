@@ -6,20 +6,20 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
-public class RenderForceArrow extends Render<EntityForceArrow> {
+public class RenderForceArrow extends EntityRenderer<EntityForceArrow> {
 
 	private static final ResourceLocation arrowTextures = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/force_arrow.png");
 
-	public RenderForceArrow(RenderManager renderManager){
+	public RenderForceArrow(EntityRendererProvider.Context renderManager){
 		super(renderManager);
 	}
 
@@ -129,7 +129,7 @@ public class RenderForceArrow extends Render<EntityForceArrow> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityForceArrow par1Entity){
+	public ResourceLocation getTextureLocation(EntityForceArrow par1Entity){
 		return arrowTextures;
 	}
 }

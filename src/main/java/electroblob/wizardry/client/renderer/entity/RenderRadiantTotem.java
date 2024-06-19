@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
-public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
+public class RenderRadiantTotem extends EntityRenderer<EntityRadiantTotem> {
 
 	private static final ResourceLocation FLARE_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/totem/flare.png");
 	private static final ResourceLocation[] CUBE_TEXTURES = new ResourceLocation[14];
@@ -27,13 +27,13 @@ public class RenderRadiantTotem extends Render<EntityRadiantTotem> {
 		for(int i = 0; i< CUBE_TEXTURES.length; i++) CUBE_TEXTURES[i] = new ResourceLocation(Wizardry.MODID, "textures/entity/totem/cube_" + i + ".png");
 	}
 
-	public RenderRadiantTotem(RenderManager manager){
+	public RenderRadiantTotem(EntityRendererProvider.Context manager){
 		super(manager);
 	}
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(EntityRadiantTotem entity){
+	public ResourceLocation getTextureLocation(EntityRadiantTotem entity){
 		return CUBE_TEXTURES[entity.tickCount % CUBE_TEXTURES.length];
 	}
 

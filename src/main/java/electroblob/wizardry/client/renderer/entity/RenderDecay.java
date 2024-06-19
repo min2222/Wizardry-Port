@@ -7,17 +7,17 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class RenderDecay extends Render<EntityDecay> {
+public class RenderDecay extends EntityRenderer<EntityDecay> {
 
 	private static final ResourceLocation[] TEXTURES = new ResourceLocation[10];
 
-	public RenderDecay(RenderManager renderManager){
+	public RenderDecay(EntityRendererProvider.Context renderManager){
 		super(renderManager);
 		for(int i = 0; i < 10; i++){
 			TEXTURES[i] = new ResourceLocation(Wizardry.MODID, "textures/entity/decay/decay_" + i + ".png");
@@ -65,7 +65,7 @@ public class RenderDecay extends Render<EntityDecay> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityDecay entity){
+	public ResourceLocation getTextureLocation(EntityDecay entity){
 		return null;
 	}
 

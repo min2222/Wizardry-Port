@@ -4,7 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderArrow;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -15,13 +15,13 @@ public class RenderConjuredArrow extends RenderArrow<EntityConjuredArrow> {
 
 	public static final ResourceLocation CONJURED_ARROW_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/conjured_arrow.png");
 
-	public RenderConjuredArrow(RenderManager manager) {
+	public RenderConjuredArrow(Context manager) {
 		super(manager);
 
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityConjuredArrow entity) {
+	public ResourceLocation getTextureLocation(EntityConjuredArrow entity) {
 		return CONJURED_ARROW_TEXTURE;
 	}
 

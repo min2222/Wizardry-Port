@@ -3,7 +3,7 @@ package electroblob.wizardry.client.renderer.entity;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.EntitySpiritWolf;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.RenderWolf;
 import net.minecraft.world.entity.passive.EntityWolf;
 import net.minecraft.resources.ResourceLocation;
@@ -18,12 +18,12 @@ public class RenderSpiritWolf extends RenderWolf {
 //	private static final int GHOST_COPIES = 3;
 //	private static final float DECONVERGENCE = 0.8f;
 
-	public RenderSpiritWolf(RenderManager renderManager){
+	public RenderSpiritWolf(Context renderManager){
 		super(renderManager);
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityWolf entity){
+	public ResourceLocation getTextureLocation(EntityWolf entity){
 		return texture;
 	}
 

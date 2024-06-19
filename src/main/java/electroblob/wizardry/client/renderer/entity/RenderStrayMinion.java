@@ -1,7 +1,7 @@
 package electroblob.wizardry.client.renderer.entity;
 
 import electroblob.wizardry.client.renderer.entity.layers.LayerStrayMinionClothing;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
@@ -11,7 +11,7 @@ public class RenderStrayMinion extends RenderSkeleton {
 
 	private static final ResourceLocation STRAY_SKELETON_TEXTURES = new ResourceLocation("textures/entity/skeleton/stray.png");
 
-	public RenderStrayMinion(RenderManager manager){
+	public RenderStrayMinion(Context manager){
 		super(manager);
 		this.addLayer(new LayerStrayMinionClothing(this)); // This is the only change
 	}
@@ -19,7 +19,7 @@ public class RenderStrayMinion extends RenderSkeleton {
 	/**
 	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
 	 */
-	protected ResourceLocation getEntityTexture(AbstractSkeleton entity){
+	public ResourceLocation getTextureLocation(AbstractSkeleton entity){
 		return STRAY_SKELETON_TEXTURES;
 	}
 }

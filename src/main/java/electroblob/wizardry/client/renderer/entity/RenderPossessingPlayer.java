@@ -1,7 +1,7 @@
 package electroblob.wizardry.client.renderer.entity;
 
 import electroblob.wizardry.spell.Possession;
-import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -21,7 +21,7 @@ public class RenderPossessingPlayer {
 
 		if(possessee != null){
 			// I reject your renderer and substitute my own!
-			Render<Mob> renderer = (Render<Mob>)event.getRenderer().getRenderManager().entityRenderMap.get(possessee.getClass());
+			EntityRenderer<Mob> renderer = (EntityRenderer<Mob>)event.getRenderer().getRenderManager().entityRenderMap.get(possessee.getClass());
 			float yaw = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * event.getPartialRenderTick();
 			possessee.swingProgress = player.swingProgress;
 			possessee.prevSwingProgress = player.prevSwingProgress;

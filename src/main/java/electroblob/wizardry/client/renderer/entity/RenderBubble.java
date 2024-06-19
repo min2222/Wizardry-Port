@@ -9,19 +9,19 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
-public class RenderBubble extends Render<EntityBubble> {
+public class RenderBubble extends EntityRenderer<EntityBubble> {
 
 	private static final ResourceLocation PARTICLE_TEXTURES = new ResourceLocation("textures/particle/particles.png");
 	private static final ResourceLocation ENTRAPMENT_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/entrapment.png");
 
-	public RenderBubble(RenderManager renderManager){
+	public RenderBubble(EntityRendererProvider.Context renderManager){
 		super(renderManager);
 	}
 
@@ -98,7 +98,7 @@ public class RenderBubble extends Render<EntityBubble> {
 	}
 
 	@Override
-	protected ResourceLocation getEntityTexture(EntityBubble entity){
+	public ResourceLocation getTextureLocation(EntityBubble entity){
 		return null;
 	}
 
