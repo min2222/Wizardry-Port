@@ -46,7 +46,7 @@ public class Poison extends SpellRay {
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.POISON),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.POISON,
-						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 						getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 			}
 		}

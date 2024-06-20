@@ -1,22 +1,23 @@
 package electroblob.wizardry.registry;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ItemManaFlask;
 import electroblob.wizardry.misc.RecipeRechargeWithFlask;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Class responsible for defining and registering wizardry's non-JSON recipes (i.e. smelting recipes and dynamic
@@ -59,20 +60,20 @@ public final class WizardryRecipes {
 
 		IForgeRegistry<IRecipe> registry = event.getRegistry();
 
-		FurnaceRecipes.instance().addSmeltingRecipeForBlock(WizardryBlocks.crystal_ore, new ItemStack(WizardryItems.magic_crystal), 0.5f);
+		FurnaceRecipes.instance().addSmeltingRecipeForBlock(WizardryBlocks.CRYSTAL_ORE.get(), new ItemStack(WizardryItems.MAGIC_CRYSTAL.get()), 0.5f);
 
 		// Mana flask recipes
 
 		for(Item chargeable : chargeableItems){
 
-			registry.register(new RecipeRechargeWithFlask(chargeable, (ItemManaFlask)WizardryItems.small_mana_flask)
-					.setRegistryName(new ResourceLocation(Wizardry.MODID, "recipes/small_flask_" + chargeable.getRegistryName().getPath())));
+			registry.register(new RecipeRechargeWithFlask(new ResourceLocation(Wizardry.MODID, "recipes/small_flask_" + ForgeRegistries.ITEMS.getKey(chargeable).getPath()), 
+					chargeable, (ItemManaFlask)WizardryItems.SMALL_MANA_FLASK.get()));
 
-			registry.register(new RecipeRechargeWithFlask(chargeable, (ItemManaFlask)WizardryItems.medium_mana_flask)
-					.setRegistryName(new ResourceLocation(Wizardry.MODID, "recipes/medium_flask_" + chargeable.getRegistryName().getPath())));
+			registry.register(new RecipeRechargeWithFlask(new ResourceLocation(Wizardry.MODID, "recipes/medium_flask_" + ForgeRegistries.ITEMS.getKey(chargeable).getPath()),
+					chargeable, (ItemManaFlask)WizardryItems.MEDIUM_MANA_FLASK.get()));
 
-			registry.register(new RecipeRechargeWithFlask(chargeable, (ItemManaFlask)WizardryItems.large_mana_flask)
-					.setRegistryName(new ResourceLocation(Wizardry.MODID, "recipes/large_flask_" + chargeable.getRegistryName().getPath())));
+			registry.register(new RecipeRechargeWithFlask(new ResourceLocation(Wizardry.MODID, "recipes/large_flask_" + ForgeRegistries.ITEMS.getKey(chargeable).getPath()),
+					chargeable, (ItemManaFlask)WizardryItems.LARGE_MANA_FLASK.get()));
 
 		}
 

@@ -47,18 +47,18 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 	public static void onLivingUpdateEvent(LivingTickEvent event){
 		if(event.getEntity().level.isClientSide){
 			// Behold the power of interfaces!
-			for(MobEffectInstance effect : event.getEntity().getActivePotionEffects()){
+			for(MobEffectInstance effect : event.getEntity().getActiveEffects()){
 
-				if(effect.getPotion() instanceof ICustomPotionParticles && effect.doesShowParticles()){
+				if(effect.getEffect() instanceof ICustomPotionParticles && effect.isVisible()){
 
 					double x = event.getEntity().getX()
-							+ (event.getEntity().world.random.nextDouble() - 0.5) * event.getEntity().width;
+							+ (event.getEntity().level.random.nextDouble() - 0.5) * event.getEntity().getBbWidth();
 					double y = event.getEntity().getY()
-							+ event.getEntity().world.random.nextDouble() * event.getEntity().getBbHeight();
+							+ event.getEntity().level.random.nextDouble() * event.getEntity().getBbHeight();
 					double z = event.getEntity().getZ()
-							+ (event.getEntity().world.random.nextDouble() - 0.5) * event.getEntity().width;
+							+ (event.getEntity().level.random.nextDouble() - 0.5) * event.getEntity().getBbWidth();
 
-					((ICustomPotionParticles)effect.getPotion()).spawnCustomParticle(event.getEntity().world, x, y, z);
+					((ICustomPotionParticles)effect.getEffect()).spawnCustomParticle(event.getEntity().level, x, y, z);
 				}
 			}
 		}
@@ -67,7 +67,7 @@ public interface ICustomPotionParticles extends ISyncedPotion {
 	@SubscribeEvent
 	// Prevents instances of this interface for which shouldMixColour() returns false from affecting mixed potion colours
 	public static void onPotionColourCalculationEvent(PotionColorCalculationEvent event){
-		event.setColor(PotionUtils.getPotionColorFromEffectList(event.getEffects().stream().filter(
+		event.setColor(PotionUtils.getColor(event.getEffects().stream().filter(
 				p -> !(p instanceof ICustomPotionParticles && !((ICustomPotionParticles)p).shouldMixColour()))
 				.collect(Collectors.toList())));
 	}

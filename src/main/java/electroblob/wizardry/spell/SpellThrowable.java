@@ -77,7 +77,7 @@ public class SpellThrowable<T extends ThrowableProjectile> extends Spell {
 	/** Trajectory calculation - see {@link SpellProjectile} for a more detailed explanation */
 	protected float calculateVelocity(SpellModifiers modifiers, float launchHeight){
 		float g = 0.03f;
-		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 		return (float) (range / Math.sqrt(2 * launchHeight/g));
 	}
 

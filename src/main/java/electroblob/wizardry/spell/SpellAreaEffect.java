@@ -127,7 +127,7 @@ public abstract class SpellAreaEffect extends Spell {
 	/** Takes care of the shared stuff for the three casting methods. This is mainly for internal use. */
 	protected boolean findAndAffectEntities(Level world, Vec3 origin, @Nullable LivingEntity caster, int ticksInUse, SpellModifiers modifiers){
 
-		double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+		double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, origin.x, origin.y, origin.z, world);
 
 		if(targetAllies){

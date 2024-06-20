@@ -70,7 +70,7 @@ public class RayOfPurification extends SpellRay {
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.RADIANT), damage);
 				// Blindness
 				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.BLINDNESS,
-						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade))));
+						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()))));
 			}
 		}
 		

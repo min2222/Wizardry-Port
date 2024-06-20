@@ -63,7 +63,7 @@ public class Thunderstorm extends Spell {
 			for(int i = 0; i < getProperty(LIGHTNING_BOLTS).intValue(); i++){
 
 				double radius = maxRadius * CENTRE_RADIUS_FRACTION + world.random.nextDouble() * maxRadius
-						* (1 - CENTRE_RADIUS_FRACTION) * modifiers.get(WizardryItems.blast_upgrade);
+						* (1 - CENTRE_RADIUS_FRACTION) * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 				float angle = world.random.nextFloat() * (float)Math.PI * 2;
 
 				double x = caster.getX() + radius * Mth.cos(angle);

@@ -34,10 +34,10 @@ public class PhaseStep extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		boolean teleportMount = caster.isPassenger() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
+		boolean teleportMount = caster.isPassenger() && ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_MOUNT_TELEPORTING.get());
 		boolean hitLiquids = teleportMount && caster.getVehicle() instanceof Boat; // Boats teleport to the surface
 
-		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids, false);
 
@@ -65,7 +65,7 @@ public class PhaseStep extends Spell {
 			// The maximum wall thickness as determined by the range multiplier. The + 0.5f is so that
 			// weird float processing doesn't incorrectly round it down.
 			int maxThickness = getProperty(WALL_THICKNESS).intValue()
-					+ (int)((modifiers.get(WizardryItems.range_upgrade) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
+					+ (int)((modifiers.get(WizardryItems.RANGE_UPGRADE.get()) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
 
 			if(((BlockHitResult) rayTrace).getDirection() == Direction.UP) maxThickness++; // Allow space for the player's head
 

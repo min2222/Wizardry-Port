@@ -43,7 +43,7 @@ public class LightningPulse extends Spell {
 		if(caster.isOnGround()){
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(
-					getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade),
+					getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get()),
 					caster.getX(), caster.getY(), caster.getZ(), world);
 
 			for(LivingEntity target : targets){
@@ -74,7 +74,7 @@ public class LightningPulse extends Spell {
 			if(world.isClientSide){
 				ParticleBuilder.create(Type.LIGHTNING_PULSE).pos(caster.getX(), caster.getY()
 						+ GeometryUtils.ANTI_Z_FIGHTING_OFFSET, caster.getZ())
-				.scale(modifiers.get(WizardryItems.blast_upgrade)).spawn(world);
+				.scale(modifiers.get(WizardryItems.BLAST_UPGRADE.get())).spawn(world);
 			}
 
 			this.playSound(world, caster, ticksInUse, -1, modifiers);

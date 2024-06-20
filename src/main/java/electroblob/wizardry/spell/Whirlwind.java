@@ -31,7 +31,7 @@ public class Whirlwind extends SpellRay {
 	protected boolean onEntityHit(Level world, Entity target, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 
 		if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
-				|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
+				|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.AMULET_ANCHORING.get()))){
 
 			if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);

@@ -117,7 +117,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 
 				// In this case we don't care whether the minions can fly or not.
 				minion.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				this.addMinionExtras(minion, pos, null, modifiers, i);
 
 				world.addFreshEntity(minion);
@@ -174,7 +174,7 @@ public class SpellMinion<T extends Mob & ISummonedCreature> extends Spell {
 				minion.setCaster(caster);
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
-				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				minion.setLifetime((int)(getProperty(MINION_LIFETIME).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				AttributeInstance attribute = minion.getAttribute(Attributes.ATTACK_DAMAGE);
 				if(attribute != null) attribute.addTransientModifier( // Apparently some things don't have an attack damage
 						new AttributeModifier(POTENCY_ATTRIBUTE_MODIFIER, modifiers.get(SpellModifiers.POTENCY) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));

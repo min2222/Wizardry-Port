@@ -35,7 +35,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 			target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.WITHER),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 			target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
 
@@ -47,7 +47,7 @@ public class PlagueOfDarkness extends SpellAreaEffect {
 
 		double particleX, particleZ;
 
-		for(int i = 0; i < 40 * modifiers.get(WizardryItems.blast_upgrade); i++){
+		for(int i = 0; i < 40 * modifiers.get(WizardryItems.BLAST_UPGRADE.get()); i++){
 
 			particleX = origin.x - 1.0d + 2 * world.random.nextDouble();
 			particleZ = origin.z - 1.0d + 2 * world.random.nextDouble();

@@ -175,7 +175,7 @@ public class SpellBuff extends Spell {
 
 		for(MobEffect potion : potionSet){
 			caster.addEffect(new MobEffectInstance(potion, potion.isInstantenous() ? 1 :
-					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(getDurationKey(potion)).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					(int)getProperty(getStrengthKey(potion)).floatValue() + bonusAmplifier,
 					false, true));
 		}

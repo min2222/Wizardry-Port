@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.ItemSpectralBow;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.packet.PacketCastContinuousSpell;
 import electroblob.wizardry.packet.PacketCastSpell;
 import electroblob.wizardry.packet.PacketCastSpellAtPos;
@@ -26,8 +27,10 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -64,7 +67,7 @@ public class CommonProxy {
 
 	public void registerKeyBindings(){}
 
-	public net.minecraft.client.model.ModelBiped getWizardArmourModel(ArmorMaterial material){
+	public HumanoidModel<?> getWizardArmourModel(ArmorMaterial material){
 		return null;
 	}
 
@@ -109,16 +112,16 @@ public class CommonProxy {
 	 * use of this method will be for text-based logic purposes (like Bibliocraft's book checking system), and since
 	 * no particular player instance can be accessed, spell discovery is ignored.
 	 */
-	public String getScrollDisplayName(ItemStack scroll){
+	public Component getScrollDisplayName(ItemStack scroll){
 
-		Spell spell = Spell.byMetadata(scroll.getItemDamage());
+        Spell spell = Spell.byMetadata(((IMetadata) scroll.getItem()).getMetadata(scroll));
 
-		return I18n.translateToLocalFormatted("item." + Wizardry.MODID + ":scroll.name",
-				I18n.translateToLocal("spell." + spell.getUnlocalisedName())).trim();
+		return Component.translatable(String.format("item." + Wizardry.MODID + ":scroll.name",
+				String.format("spell." + spell.getUnlocalisedName())).trim());
 	}
 
 	public double getConjuredBowDurability(ItemStack stack){
-		return ((ItemSpectralBow)WizardryItems.spectral_bow).getDefaultDurabilityForDisplay(stack);
+		return ((ItemSpectralBow)WizardryItems.SPECTRAL_BOW.get()).getDefaultDurabilityForDisplay(stack);
 	}
 
 	/**
@@ -128,7 +131,7 @@ public class CommonProxy {
 	 * @param args The format arguments to pass into the translation, if any.
 	 * @return The resulting translated text.
 	 */
-	public String translate(String key, Object... args){
+	public Component translate(String key, Object... args){
 		return translate(key, Style.EMPTY, args);
 	}
 
@@ -140,12 +143,12 @@ public class CommonProxy {
 	 * @param args The format arguments to pass into the translation, if any.
 	 * @return The resulting translated text.
 	 */
-	public String translate(String key, Style style, Object... args){
-		return key;
+	public Component translate(String key, Style style, Object... args){
+		return Component.translatable(key, args);
 	}
 
 	/** Like {@link CommonProxy#addMultiLineDescription(List, String, Style, Object...)}, but style defaults to light grey. */
-	public void addMultiLineDescription(List<String> tooltip, String key, Object... args){
+	public void addMultiLineDescription(List<Component> tooltip, String key, Object... args){
 		this.addMultiLineDescription(tooltip, key, Style.EMPTY.withColor(ChatFormatting.GRAY), args);
 	}
 

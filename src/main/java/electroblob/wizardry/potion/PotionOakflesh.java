@@ -12,18 +12,16 @@ public class PotionOakflesh extends PotionMagicEffect {
 
 	public PotionOakflesh(MobEffectCategory category, int liquidColour) {
 		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/oakflesh.png"));
-		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
-		this.setPotionName("potion." + Wizardry.MODID + ":ironflesh");
-		this.registerPotionAttributeModifier(Attributes.MOVEMENT_SPEED,
+		this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
 				"98b4ba66-7c50-4a4c-9f3f-40bcb37313b5", -0.1f, EntityUtils.Operations.MULTIPLY_CUMULATIVE);
-		this.registerPotionAttributeModifier(Attributes.MAX_HEALTH,
+		this.addAttributeModifier(Attributes.MAX_HEALTH,
 				"ed9d0423-60f4-4998-bd8d-dc7c33bd45b8", 0.2f, EntityUtils.Operations.MULTIPLY_FLAT);
-		this.registerPotionAttributeModifier(Attributes.ARMOR,
+		this.addAttributeModifier(Attributes.ARMOR,
 				"0b607c3f-fb14-43d7-96b5-1c1b6f6da242", 3.0f, EntityUtils.Operations.ADD);
 	}
 
 	@Override
-	public boolean isReady(int duration, int amplifier) {
+	public boolean isDurationEffectTick(int duration, int amplifier) {
 		return true;
 	}
 }

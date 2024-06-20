@@ -1,5 +1,8 @@
 package electroblob.wizardry.spell;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.event.ResurrectionEvent;
@@ -12,21 +15,18 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.Mth;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import java.util.Arrays;
-import java.util.Comparator;
+import net.minecraftforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class Resurrection extends Spell {
@@ -50,14 +50,14 @@ public class Resurrection extends Spell {
 
 		WizardData data = WizardData.get(caster);
 
-		double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+		double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		if(!world.isClientSide && caster.getServer() != null){
 			// Potency reduces the time you have to wait to resurrect an ally
 			int waitTime = (int)(getProperty(WAIT_TIME).floatValue() / modifiers.get(SpellModifiers.POTENCY));
 
 			ServerPlayer nearestDeadAlly = caster.getServer().getPlayerList().getPlayers().stream()
-					.filter(p -> !p.isEntityAlive() && p.deathTime > waitTime && (data.isPlayerAlly(p) || caster == p)
+					.filter(p -> !p.isAlive() && p.deathTime > waitTime && (data.isPlayerAlly(p) || caster == p)
 							&& p.distanceToSqr(caster) < radius * radius)
 					.min(Comparator.comparingDouble(caster::distanceToSqr))
 					.orElse(null);
@@ -75,15 +75,15 @@ public class Resurrection extends Spell {
 				world.addFreshEntity(nearestDeadAlly); // Re-add the player to all the relevant entity lists
 
 				// Notify clients to reset the appropriate fields, spawn particles and play sounds
-				IMessage msg = new PacketResurrection.Message(nearestDeadAlly.getEntityId());
-				WizardryPacketHandler.net.sendToDimension(msg, caster.dimension);
+				PacketResurrection.Message msg = new PacketResurrection.Message(nearestDeadAlly.getId());
+				WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> caster.level.dimension()), msg);
 
 				if(caster == nearestDeadAlly){
-					caster.getServer().getPlayerList().sendMessage(Component.translatable(
-							"spell." + this.getRegistryName() + ".resurrect_self", caster.getDisplayName()));
+					caster.getServer().getPlayerList().broadcastSystemMessage(Component.translatable(
+							"spell." + this.getRegistryName() + ".resurrect_self", caster.getDisplayName()), false);
 				}else{
-					caster.getServer().getPlayerList().sendMessage(Component.translatable(
-							"spell." + this.getRegistryName() + ".resurrect_ally", nearestDeadAlly.getDisplayName(), caster.getDisplayName()));
+					caster.getServer().getPlayerList().broadcastSystemMessage(Component.translatable(
+							"spell." + this.getRegistryName() + ".resurrect_ally", nearestDeadAlly.getDisplayName(), caster.getDisplayName()), false);
 				}
 
 				return true;
@@ -96,19 +96,19 @@ public class Resurrection extends Spell {
 	/** Sets the given player back to alive, sets their health to half-full and (on the client) spawns particles. */
 	public void resurrect(Player player){
 
-		player.isDead = false;
+		player.revive();
 		player.setHealth(player.getMaxHealth() / 2);
 		// Experience doesn't normally get reset until respawn, so we need to do that here too
 		player.deathTime = 0;
-		player.experience = 0;
+		player.experienceProgress = 0;
 		player.experienceLevel = 0;
-		player.experienceTotal = 0;
+		player.totalExperience = 0;
 		// Not sure what potion core is 'fixing' but it breaks my resurrection, so let's unfix it!
-		player.getPersistentData().removeTag(POTION_CORE_FIX_NBT_KEY);
+		player.getPersistentData().remove(POTION_CORE_FIX_NBT_KEY);
 
-		if(player.world.isClientSide){
-			ParticleBuilder.spawnHealParticles(player.world, player);
-			this.playSound(player.world, player, 0, -1, null); // We know the modifiers parameter isn't used
+		if(player.level.isClientSide){
+			ParticleBuilder.spawnHealParticles(player.level, player);
+			this.playSound(player.level, player, 0, -1, null); // We know the modifiers parameter isn't used
 		}
 	}
 
@@ -130,7 +130,7 @@ public class Resurrection extends Spell {
 
 			Player player = (Player)event.getEntity();
 
-			if(player.world.isClientSide && !player.isEntityAlive()){
+			if(player.level.isClientSide && !player.isAlive()){
 
 				Player firstPersonPlayer = Wizardry.proxy.getThePlayer();
 
@@ -139,7 +139,7 @@ public class Resurrection extends Spell {
 					ItemStack wand = firstPersonPlayer.getMainHandItem();
 
 					if(!(wand.getItem() instanceof ISpellCastingItem)){
-						wand = firstPersonPlayer.getOffHandItem();
+						wand = firstPersonPlayer.getOffhandItem();
 						if(!(wand.getItem() instanceof ISpellCastingItem)) return;
 					}
 
@@ -149,11 +149,11 @@ public class Resurrection extends Spell {
 						int waitTime = Spells.resurrection.getProperty(WAIT_TIME).intValue();
 
 						if(player.deathTime > waitTime){
-							ParticleBuilder.create(Type.SPARKLE, player.world.rand, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
-									.clr(1, 1, 0.3f).vel(0, 0.02, 0).spawn(player.world);
+							ParticleBuilder.create(Type.SPARKLE, player.level.random, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
+									.clr(1, 1, 0.3f).vel(0, 0.02, 0).spawn(player.level);
 						}else{
-							ParticleBuilder.create(Type.DUST, player.world.rand, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
-									.clr(1, 1, 0.3f).vel(0, 0.02, 0).time(50).spawn(player.world);
+							ParticleBuilder.create(Type.DUST, player.level.random, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)
+									.clr(1, 1, 0.3f).vel(0, 0.02, 0).time(50).spawn(player.level);
 						}
 					}
 				}

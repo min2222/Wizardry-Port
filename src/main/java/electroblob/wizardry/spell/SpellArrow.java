@@ -72,7 +72,7 @@ public class SpellArrow<T extends EntityMagicArrow> extends Spell {
 	// input something meaningful.
 	protected float calculateVelocity(EntityMagicArrow projectile, SpellModifiers modifiers, float launchHeight){
 		// The required range
-		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		if(!projectile.doGravity()){
 			// No sensible spell will do this - range is meaningless if the particle has no gravity or lifetime

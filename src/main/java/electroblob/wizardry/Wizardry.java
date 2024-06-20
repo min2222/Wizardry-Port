@@ -121,9 +121,11 @@ public class Wizardry {
 		WizardryEntities.ENTITY_TYPES.register(bus);
 		WizardryPotions.EFFECTS.register(bus);
 		WizardryItems.ITEMS.register(bus);
+		WizardryItems.PATTERNS.register(bus);
 		WizardryBlocks.BLOCKS.register(bus);
 		WizardryBlocks.BLOCK_ENTITIES.register(bus);
 		WizardryGuiHandler.MENUS.register(bus);
+		WizardryLoot.FUNCTIONS.register(bus);
 	}
 
 	@EventHandler
@@ -143,7 +145,6 @@ public class Wizardry {
 		DispenserCastingData.register();
 
 		// Register things that don't have registries
-		WizardryBlocks.registerTileEntities();
 		WizardryLoot.register();
 		WizardryAdvancementTriggers.register();
 		Forfeit.register();
@@ -157,7 +158,6 @@ public class Wizardry {
 		WizardrySounds.SPELLS = SoundSource.PLAYERS;//CustomSoundCategory.add(Wizardry.MODID + "_spells");
 
 		WizardryBaublesIntegration.init();
-		WizardryAntiqueAtlasIntegration.init();
 
 	}
 

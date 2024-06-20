@@ -1,17 +1,14 @@
 package electroblob.wizardry.block;
 
-import electroblob.wizardry.registry.WizardryTabs;
-import net.minecraft.world.level.block.BlockPlanks;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 
-public class BlockGildedWood extends BlockPlanks {
+public class BlockGildedWood extends Block {
 
 	public BlockGildedWood(){
-		super();
-		this.setCreativeTab(WizardryTabs.WIZARDRY);
-		this.setHardness(2.0F);
-		this.setResistance(5.0F);
-		this.setSoundType(SoundType.WOOD); // Why is this protected?!
+        super(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD));
 	}
 
 }

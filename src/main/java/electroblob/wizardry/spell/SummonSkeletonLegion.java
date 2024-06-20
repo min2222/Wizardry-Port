@@ -22,7 +22,7 @@ public class SummonSkeletonLegion extends SpellMinion<EntitySkeletonMinion> {
 
 	@Override
 	protected EntitySkeletonMinion createMinion(Level world, LivingEntity caster, SpellModifiers modifiers){
-		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants)){
+		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.CHARM_MINION_VARIANTS.get())){
 			return new EntityStrayMinion(world);
 		}else{
 			return super.createMinion(world, caster, modifiers);

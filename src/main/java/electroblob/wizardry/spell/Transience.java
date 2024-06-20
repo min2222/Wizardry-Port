@@ -47,7 +47,7 @@ public class Transience extends Spell {
 
 			if(!world.isClientSide){
 
-				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 
 				caster.addEffect(new MobEffectInstance(WizardryPotions.TRANSIENCE.get(), duration, 0));
 				caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration, 0, false, false));

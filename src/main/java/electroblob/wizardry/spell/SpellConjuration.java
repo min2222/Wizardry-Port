@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.IConjuredItem;
 import electroblob.wizardry.item.SpellActions;
@@ -41,13 +43,13 @@ public class SpellConjuration extends Spell {
 	public static final String ITEM_LIFETIME = "item_lifetime";
 
 	/** The item that is conjured by this spell. Should implement {@link IConjuredItem}. */
-	protected final Item item;
+	protected final Supplier<Item> item;
 
-	public SpellConjuration(String name, Item item){
+	public SpellConjuration(String name, Supplier<Item> item){
 		this(Wizardry.MODID, name, item);
 	}
 
-	public SpellConjuration(String modID, String name, Item item){
+	public SpellConjuration(String modID, String name, Supplier<Item> item){
 		super(modID, name, SpellActions.IMBUE, false);
 		this.item = item;
 		addProperties(ITEM_LIFETIME);
@@ -83,11 +85,11 @@ public class SpellConjuration extends Spell {
 	 * player already had the item. Override to add special conjuring behaviour. */
 	protected boolean conjureItem(Player caster, SpellModifiers modifiers){
 
-		ItemStack stack = new ItemStack(item);
+		ItemStack stack = new ItemStack(item.get());
 
-		if(InventoryUtils.doesPlayerHaveItem(caster, item)) return false;
+		if(InventoryUtils.doesPlayerHaveItem(caster, item.get())) return false;
 
-		IConjuredItem.setDurationMultiplier(stack, modifiers.get(WizardryItems.duration_upgrade));
+		IConjuredItem.setDurationMultiplier(stack, modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 		IConjuredItem.setDamageMultiplier(stack, modifiers.get(SpellModifiers.POTENCY));
 
 		addItemExtras(caster, stack, modifiers);

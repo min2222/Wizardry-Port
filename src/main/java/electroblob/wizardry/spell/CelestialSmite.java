@@ -1,20 +1,25 @@
 package electroblob.wizardry.spell;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.List;
+import net.minecraft.world.phys.Vec3;
 
 public class CelestialSmite extends SpellRay {
 
@@ -45,8 +50,8 @@ public class CelestialSmite extends SpellRay {
 		}
 
 		if(world.isClientSide){
-
-			ParticleBuilder.create(Type.BEAM).pos(hit.x, world.getActualHeight(), hit.z).target(hit).scale(8)
+			
+			ParticleBuilder.create(Type.BEAM).pos(hit.x, (world.getMinBuildHeight() + world.dimensionType().logicalHeight()), hit.z).target(hit).scale(8)
 			.clr(0xffbf00).time(10).spawn(world);
 			ParticleBuilder.create(Type.SPHERE).pos(hit).scale(4).clr(0xfff098).spawn(world);
 

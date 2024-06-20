@@ -160,9 +160,9 @@ public class SpellConstruct<T extends EntityMagicConstruct> extends Spell {
 			construct.setPos(x, y, z);
 			// Sets the various parameters
 			construct.setCaster(caster);
-			construct.lifetime = permanent ? -1 : (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+			construct.lifetime = permanent ? -1 : (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 			construct.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-			if(construct instanceof EntityScaledConstruct) ((EntityScaledConstruct)construct).setSizeMultiplier(modifiers.get(WizardryItems.blast_upgrade));
+			if(construct instanceof EntityScaledConstruct) ((EntityScaledConstruct)construct).setSizeMultiplier(modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 			addConstructExtras(construct, side, caster, modifiers);
 			// Prevents overlapping of multiple constructs of the same type. Since we have an instance here this is
 			// very simple. The trade-off is that we have to create the entity before the spell fails, but unless

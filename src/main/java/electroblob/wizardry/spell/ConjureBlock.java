@@ -34,7 +34,7 @@ public class ConjureBlock extends SpellRay {
 	@Override
 	protected boolean onBlockHit(Level world, BlockPos pos, Direction side, Vec3 hit, LivingEntity caster, Vec3 origin, int ticksInUse, SpellModifiers modifiers){
 		
-		if(caster != null && caster.isShiftKeyDown() && world.getBlockState(pos).getBlock() == WizardryBlocks.spectral_block){
+		if(caster != null && caster.isShiftKeyDown() && world.getBlockState(pos).getBlock() == WizardryBlocks.SPECTRAL_BLOCK.get()){
 
 			if(!world.isClientSide){
 				// Dispelling of blocks
@@ -58,7 +58,7 @@ public class ConjureBlock extends SpellRay {
 
 			if(!world.isClientSide){
 				
-				world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
+				world.setBlockAndUpdate(pos, WizardryBlocks.SPECTRAL_BLOCK.get().defaultBlockState());
 				
 				if(world.getBlockEntity(pos) instanceof TileEntityTimer){
 					((TileEntityTimer)world.getBlockEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()

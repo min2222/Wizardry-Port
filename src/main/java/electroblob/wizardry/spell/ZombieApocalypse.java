@@ -47,11 +47,11 @@ public class ZombieApocalypse extends SpellConstruct<EntityZombieSpawner> {
 
 	@Override
 	protected void addConstructExtras(EntityZombieSpawner construct, Direction side, @Nullable LivingEntity caster, SpellModifiers modifiers){
-		construct.spawnHusks = caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants);
+		construct.spawnHusks = caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.CHARM_MINION_VARIANTS.get());
 	}
 
 	@Override
 	protected void playSound(Level world, double x, double y, double z, int ticksInUse, int duration, SpellModifiers modifiers, String... sounds){
-		this.playSoundLoop(world, x, y + SPAWNER_HEIGHT, z, 0, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+		this.playSoundLoop(world, x, y + SPAWNER_HEIGHT, z, 0, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 	}
 }

@@ -48,7 +48,7 @@ public class Cobwebs extends SpellRay {
 
 			if(world.isEmptyBlock(pos1)){
 				if(!world.isClientSide){
-					world.setBlockAndUpdate(pos1, WizardryBlocks.vanishing_cobweb.defaultBlockState());
+					world.setBlockAndUpdate(pos1, WizardryBlocks.VANISHING_COBWEB.get().defaultBlockState());
 					if(world.getBlockEntity(pos1) instanceof TileEntityTimer){
 						((TileEntityTimer)world.getBlockEntity(pos1))
 								.setLifetime((int)(getProperty(DURATION).doubleValue()

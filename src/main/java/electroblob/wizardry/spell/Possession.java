@@ -47,8 +47,6 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.init.PotionTypes;
-import net.minecraft.item.ItemBow;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -62,24 +60,29 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.EntityAIAttackMelee;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.monster.Stray;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.Snowball;
 import net.minecraft.world.entity.projectile.ThrownPotion;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -137,7 +140,7 @@ public class Possession extends SpellRay {
 				Attributes.KNOCKBACK_RESISTANCE, UUID.fromString("05529535-9bcf-42bb-8822-45f5ce6a8f08"));
 
 		addAbility(Spider.class, (spider, player) -> { if(player.horizontalCollision) player.motionY = 0.2; });
-		addAbility(Chicken.class, (chicken, player) -> { if(!player.onGround && player.motionY < 0) player.motionY *= 0.6D; });
+		addAbility(Chicken.class, (chicken, player) -> { if(!player.isOnGround() && player.getDeltaMovement().y < 0) player.motionY *= 0.6D; });
 		addAbility(Mob.class, (entity, player) -> { if(!entity.getType().fireImmune() && player.isOnFire()) player.clearFire(); });
 
 		addProjectile(SnowGolem.class, t -> new Snowball(EntityType.SNOWBALL, t)); // Woooo snowballs!
@@ -198,7 +201,7 @@ public class Possession extends SpellRay {
 			}
 
 			if(!world.isClientSide){
-				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+				int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 				if(possess(player, (Mob)target, duration)){
 					return true;
 				}
@@ -262,30 +265,30 @@ public class Possession extends SpellRay {
 			attributes:
 			for(Attribute attribute : INHERITED_ATTRIBUTES.keySet()){
 
-				AttributeInstance instance = target.getAttributeMap().getAttributeInstance(attribute);
+				AttributeInstance instance = target.getAttributes().getInstance(attribute);
 
 				if(instance != null){
 
-					double targetValue = instance.getAttributeValue();
-					double currentValue = possessor.getAttributeMap().getAttributeInstance(attribute).getAttributeValue();
+					double targetValue = instance.getValue();
+					double currentValue = possessor.getAttributes().getInstance(attribute).getValue();
 					// Don't ask me why, but the player's base movement speed seems to be 0.1
 					if(attribute == Attributes.MOVEMENT_SPEED) currentValue /= possessor.capabilities.getWalkSpeed();
 
 					for(EquipmentSlot slot : EquipmentSlot.values()){
-						if(target.getItemStackFromSlot(slot).getAttributeModifiers(slot).containsKey(attribute.getName())){
+						if(target.getItemBySlot(slot).getAttributeModifiers(slot).containsKey(attribute.getName())){
 							// If the mob has equipment, use the modifiers for that equipment instead of the mob's normal ones
 							// Not doing this results in the player being able to one-hit most mobs when possessing a zombie pigman!
 							continue attributes;
 						}
 					}
 
-					possessor.getAttributeMap().getAttributeInstance(attribute).applyModifier(new AttributeModifier(
+					possessor.getAttributes().getInstance(attribute).addPermanentModifier(new AttributeModifier(
 							INHERITED_ATTRIBUTES.get(attribute), "possessionModifier", targetValue / currentValue,
 							EntityUtils.Operations.MULTIPLY_FLAT));
 				}
 			}
 
-			if(possessor.world.isClientSide){
+			if(possessor.level.isClientSide){
 				// Shaders and effects
 				Wizardry.proxy.loadShader(possessor, SHADER);
 				Wizardry.proxy.playBlinkEffect(possessor);
@@ -295,11 +298,11 @@ public class Possession extends SpellRay {
 				// Targeting
 
 				for(Mob creature : EntityUtils.getEntitiesWithinRadius(16, possessor.getX(),
-						possessor.getY(), possessor.getZ(), possessor.world, Mob.class)){
+						possessor.getY(), possessor.getZ(), possessor.level, Mob.class)){
 					// Mobs are dumb, if a player possesses something they're like "Huh?! Where'd you go?"
 					// Of course, this won't last long if the player attacks them, since they'll revenge-target them
-					if(creature.getTarget() == possessor && !creature.canAttackClass(target.getClass()))
-						creature.setAttackTarget(null);
+					if(creature.getTarget() == possessor && !creature.canAttack(target))
+						creature.setTarget(null);
 				}
 
 				// Inventory and items
@@ -308,27 +311,27 @@ public class Possession extends SpellRay {
 					NBTExtras.storeTagSafely(possessor.getPersistentData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new ListTag()));
 				}
 
-				possessor.inventory.clear();
+				possessor.getInventory().clearContent();
 				possessor.inventoryContainer.detectAndSendChanges();
 
 				ItemStack stack = target.getMainHandItem().copy();
 
-				if(target instanceof EntityEnderman && ((EntityEnderman)target).getHeldBlockState() != null){
-					stack = new ItemStack(((EntityEnderman)target).getHeldBlockState().getBlock());
+				if(target instanceof EnderMan && ((EnderMan)target).getCarriedBlock() != null){
+					stack = new ItemStack(((EnderMan)target).getCarriedBlock().getBlock());
 
-				}else if(stack.getItem() instanceof ItemBow){
+				}else if(stack.getItem() instanceof BowItem){
 					Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-					enchantments.put(Enchantments.INFINITY, 1);
+					enchantments.put(Enchantments.INFINITY_ARROWS, 1);
 					EnchantmentHelper.setEnchantments(enchantments, stack);
 					ItemStack arrow = new ItemStack(Items.ARROW);
-					if(target instanceof EntityStray || target instanceof EntityStrayMinion){
+					if(target instanceof Stray || target instanceof EntityStrayMinion){
 						arrow = new ItemStack(Items.TIPPED_ARROW);
-						PotionUtils.addPotionToItemStack(arrow, PotionTypes.SLOWNESS);
+						PotionUtils.setPotion(arrow, Potions.SLOWNESS);
 					}
-					possessor.setHeldItem(EnumHand.OFF_HAND, arrow);
+					possessor.setItemInHand(InteractionHand.OFF_HAND, arrow);
 				}
 
-				possessor.setItemStackToSlot(EquipmentSlot.MAINHAND, stack);
+				possessor.setItemSlot(EquipmentSlot.MAINHAND, stack);
 
 				// Packets
 
@@ -354,14 +357,14 @@ public class Possession extends SpellRay {
 
 		if(victim != null){
 
-			victim.isDead = false;
-			victim.setNoAI(false);
-			victim.getPersistentData().removeTag(NBT_KEY);
+			victim.revive();
+			victim.setNoAi(false);
+			victim.getPersistentData().remove(NBT_KEY);
 			victim.setPos(player.getX(), player.getY(), player.getZ());
-			if(!player.world.isClientSide) player.world.addFreshEntity(victim);
+			if(!player.level.isClientSide) player.level.addFreshEntity(victim);
 
-			for(MobEffectInstance effect : player.getActivePotionEffects()){
-				if(effect.getPotion() instanceof PotionSlowTime) continue; // Don't transfer slow time
+			for(MobEffectInstance effect : player.getActiveEffects()){
+				if(effect.getEffect() instanceof PotionSlowTime) continue; // Don't transfer slow time
 				victim.addEffect(effect);
 			}
 		}
@@ -482,8 +485,8 @@ public class Possession extends SpellRay {
 			entity.getBbWidth() = width;
 			entity.getBbHeight() = height;
 
-			double halfwidth = (double)getBbWidth() / 2.0D;
-			entity.setEntityBoundingBox(new AABB(entity.getX() - halfgetBbWidth(), entity.getY(), entity.getZ() - halfgetBbWidth(), entity.getX() + halfgetBbWidth(), entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfgetBbWidth()));
+			double halfwidth = (double)width / 2.0D;
+			entity.setBoundingBox(new AABB(entity.getX() - halfgetBbWidth(), entity.getY(), entity.getZ() - halfgetBbWidth(), entity.getX() + halfgetBbWidth(), entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfgetBbWidth()));
 		}
 	}
 
@@ -501,10 +504,8 @@ public class Possession extends SpellRay {
 				// Updating these to the player's variables won't have an effect on player movement, but it will
 				// affect various bits of mob-specific logic
 				possessee.setPos(event.player.getX(), event.player.getY(), event.player.getZ());
-				possessee.motionX = event.player.motionX;
-				possessee.motionY = event.player.motionY;
-				possessee.motionZ = event.player.motionZ;
-				possessee.onGround = event.player.onGround;
+				possessee.setDeltaMovement(event.player.getDeltaMovement());
+				possessee.setOnGround(event.player.isOnGround());
 
 				possessee.tick(); // Event though it's not in the world, it still needs updating
 				possessee.tickCount++; // Normally gets updated from World
@@ -537,7 +538,7 @@ public class Possession extends SpellRay {
 			Mob possessee = getPossessee((Player)event.getEntity());
 
 			if(possessee != null){
-				DamageSafetyChecker.attackEntitySafely(possessee, event.getSource(), event.getAmount(), event.getSource().getDamageType());
+				DamageSafetyChecker.attackEntitySafely(possessee, event.getSource(), event.getAmount(), event.getSource().getMsgId());
 				event.setCanceled(true);
 			}
 		}
@@ -548,7 +549,7 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingDamageEvent(LivingDamageEvent event){
 
-		for(Player player : event.getEntity().world.playerEntities){
+		for(Player player : event.getEntity().level.players()){
 
 			Mob possessee = getPossessee(player);
 
@@ -556,10 +557,10 @@ public class Possession extends SpellRay {
 				// Possessors take half of all damage taken by the entity they are possessing. If the possessor receives
 				// fatal/critical damage (i.e. damage that takes them to half a heart or less), their health is reset to half
 				// a heart and the possession ends.
-				if(!player.capabilities.isCreativeMode){
+				if(!player.getAbilities().instabuild){
 					// TODO: Make this a proper DamageSource?
 					DamageSafetyChecker.attackEntitySafely(player, DamageSource.OUT_OF_WORLD, event.getAmount() / 2,
-							DamageSource.OUT_OF_level.getDamageType());
+							DamageSource.OUT_OF_WORLD.getMsgId());
 				}
 
 				if(player.getHealth() <= Spells.possession.getProperty(CRITICAL_HEALTH).floatValue()){
@@ -581,12 +582,12 @@ public class Possession extends SpellRay {
 		if(possessee != null){
 
 			// Let endermen interact with blocks
-			if(possessee instanceof EntityEnderman && (
-					(event instanceof PlayerInteractEvent.RightClickBlock && ((EntityEnderman)possessee).getHeldBlockState() != null)
-							|| (event instanceof PlayerInteractEvent.LeftClickBlock && ((EntityEnderman)possessee).getHeldBlockState() == null)))
+			if(possessee instanceof EnderMan && (
+					(event instanceof PlayerInteractEvent.RightClickBlock && ((EnderMan)possessee).getCarriedBlock() != null)
+							|| (event instanceof PlayerInteractEvent.LeftClickBlock && ((EnderMan)possessee).getCarriedBlock() == null)))
 				return;
 
-			if(WizardData.get(event.getEntity()) != null && event.getWorld().isRemote
+			if(WizardData.get(event.getEntity()) != null && event.getLevel().isClientSide
 					&& (event instanceof PlayerInteractEvent.RightClickEmpty
 					|| event instanceof PlayerInteractEvent.EntityInteract
 					|| event instanceof PlayerInteractEvent.RightClickBlock)){
@@ -599,11 +600,11 @@ public class Possession extends SpellRay {
 					WizardData.get(event.getEntity()).setVariable(SHOOT_COOLDOWN_KEY, PROJECTILE_COOLDOWN);
 
 					if(possessee instanceof EntityLightningWraith){
-						Spells.arc.cast(event.getWorld(), event.getEntity(), EnumHand.MAIN_HAND, 0, new SpellModifiers());
+						Spells.ARC.cast(event.getLevel(), event.getEntity(), InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 					}
 
-					if(possessee instanceof EntityCreeper){
-						((EntityCreeper)possessee).ignite();
+					if(possessee instanceof Creeper){
+						((Creeper)possessee).ignite();
 					}
 				}
 			}
@@ -626,19 +627,19 @@ public class Possession extends SpellRay {
 				if(possessee != null){
 
 					if(possessee instanceof EntityLightningWraith){
-						Spells.arc.cast(possessor.world, possessor, EnumHand.MAIN_HAND, 0, new SpellModifiers());
+						Spells.ARC.cast(possessor.level, possessor, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 					}
 
-					if(possessee instanceof EntityCreeper){
+					if(possessee instanceof Creeper){
 						((Possession)Spells.possession).endPossession(possessor);
-						((EntityCreeper)possessee).ignite(); // Aaaaaaand.... RUN!
+						((Creeper)possessee).ignite(); // Aaaaaaand.... RUN!
 					}
 
-					Function<Level, ? extends IProjectile> factory = projectiles.get(possessee.getClass());
+					Function<Level, ? extends Projectile> factory = projectiles.get(possessee.getClass());
 
 					if(factory != null){
 
-						IProjectile projectile = factory.apply(possessor.world);
+						Projectile projectile = factory.apply(possessor.level);
 						Vec3 look = possessor.getLookAngle();
 						((Entity)projectile).setPos(possessor.getX() + look.x, possessor.getY() + possessor.getEyeHeight() + look.y, possessor.getZ() + look.z);
 						projectile.shoot(look.x, look.y, look.z, 1.6f, EntityUtils.getDefaultAimingError(possessor.level.getDifficulty()));
@@ -646,7 +647,7 @@ public class Possession extends SpellRay {
 						if(projectile instanceof EntityMagicProjectile) ((EntityMagicProjectile)projectile).setCaster(possessor);
 						else if(projectile instanceof EntityMagicArrow) ((EntityMagicArrow)projectile).setCaster(possessor);
 
-						possessor.world.addFreshEntity((Entity)projectile);
+						possessor.level.addFreshEntity((Entity)projectile);
 
 					}
 
@@ -661,8 +662,8 @@ public class Possession extends SpellRay {
 		if(event.getTarget() instanceof Player && event.getEntity() instanceof Mob){
 			Mob possessee = getPossessee((Player)event.getTarget());
 			Mob attacker = (Mob)event.getEntity();
-			if(possessee != null && !attacker.canAttackClass(possessee.getClass())){
-				((Mob)event.getEntity()).setAttackTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
+			if(possessee != null && !attacker.canAttack(possessee)){
+				((Mob)event.getEntity()).setTarget(null); // Mobs can't target a player possessing an entity they don't normally attack
 			}
 		}
 	}
@@ -678,7 +679,7 @@ public class Possession extends SpellRay {
 
 	@SubscribeEvent
 	public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event){
-		if(isPossessing(event.player)) ((Possession)Spells.possession).endPossession(event.player);
+		if(isPossessing(event.getEntity())) ((Possession)Spells.possession).endPossession(event.player);
 	}
 
 	@SubscribeEvent
@@ -686,7 +687,7 @@ public class Possession extends SpellRay {
 
 		Mob possessee = getPossessee(event.getPlayer());
 
-		if(possessee instanceof EntityEnderman){
+		if(possessee instanceof EnderMan){
 			if(((EntityEnderman)possessee).getHeldBlockState() == null){
 				((EntityEnderman)possessee).setHeldBlockState(event.getState());
 				event.getPlayer().setHeldItem(EnumHand.MAIN_HAND, new ItemStack(event.getState().getBlock()));
@@ -703,9 +704,9 @@ public class Possession extends SpellRay {
 
 		Mob possessee = getPossessee(event.getPlayer());
 
-		if(possessee instanceof EntityEnderman){
-			if(((EntityEnderman)possessee).getHeldBlockState() == event.getState()){
-				((EntityEnderman)possessee).setHeldBlockState(null);
+		if(possessee instanceof EnderMan){
+			if(((EnderMan)possessee).getCarriedBlock() == event.getState()){
+				((EnderMan)possessee).setCarriedBlock(null);
 			}else{
 				event.setCanceled(true);
 			}
@@ -733,7 +734,7 @@ public class Possession extends SpellRay {
 	static void onItemTossEvent(ItemTossEvent event){
 		if(isPossessing(event.getPlayer())){ // Can't drop items while possessing
 			event.setCanceled(true);
-			event.getPlayer().inventory.addItemStackToInventory(event.getEntity().getItem());
+			event.getPlayer().getInventory().add(event.getEntity().getItem());
 		}
 	}
 
@@ -744,9 +745,9 @@ public class Possession extends SpellRay {
 
 		if(possessee == null) return;
 
-		if(possessee instanceof EntityCreeper){
+		if(possessee instanceof Creeper){
 			event.setCanceled(true); // Why do creepers have a melee AI?!
-		}else if(possessee.tasks.taskEntries.stream().noneMatch(t -> t.action instanceof EntityAIAttackMelee)){
+		}else if(possessee.goalSelector.getAvailableGoals().stream().noneMatch(t -> t.getGoal() instanceof MeleeAttackGoal)){
 			event.setCanceled(true); // Can't melee with a non-melee mob
 		}
 	}

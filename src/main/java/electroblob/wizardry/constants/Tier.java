@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -134,7 +135,7 @@ public class Tier {
 	 * same relative weights for each. For example, if the array contains APPRENTICE and MASTER, then the weighting will
 	 * become: Apprentice 83.3%, Master 16.7%.
 	 */
-	public static Tier getWeightedRandomTier(Random random, Tier... tiers){
+	public static Tier getWeightedRandomTier(RandomSource random, Tier... tiers){
 
 		if(tiers.length == 0) tiers = values();
 

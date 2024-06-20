@@ -68,8 +68,8 @@ public class Paralysis extends SpellRay {
 			}
 
 			float durationMultiplier = target instanceof Player ? modifiers.get(PLAYER_EFFECT_DURATION_MULTIPLIER) : 1.0f;
-			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.paralysis,
-					(int)(getProperty(EFFECT_DURATION).floatValue() * durationMultiplier * modifiers.get(WizardryItems.duration_upgrade)), 0));
+			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.PARALYSIS.get(),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * durationMultiplier * modifiers.get(WizardryItems.DURATION_UPGRADE.get())), 0));
 		}
 		
 		return false;
@@ -92,7 +92,7 @@ public class Paralysis extends SpellRay {
 	@Override
 	protected boolean onMiss(Level world, LivingEntity caster, Vec3 origin, Vec3 direction, int ticksInUse, SpellModifiers modifiers){
 		// This is first because we want the endpoint to be unaffected by the offset
-		Vec3 endpoint = origin.add(direction.scale(getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)));
+		Vec3 endpoint = origin.add(direction.scale(getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get())));
 
 		if(world.isClientSide){
 			ParticleBuilder.create(Type.LIGHTNING).time(4).pos(origin).target(endpoint).scale(0.5f).spawn(world);
@@ -110,8 +110,8 @@ public class Paralysis extends SpellRay {
 		// Disables entities' AI when under the effects of paralysis and re-enables it on the last update of the effect
 		// - this can't be in the potion class because it requires access to the duration and hence the actual
 		// PotionEffect instance
-		if(event.getEntity() instanceof Mob && event.getEntity().hasEffect(WizardryPotions.paralysis)){
-			int timeLeft = event.getEntity().getEffect(WizardryPotions.paralysis).getDuration();
+		if(event.getEntity() instanceof Mob && event.getEntity().hasEffect(WizardryPotions.PARALYSIS.get())){
+			int timeLeft = event.getEntity().getEffect(WizardryPotions.PARALYSIS.get()).getDuration();
 			((Mob)event.getEntity()).setNoAi(timeLeft > 1);
 		}
 	}
@@ -119,9 +119,9 @@ public class Paralysis extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 		// Paralysed creatures snap out of paralysis when they take critical damage
-		if(event.getEntity().hasEffect(WizardryPotions.paralysis) && event.getEntity().getHealth()
+		if(event.getEntity().hasEffect(WizardryPotions.PARALYSIS.get()) && event.getEntity().getHealth()
 				- event.getAmount() <= Spells.paralysis.getProperty(CRITICAL_HEALTH).floatValue()){
-			event.getEntity().removeEffect(WizardryPotions.paralysis);
+			event.getEntity().removeEffect(WizardryPotions.PARALYSIS.get());
 		}
 	}
 

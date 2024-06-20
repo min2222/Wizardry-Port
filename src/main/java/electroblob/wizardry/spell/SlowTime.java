@@ -16,7 +16,7 @@ public class SlowTime extends SpellBuff {
 	public static final ResourceLocation SHADER = new ResourceLocation(Wizardry.MODID, "shaders/post/slow_time.json");
 
 	public SlowTime(){
-		super("slow_time", 0.2f, 0.8f, 0.8f, () -> WizardryPotions.slow_time);
+		super("slow_time", 0.2f, 0.8f, 0.8f, () -> WizardryPotions.SLOW_TIME.get());
 		addProperties(EFFECT_RADIUS);
 		soundValues(0.6f, 1.5f, 0);
 	}

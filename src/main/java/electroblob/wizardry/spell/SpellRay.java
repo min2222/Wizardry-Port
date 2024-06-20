@@ -238,7 +238,7 @@ public abstract class SpellRay extends Spell {
 	// Technically you could alter the range in the SpellModifiers object by overriding the cast method but that
 	// would be a bit of a hack since it's not really what spell modifiers are for.
 	protected double getRange(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, int ticksInUse, SpellModifiers modifiers){
-		return getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+		return getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 	}
 
 	/**

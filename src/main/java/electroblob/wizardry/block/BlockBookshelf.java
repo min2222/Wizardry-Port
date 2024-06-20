@@ -8,6 +8,8 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import net.minecraft.world.level.block.BlockHorizontal;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
@@ -44,7 +46,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber
-public class BlockBookshelf extends BlockHorizontal implements ITileEntityProvider {
+public class BlockBookshelf extends HorizontalDirectionalBlock implements EntityBlock {
 
 	/** When a bookshelf block (of any kind specified in the config) is added or removed, players within this range will
 	 * be notified of the change. */

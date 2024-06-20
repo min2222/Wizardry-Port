@@ -1,24 +1,26 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.spell.ArcaneLock;
 import electroblob.wizardry.util.GeometryUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderArcaneLock {
@@ -32,13 +34,13 @@ public class RenderArcaneLock {
 	}
 
 	@SubscribeEvent
-	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
+	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
 
 		Player player = Minecraft.getInstance().player;
-		Level world = Minecraft.getInstance().world;
-		Vec3 origin = player.getPositionEyes(event.getPartialTicks());
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
+		Level world = Minecraft.getInstance().level;
+		Vec3 origin = player.getEyePosition(event.getPartialTick());
+		Tesselator tessellator = Tesselator.getInstance();
+		BufferBuilder buffer = tessellator.getBuilder();
 
 		boolean flag = false;
 		boolean lighting = false;
@@ -102,10 +104,10 @@ public class RenderArcaneLock {
 	}
 
 	private static void drawFace(BufferBuilder buffer, Vec3 topLeft, Vec3 topRight, Vec3 bottomLeft, Vec3 bottomRight, float u1, float v1, float u2, float v2){
-		buffer.pos(topLeft.x, topLeft.y, topLeft.z).tex(u1, v1).endVertex();
-		buffer.pos(topRight.x, topRight.y, topRight.z).tex(u2, v1).endVertex();
-		buffer.pos(bottomRight.x, bottomRight.y, bottomRight.z).tex(u2, v2).endVertex();
-		buffer.pos(bottomLeft.x, bottomLeft.y, bottomLeft.z).tex(u1, v2).endVertex();
+		buffer.vertex(topLeft.x, topLeft.y, topLeft.z).uv(u1, v1).endVertex();
+		buffer.vertex(topRight.x, topRight.y, topRight.z).uv(u2, v1).endVertex();
+		buffer.vertex(bottomRight.x, bottomRight.y, bottomRight.z).uv(u2, v2).endVertex();
+		buffer.vertex(bottomLeft.x, bottomLeft.y, bottomLeft.z).uv(u1, v2).endVertex();
 	}
 
 }

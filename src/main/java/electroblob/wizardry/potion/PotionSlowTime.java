@@ -1,5 +1,8 @@
 package electroblob.wizardry.potion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.Spells;
@@ -9,24 +12,20 @@ import electroblob.wizardry.spell.SlowTime;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.IProjectile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mod.EventBusSubscriber
 public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
@@ -37,7 +36,6 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 
 	public PotionSlowTime(MobEffectCategory category, int liquidColour){
 		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/slow_time.png"));
-		this.setPotionName("potion." + Wizardry.MODID + ":slow_time");
 	}
 
 	private static double getEffectRadius(){
@@ -45,7 +43,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	}
 
 	public static void unblockNearbyEntities(LivingEntity host){
-		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.getX(), host.getY(), host.getZ(), host.world, Entity.class);
+		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.getX(), host.getY(), host.getZ(), host.level, Entity.class);
 		targetsBeyondRange.forEach(e -> e.canUpdate(true));
 	}
 
@@ -53,30 +51,32 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	// potion effect, and doesn't fire on the client at all for non-players
 	private static void performEffectConsistent(LivingEntity host, int strength){
 
-		boolean stopTime = host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.charm_stop_time);
+		boolean stopTime = host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.CHARM_STOP_TIME.get());
 
 		int interval = strength * 4 + 6;
 
 		// Mark all entities within range
-		List<Entity> targetsInRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius(), host.getX(), host.getY(), host.getZ(), host.world, Entity.class);
+		List<Entity> targetsInRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius(), host.getX(), host.getY(), host.getZ(), host.level, Entity.class);
 		targetsInRange.remove(host);
 		// Other entities with the slow time effect are unaffected
-		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).hasEffect(WizardryPotions.slow_time));
+		targetsInRange.removeIf(t -> t instanceof LivingEntity && ((LivingEntity)t).hasEffect(WizardryPotions.SLOW_TIME.get()));
 		if(!Wizardry.settings.slowTimeAffectsPlayers) targetsInRange.removeIf(t -> t instanceof Player);
-		targetsInRange.removeIf(t -> t instanceof Arrow && t.isEntityInsideOpaqueBlock());
+		targetsInRange.removeIf(t -> t instanceof Arrow && t.isInWall());
 
 		for(Entity entity : targetsInRange){
 
 			entity.getPersistentData().putBoolean(NBT_KEY, true);
 
 			// If time is stopped, block all updates; otherwise block all updates except every [interval] ticks
-			entity.updateBlocked = stopTime || host.tickCount % interval != 0;
+			boolean updateBlocked = stopTime || host.tickCount % interval != 0;
+			
+			entity.canUpdate(!updateBlocked);
 
 			if(!stopTime && entity.level.isClientSide){
 
 				// Client-side movement interpolation (smoothing)
 
-				if(entity.onGround) entity.motionY = 0; // Don't ask. It just works.
+				if(entity.isOnGround()) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z); // Don't ask. It just works.
 
 //				if(entity instanceof EntityLivingBase){
 //					((EntityLivingBase)entity).prevLimbSwingAmount = ((EntityLivingBase)entity).limbSwingAmount;
@@ -85,42 +85,38 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 //					((EntityLivingBase)entity).rotationYawHead = ((EntityLivingBase)entity).prevRotationYawHead;
 //				}
 
-				if(entity.updateBlocked){
+				if(updateBlocked){
 					// When the update is blocked, the entity is moved 1/interval times the distance it would have moved
-					double x = entity.getX() + entity.motionX * 1d / (double)interval;
-					double y = entity.getY() + entity.motionY * 1d / (double)interval;
-					double z = entity.getZ() + entity.motionZ * 1d / (double)interval;
+					double x = entity.getX() + entity.getDeltaMovement().x * 1d / (double)interval;
+					double y = entity.getY() + entity.getDeltaMovement().y * 1d / (double)interval;
+					double z = entity.getZ() + entity.getDeltaMovement().z * 1d / (double)interval;
 
-					entity.prevgetX() = entity.getX();
-					entity.prevgetY() = entity.getY();
-					entity.prevgetZ() = entity.getZ();
+					entity.xo = entity.getX();
+					entity.yo = entity.getY();
+					entity.zo = entity.getZ();
 
-					entity.getX() = x;
-					entity.getY() = y;
-					entity.getZ() = z;
+					entity.setPos(x, y, z);
 
 				}else{
 					// When the update is not blocked, the entity is moved BACK 1-1/interval times the distance it moved
 					// This is because the entity already covered most of that distance when its update was blocked
-					entity.getX() += entity.motionX * 1d / (double)interval;
-					entity.getY() += entity.motionY * 1d / (double)interval;
-					entity.getZ() += entity.motionZ * 1d / (double)interval;
+					entity.setPos(entity.position().add(entity.getDeltaMovement().scale(1d / (double)interval)));
 
-					double x = entity.getX() - entity.motionX * 1d / (double)interval;
-					double y = entity.getY() - entity.motionY * 1d / (double)interval;
-					double z = entity.getZ() - entity.motionZ * 1d / (double)interval;
+					double x = entity.getX() - entity.getDeltaMovement().x * 1d / (double)interval;
+					double y = entity.getY() - entity.getDeltaMovement().y * 1d / (double)interval;
+					double z = entity.getZ() - entity.getDeltaMovement().z * 1d / (double)interval;
 
-					entity.prevgetX() = x;
-					entity.prevgetY() = y;
-					entity.prevgetZ() = z;
+					entity.xo = x;
+					entity.yo = y;
+					entity.zo = z;
 				}
 			}
 
 			if(entity.level.isClientSide && host.tickCount % 2 == 0){
 				int lifetime = 15;
-				double dx = (entity.world.random.nextDouble() - 0.5D) * 2 * (double)entity.width;
-				double dy = (entity.world.random.nextDouble() - 0.5D) * 2 * (double)entity.width;
-				double dz = (entity.world.random.nextDouble() - 0.5D) * 2 * (double)entity.width;
+				double dx = (entity.level.random.nextDouble() - 0.5D) * 2 * (double)entity.getBbWidth();
+				double dy = (entity.level.random.nextDouble() - 0.5D) * 2 * (double)entity.getBbWidth();
+				double dz = (entity.level.random.nextDouble() - 0.5D) * 2 * (double)entity.getBbWidth();
 				double x = entity.getX() + dx;
 				double y = entity instanceof Projectile ? entity.getY() + dy : entity.getY() + entity.getBbHeight()/2 + dy;
 				double z = entity.getZ() + dz;
@@ -134,7 +130,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		// Un-mark all entities that have just left range
 		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.getX(), host.getY(), host.getZ(), host.world, Entity.class);
 		targetsBeyondRange.removeAll(targetsInRange);
-		targetsBeyondRange.forEach(e -> e.updateBlocked = false);
+		targetsBeyondRange.forEach(e -> e.canUpdate(true));
 
 	}
 
@@ -147,15 +143,15 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	public static void cleanUpEntities(Level world){
 		// Had trouble with accessing loadedTileEntityList from tick events causing random CMEs so I'm making a
 		// copy of this too just in case
-		List<Entity> loadedEntityList = new ArrayList<>(world.loadedEntityList);
+		List<Entity> loadedEntityList = new ArrayList<>(world.getEntities().getAll());
 
 		for(Entity entity : loadedEntityList){
 			if(entity.getPersistentData().getBoolean(NBT_KEY)){
 				// Currently only players can cast slow time, but you could apply the effect to NPCs with commands
-				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(getEffectRadius(), entity.getX(), entity.getY(), entity.getZ(), entity.world);
+				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(getEffectRadius(), entity.getX(), entity.getY(), entity.getZ(), entity.level);
 				if(nearby.stream().noneMatch(e -> e.hasEffect(WizardryPotions.SLOW_TIME.get()))){
 					entity.getPersistentData().remove(NBT_KEY);
-					entity.updateBlocked = false;
+					entity.canUpdate(true);
 				}
 			}
 		}
@@ -172,8 +168,8 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	}
 
 	@SubscribeEvent
-	public static void onPotionAddedEvent(PotionEvent.PotionAddedEvent event){
-		if(event.getEntity().level.isClientSide && event.getPotionEffect().getPotion() == WizardryPotions.SLOW_TIME.get()
+	public static void onPotionAddedEvent(MobEffectEvent.Added event){
+		if(event.getEntity().level.isClientSide && event.getEffectInstance().getEffect() == WizardryPotions.SLOW_TIME.get()
 				&& event.getEntity() instanceof Player){
 			Wizardry.proxy.loadShader((Player)event.getEntity(), SlowTime.SHADER);
 			Wizardry.proxy.playBlinkEffect((Player)event.getEntity());
@@ -190,7 +186,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	// something else weird happens...
 	@SubscribeEvent
 	public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event){
-		if(event.getEntity().updateBlocked) event.getEntity().updateBlocked = false;
+		if(!event.getEntity().canUpdate()) event.getEntity().canUpdate(true);
 	}
 
 }

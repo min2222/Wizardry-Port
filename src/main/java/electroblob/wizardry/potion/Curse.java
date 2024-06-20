@@ -31,7 +31,7 @@ public class Curse extends PotionMagicEffect {
 	@Override
 	public List<ItemStack> getCurativeItems(){
 		List<ItemStack> items = new ArrayList<>();
-		items.add(new ItemStack(WizardryItems.purifying_elixir));
+		items.add(new ItemStack(WizardryItems.PURIFYING_ELIXIR.get()));
 		return items;
 	}
 	
@@ -49,7 +49,7 @@ public class Curse extends PotionMagicEffect {
 				RenderSystem.setShaderTexture(0, BACKGROUND);
 				electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 140, 32, 256, 256);
 				
-				String name = Wizardry.proxy.translate(this.getName());
+				String name = Wizardry.proxy.translate(Curse.this.getDescriptionId());
 
 				// Amplifier 0 (which would be I) is not rendered and the tooltips only go up to X (amplifier 9)
 				// The vanilla implementation uses elseifs and only goes up to 4... how lazy.
@@ -57,7 +57,7 @@ public class Curse extends PotionMagicEffect {
 					name = name + " " + Wizardry.proxy.translate("enchantment.level." + (instance.getAmplifier() + 1));
 				}
 
-				List<String> lines = mc.font.listFormattedStringToWidth(name, 100);
+				List<String> lines = mc.font.split(name, 100);
 				
 				int i=0;
 				for(String line : lines){

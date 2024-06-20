@@ -41,13 +41,13 @@ public class MindTrick extends SpellRay {
 				if(target instanceof Player){
 
 					((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.CONFUSION,
-							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
+							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())), 0));
 
 				}else if(target instanceof Mob){
 
 					((Mob)target).setTarget(null);
 					((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.MIND_TRICK.get(),
-							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)), 0));
+							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())), 0));
 				}
 				
 			}else{

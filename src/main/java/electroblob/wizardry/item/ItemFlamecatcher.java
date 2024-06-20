@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemBow;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-public class ItemFlamecatcher extends ItemBow implements IConjuredItem {
+public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 
 	public static final float DRAW_TIME = 10;
 

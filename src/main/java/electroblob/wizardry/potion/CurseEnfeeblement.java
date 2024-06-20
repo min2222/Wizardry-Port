@@ -1,16 +1,18 @@
 package electroblob.wizardry.potion;
 
+import java.lang.reflect.Field;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardryPotions;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FoodStats;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.food.FoodData;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.event.TickEvent;
-
-import java.lang.reflect.Field;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 @Mod.EventBusSubscriber
 public class CurseEnfeeblement extends Curse {
@@ -19,16 +21,15 @@ public class CurseEnfeeblement extends Curse {
 	private static final Field foodTimer;
 
 	static {
-		foodTimer = ObfuscationReflectionHelper.findField(FoodStats.class, "field_75123_d");
+		foodTimer = ObfuscationReflectionHelper.findField(FoodData.class, "field_75123_d");
 		foodTimer.setAccessible(true);
 	}
 
-	public CurseEnfeeblement(boolean isBadEffect, int liquiidColour){
-		super(isBadEffect, liquiidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_enfeeblement.png"));
+	public CurseEnfeeblement(MobEffectCategory category, int liquiidColour){
+		super(category, liquiidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/curse_of_enfeeblement.png"));
 		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
-		this.setPotionName("potion." + Wizardry.MODID + ":curse_of_enfeeblement");
-		this.registerPotionAttributeModifier(Attributes.MAX_HEALTH,
-				"2e8c378e-3d51-4ba1-b02c-591b5d968a05", -0.2, 1);
+		this.addAttributeModifier(Attributes.MAX_HEALTH,
+				"2e8c378e-3d51-4ba1-b02c-591b5d968a05", -0.2, Operation.MULTIPLY_BASE);
 	}
 
 	@SubscribeEvent

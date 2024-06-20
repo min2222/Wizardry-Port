@@ -70,7 +70,7 @@ public class TileEntityArcaneWorkbench extends BaseContainerBlockEntity {
 		if(stack.getItem() instanceof IManaStoringItem && !world.isClientSide && !((IManaStoringItem)stack.getItem()).isManaFull(stack)
 				&& world.getGameTime() % electroblob.wizardry.constants.Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
-			((IManaStoringItem)stack.getItem()).rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
+			((IManaStoringItem)stack.getItem()).rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.CONDENSER_UPGRADE.get()));
 		}
 
 		// The server doesn't care what these are, and there's no need for them to be synced or saved.
@@ -191,10 +191,10 @@ public class TileEntityArcaneWorkbench extends BaseContainerBlockEntity {
 
 		}else if(slotNumber == ContainerArcaneWorkbench.UPGRADE_SLOT){
 			Set<Item> upgrades = new HashSet<>(WandHelper.getSpecialUpgrades());
-			upgrades.add(WizardryItems.arcane_tome);
-			upgrades.add(WizardryItems.resplendent_thread);
-			upgrades.add(WizardryItems.crystal_silver_plating);
-			upgrades.add(WizardryItems.ethereal_crystalweave);
+			upgrades.add(WizardryItems.ARCANE_TOME.get());
+			upgrades.add(WizardryItems.RESPLENDENT_THREAD.get());
+			upgrades.add(WizardryItems.CRYSTAL_SILVER_PLATING.get());
+			upgrades.add(WizardryItems.ETHEREAL_CRYSTALWEAVE.get());
 			return upgrades.contains(itemstack.getItem());
 		}
 

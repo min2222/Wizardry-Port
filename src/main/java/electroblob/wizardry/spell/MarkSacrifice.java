@@ -34,7 +34,7 @@ public class MarkSacrifice extends SpellRay {
 		
 		if(EntityUtils.isLiving(target)){
 			((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.MARK_OF_SACRIFICE.get(),
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					getProperty(EFFECT_STRENGTH).intValue() + SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY))));
 		}
 		

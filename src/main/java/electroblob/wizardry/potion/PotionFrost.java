@@ -5,10 +5,11 @@ import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
@@ -20,11 +21,9 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 
 	public PotionFrost(MobEffectCategory category, int liquidColour){
 		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost.png"));
-		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
-		this.setPotionName("potion." + Wizardry.MODID + ":frost");
 		// With -0.5 as the 'amount', frost 1 slows the entity down by a half and frost 2 roots it to the spot
-		this.registerPotionAttributeModifier(Attributes.MOVEMENT_SPEED,
-				"35dded48-2f19-4541-8510-b29e2dc2cd51", -Constants.FROST_SLOWNESS_PER_LEVEL, 2);
+		this.addAttributeModifier(Attributes.MOVEMENT_SPEED,
+				"35dded48-2f19-4541-8510-b29e2dc2cd51", -Constants.FROST_SLOWNESS_PER_LEVEL, Operation.MULTIPLY_TOTAL);
 	}
 
 	@Override
@@ -34,36 +33,36 @@ public class PotionFrost extends PotionMagicEffect implements ICustomPotionParti
 
 	@SubscribeEvent
 	public static void onBreakSpeedEvent(BreakSpeed event){
-		if(event.getEntity().hasEffect(WizardryPotions.frost)){
+		if(event.getEntity().hasEffect(WizardryPotions.FROST.get())){
 			// Amplifier + 1 because it starts at 0
 			event.setNewSpeed(event.getOriginalSpeed() * (1 - Constants.FROST_FATIGUE_PER_LEVEL
-					* (event.getEntity().getActivePotionEffect(WizardryPotions.frost).getAmplifier() + 1)));
+					* (event.getEntity().getEffect(WizardryPotions.FROST.get()).getAmplifier() + 1)));
 		}
 	}
 
 	@SubscribeEvent
 	public static void onLivingJumpEvent(LivingJumpEvent event){
-		if(event.getEntity().hasEffect(WizardryPotions.frost)){
-			if(event.getEntity().getActivePotionEffect(WizardryPotions.frost).getAmplifier() == 0){
-				event.getEntity().motionY *= 0.5;
+		if(event.getEntity().hasEffect(WizardryPotions.FROST.get())){
+			if(event.getEntity().getEffect(WizardryPotions.FROST.get()).getAmplifier() == 0){
+				event.getEntity().setDeltaMovement(event.getEntity().getDeltaMovement().multiply(1, 0.5, 1));
 			}else{
-				event.getEntity().motionY = 0;
+				event.getEntity().setDeltaMovement(event.getEntity().getDeltaMovement().x, 0, event.getEntity().getDeltaMovement().z);
 			}
 		}
 	}
 
 	@Override
-	public void performEffect(LivingEntity entitylivingbase, int strength) {
-		if (entitylivingbase.isBurning()) {
-			if (entitylivingbase.hasEffect(WizardryPotions.frost)) {
-				entitylivingbase.removePotionEffect(WizardryPotions.frost);
-				entitylivingbase.extinguish();
+	public void applyEffectTick(LivingEntity entitylivingbase, int strength) {
+		if (entitylivingbase.isOnFire()) {
+			if (entitylivingbase.hasEffect(WizardryPotions.FROST.get())) {
+				entitylivingbase.removeEffect(WizardryPotions.FROST.get());
+				entitylivingbase.clearFire();
 			}
 		}
 	}
 
 	@Override
-	public boolean isReady(int duration, int amplifier) {
+	public boolean isDurationEffectTick(int duration, int amplifier) {
 		return true;
 	}
 }

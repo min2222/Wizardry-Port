@@ -2,19 +2,20 @@ package electroblob.wizardry.item;
 
 import electroblob.wizardry.registry.Spells;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.item.ItemArmor;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemSpectralArmour extends ItemArmor implements IConjuredItem {
+public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 
-	public ItemSpectralArmour(ArmorMaterial material, int renderIndex, EquipmentSlot armourType){
+	public ItemSpectralArmour(ArmorMaterial material, EquipmentSlot armourType){
 		super(material, renderIndex, armourType);
 		setCreativeTab(null);
 		setMaxDamage(1200);

@@ -1,5 +1,7 @@
 package electroblob.wizardry.potion;
 
+import java.lang.reflect.Field;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryBlocks;
@@ -8,23 +10,21 @@ import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.enchantment.EnchantmentFrostWalker;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.util.Mth;
+import net.minecraft.world.item.enchantment.FrostWalkerEnchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-
-import java.lang.reflect.Field;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 @Mod.EventBusSubscriber
 public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionParticles {
@@ -33,7 +33,6 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 	public PotionFrostStep(MobEffectCategory category, int liquidColour){
 		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/frost_step.png"));
-		this.setPotionName("potion." + Wizardry.MODID + ":frost_step");
 	}
 
 //	@Override
@@ -67,12 +66,12 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 
 						prevBlockPos.set(host, currentPos);
 
-						int strength = host.getActivePotionEffect(WizardryPotions.frost_step).getAmplifier();
+						int strength = host.getEffect(WizardryPotions.FROST_STEP.get()).getAmplifier();
 
-						EnchantmentFrostWalker.freezeNearby(host, host.world, currentPos, strength);
+						FrostWalkerEnchantment.onEntityMoved(host, host.level, currentPos, strength);
 
-						if(host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.charm_lava_walking)){
-							freezeNearbyLava(host, host.world, currentPos, strength);
+						if(host instanceof Player && ItemArtefact.isArtefactActive((Player)host, WizardryItems.CHARM_LAVA_WALKING.get())){
+							freezeNearbyLava(host, host.level, currentPos, strength);
 						}
 					}
 
@@ -83,7 +82,7 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 		}
 	}
 
-	/** Copied from {@link EnchantmentFrostWalker#freezeNearby(LivingEntity, Level, BlockPos, int)} and modified
+	/** Copied from {@link FrostWalkerEnchantment#onEntityMoved(LivingEntity, Level, BlockPos, int)} and modified
 	 * to turn lava to obsidian crust blocks instead. */
 	private static void freezeNearbyLava(LivingEntity living, Level world, BlockPos pos, int level){
 
@@ -92,20 +91,20 @@ public class PotionFrostStep extends PotionMagicEffect implements ICustomPotionP
 			float f = (float)Math.min(16, 2 + level);
 			BlockPos.MutableBlockPos pos1 = new BlockPos.MutableBlockPos(0, 0, 0);
 
-			for(BlockPos.MutableBlockPos pos2 : BlockPos.getAllInBoxMutable(pos.add((double)(-f), -1.0D, (double)(-f)), pos.add((double)f, -1.0D, (double)f))){
+			for(BlockPos pos2 : BlockPos.betweenClosed(pos.offset((double)(-f), -1.0D, (double)(-f)), pos.offset((double)f, -1.0D, (double)f))){
 
-				if(pos2.distanceSqToCenter(living.getX(), living.getY(), living.getZ()) <= (double)(f * f)){
+				if(pos2.distToCenterSqr(living.getX(), living.getY(), living.getZ()) <= (double)(f * f)){
 
-					pos1.setPos(pos2.getX(), pos2.getY() + 1, pos2.getZ());
-					BlockState state1 = level.getBlockState(pos1);
+					pos1.set(pos2.getX(), pos2.getY() + 1, pos2.getZ());
+					BlockState state1 = world.getBlockState(pos1);
 
 					if(state1.getMaterial() == Material.AIR){
 
-						BlockState state2 = level.getBlockState(pos2);
+						BlockState state2 = world.getBlockState(pos2);
 
-						if(BlockUtils.isLavaSource(state2) && world.mayPlace(WizardryBlocks.obsidian_crust, pos2, false, Direction.DOWN, null)){
-							level.setBlockAndUpdate(pos2, WizardryBlocks.obsidian_crust.defaultBlockState());
-							world.scheduleUpdate(pos2.toImmutable(), WizardryBlocks.obsidian_crust, Mth.getInt(living.getRNG(), 60, 120));
+						if(BlockUtils.isLavaSource(state2) && world.isUnobstructed(WizardryBlocks.OBSIDIAN_CRUST.get().defaultBlockState(), pos2, CollisionContext.empty())){
+							world.setBlockAndUpdate(pos2, WizardryBlocks.OBSIDIAN_CRUST.get().defaultBlockState());
+							world.scheduleTick(pos2.immutable(), WizardryBlocks.OBSIDIAN_CRUST.get(), Mth.nextInt(living.getRandom(), 60, 120));
 						}
 					}
 				}

@@ -53,6 +53,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -240,7 +241,7 @@ public abstract class Spell implements Comparable<Spell> {
 		this.sounds = createSounds();
 		this.id = nextSpellId++;
 		Wizardry.logger.debug("Registering spell " + this.unlocalisedName +" with networkID " + id);
-		this.items(WizardryItems.spell_book, WizardryItems.scroll);
+		this.items(WizardryItems.SPELL_BOOK.get(), WizardryItems.SCROLL.get());
 		this.npcSelector((e, o) -> false);
 	}
 	
@@ -352,8 +353,8 @@ public abstract class Spell implements Comparable<Spell> {
 		// To avoid sending extra data unnecessarily, the spell properties are sent in order of spell ID
 		List<Spell> spells = new ArrayList<>(registry.get().getValues());
 		spells.sort(Comparator.comparingInt(Spell::networkID));
-		WizardryPacketHandler.net.sendTo(new PacketSpellProperties.Message(spells.stream()
-				.map(s -> s.properties).toArray(SpellProperties[]::new)), player);
+		WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> player), new PacketSpellProperties.Message(spells.stream()
+				.map(s -> s.properties).toArray(SpellProperties[]::new)));
 	}
 
 	private static void clearProperties(){
@@ -609,10 +610,18 @@ public abstract class Spell implements Comparable<Spell> {
 	}
 
 	// Property getters - these are final to force addon devs to use the JSON system instead of just overriding them
+	
+    public final int getTierId() {
+        return arePropertiesInitialised() ? ((ForgeRegistry<Tier>) Tier.registry.get()).getID(properties.tier) : ((ForgeRegistry<Tier>) Tier.registry.get()).getID(Tier.NOVICE);
+    }
 
 	/** Returns the tier that this spell belongs to. */
 	public final Tier getTier(){
 		return arePropertiesInitialised() ? properties.tier : Tier.NOVICE;
+	}
+	
+	public final int getElementId(){
+		return arePropertiesInitialised() ? ((ForgeRegistry<Element>) Element.registry.get()).getID(properties.element) : ((ForgeRegistry<Element>) Element.registry.get()).getID(Element.MAGIC);
 	}
 
 	/** Returns the element that this spell belongs to. */
@@ -695,7 +704,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * Returns the translated display name of the spell, without formatting (i.e. not coloured). <b>Client-side
 	 * only!</b> On the server side, use {@link TextComponentTranslation} (see {@link Spell#getNameForTranslation()}).
 	 */
-	public String getDisplayName(){
+	public Component getDisplayName(){
 		return Wizardry.proxy.translate(getTranslationKey());
 	}
 
@@ -711,7 +720,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * Returns the translated display name of the spell, with formatting (i.e. coloured). <b>Client-side only!</b> On
 	 * the server side, use {@link TextComponentTranslation} (see {@link Spell#getNameForTranslationFormatted()}).
 	 */
-	public String getDisplayNameWithFormatting(){
+	public Component getDisplayNameWithFormatting(){
 		return Wizardry.proxy.translate(getTranslationKey(), getElement().getColour());
 	}
 
@@ -727,7 +736,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * Returns the translated description of the spell, without formatting. <b>Client-side only!</b> You should not need
 	 * to use this on the server side.
 	 */
-	public String getDescription(){
+	public Component getDescription(){
 		return Wizardry.proxy.translate(getDescriptionTranslationKey());
 	}
 
@@ -770,7 +779,7 @@ public abstract class Spell implements Comparable<Spell> {
 			String[] args = condition.split(MATCH_KEY_VALUE_SEPARATOR, 2);
 
 			// Invalid condition, treat the whole lot as a spell name instead
-			if(args.length < 2) return discovered && getDisplayName().toLowerCase(Locale.ROOT).contains(text);
+			if(args.length < 2) return discovered && getDisplayName().getString().toLowerCase(Locale.ROOT).contains(text);
 
 			String key = args[0];
 			String[] values = args[1].split(MATCH_VALUE_SEPARATOR);
@@ -804,7 +813,7 @@ public abstract class Spell implements Comparable<Spell> {
 					break;
 				default:
 					// Invalid condition, treat the whole lot as a spell name instead
-					return discovered && getDisplayName().toLowerCase(Locale.ROOT).contains(text);
+					return discovered && getDisplayName().getString().toLowerCase(Locale.ROOT).contains(text);
 			}
 
 			if(Arrays.stream(values).noneMatch(target::contains)) return false; // Didn't match
@@ -1012,15 +1021,15 @@ public abstract class Spell implements Comparable<Spell> {
 	 */
 	public static Spell byMetadata(int metadata){
 		Spell spell = ((ForgeRegistry<Spell>)registry.get()).getValue(metadata);
-		return spell == null ? Spells.none : spell;
+		return spell == null ? Spells.NONE : spell;
 	}
 
 	/** Gets a spell instance from its network ID, or the {@link None} spell if no such spell exists. */
 	public static Spell byNetworkID(int id){
 		if(id < 0 || id >= registry.get().getValues().size()){
-			return Spells.none;
+			return Spells.NONE;
 		}
-		return registry.get().getValues().stream().filter(s -> s.id == id).findAny().orElse(Spells.none);
+		return registry.get().getValues().stream().filter(s -> s.id == id).findAny().orElse(Spells.NONE);
 	}
 
 	/**
@@ -1041,7 +1050,7 @@ public abstract class Spell implements Comparable<Spell> {
 	public static Collection<ResourceLocation> getSpellNames(){
 		// Maybe it would be better to store all of this statically?
 		Set<ResourceLocation> keys = new HashSet<ResourceLocation>(registry.get().getKeys());
-		keys.remove(registry.get().getKey(Spells.none));
+		keys.remove(registry.get().getKey(Spells.NONE));
 		return keys;
 	}
 
@@ -1058,7 +1067,7 @@ public abstract class Spell implements Comparable<Spell> {
 	 * @see TierElementFilter
 	 */
 	public static List<Spell> getSpells(Predicate<Spell> filter){
-		return registry.get().getValues().stream().filter(filter.and(s -> s != Spells.none)).collect(Collectors.toList());
+		return registry.get().getValues().stream().filter(filter.and(s -> s != Spells.NONE)).collect(Collectors.toList());
 	}
 
 	/** Returns all registered spells, excluding the {@link None} spell. */

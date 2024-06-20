@@ -19,7 +19,7 @@ public interface ISpellSortable {
 	enum SortType {
 
 		TIER("tier", Comparator.naturalOrder()),
-		ELEMENT("element", Comparator.comparing(Spell::getElement).thenComparing(Spell::getTier)),
+		ELEMENT("element", Comparator.comparing(Spell::getElementId).thenComparing(Spell::getTierId)),
 		ALPHABETICAL("alphabetical", Comparator.comparing(s -> s.getRegistryName().getPath().toString()));
 		public String name;
 		public Comparator<? super Spell> comparator;

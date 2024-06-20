@@ -30,14 +30,14 @@ public class Meteor extends SpellRay {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		if(ItemArtefact.isArtefactActive(caster, WizardryItems.ring_meteor)){
+		if(ItemArtefact.isArtefactActive(caster, WizardryItems.RING_METEOR.get())){
 
 			if(!world.isClientSide){
 
 				EntityMeteor meteor = new EntityMeteor(world, caster.getX(), caster.getY() + caster.getEyeHeight(), caster.getZ(),
-						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
+						modifiers.get(WizardryItems.BLAST_UPGRADE.get()), EntityUtils.canDamageBlocks(caster, world));
 
-				Vec3 direction = caster.getLookAngle().scale(2 * modifiers.get(WizardryItems.range_upgrade));
+				Vec3 direction = caster.getLookAngle().scale(2 * modifiers.get(WizardryItems.RANGE_UPGRADE.get()));
 				meteor.setDeltaMovement(direction);
 
 				world.addFreshEntity(meteor);
@@ -65,7 +65,7 @@ public class Meteor extends SpellRay {
 
 			if(!world.isClientSide){
 				EntityMeteor meteor = new EntityMeteor(world, pos.getX(), pos.getY() + 50, pos.getZ(),
-						modifiers.get(WizardryItems.blast_upgrade), EntityUtils.canDamageBlocks(caster, world));
+						modifiers.get(WizardryItems.BLAST_UPGRADE.get()), EntityUtils.canDamageBlocks(caster, world));
 				world.addFreshEntity(meteor);
 			}
 

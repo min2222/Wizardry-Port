@@ -47,7 +47,7 @@ public class WitherSkull extends Spell {
 
 			witherskull.setPos(caster.getX() + look.x, caster.getY() + look.y + 1.3, caster.getZ() + look.z);
 
-			double acceleration = getProperty(ACCELERATION).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+			double acceleration = getProperty(ACCELERATION).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 			witherskull.xPower = look.x * acceleration;
 			witherskull.yPower = look.y * acceleration;

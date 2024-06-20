@@ -1,9 +1,24 @@
 package electroblob.wizardry.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+
 import electroblob.wizardry.client.renderer.overlay.RenderBlinkEffect;
 import electroblob.wizardry.data.DispenserCastingData;
 import electroblob.wizardry.data.SpellEmitterData;
-import electroblob.wizardry.item.*;
+import electroblob.wizardry.item.ISpellCastingItem;
+import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.item.ItemFlamecatcher;
+import electroblob.wizardry.item.ItemSpectralBow;
 import electroblob.wizardry.potion.PotionSlowTime;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
@@ -12,29 +27,22 @@ import electroblob.wizardry.spell.SixthSense;
 import electroblob.wizardry.spell.SlowTime;
 import electroblob.wizardry.spell.Transience;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.Item;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * General-purpose client-side event handler for things that don't fit anywhere else or groups of related behaviours
@@ -59,9 +67,9 @@ public final class WizardryClientEventHandler {
 
 			// Reset shaders if their respective potions aren't active
 			// This is a player so the potion effects are synced by vanilla
-			if(Minecraft.getInstance().gameRenderer.getShaderGroup() != null){ // IntelliJ is wrong, this can be null
+			if(Minecraft.getInstance().gameRenderer.currentEffect() != null){ // IntelliJ is wrong, this can be null
 
-				String activeShader = Minecraft.getInstance().gameRenderer.getShaderGroup().getShaderGroupName();
+				String activeShader = Minecraft.getInstance().gameRenderer.currentEffect().getName();
 
 				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.SLOW_TIME.get()))
 						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.SIXTH_SENSE.get()))
@@ -88,7 +96,8 @@ public final class WizardryClientEventHandler {
 			if(world == null) return;
 
 			// Somehow this was throwing a CME, I have no idea why so I'm just going to cheat and copy the list
-			List<BlockEntity> tileEntities = new ArrayList<>(world.loadedTileEntityList);
+            ArrayList<BlockEntity> freshBlockEntities = ObfuscationReflectionHelper.getPrivateValue(Level.class, world, "freshBlockEntities");
+            List<BlockEntity> tileEntities = new ArrayList<>(freshBlockEntities);
 
 			for(BlockEntity tileentity : tileEntities){
 				if(tileentity instanceof DispenserBlockEntity){
@@ -107,37 +116,37 @@ public final class WizardryClientEventHandler {
 	// ===============================================================================================================
 
 	@SubscribeEvent
-	public static void onMouseEvent(MouseEvent event){
+	public static void onMouseEvent(ViewportEvent.ComputeCameraAngles event){
 
 		// Prevents the player looking around when paralysed
-		if(Minecraft.getInstance().player.hasEffect(WizardryPotions.paralysis)
-				&& Minecraft.getInstance().inGameHasFocus){
+		if(Minecraft.getInstance().player.hasEffect(WizardryPotions.PARALYSIS.get())
+				&& Minecraft.getInstance().mouseHandler.isMouseGrabbed()){
 			event.setCanceled(true);
-			Minecraft.getInstance().player.prevRotationYaw = 0;
-			Minecraft.getInstance().player.prevRotationPitch = 0;
-			Minecraft.getInstance().player.rotationYaw = 0;
-			Minecraft.getInstance().player.rotationPitch = 0;
+            Minecraft.getInstance().player.yRotO = 0;
+            Minecraft.getInstance().player.xRotO = 0;
+            Minecraft.getInstance().player.setYRot(0);
+            Minecraft.getInstance().player.setXRot(0);
 
 		}
 	}
 
 	// This event is called every tick, not just when a movement key is pressed
 	@SubscribeEvent
-	public static void onInputUpdateEvent(InputUpdateEvent event){
+	public static void onInputUpdateEvent(MovementInputUpdateEvent event){
 		// Prevents the player moving when paralysed
-		if(event.getEntity().hasEffect(WizardryPotions.paralysis)){
-			event.getMovementInput().moveForward = 0;
-			event.getMovementInput().moveStrafe = 0;
-			event.getMovementInput().jump = false;
-			event.getMovementInput().sneak = false;
+		if(event.getEntity().hasEffect(WizardryPotions.PARALYSIS.get())){
+            event.getInput().forwardImpulse = 0;
+            event.getInput().leftImpulse = 0;
+            event.getInput().jumping = false;
+            event.getInput().shiftKeyDown = false;
 		}
 		
-		if(ItemArtefact.isArtefactActive(event.getEntity(), WizardryItems.charm_move_speed)
-				&& event.getEntity().isHandActive()
-				&& event.getEntity().getActiveItemStack().getItem() instanceof ISpellCastingItem){
+		if(ItemArtefact.isArtefactActive(event.getEntity(), WizardryItems.CHARM_MOVE_SPEED.get())
+				&& event.getEntity().isUsingItem()
+				&& event.getEntity().getUseItem().getItem() instanceof ISpellCastingItem){
 			// Normally speed is set to 20% when using items, this makes it 80%
-			event.getMovementInput().moveStrafe *= 4;
-			event.getMovementInput().moveForward *= 4;
+            event.getInput().leftImpulse *= 4;
+            event.getInput().forwardImpulse *= 4;
 		}
 	}
 
@@ -152,7 +161,7 @@ public final class WizardryClientEventHandler {
 
 		if(victim != null){
 
-			victim.rotationYawHead = Minecraft.getInstance().player.rotationYaw;
+            victim.yHeadRot = Minecraft.getInstance().player.getYRot();
 
 			if(Minecraft.getInstance().player.getMainHandItem().isEmpty()){
 				event.setCanceled(true);
@@ -161,16 +170,18 @@ public final class WizardryClientEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onFOVUpdateEvent(FOVUpdateEvent event){
+	public static void onFOVUpdateEvent(ViewportEvent.ComputeFov event){
 
 		// Bow zoom. Taken directly from AbstractClientPlayer so it works exactly like vanilla.
-		if(event.getEntity().isHandActive()){
+		if(event.getCamera().getEntity() == null)
+			return;
+		if(((LivingEntity) event.getCamera().getEntity()).isUsingItem()){
 
-			Item item = event.getEntity().getActiveItemStack().getItem();
+			Item item = ((LivingEntity) event.getCamera().getEntity()).getUseItem().getItem();
 
 			if(item instanceof ItemSpectralBow || item instanceof ItemFlamecatcher){
 
-				int maxUseTicks = event.getEntity().getItemInUseMaxCount();
+				int maxUseTicks = ((LivingEntity) event.getCamera().getEntity()).getTicksUsingItem();
 
 				float maxUseSeconds = (float)maxUseTicks / (item instanceof ItemFlamecatcher ? ItemFlamecatcher.DRAW_TIME : 20);
 
@@ -180,7 +191,7 @@ public final class WizardryClientEventHandler {
 					maxUseSeconds = maxUseSeconds * maxUseSeconds;
 				}
 
-				event.setNewfov(event.getFov() * 1.0F - maxUseSeconds * 0.15F);
+				event.setFOV(event.getFOV() * 1.0F - maxUseSeconds * 0.15F);
 			}
 		}
 	}
@@ -190,31 +201,33 @@ public final class WizardryClientEventHandler {
 	 * @param resolution The screen resolution
 	 * @param texture The overlay texture to display
 	 */
-	public static void renderScreenOverlay(ScaledResolution resolution, ResourceLocation texture){
+	public static void renderScreenOverlay(PoseStack stack, Window resolution, ResourceLocation texture){
 		
-		GlStateManager.pushMatrix();
-
-		GlStateManager.disableDepth();
-		GlStateManager.depthMask(false);
+		stack.pushPose();
 		
-		Minecraft.getInstance().renderEngine.bindTexture(texture);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
+		RenderSystem.disableDepthTest();
+		RenderSystem.depthMask(false);
 
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+        RenderSystem.setShaderTexture(0, texture);
 
-		buffer.pos(0, 						resolution.getScaledHeight(), -90).tex(0, 1).endVertex();
-		buffer.pos(resolution.getScaledWidth(), resolution.getScaledHeight(), -90).tex(1, 1).endVertex();
-		buffer.pos(resolution.getScaledWidth(), 0, 						  -90).tex(1, 0).endVertex();
-		buffer.pos(0, 						0, 						  -90).tex(0, 0).endVertex();
+        Tesselator tessellator = Tesselator.getInstance();
+		BufferBuilder buffer = tessellator.getBuilder();
 
-		tessellator.draw();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+		buffer.vertex(stack.last().pose(), 0, 						resolution.getGuiScaledHeight(), -90).uv(0, 1).endVertex();
+		buffer.vertex(stack.last().pose(), resolution.getGuiScaledWidth(), resolution.getGuiScaledHeight(), -90).uv(1, 1).endVertex();
+		buffer.vertex(stack.last().pose(), resolution.getGuiScaledWidth(), 0, 						  -90).uv(1, 0).endVertex();
+		buffer.vertex(stack.last().pose(), 0, 						0, 						  -90).uv(0, 0).endVertex();
+
+        BufferUploader.drawWithShader(buffer.end());
 		
-		GlStateManager.depthMask(true);
-		GlStateManager.enableDepth();
+		RenderSystem.depthMask(true);
+		RenderSystem.enableDepthTest();
 
-		GlStateManager.popMatrix();
+		stack.popPose();
 	}
 
 }

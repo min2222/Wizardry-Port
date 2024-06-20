@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockFaceShape;
@@ -37,27 +38,12 @@ public class BlockArcaneWorkbench extends BaseEntityBlock {
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
-		return new TileEntityArcaneWorkbench();
+		return new TileEntityArcaneWorkbench(pos, state);
 	}
 
 	@Override
-	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
-		return false;
-	}
-
-	@Override
-	public EnumBlockRenderType getRenderType(BlockState state){
-		return EnumBlockRenderType.MODEL;
-	}
-
-	@Override
-	public boolean isOpaqueCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean isFullCube(BlockState state){
-		return false;
+	public RenderShape getRenderShape(BlockState state){
+		return RenderShape.MODEL;
 	}
 
 	@Override

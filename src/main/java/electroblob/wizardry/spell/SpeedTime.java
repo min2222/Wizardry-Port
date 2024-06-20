@@ -59,7 +59,7 @@ public class SpeedTime extends Spell {
 			flag = true;
 		}
 
-		double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+		double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 		// Doubles the normal effect of the modifier
 		float potencyLevel = ((modifiers.get(SpellModifiers.POTENCY) - 1) * 2 + 1) * getProperty(EXTRA_TICKS).floatValue();

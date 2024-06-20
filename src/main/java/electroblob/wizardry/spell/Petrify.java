@@ -31,8 +31,8 @@ public class Petrify extends SpellRay {
 		
 		if(target instanceof Mob && !world.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
-			if(((BlockStatue)WizardryBlocks.petrified_stone).convertToStatue((Mob)target,
-					caster, (int)(getProperty(MINIMUM_EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
+			if(((BlockStatue)WizardryBlocks.PETRIFIED_STONE.get()).convertToStatue((Mob)target,
+					caster, (int)(getProperty(MINIMUM_EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())))){
 			}
 		}
 		

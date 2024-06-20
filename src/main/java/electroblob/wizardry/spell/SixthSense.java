@@ -36,8 +36,8 @@ public class SixthSense extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		caster.addEffect(new MobEffectInstance(WizardryPotions.SIXTH_SENSE.get(),
-				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
-				(int)((modifiers.get(WizardryItems.range_upgrade) - 1f) / Constants.RANGE_INCREASE_PER_LEVEL)));
+				(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
+				(int)((modifiers.get(WizardryItems.RANGE_UPGRADE.get()) - 1f) / Constants.RANGE_INCREASE_PER_LEVEL)));
 
 		if(world.isClientSide){
 			Wizardry.proxy.loadShader(caster, SHADER);

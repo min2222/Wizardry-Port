@@ -14,6 +14,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.world.item.ItemStack;
@@ -21,11 +23,11 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class ItemFlamingAxe extends ItemAxe implements IConjuredItem {
+public class ItemFlamingAxe extends AxeItem implements IConjuredItem {
 
 	private Rarity rarity = Rarity.COMMON;
 
-	public ItemFlamingAxe(ToolMaterial material){
+	public ItemFlamingAxe(Tier material){
 		super(material, 8, -3);
 		setMaxDamage(1200); // Might cause problems if removed, the actual number is irrelevant as long as it's > 0
 		setNoRepair();

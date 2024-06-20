@@ -7,19 +7,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tier;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-public class ItemSpectralPickaxe extends ItemPickaxe implements IConjuredItem {
+public class ItemSpectralPickaxe extends PickaxeItem implements IConjuredItem {
 
 	private Rarity rarity = Rarity.COMMON;
 
-	public ItemSpectralPickaxe(ToolMaterial material){
+	public ItemSpectralPickaxe(Tier material){
 		super(material);
 		setMaxDamage(1200);
 		setNoRepair();

@@ -7,6 +7,8 @@ import electroblob.wizardry.tileentity.TileEntityLectern;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.level.block.BlockHorizontal;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
@@ -29,7 +31,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockLectern extends BlockHorizontal implements ITileEntityProvider {
+public class BlockLectern extends HorizontalDirectionalBlock implements EntityBlock {
 
 	public BlockLectern(){
 		super(Material.WOOD);

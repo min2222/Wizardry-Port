@@ -89,7 +89,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, ignoreUncollidables, false);
 
 		if(rayTrace != null && rayTrace.getType() == HitResult.Type.BLOCK && (((BlockHitResult) rayTrace).getDirection() == Direction.UP ||
@@ -129,7 +129,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	public boolean cast(Level world, Mob caster, InteractionHand hand, int ticksInUse, LivingEntity target,
                         SpellModifiers modifiers){
 
-		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 		Vec3 origin = caster.getEyePosition(1);
 
 		if(target != null && caster.distanceTo(target) <= range){
@@ -171,7 +171,7 @@ public class SpellConstructRanged<T extends EntityMagicConstruct> extends SpellC
 	@Override
 	public boolean cast(Level world, double x, double y, double z, Direction direction, int ticksInUse, int duration, SpellModifiers modifiers){
 		
-		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 		Vec3 origin = new Vec3(x, y, z);
 		Vec3 endpoint = origin.add(new Vec3(direction.step()).scale(range));
         HitResult rayTrace = world.clip(new ClipContext(origin, endpoint, ClipContext.Block.COLLIDER, hitLiquids ? ClipContext.Fluid.ANY : ClipContext.Fluid.NONE, null));

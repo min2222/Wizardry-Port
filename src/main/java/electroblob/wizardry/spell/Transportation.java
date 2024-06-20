@@ -28,7 +28,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.network.PacketDistributor;
 
 public class Transportation extends Spell {
 
@@ -75,7 +75,7 @@ public class Transportation extends Spell {
 					return false;
 				}
 
-				if(ItemArtefact.isArtefactActive(caster, WizardryItems.charm_transportation)){
+				if(ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_TRANSPORTATION.get())){
 
 					List<Location> locationsInDimension = locations.stream().filter(l -> l.dimension == caster.level.dimension().location().getPath()).collect(Collectors.toList());
 
@@ -187,7 +187,7 @@ public class Transportation extends Spell {
 
 				player.moveTo(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
 
-				boolean teleportMount = mount != null && ItemArtefact.isArtefactActive(player, WizardryItems.charm_mount_teleporting);
+				boolean teleportMount = mount != null && ItemArtefact.isArtefactActive(player, WizardryItems.CHARM_MOUNT_TELEPORTING.get());
 
 				if(teleportMount){
 					mount.moveTo(destination.pos.getX() + 0.5, destination.pos.getY(), destination.pos.getZ() + 0.5);
@@ -195,8 +195,8 @@ public class Transportation extends Spell {
 				}
 
 				player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0));
-				IMessage msg = new PacketTransportation.Message(destination.pos, teleportMount ? null : player);
-				WizardryPacketHandler.net.sendToDimension(msg, player.level.dimension());
+				PacketTransportation.Message msg = new PacketTransportation.Message(destination.pos, teleportMount ? null : player);
+				WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> player.level.dimension()), msg);
 			}
 
 			if(countdown > 0){

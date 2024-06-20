@@ -3,47 +3,20 @@ package electroblob.wizardry.registry;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockArcaneWorkbench;
 import electroblob.wizardry.block.BlockBookshelf;
-import electroblob.wizardry.block.BlockCrystal;
 import electroblob.wizardry.block.BlockCrystalFlower;
-import electroblob.wizardry.block.BlockCrystalFlowerPot;
 import electroblob.wizardry.block.BlockCrystalOre;
-import electroblob.wizardry.block.BlockDryFrostedIce;
 import electroblob.wizardry.block.BlockGildedWood;
 import electroblob.wizardry.block.BlockImbuementAltar;
 import electroblob.wizardry.block.BlockLectern;
-import electroblob.wizardry.block.BlockMagicLight;
-import electroblob.wizardry.block.BlockObsidianCrust;
-import electroblob.wizardry.block.BlockPedestal;
-import electroblob.wizardry.block.BlockPermafrost;
-import electroblob.wizardry.block.BlockReceptacle;
-import electroblob.wizardry.block.BlockRunestone;
-import electroblob.wizardry.block.BlockSnare;
-import electroblob.wizardry.block.BlockSpectral;
-import electroblob.wizardry.block.BlockStatue;
-import electroblob.wizardry.block.BlockThorns;
-import electroblob.wizardry.block.BlockTransportationStone;
-import electroblob.wizardry.block.BlockVanishingCobweb;
 import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
-import electroblob.wizardry.tileentity.TileEntityBookshelf;
-import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
-import electroblob.wizardry.tileentity.TileEntityLectern;
-import electroblob.wizardry.tileentity.TileEntityPlayerSave;
-import electroblob.wizardry.tileentity.TileEntityReceptacle;
-import electroblob.wizardry.tileentity.TileEntityShrineCore;
-import electroblob.wizardry.tileentity.TileEntityStatue;
-import electroblob.wizardry.tileentity.TileEntityThorns;
-import electroblob.wizardry.tileentity.TileEntityTimer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
 /**
@@ -71,108 +44,68 @@ public final class WizardryBlocks {
     public static final RegistryObject<Block> ARCANE_WORKBENCH = BLOCKS.register("arcane_workbench", () -> new BlockArcaneWorkbench());
     public static final RegistryObject<Block> CRYSTAL_ORE = BLOCKS.register("crystal_ore", () -> new BlockCrystalOre());
     public static final RegistryObject<Block> CRYSTAL_FLOWER = BLOCKS.register("crystal_flower", () -> new BlockCrystalFlower());
-	public static final Block TRANSPORTATION_STONE = placeholder();
-	public static final Block crystal_block = placeholder();
+	public static final RegistryObject<Block> TRANSPORTATION_STONE = placeholder();
+    public static final RegistryObject<Block> MAGIC_CRYSTAL_BLOCK = BLOCKS.register("magic_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_PINK).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> FIRE_CRYSTAL_BLOCK = BLOCKS.register("fire_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.TERRACOTTA_ORANGE).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> ICE_CRYSTAL_BLOCK = BLOCKS.register("ice_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_LIGHT_BLUE).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> LIGHTNING_CRYSTAL_BLOCK = BLOCKS.register("lightning_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_CYAN).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> NECROMANCY_CRYSTAL_BLOCK = BLOCKS.register("necromancy_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_PURPLE).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> EARTH_CRYSTAL_BLOCK = BLOCKS.register("earth_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_GREEN).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> SORCERY_CRYSTAL_BLOCK = BLOCKS.register("sorcery_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_LIGHT_GREEN).strength(5, 10).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> HEALING_CRYSTAL_BLOCK = BLOCKS.register("healing_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_YELLOW).strength(5, 10).requiresCorrectToolForDrops()));
 
-	public static final Block petrified_stone = placeholder();
-	public static final Block ice_statue = placeholder();
-	public static final Block magic_light = placeholder();
-	public static final Block snare = placeholder();
-	public static final Block spectral_block = placeholder();
-	public static final Block meteor = placeholder();
-	public static final Block vanishing_cobweb = placeholder();
-	public static final Block thorns = placeholder();
-	public static final Block obsidian_crust = placeholder();
-	public static final Block dry_frosted_ice = placeholder();
-	public static final Block crystal_flower_pot = placeholder();
-	public static final Block permafrost = placeholder();
+	public static final RegistryObject<Block> PETRIFIED_STONE = placeholder();
+	public static final RegistryObject<Block> ICE_STATUE = placeholder();
+	public static final RegistryObject<Block> MAGIC_LIGHT = placeholder();
+	public static final RegistryObject<Block> SNARE = placeholder();
+	public static final RegistryObject<Block> SPECTRAL_BLOCK = placeholder();
+	public static final RegistryObject<Block> METEOR = placeholder();
+	public static final RegistryObject<Block> VANISHING_COBWEB = placeholder();
+	public static final RegistryObject<Block> THORNS = placeholder();
+	public static final RegistryObject<Block> OBSIDIAN_CRUST = placeholder();
+	public static final RegistryObject<Block> DRY_FROSTED_ICE = placeholder();
+	public static final RegistryObject<Block> CRYSTAL_FLOWER_POT = placeholder();
+	public static final RegistryObject<Block> PERMAFROST = placeholder();
 
-	public static final Block runestone = placeholder();
-	public static final Block runestone_pedestal = placeholder();
+    public static final RegistryObject<Block> FIRE_RUNESTONE = BLOCKS.register("fire_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_RED).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> ICE_RUNESTONE = BLOCKS.register("ice_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_LIGHT_BLUE).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> LIGHTNING_RUNESTONE = BLOCKS.register("lightning_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_CYAN).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> NECROMANCY_RUNESTONE = BLOCKS.register("necromancy_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_PURPLE).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> EARTH_RUNESTONE = BLOCKS.register("earth_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_BROWN).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> SORCERY_RUNESTONE = BLOCKS.register("sorcery_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> HEALING_RUNESTONE = BLOCKS.register("healing_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_YELLOW).strength(1.5F, 10.0F)));
 
-	public static final Block gilded_wood = placeholder();
+    public static final RegistryObject<Block> FIRE_RUNESTONE_PEDESTAL = BLOCKS.register("fire_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_RED).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> ICE_RUNESTONE_PEDESTAL = BLOCKS.register("ice_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_LIGHT_BLUE).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> LIGHTNING_RUNESTONE_PEDESTAL = BLOCKS.register("lightning_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_CYAN).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> NECROMANCY_RUNESTONE_PEDESTAL = BLOCKS.register("necromancy_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_PURPLE).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> EARTH_RUNESTONE_PEDESTAL = BLOCKS.register("earth_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_BROWN).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> SORCERY_RUNESTONE_PEDESTAL = BLOCKS.register("sorcery_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).strength(1.5F, 10.0F)));
+    public static final RegistryObject<Block> HEALING_RUNESTONE_PEDESTAL = BLOCKS.register("healing_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_YELLOW).strength(1.5F, 10.0F)));
 
-	public static final Block oak_bookshelf = placeholder();
-	public static final Block spruce_bookshelf = placeholder();
-	public static final Block birch_bookshelf = placeholder();
-	public static final Block jungle_bookshelf = placeholder();
-	public static final Block acacia_bookshelf = placeholder();
-	public static final Block dark_oak_bookshelf = placeholder();
+    public static final RegistryObject<Block> GILDED_OAK_WOOD = BLOCKS.register("gilded_oak_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_SPRUCE_WOOD = BLOCKS.register("gilded_spruce_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_BIRCH_WOOD = BLOCKS.register("gilded_birch_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_JUNGLE_WOOD = BLOCKS.register("gilded_jungle_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_ACACIA_WOOD = BLOCKS.register("gilded_acacia_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_DARK_OAK_WOOD = BLOCKS.register("gilded_dark_oak_wood", () -> new BlockGildedWood());
+    
+    public static final RegistryObject<Block> OAK_BOOKSHELF = BLOCKS.register("oak_bookshelf", () -> new BlockBookshelf());
+    public static final RegistryObject<Block> SPRUCE_BOOKSHELF = BLOCKS.register("spruce_bookshelf", () -> new BlockBookshelf());
+    public static final RegistryObject<Block> BIRCH_BOOKSHELF = BLOCKS.register("birch_bookshelf", () -> new BlockBookshelf());
+    public static final RegistryObject<Block> JUNGLE_BOOKSHELF = BLOCKS.register("jungle_bookshelf", () -> new BlockBookshelf());
+    public static final RegistryObject<Block> ACACIA_BOOKSHELF = BLOCKS.register("acacia_bookshelf", () -> new BlockBookshelf());
+    public static final RegistryObject<Block> DARK_OAK_BOOKSHELF = BLOCKS.register("dark_oak_bookshelf", () -> new BlockBookshelf());
 
-	public static final Block oak_lectern = placeholder();
-	public static final Block spruce_lectern = placeholder();
-	public static final Block birch_lectern = placeholder();
-	public static final Block jungle_lectern = placeholder();
-	public static final Block acacia_lectern = placeholder();
-	public static final Block dark_oak_lectern = placeholder();
+    public static final RegistryObject<Block> OAK_LECTERN = BLOCKS.register("oak_lectern", () -> new BlockLectern());
+    public static final RegistryObject<Block> SPRUCE_LECTERN = BLOCKS.register("spruce_lectern", () -> new BlockLectern());
+    public static final RegistryObject<Block> BIRCH_LECTERN = BLOCKS.register("birch_lectern", () -> new BlockLectern());
+    public static final RegistryObject<Block> JUNGLE_LECTERN = BLOCKS.register("jungle_lectern", () -> new BlockLectern());
+    public static final RegistryObject<Block> ACACIA_LECTERN = BLOCKS.register("acacia_lectern", () -> new BlockLectern());
+    public static final RegistryObject<Block> DARK_OAK_LECTERN = BLOCKS.register("dark_oak_lectern", () -> new BlockLectern());
 
-	public static final Block receptacle = placeholder();
-	public static final Block imbuement_altar = placeholder();
-
-	/**
-	 * Sets both the registry and unlocalised names of the given block, then registers it with the given registry. Use
-	 * this instead of {@link Block#setRegistryName(String)} and {@link Block#setTranslationKey(String)} during
-	 * construction, for convenience and consistency.
-	 * 
-	 * @param registry The registry to register the given block to.
-	 * @param name The name of the block, without the mod ID or the .name stuff. The registry name will be
-	 *        {@code ebwizardry:[name]}. The unlocalised name will be {@code tile.ebwizardry:[name].name}.
-	 * @param block The block to register.
-	 */
-	public static void registerBlock(IForgeRegistry<Block> registry, String name, Block block){
-		block.setRegistryName(Wizardry.MODID, name);
-		block.setTranslationKey(block.getRegistryName().toString());
-		registry.register(block);
-	}
-
-	@SubscribeEvent
-	public static void register(RegistryEvent.Register<Block> event){
-
-		BlockBookshelf.initBookProperties();
-
-		IForgeRegistry<Block> registry = event.getRegistry();
-
-		// TODO: Put everything in block classes wherever possible
-		registerBlock(registry, "arcane_workbench", 		new BlockArcaneWorkbench().setHardness(1.0F).setCreativeTab(WizardryTabs.WIZARDRY));
-		registerBlock(registry, "crystal_ore", 			new BlockCrystalOre(Material.ROCK).setHardness(3.0F).setCreativeTab(WizardryTabs.WIZARDRY));
-		registerBlock(registry, "crystal_flower", 		new BlockCrystalFlower(Material.PLANTS).setHardness(0.0F).setCreativeTab(WizardryTabs.WIZARDRY));
-		registerBlock(registry, "transportation_stone", 	new BlockTransportationStone(Material.ROCK).setHardness(0.3F).setLightLevel(0.5f).setLightOpacity(0).setCreativeTab(WizardryTabs.WIZARDRY));
-		registerBlock(registry, "crystal_block", 			new BlockCrystal(Material.IRON).setHardness(5.0F).setResistance(10.0F).setCreativeTab(WizardryTabs.WIZARDRY));
-
-		registerBlock(registry, "petrified_stone", 		new BlockStatue(Material.ROCK).setHardness(1.5F).setResistance(10.0F));
-		registerBlock(registry, "ice_statue", 			new BlockStatue(Material.ICE).setHardness(0.5F).setLightOpacity(3));
-		registerBlock(registry, "magic_light", 			new BlockMagicLight(Material.CIRCUITS));
-		registerBlock(registry, "snare", 					new BlockSnare(Material.PLANTS).setHardness(0.0F));
-		registerBlock(registry, "spectral_block", 		new BlockSpectral(Material.GLASS).setLightOpacity(1).setBlockUnbreakable().setResistance(6000000.0F));
-		registerBlock(registry, "meteor", 				new Block(Material.ROCK).setLightLevel(1));
-		registerBlock(registry, "vanishing_cobweb", 		new BlockVanishingCobweb(Material.WEB).setLightOpacity(1).setHardness(4.0F));
-		registerBlock(registry, "thorns", 				new BlockThorns());
-		registerBlock(registry, "obsidian_crust", 		new BlockObsidianCrust());
-		registerBlock(registry, "dry_frosted_ice", 		new BlockDryFrostedIce());
-		registerBlock(registry, "crystal_flower_pot", 	new BlockCrystalFlowerPot());
-		registerBlock(registry, "permafrost", 			new BlockPermafrost());
-
-		registerBlock(registry, "runestone", 				new BlockRunestone(Material.ROCK));
-		registerBlock(registry, "runestone_pedestal", 	new BlockPedestal(Material.ROCK));
-
-		registerBlock(registry, "gilded_wood", 			new BlockGildedWood());
-
-		registerBlock(registry, "oak_bookshelf", 			new BlockBookshelf());
-		registerBlock(registry, "spruce_bookshelf", 		new BlockBookshelf());
-		registerBlock(registry, "birch_bookshelf", 		new BlockBookshelf());
-		registerBlock(registry, "jungle_bookshelf", 		new BlockBookshelf());
-		registerBlock(registry, "acacia_bookshelf", 		new BlockBookshelf());
-		registerBlock(registry, "dark_oak_bookshelf", 	new BlockBookshelf());
-
-		registerBlock(registry, "oak_lectern", 			new BlockLectern());
-		registerBlock(registry, "birch_lectern", 			new BlockLectern());
-		registerBlock(registry, "spruce_lectern", 		new BlockLectern());
-		registerBlock(registry, "jungle_lectern", 		new BlockLectern());
-		registerBlock(registry, "acacia_lectern", 		new BlockLectern());
-		registerBlock(registry, "dark_oak_lectern", 		new BlockLectern());
-
-		registerBlock(registry, "receptacle", 			new BlockReceptacle());
-		registerBlock(registry, "imbuement_altar", 		new BlockImbuementAltar());
-
-	}
+	public static final RegistryObject<Block> RECEPTACLE = placeholder();
+    public static final RegistryObject<Block> IMBUEMENT_ALTAR = BLOCKS.register("imbuement_altar", () -> new BlockImbuementAltar());
+    
+    public static final RegistryObject<BlockEntityType<TileEntityArcaneWorkbench>> ARCANE_WORKBENCH_BLOCK_ENTITY = BLOCK_ENTITIES.register("arcane_workbench", () -> BlockEntityType.Builder.of(TileEntityArcaneWorkbench::new, WizardryBlocks.ARCANE_WORKBENCH.get()).build(null));
 }

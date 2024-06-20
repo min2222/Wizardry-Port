@@ -332,7 +332,7 @@ public final class SpellProperties {
 		// Spells will be removed from this list as their properties are set
 		// If everything works properly, it should be empty by the end
 		List<Spell> spells = Spell.getSpells(s -> s.getRegistryName().getNamespace().equals(modID));
-		if(modID.equals(Wizardry.MODID)) spells.add(Spells.none); // In this particular case we do need the none spell
+		if(modID.equals(Wizardry.MODID)) spells.add(Spells.NONE); // In this particular case we do need the none spell
 
 		Wizardry.logger.info("Loading built-in spell properties for " + spells.size() + " spells in mod " + modID);
 

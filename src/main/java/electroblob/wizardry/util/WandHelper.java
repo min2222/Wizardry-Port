@@ -1,22 +1,22 @@
 package electroblob.wizardry.util;
 
-import electroblob.wizardry.constants.Constants;
-import electroblob.wizardry.item.IManaStoringItem;
-import electroblob.wizardry.item.IWorkbenchItem;
-import electroblob.wizardry.item.ItemCrystal;
-import electroblob.wizardry.item.ItemWand;
-import electroblob.wizardry.registry.Spells;
-import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.spell.Spell;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
+
+import electroblob.wizardry.constants.Constants;
+import electroblob.wizardry.item.IManaStoringItem;
+import electroblob.wizardry.item.IWorkbenchItem;
+import electroblob.wizardry.item.ItemWand;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryTags;
+import electroblob.wizardry.spell.Spell;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 /**
  * <i>"Never fear, {@code WandHelper} is here!"</i>
@@ -94,7 +94,7 @@ public final class WandHelper {
 		int[] spellIDs = new int[spells.length];
 
 		for(int i = 0; i < spells.length; i++){
-			spellIDs[i] = spells[i] != null ? spells[i].metadata() : Spells.none.metadata();
+			spellIDs[i] = spells[i] != null ? spells[i].metadata() : Spells.NONE.metadata();
 		}
 
 		wand.getTag().putIntArray(SPELL_ARRAY_KEY, spellIDs);
@@ -114,7 +114,7 @@ public final class WandHelper {
 			}
 		}
 
-		return Spells.none;
+		return Spells.NONE;
 	}
 	
 	/** Returns the spell after the currently selected spell for the given wand, or the 'none' spell if the wand has no
@@ -128,7 +128,7 @@ public final class WandHelper {
 			return spells[index];
 		}
 
-		return Spells.none;
+		return Spells.NONE;
 	}
 	
 	/** Returns the spell before the currently selected spell for the given wand, or the 'none' spell if the wand has no
@@ -142,7 +142,7 @@ public final class WandHelper {
 			return spells[index];
 		}
 
-		return Spells.none;
+		return Spells.NONE;
 	}
 
 	/** Selects the next spell in this wand's list of spells. */
@@ -466,15 +466,15 @@ public final class WandHelper {
 
 	/** Called from the init() method in wizardry's main mod class to populate the special wand upgrade map. */
 	public static void populateUpgradeMap(){
-		upgradeMap.put(WizardryItems.condenser_upgrade, "condenser");
-		upgradeMap.put(WizardryItems.storage_upgrade, "storage");
-		upgradeMap.put(WizardryItems.siphon_upgrade, "siphon");
-		upgradeMap.put(WizardryItems.range_upgrade, "range");
-		upgradeMap.put(WizardryItems.duration_upgrade, "duration");
-		upgradeMap.put(WizardryItems.cooldown_upgrade, "cooldown");
-		upgradeMap.put(WizardryItems.blast_upgrade, "blast");
-		upgradeMap.put(WizardryItems.attunement_upgrade, "attunement");
-		upgradeMap.put(WizardryItems.melee_upgrade, "melee");
+        upgradeMap.put(WizardryItems.CONDENSER_UPGRADE.get(), "condenser");
+        upgradeMap.put(WizardryItems.STORAGE_UPGRADE.get(), "storage");
+        upgradeMap.put(WizardryItems.SIPHON_UPGRADE.get(), "siphon");
+        upgradeMap.put(WizardryItems.RANGE_UPGRADE.get(), "range");
+        upgradeMap.put(WizardryItems.DURATION_UPGRADE.get(), "duration");
+        upgradeMap.put(WizardryItems.COOLDOWN_UPGRADE.get(), "cooldown");
+        upgradeMap.put(WizardryItems.BLAST_UPGRADE.get(), "blast");
+        upgradeMap.put(WizardryItems.ATTUNEMENT_UPGRADE.get(), "attunement");
+        upgradeMap.put(WizardryItems.MELEE_UPGRADE.get(), "melee");
 	}
 
 	// ================================================= Progression =================================================
@@ -524,10 +524,10 @@ public final class WandHelper {
 			// previously this was defaulted to the regular crystal's amount, allowing players to exploit it if a crystal was worth less mana than that.
 			int manaPerItem = crystals.getItem().getItem() instanceof IManaStoringItem ?
 					((IManaStoringItem) crystals.getItem().getItem()).getMana(crystals.getItem()) :
-					crystals.getItem().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
+					crystals.getItem().is(WizardryTags.WizardryItemTags.CRYSTALS) ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
 
-			if (crystals.getItem().getItem() == WizardryItems.crystal_shard) {manaPerItem = Constants.MANA_PER_SHARD;}
-			if (crystals.getItem().getItem() == WizardryItems.grand_crystal) {manaPerItem = Constants.GRAND_CRYSTAL_MANA;}
+			if (crystals.getItem().getItem() == WizardryItems.CRYSTAL_SHARD.get()) {manaPerItem = Constants.MANA_PER_SHARD;}
+			if (crystals.getItem().getItem() == WizardryItems.GRAND_CRYSTAL.get()) {manaPerItem = Constants.GRAND_CRYSTAL_MANA;}
 
 			if (crystals.getItem().getCount() * manaPerItem < chargeDepleted) {
 				// If there aren't enough crystals to fully charge the item

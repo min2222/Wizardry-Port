@@ -1,6 +1,17 @@
 package electroblob.wizardry.loot;
 
-import com.google.gson.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSyntaxException;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
@@ -10,20 +21,19 @@ import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryLoot;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
-import net.minecraft.world.storage.loot.functions.LootFunction;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 /**
  * Loot function that allows spell books and scrolls to select a random spell based on the standard weighting.
@@ -55,7 +65,7 @@ import java.util.Random;
 /* You could even use the yet more long-winded method of adding each spell as an individual entry, which would be
  * stupidly long but would allow precise control over each individual spell... I'll leave that for pack makers to do if
  * they have the patience! */
-public class RandomSpell extends LootFunction {
+public class RandomSpell extends LootItemConditionalFunction {
 
 	private final List<Spell> spells;
 	private final boolean ignoreWeighting;
@@ -63,7 +73,7 @@ public class RandomSpell extends LootFunction {
 	private final List<Tier> tiers;
 	private final List<Element> elements;
 
-	protected RandomSpell(LootCondition[] conditions, List<Spell> spells, boolean ignoreWeighting,
+	protected RandomSpell(LootItemCondition[] conditions, List<Spell> spells, boolean ignoreWeighting,
 						  float undiscoveredBias, List<Tier> tiers, List<Element> elements){
 		super(conditions);
 		this.spells = spells;
@@ -72,14 +82,20 @@ public class RandomSpell extends LootFunction {
 		this.tiers = tiers;
 		this.elements = elements;
 	}
+	
+    @Override
+    public LootItemFunctionType getType() {
+        return WizardryLoot.RANDOM_SPELL.get();
+    }
 
 	@Override
-	public ItemStack apply(ItemStack stack, Random random, LootContext context){
+	public ItemStack run(ItemStack stack, LootContext context){
 
+		RandomSource random = context.getRandom();
 		if(!(stack.getItem() instanceof ItemSpellBook) && !(stack.getItem() instanceof ItemScroll)) Wizardry.logger
 				.warn("Applying the random_spell loot function to an item that isn't a spell book or scroll.");
 
-		SpellProperties.Context spellContext = context.getLootedEntity() == null ? SpellProperties.Context.TREASURE
+		SpellProperties.Context spellContext = context.getParam(LootContextParams.THIS_ENTITY) == null ? SpellProperties.Context.TREASURE
 				: SpellProperties.Context.LOOTING;
 
 		// This method is badly-named, loot chests pass a player through too, not just mobs
@@ -88,15 +104,17 @@ public class RandomSpell extends LootFunction {
 
 		Spell spell = pickRandomSpell(stack, random, spellContext, player);
 
-		if(spell == Spells.none) Wizardry.logger.warn("Tried to apply the random_spell loot function to an item, but no"
+		if(spell == Spells.NONE) Wizardry.logger.warn("Tried to apply the random_spell loot function to an item, but no"
 					+ " enabled spells matched the criteria specified. Substituting placeholder (metadata 0) item.");
 
-		stack.setItemDamage(spell.metadata());
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("Spell", spell.metadata());
+        stack.addTagElement("Spells", tag);
 
 		return stack;
 	}
 
-	private Spell pickRandomSpell(ItemStack stack, Random random, SpellProperties.Context spellContext, Player player){
+	private Spell pickRandomSpell(ItemStack stack, RandomSource random, SpellProperties.Context spellContext, Player player){
 
 		// We're now doing this first because we need to know which spells we have to play with before selecting a tier and element
 		List<Spell> possibleSpells = Spell.getSpells(s -> s.isEnabled(spellContext) && s.applicableForItem(stack.getItem())
@@ -122,14 +140,14 @@ public class RandomSpell extends LootFunction {
 		// Remove all empty tiers
 		possibleTiers.removeIf(t -> possibleSpells.stream().noneMatch(s -> s.getTier() == t)); // Lambdaception!
 
-		if(possibleTiers.isEmpty()) return Spells.none; // Gotta disable a lot of spells for this to happen
+		if(possibleTiers.isEmpty()) return Spells.NONE; // Gotta disable a lot of spells for this to happen
 
 		Tier tier = ignoreWeighting ? possibleTiers.get(random.nextInt(possibleTiers.size()))
 				: Tier.getWeightedRandomTier(random, possibleTiers.toArray(new Tier[0]));
 
 		// Remove all spells that aren't of the selected tier
 		possibleSpells.removeIf(s -> s.getTier() != tier);
-		if(possibleSpells.isEmpty()) return Spells.none; // Should be caught by the no-elements check but we might as well
+		if(possibleSpells.isEmpty()) return Spells.NONE; // Should be caught by the no-elements check but we might as well
 
 		// Select an element...
 
@@ -144,19 +162,19 @@ public class RandomSpell extends LootFunction {
 		// Remove all empty elements
 		possibleElements.removeIf(e -> possibleSpells.stream().noneMatch(s -> s.getElement() == e));
 
-		if(possibleElements.isEmpty()) return Spells.none; // A bit more likely I guess, but still pretty unlikely
+		if(possibleElements.isEmpty()) return Spells.NONE; // A bit more likely I guess, but still pretty unlikely
 
 		Element element = possibleElements.get(random.nextInt(possibleElements.size()));
 
 		// Remove all spells that aren't of the selected tier
 		possibleSpells.removeIf(s -> s.getElement() != element);
-		if(possibleSpells.isEmpty()) return Spells.none; // If it fails anywhere, it'll most likely be here
+		if(possibleSpells.isEmpty()) return Spells.NONE; // If it fails anywhere, it'll most likely be here
 
 		if(player != null){
 
 			float bias = undiscoveredBias;
 			// Archivist's eyeglass increases undiscovered bias by 0.4 up to a maximum of 0.9
-			if(ItemArtefact.isArtefactActive(player, WizardryItems.charm_spell_discovery))
+			if(ItemArtefact.isArtefactActive(player, WizardryItems.CHARM_SPELL_DISCOVERY.get()))
 				bias = Math.min(bias + 0.4f, 0.9f);
 
 			// Remove either the undiscovered spells or the discovered ones, depending on the bias
@@ -177,11 +195,7 @@ public class RandomSpell extends LootFunction {
 		return possibleSpells.get(random.nextInt(possibleSpells.size())); // Finally pick a spell
 	}
 
-	public static class Serializer extends LootFunction.Serializer<RandomSpell> {
-
-		public Serializer(){
-			super(new ResourceLocation(Wizardry.MODID, "random_spell"), RandomSpell.class);
-		}
+	public static class Serializer extends LootItemConditionalFunction.Serializer<RandomSpell> {
 
 		public void serialize(JsonObject object, RandomSpell function, JsonSerializationContext serializationContext){
 
@@ -224,7 +238,7 @@ public class RandomSpell extends LootFunction {
 		}
 
 		public RandomSpell deserialize(JsonObject object, JsonDeserializationContext deserializationContext,
-				LootCondition[] conditions){
+				LootItemCondition[] conditions){
 
 			List<Spell> spells = null;
 			List<Tier> tiers = null;
@@ -236,9 +250,9 @@ public class RandomSpell extends LootFunction {
 
 				// Importantly, it is necessary to specify a default (the new JsonArray) here because otherwise the
 				// parameter will be mandatory, and the game will crash if it isn't present.
-				for(JsonElement element : JsonUtils.getJsonArray(object, "spells", new JsonArray())){
+				for(JsonElement element : GsonHelper.getAsJsonArray(object, "spells", new JsonArray())){
 
-					String string = JsonUtils.getString(element, "spell");
+					String string = GsonHelper.convertToString(element, "spell");
 
 					Spell spell = Spell.get(string);
 
@@ -250,17 +264,17 @@ public class RandomSpell extends LootFunction {
 				}
 			}
 
-			boolean ignoreWeighting = JsonUtils.getBoolean(object, "ignore_weighting", false);
+			boolean ignoreWeighting = GsonHelper.getAsBoolean(object, "ignore_weighting", false);
 
-			float undiscoveredBias = JsonUtils.getFloat(object, "undiscovered_bias", 0);
+			float undiscoveredBias = GsonHelper.getAsFloat(object, "undiscovered_bias", 0);
 
 			if(object.has("tiers")){
 
 				tiers = new ArrayList<>();
 
-				for(JsonElement element : JsonUtils.getJsonArray(object, "tiers", new JsonArray())){
+				for(JsonElement element : GsonHelper.getAsJsonArray(object, "tiers", new JsonArray())){
 
-					String string = JsonUtils.getString(element, "tier");
+					String string = GsonHelper.convertToString(element, "tier");
 
 					try {
 						tiers.add(Tier.fromName(string));
@@ -275,9 +289,9 @@ public class RandomSpell extends LootFunction {
 
 				elements = new ArrayList<>();
 
-				for(JsonElement jelement : JsonUtils.getJsonArray(object, "elements", new JsonArray())){
+				for(JsonElement jelement : GsonHelper.getAsJsonArray(object, "elements", new JsonArray())){
 
-					String string = JsonUtils.getString(jelement, "element");
+					String string = GsonHelper.convertToString(jelement, "element");
 
 					try {
 						elements.add(Element.fromName(string));

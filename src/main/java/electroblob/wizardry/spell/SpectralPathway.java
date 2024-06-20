@@ -34,7 +34,7 @@ public class SpectralPathway extends Spell {
 
 		// Won't work if caster is airborne or if they are already on a bridge (prevents infinite bridges)
 		if(BlockUtils.getBlockEntityIsStandingOn(caster).getBlock() == Blocks.AIR
-				|| BlockUtils.getBlockEntityIsStandingOn(caster).getBlock() == WizardryBlocks.spectral_block){
+				|| BlockUtils.getBlockEntityIsStandingOn(caster).getBlock() == WizardryBlocks.SPECTRAL_BLOCK.get()){
 			return false;
 		}
 
@@ -51,14 +51,14 @@ public class SpectralPathway extends Spell {
 
 			int startPoint = direction.getAxisDirection() == AxisDirection.POSITIVE ? -1 : 0;
 
-			for(int i = 0; i < (int)(getProperty(LENGTH).floatValue() * modifiers.get(WizardryItems.range_upgrade)); i++){
+			for(int i = 0; i < (int)(getProperty(LENGTH).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get())); i++){
 				// If either a block gets placed or one has already been placed, flag is set to true.
 				flag = placePathwayBlockIfPossible(world, origin.relative(direction, startPoint + i),
-						modifiers.get(WizardryItems.duration_upgrade)) || flag;
+						modifiers.get(WizardryItems.DURATION_UPGRADE.get())) || flag;
 				flag = placePathwayBlockIfPossible(world, origin.relative(direction, startPoint + i)
 						// Moves the BlockPos minus one block perpendicular to direction.
 						.offset(Direction.getFacingFromAxis(AxisDirection.NEGATIVE, direction.rotateY().getAxis())),
-						modifiers.get(WizardryItems.duration_upgrade)) || flag;
+						modifiers.get(WizardryItems.DURATION_UPGRADE.get())) || flag;
 			}
 		}
 
@@ -69,7 +69,7 @@ public class SpectralPathway extends Spell {
 
 	private boolean placePathwayBlockIfPossible(Level world, BlockPos pos, float durationMultiplier){
 		if(BlockUtils.canBlockBeReplaced(world, pos, true)){
-			world.setBlockAndUpdate(pos, WizardryBlocks.spectral_block.defaultBlockState());
+			world.setBlockAndUpdate(pos, WizardryBlocks.SPECTRAL_BLOCK.get().defaultBlockState());
 			if(world.getBlockEntity(pos) instanceof TileEntityTimer){
 				((TileEntityTimer)world.getBlockEntity(pos)).setLifetime((int)(getProperty(DURATION).floatValue() * durationMultiplier));
 			}

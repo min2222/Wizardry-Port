@@ -1,25 +1,32 @@
 package electroblob.wizardry.registry;
 
+import java.util.Arrays;
+
+import org.jetbrains.annotations.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.loot.RandomSpell;
 import electroblob.wizardry.loot.WizardSpell;
-import net.minecraft.world.entity.EnumCreatureType;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootEntryTable;
-import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraft.world.storage.loot.RandomValueRange;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import java.util.Arrays;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Class responsible for registering wizardry's loot functions and loot tables. Also handles loot injection and the
@@ -32,6 +39,11 @@ import java.util.Arrays;
 public final class WizardryLoot {
 
 	//public static final String FROM_SPAWNER_NBT_FLAG = "fromSpawner";
+	
+    public static final DeferredRegister<LootItemFunctionType> FUNCTIONS = DeferredRegister.create(Registry.LOOT_FUNCTION_REGISTRY, Wizardry.MODID);
+
+    public static final RegistryObject<LootItemFunctionType> RANDOM_SPELL = FUNCTIONS.register("random_spell", () -> new LootItemFunctionType(new RandomSpell.Serializer()));
+    public static final RegistryObject<LootItemFunctionType> WIZARD_SPELL = FUNCTIONS.register("wizard_spell", () -> new LootItemFunctionType(new WizardSpell.Serializer()));
 
 	public static final ResourceLocation[] RUINED_SPELL_BOOK_LOOT_TABLES = Arrays.stream(Element.values())
 			.filter(e -> e != Element.MAGIC)
@@ -106,13 +118,13 @@ public final class WizardryLoot {
 				String[] split = event.getName().getPath().split("/");
 				String entityName = split[split.length - 1];
 
-				EntityEntry entry = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(entityName));
+				EntityType<?> entry = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(entityName));
 				if (entry == null) {
 					return; // If this is true it didn't work :(
 				}
 				Class entityClass = entry.getEntityClass();
 
-				if (EnumCreatureType.MONSTER.getCreatureClass().isAssignableFrom(entityClass)) {
+				if (MobCategory.MONSTER.getCreatureClass().isAssignableFrom(entityClass)) {
 					event.getTable().addPool(getAdditive(Wizardry.MODID + ":entities/mob_additions", Wizardry.MODID + "_additional_mob_drops"));
 				}
 			}

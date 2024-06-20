@@ -72,7 +72,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 	// input something meaningful.
 	protected float calculateVelocity(EntityMagicProjectile projectile, SpellModifiers modifiers, float launchHeight){
 		// The required range
-		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		float range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		if(projectile.isNoGravity()){
 			// No sensible spell will do this - range is meaningless if the projectile has no gravity or lifetime
@@ -105,7 +105,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			projectile.aim(caster, calculateVelocity(projectile, modifiers, caster.getEyeHeight()
 					- (float)EntityMagicProjectile.LAUNCH_Y_OFFSET));
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
+			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 			addProjectileExtras(projectile, caster, modifiers);
 			// Spawns the projectile in the world
 			world.addFreshEntity(projectile);
@@ -132,7 +132,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 				projectile.aim(caster, target, calculateVelocity(projectile, modifiers, caster.getEyeHeight()
 						- (float)EntityMagicProjectile.LAUNCH_Y_OFFSET), aimingError);
 				projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-				if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
+				if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 				addProjectileExtras(projectile, caster, modifiers);
 				// Spawns the projectile in the world
 				world.addFreshEntity(projectile);
@@ -160,7 +160,7 @@ public class SpellProjectile<T extends EntityMagicProjectile> extends Spell {
 			projectile.shoot(vec.getX(), vec.getY(), vec.getZ(), calculateVelocity(projectile, modifiers,
 					0.375f), DISPENSER_INACCURACY); // 0.375 is the height of the hole in a dispenser
 			projectile.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
-			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.blast_upgrade);
+			if(projectile instanceof EntityBomb) ((EntityBomb)projectile).blastMultiplier = modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 			addProjectileExtras(projectile, null, modifiers);
 			// Spawns the projectile in the world
 			world.addFreshEntity(projectile);

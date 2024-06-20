@@ -18,7 +18,7 @@ public class SummonZombie extends SpellMinion<EntityZombieMinion> {
 
 	@Override
 	protected EntityZombieMinion createMinion(Level world, LivingEntity caster, SpellModifiers modifiers){
-		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_minion_variants)){
+		if(caster instanceof Player && ItemArtefact.isArtefactActive((Player)caster, WizardryItems.CHARM_MINION_VARIANTS.get())){
 			return new EntityHuskMinion(world);
 		}else{
 			return super.createMinion(world, caster, modifiers);

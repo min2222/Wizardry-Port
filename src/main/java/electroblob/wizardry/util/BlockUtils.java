@@ -21,7 +21,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CactusBlock;
@@ -33,7 +32,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -296,7 +294,7 @@ public final class BlockUtils {
 
 		if(world.isOutsideBuildHeight(pos)) return -1;
 
-		Player fakeplayer = FakePlayerFactory.getInstance((ServerLevel)world);
+		Player fakeplayer = FakePlayerFactory.getMinecraft((ServerLevel)world);
 
 		if(breaker instanceof Player){
 			// This line *should* trigger bukkit plugin hooks
@@ -344,25 +342,6 @@ public final class BlockUtils {
 		return block.is(BlockTags.LOGS) || block.getBlock() instanceof CactusBlock
 				|| block.getMaterial() == Material.LEAVES || block.getBlock() instanceof LeavesBlock
 				|| Settings.containsMetaBlock(Wizardry.settings.treeBlocks, world.getBlockState(pos));
-	}
-
-	/**
-	 * Returns the predominant wood type (see {@link net.minecraft.world.level.block.BlockPlanks.EnumType}) for the given biome, or
-	 * the default {@link net.minecraft.world.level.block.BlockPlanks.EnumType#OAK} for biomes with no trees. This is accurate for
-	 * most vanilla biomes
-	 * @param biome The biome to query
-	 * @return The wood type for the given biome
-	 */
-	public static BlockPlanks.EnumType getBiomeWoodVariant(Biome biome){
-		// Unfortunately, I can't check all the wood types with the biome dictionary
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.CONIFEROUS)) 	return BlockPlanks.EnumType.SPRUCE;
-		if(biome == Biomes.BIRCH_FOREST || biome == Biomes.BIRCH_FOREST_HILLS) 	return BlockPlanks.EnumType.BIRCH;
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)) 		return BlockPlanks.EnumType.JUNGLE;
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.SAVANNA)) 		return BlockPlanks.EnumType.ACACIA;
-		// Not technically a tree type, but I think it fits quite well anyway
-		if(BiomeDictionary.hasType(biome, BiomeDictionary.Type.SPOOKY)) 		return BlockPlanks.EnumType.DARK_OAK;
-		// Everything else is oak
-		return BlockPlanks.EnumType.OAK;
 	}
 
 	/**

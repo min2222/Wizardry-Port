@@ -35,7 +35,7 @@ public class Telekinesis extends SpellRay {
 			target.setDeltaMovement((origin.x - target.getX()) / 6, (origin.y - target.getY()) / 6, (origin.z - target.getZ()) / 6);
 			return true;
 
-		} else if (target instanceof Player && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((Player) target, WizardryItems.amulet_anchoring))) {
+		} else if (target instanceof Player && (Wizardry.settings.telekineticDisarmament && !ItemArtefact.isArtefactActive((Player) target, WizardryItems.AMULET_ANCHORING.get()))) {
 
 			Player player = (Player) target;
 

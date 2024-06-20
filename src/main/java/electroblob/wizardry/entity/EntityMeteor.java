@@ -37,7 +37,7 @@ public class EntityMeteor extends FallingBlockEntity {
 	}
 
 	public EntityMeteor(Level world, double x, double y, double z, float blastMultiplier, boolean damageBlocks){
-		super(world, x, y, z, WizardryBlocks.meteor.defaultBlockState());
+		super(world, x, y, z, WizardryBlocks.METEOR.get().defaultBlockState());
 		this.setDeltaMovement(this.getDeltaMovement().x, -1.0D, this.getDeltaMovement().z);
 		this.setSecondsOnFire(200);
 		this.blastMultiplier = blastMultiplier;
@@ -98,7 +98,7 @@ public class EntityMeteor extends FallingBlockEntity {
 
 	@Override
 	public BlockState getBlockState(){
-		return WizardryBlocks.meteor.defaultBlockState(); // For some reason the superclass version returns null on the
+		return WizardryBlocks.METEOR.get().defaultBlockState(); // For some reason the superclass version returns null on the
 														// client
 	}
 

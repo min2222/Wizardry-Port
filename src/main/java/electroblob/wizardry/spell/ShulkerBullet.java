@@ -62,7 +62,7 @@ public class ShulkerBullet extends Spell {
 
 		if(!world.isClientSide){
 
-			double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+			double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 			List<LivingEntity> possibleTargets = EntityUtils.getLivingWithinRadius(range, x, y, z, world);
 

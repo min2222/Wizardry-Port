@@ -3,10 +3,12 @@ package electroblob.wizardry.misc;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.MerchantOffer;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraftforge.oredict.OreDictionary;
 
 /** Custom version of {@link MerchantRecipeList} which allows wildcard recipes (i.e. trades which accept items with any
@@ -14,7 +16,7 @@ import net.minecraftforge.oredict.OreDictionary;
  * @author Electroblob
  * @since Wizardry 4.1 */
 @SuppressWarnings("serial")
-public class WildcardTradeList extends MerchantRecipeList {
+public class WildcardTradeList extends MerchantOffers {
 
 	private int currentIndex;
 
@@ -27,25 +29,25 @@ public class WildcardTradeList extends MerchantRecipeList {
 	}
 
 	/** Returns the current recipe  */
-	public MerchantRecipe getCurrentRecipe(){
+	public MerchantOffer getCurrentRecipe(){
 		return get(currentIndex); // Allows events to access the selected recipe without reflection
 	}
 
 	@Override
-    public MerchantRecipe canRecipeBeUsed(ItemStack offer1, ItemStack offer2, int index){
+    public MerchantOffer getRecipeFor(ItemStack offer1, ItemStack offer2, int index){
 
 		currentIndex = index; // Update the index
 		
         if(index > 0 && index < this.size()){
         	
-            MerchantRecipe merchantrecipe1 = this.get(index);
+        	MerchantOffer merchantrecipe1 = this.get(index);
             return !this.areItemStacksExactlyEqual(offer1, merchantrecipe1.getItemToBuy()) || (!offer2.isEmpty() || merchantrecipe1.hasSecondItemToBuy()) && (!merchantrecipe1.hasSecondItemToBuy() || !this.areItemStacksExactlyEqual(offer2, merchantrecipe1.getSecondItemToBuy())) || offer1.getCount() < merchantrecipe1.getItemToBuy().getCount() || merchantrecipe1.hasSecondItemToBuy() && offer2.getCount() < merchantrecipe1.getSecondItemToBuy().getCount() ? null : merchantrecipe1;
         
         }else{
         	
             for(int i = 0; i < this.size(); ++i){
             	
-                MerchantRecipe merchantrecipe = this.get(i);
+            	MerchantOffer merchantrecipe = this.get(i);
 
                 if (this.areItemStacksExactlyEqual(offer1, merchantrecipe.getItemToBuy()) && offer1.getCount() >= merchantrecipe.getItemToBuy().getCount() && (!merchantrecipe.hasSecondItemToBuy() && offer2.isEmpty() || merchantrecipe.hasSecondItemToBuy() && this.areItemStacksExactlyEqual(offer2, merchantrecipe.getSecondItemToBuy()) && offer2.getCount() >= merchantrecipe.getSecondItemToBuy().getCount())){
                     return merchantrecipe;
@@ -74,18 +76,18 @@ public class WildcardTradeList extends MerchantRecipeList {
 		for(MerchantRecipe merchantrecipe : this){
 
 			ItemStack itemToBuy = merchantrecipe.getItemToBuy();
-			if(itemToBuy.getMetadata() == OreDictionary.WILDCARD_VALUE) itemToBuy = InventoryUtils.copyWithMeta(itemToBuy, 0);
+			if(itemToBuy.getMetadata() == Short.MAX_VALUE) itemToBuy = InventoryUtils.copyWithMeta(itemToBuy, 0);
 			buffer.writeItemStack(itemToBuy);
 
 			ItemStack itemToSell = merchantrecipe.getItemToSell();
-			if(itemToSell.getMetadata() == OreDictionary.WILDCARD_VALUE) itemToSell = InventoryUtils.copyWithMeta(itemToSell, 0);
+			if(itemToSell.getMetadata() == Short.MAX_VALUE) itemToSell = InventoryUtils.copyWithMeta(itemToSell, 0);
 			buffer.writeItemStack(itemToSell);
 
 			ItemStack secondItemToBuy = merchantrecipe.getSecondItemToBuy();
 			buffer.writeBoolean(!secondItemToBuy.isEmpty());
 
 			if(!secondItemToBuy.isEmpty()){
-				if(secondItemToBuy.getMetadata() == OreDictionary.WILDCARD_VALUE) secondItemToBuy = InventoryUtils.copyWithMeta(secondItemToBuy, 0);
+				if(secondItemToBuy.getMetadata() == Short.MAX_VALUE) secondItemToBuy = InventoryUtils.copyWithMeta(secondItemToBuy, 0);
 				buffer.writeItemStack(secondItemToBuy);
 			}
 

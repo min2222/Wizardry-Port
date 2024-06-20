@@ -29,7 +29,7 @@ public class Light extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, false);
 
@@ -40,10 +40,10 @@ public class Light extends Spell {
 			if(world.isEmptyBlock(pos)){
 
 				if(!world.isClientSide){
-					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
+					world.setBlockAndUpdate(pos, WizardryBlocks.MAGIC_LIGHT.get().defaultBlockState());
 					if(world.getBlockEntity(pos) instanceof TileEntityTimer){
-						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
-								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_LIGHT.get()) ? -1
+								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 						((TileEntityTimer)world.getBlockEntity(pos)).setLifetime(lifetime);
 					}
 				}
@@ -61,10 +61,10 @@ public class Light extends Spell {
 
 			if(world.isEmptyBlock(pos)){
 				if(!world.isClientSide){
-					world.setBlockAndUpdate(pos, WizardryBlocks.magic_light.defaultBlockState());
+					world.setBlockAndUpdate(pos, WizardryBlocks.MAGIC_LIGHT.get().defaultBlockState());
 					if(world.getBlockEntity(pos) instanceof TileEntityTimer){
-						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.charm_light) ? -1
-								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+						int lifetime = ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_LIGHT.get()) ? -1
+								: (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 						((TileEntityTimer)world.getBlockEntity(pos)).setLifetime(lifetime);
 					}
 				}

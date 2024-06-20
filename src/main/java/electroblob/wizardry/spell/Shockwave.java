@@ -1,5 +1,7 @@
 package electroblob.wizardry.spell;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.item.SpellActions;
@@ -10,20 +12,17 @@ import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.play.server.SPacketEntityVelocity;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class Shockwave extends SpellAreaEffect {
 
@@ -41,13 +40,13 @@ public class Shockwave extends SpellAreaEffect {
 	@Override
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
-		float radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+		float radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 		if(target instanceof Player){
 
 			if(!Wizardry.settings.playersMoveEachOther) return false;
 
-			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)){
+			if(ItemArtefact.isArtefactActive((Player)target, WizardryItems.AMULET_ANCHORING.get())){
 				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(),
 								this.getNameForTranslationFormatted()), true);
@@ -74,13 +73,11 @@ public class Shockwave extends SpellAreaEffect {
 			double dy = target.getY() + 1 - origin.y;
 			double dz = target.getZ() - origin.z;
 
-			target.motionX = velocityFactor * dx;
-			target.motionY = velocityFactor * dy;
-			target.motionZ = velocityFactor * dz;
+			target.setDeltaMovement(velocityFactor * dx, velocityFactor * dy, velocityFactor * dz);
 
 			// Player motion is handled on that player's client so needs packets
 			if(target instanceof ServerPlayer){
-				((ServerPlayer)target).connection.sendPacket(new SPacketEntityVelocity(target));
+				((ServerPlayer)target).connection.send(new ClientboundSetEntityMotionPacket(target));
 			}
 		}
 
@@ -104,8 +101,8 @@ public class Shockwave extends SpellAreaEffect {
 			BlockState block = world.getBlockState(new BlockPos(origin.x, origin.y - 0.5, origin.z));
 
 			if(block != null){
-				world.addParticle(ParticleTypes.BLOCK_DUST, particleX, origin.y,
-						particleZ, particleX - origin.x, 0, particleZ - origin.z, Block.getStateId(block));
+				world.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, block), particleX, origin.y,
+						particleZ, particleX - origin.x, 0, particleZ - origin.z);
 			}
 		}
 

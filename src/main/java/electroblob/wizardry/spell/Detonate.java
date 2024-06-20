@@ -39,7 +39,7 @@ public class Detonate extends SpellRay {
 		if(!world.isClientSide){
 			
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(getProperty(BLAST_RADIUS).doubleValue()
-					* modifiers.get(WizardryItems.blast_upgrade), pos.getX(), pos.getY(), pos.getZ(), world);
+					* modifiers.get(WizardryItems.BLAST_UPGRADE.get()), pos.getX(), pos.getY(), pos.getZ(), world);
 			
 			for(LivingEntity target : targets){
 				target.hurt(MagicDamage.causeDirectMagicDamage(caster, DamageType.BLAST),

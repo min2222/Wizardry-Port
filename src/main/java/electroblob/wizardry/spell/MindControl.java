@@ -84,7 +84,7 @@ public class MindControl extends SpellRay {
 				}
 
 				if(!world.isClientSide) startControlling((Mob)target, caster,
-						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 			}
 
 			if(world.isClientSide){

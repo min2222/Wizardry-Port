@@ -51,8 +51,8 @@ public class WallOfFrost extends SpellRay {
 		// Wall of frost now freezes entities solid too!
 		if(target instanceof Mob && !world.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
-			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
-					caster, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
+			if(((BlockStatue)WizardryBlocks.ICE_STATUE.get()).convertToStatue((Mob)target,
+					caster, (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())))){
 				
 				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
@@ -74,15 +74,15 @@ public class WallOfFrost extends SpellRay {
 			}
 
 			if(origin.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) > MINIMUM_PLACEMENT_RANGE * MINIMUM_PLACEMENT_RANGE
-					&& world.getBlockState(pos).getBlock() != WizardryBlocks.ice_statue && world.getBlockState(pos).getBlock() != WizardryBlocks.dry_frosted_ice){
+					&& world.getBlockState(pos).getBlock() != WizardryBlocks.ICE_STATUE.get() && world.getBlockState(pos).getBlock() != WizardryBlocks.DRY_FROSTED_ICE.get()){
 
 				pos = pos.relative(side);
 				
-				int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+				int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 
 				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-					world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
-					world.scheduleTick(pos.immutable(), WizardryBlocks.dry_frosted_ice, duration);
+					world.setBlockAndUpdate(pos, WizardryBlocks.DRY_FROSTED_ICE.get().defaultBlockState());
+					world.scheduleTick(pos.immutable(), WizardryBlocks.DRY_FROSTED_ICE.get(), duration);
 				}
 
 				// Builds a 2 block high wall if it hits the ground
@@ -90,8 +90,8 @@ public class WallOfFrost extends SpellRay {
 					pos = pos.relative(side);
 
 					if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
-						world.setBlockAndUpdate(pos, WizardryBlocks.dry_frosted_ice.defaultBlockState());
-						world.scheduleTick(pos.immutable(), WizardryBlocks.dry_frosted_ice, duration);
+						world.setBlockAndUpdate(pos, WizardryBlocks.DRY_FROSTED_ICE.get().defaultBlockState());
+						world.scheduleTick(pos.immutable(), WizardryBlocks.DRY_FROSTED_ICE.get(), duration);
 					}
 				}
 			}
