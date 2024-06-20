@@ -43,7 +43,7 @@ public class EntityPoisonBomb extends EntityBomb {
 
 		if(entityHit != null){
 			// This is if the poison bomb gets a direct hit
-			float damage = Spells.poison_bomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.POISON_BOMB.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
 			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.POISON).setProjectile(),
@@ -51,8 +51,8 @@ public class EntityPoisonBomb extends EntityBomb {
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.POISON, entityHit))
 				((LivingEntity)entityHit).addEffect(new MobEffectInstance(MobEffects.POISON,
-						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
-						Spells.poison_bomb.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
+						Spells.POISON_BOMB.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
+						Spells.POISON_BOMB.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
 
 		// Particle effect
@@ -79,7 +79,7 @@ public class EntityPoisonBomb extends EntityBomb {
 			this.playSound(WizardrySounds.ENTITY_POISON_BOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_POISON_BOMB_POISON, 1.2F, 1.0f);
 
-			double range = Spells.poison_bomb.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
+			double range = Spells.POISON_BOMB.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
 					this.getZ(), this.level);
@@ -89,10 +89,10 @@ public class EntityPoisonBomb extends EntityBomb {
 						&& !MagicDamage.isEntityImmune(DamageType.POISON, target)){
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.POISON),
-							Spells.poison_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
+							Spells.POISON_BOMB.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 					target.addEffect(new MobEffectInstance(MobEffects.POISON,
-							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
-							Spells.poison_bomb.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
+							Spells.POISON_BOMB.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
+							Spells.POISON_BOMB.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}
 			}
 

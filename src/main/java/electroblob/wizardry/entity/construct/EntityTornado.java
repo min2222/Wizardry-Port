@@ -92,7 +92,7 @@ public class EntityTornado extends EntityScaledConstruct {
 			for(LivingEntity target : targets){
 
 				if(target instanceof Player && ((getCaster() instanceof Player && !Wizardry.settings.playersMoveEachOther)
-						|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
+						|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.AMULET_ANCHORING.get()))){
 					continue;
 				}
 

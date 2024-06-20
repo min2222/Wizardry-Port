@@ -282,7 +282,7 @@ public class Possession extends SpellRay {
 						}
 					}
 
-					possessor.getAttributes().getInstance(attribute).addPermanentModifier(new AttributeModifier(
+					possessor.getAttributes().getInstance(attribute).addTransientModifier(new AttributeModifier(
 							INHERITED_ATTRIBUTES.get(attribute), "possessionModifier", targetValue / currentValue,
 							EntityUtils.Operations.MULTIPLY_FLAT));
 				}

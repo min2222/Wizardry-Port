@@ -28,7 +28,7 @@ public class EntityIceShard extends EntityMagicArrow {
 		super(type, world);
 	}
 
-	@Override public double getDamage(){ return Spells.ice_shard.getProperty(Spell.DAMAGE).floatValue(); }
+	@Override public double getDamage(){ return Spells.ICE_SHARD.getProperty(Spell.DAMAGE).floatValue(); }
 
 	@Override public int getLifetime(){ return -1; }
 
@@ -46,8 +46,8 @@ public class EntityIceShard extends EntityMagicArrow {
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
 			entityHit.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-					Spells.ice_shard.getProperty(Spell.EFFECT_DURATION).intValue(),
-					Spells.ice_shard.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+					Spells.ICE_SHARD.getProperty(Spell.EFFECT_DURATION).intValue(),
+					Spells.ICE_SHARD.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 		this.playSound(WizardrySounds.ENTITY_ICE_SHARD_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}

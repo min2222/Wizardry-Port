@@ -26,6 +26,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.level.Level;
@@ -295,9 +297,9 @@ public class BlockBookshelf extends HorizontalDirectionalBlock implements Entity
 	 * @param exclude Any tile entities that should be excluded from the returned list
 	 * @return A list of nearby {@link IInventory} objects that count as valid bookshelves
 	 */
-	public static List<IInventory> findNearbyBookshelves(Level world, BlockPos centre, BlockEntity... exclude){
+	public static List<Container> findNearbyBookshelves(Level world, BlockPos centre, BlockEntity... exclude){
 
-		List<IInventory> bookshelves = new ArrayList<>();
+		List<Container> bookshelves = new ArrayList<>();
 
 		int searchRadius = Wizardry.settings.bookshelfSearchRadius;
 
@@ -305,11 +307,11 @@ public class BlockBookshelf extends HorizontalDirectionalBlock implements Entity
 			for(int y = -searchRadius; y <= searchRadius; y++){
 				for(int z = -searchRadius; z <= searchRadius; z++){
 
-					BlockPos pos = centre.add(x, y, z);
+					BlockPos pos = centre.offset(x, y, z);
 
-					if(Settings.containsMetaBlock(Wizardry.settings.bookshelfBlocks, level.getBlockState(pos))){
-						BlockEntity te = level.getTileEntity(pos);
-						if(te instanceof IInventory && !ArrayUtils.contains(exclude, te)) bookshelves.add((IInventory)te);
+					if(Settings.containsMetaBlock(Wizardry.settings.bookshelfBlocks, world.getBlockState(pos))){
+						BlockEntity te = world.getBlockEntity(pos);
+						if(te instanceof Container && !ArrayUtils.contains(exclude, te)) bookshelves.add((Container)te);
 					}
 
 				}

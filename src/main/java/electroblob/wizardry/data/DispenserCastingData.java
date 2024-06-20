@@ -8,6 +8,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.BlockDispenser;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -78,12 +79,12 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 
 	@Override
 	protected Direction getDirection(){
-		return tileEntity.getWorld().getBlockState(tileEntity.getPos()).getValue(BlockDispenser.FACING);
+		return tileEntity.getLevel().getBlockState(tileEntity.getBlockPos()).getValue(DispenserBlock.FACING);
 	}
 
 	@Override
 	protected boolean shouldContinueCasting(){
-		return tileEntity.getWorld().isBlockPowered(tileEntity.getPos());
+		return tileEntity.getLevel().isBlockPowered(tileEntity.getBlockPos());
 	}
 
 	@Override
@@ -94,7 +95,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 		// Check whether enough scrolls are left
 		if(this.isCasting() && this.spell.isContinuous){
 
-			if(castingTick > duration && !tileEntity.getWorld().isRemote){
+			if(castingTick > duration && !tileEntity.getLevel().isClientSide){
 
 				if(findNewScroll()){
 					duration += ItemScroll.CASTING_TIME; // Best way to do it for now.
@@ -110,24 +111,24 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 	 * than one applicable stack is found then one will be chosen at random. */
 	private boolean findNewScroll(){
 		
-		if(spell == Spells.none) return false;
+		if(spell == Spells.NONE) return false;
 		
 		List<Integer> slots = new ArrayList<Integer>();
 		
-		for(int i = 0; i < tileEntity.getSizeInventory(); i++){
-			ItemStack stack = tileEntity.getStackInSlot(i);
+		for(int i = 0; i < tileEntity.getContainerSize(); i++){
+			ItemStack stack = tileEntity.getItem(i);
 			if(stack.getItem() instanceof ItemScroll && stack.getMetadata() == spell.metadata()) slots.add(i);
 		}
 		
 		if(slots.isEmpty()) return false; // If no stack was found that matched the current spell
 		
-		tileEntity.remove(slots.get(tileEntity.getWorld().random.nextInt(slots.size())), 1); // Consumes 1 scroll
+		tileEntity.removeItem(slots.get(tileEntity.getLevel().random.nextInt(slots.size())), 1); // Consumes 1 scroll
 		return true;
 	}
 
 	/** Returns the DispenserCastingData instance for the specified dispenser. */
 	public static DispenserCastingData get(DispenserBlockEntity dispenser){
-		return dispenser.getCapability(DISPENSER_CASTING_CAPABILITY, null);
+		return dispenser.getCapability(DISPENSER_CASTING_CAPABILITY).orElse(null);
 	}
 	
 	/** Called from preInit in the main mod class to register the DispenserCastingData capability. */

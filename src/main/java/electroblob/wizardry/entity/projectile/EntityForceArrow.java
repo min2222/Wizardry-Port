@@ -70,11 +70,11 @@ public class EntityForceArrow extends EntityMagicArrow {
 
 			Player player = (Player)getCaster();
 
-			if(!player.getAbilities().instabuild && ItemArtefact.isArtefactActive(player, WizardryItems.ring_mana_return)){
+			if(!player.getAbilities().instabuild && ItemArtefact.isArtefactActive(player, WizardryItems.RING_MANA_RETURN.get())){
 
 				for(ItemStack stack : InventoryUtils.getPrioritisedHotbarAndOffhand(player)){
 					if(stack.getItem() instanceof ISpellCastingItem && stack.getItem() instanceof IManaStoringItem
-							&& Arrays.asList(((ISpellCastingItem)stack.getItem()).getSpells(stack)).contains(Spells.force_arrow)){
+							&& Arrays.asList(((ISpellCastingItem)stack.getItem()).getSpells(stack)).contains(Spells.FORCE_ARROW)){
 						((IManaStoringItem)stack.getItem()).rechargeMana(stack, mana);
 					}
 				}
@@ -101,7 +101,7 @@ public class EntityForceArrow extends EntityMagicArrow {
 
 	@Override
 	public double getDamage(){
-		return Spells.force_arrow.getProperty(Spell.DAMAGE).floatValue();
+		return Spells.FORCE_ARROW.getProperty(Spell.DAMAGE).floatValue();
 	}
 
 	@Override

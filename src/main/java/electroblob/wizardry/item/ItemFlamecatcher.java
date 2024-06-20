@@ -1,55 +1,40 @@
 package electroblob.wizardry.item;
 
-import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.projectile.EntityFlamecatcherArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Flamecatcher;
 import electroblob.wizardry.util.InventoryUtils;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemBow;
 import net.minecraft.world.item.BowItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
 
 public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 
 	public static final float DRAW_TIME = 10;
 
 	public ItemFlamecatcher(){
-		super();
-		setMaxDamage(1200);
-		setNoRepair();
-		setCreativeTab(null);
-		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter(){
-			@OnlyIn(Dist.CLIENT)
-			public float apply(ItemStack stack, @Nullable Level worldIn, @Nullable LivingEntity entityIn){
-				if(entityIn == null){
-					return 0.0F;
-				}else{
-					ItemStack itemstack = entityIn.getActiveItemStack();
-					return itemstack.getItem() == ItemFlamecatcher.this
-							? (float)(stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / DRAW_TIME : 0;
-				}
+        super(new Item.Properties().durability(1200).setNoRepair());
+		ItemProperties.register(this, new ResourceLocation("pull"), (stack, p_174636_, entityIn, p_174638_) -> {
+			if(entityIn == null){
+				return 0.0F;
+			}else{
+				ItemStack itemstack = entityIn.getUseItem();
+				return itemstack.getItem() == ItemFlamecatcher.this
+						? (float)(stack.getUseDuration() - entityIn.getUseItemRemainingTicks()) / DRAW_TIME : 0;
 			}
 		});
-		this.addPropertyOverride(new ResourceLocation("pulling"), new IItemPropertyGetter(){
-			@OnlyIn(Dist.CLIENT)
-			public float apply(ItemStack stack, @Nullable Level worldIn, @Nullable LivingEntity entityIn){
-				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1 : 0;
-			}
+		ItemProperties.register(this, new ResourceLocation("pulling"), (stack, p_174636_, entityIn, p_174638_) -> {
+			return entityIn != null && entityIn.isUsingItem() && entityIn.getUseItem() == stack ? 1 : 0;
 		});
 		addAnimationPropertyOverrides();
 	}
@@ -60,19 +45,12 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	// Why does this still exist? Item models deal with this now, right?
-	public boolean isFull3D(){
-		return true;
-	}
-
-	@Override
 	public int getMaxDamage(ItemStack stack){
 		return this.getMaxDamageFromNBT(stack, Spells.flamecatcher);
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
@@ -98,34 +76,22 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 	@Override
 	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return true;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return true;
 		return super.canContinueUsing(oldStack, newStack);
 	}
 
 	@Override
 	public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return false;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return false;
 		return super.shouldCauseBlockBreakReset(oldStack, newStack);
 	}
 
 	@Override
-	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
-		int damage = stack.getItemDamage();
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
-		stack.setItemDamage(damage + 1);
-	}
-
-	// The following two methods re-route the displayed durability through the proxies in order to override the pausing
-	// of the item timer when the bow is being pulled.
-
-	@Override
-	public double getDurabilityForDisplay(ItemStack stack){
-		return Wizardry.proxy.getConjuredBowDurability(stack);
-	}
-
-	public double getDefaultDurabilityForDisplay(ItemStack stack){
-		return super.getDurabilityForDisplay(stack);
+		stack.setDamageValue(damage + 1);
 	}
 
 	@Override
@@ -134,26 +100,26 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 		ItemStack stack = player.getItemInHand(hand);
 
 		int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY);
-		if(shotsLeft == 0) return InteractionResultHolder.newResult(InteractionResult.PASS, stack);
+		if(shotsLeft == 0) return InteractionResultHolder.pass(stack);
 
 		InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(stack, world, player, hand,
 				true);
 
 		if(ret != null) return ret;
 
-		player.setActiveHand(hand);
+		player.startUsingItem(hand);
 
-		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
+		return InteractionResultHolder.success(stack);
 
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack stack2){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	@Override
-	public int getItemEnchantability(){
+	public int getEnchantmentValue(){
 		return 0;
 	}
 
@@ -182,15 +148,15 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 //	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft){
+	public void releaseUsing(ItemStack stack, Level world, LivingEntity entity, int timeLeft){
 		// Decreases the timer by the amount it should have been decreased while the bow was in use.
-		if(!level.isClientSide) stack.setItemDamage(stack.getItemDamage() + (this.getMaxItemUseDuration(stack) - timeLeft));
+		if(!world.isClientSide) stack.setDamageValue(stack.getDamageValue() + (this.getUseDuration(stack) - timeLeft));
 
 		if(entity instanceof Player){
 
 			Player player = (Player)entity;
 
-			int charge = this.getMaxItemUseDuration(stack) - timeLeft;
+			int charge = this.getUseDuration(stack) - timeLeft;
 			charge = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, world, (Player)entity, charge, true);
 			if(charge < 0) return;
 
@@ -204,12 +170,12 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 				if(stack.getTag() != null){
 					int shotsLeft = stack.getTag().getInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY) - 1;
 					stack.getTag().putInt(Flamecatcher.SHOTS_REMAINING_NBT_KEY, shotsLeft);
-					if(shotsLeft == 0 && !level.isClientSide){
-						stack.setItemDamage(getMaxDamage(stack) - getAnimationFrames());
+					if(shotsLeft == 0 && !world.isClientSide){
+						stack.setDamageValue(getMaxDamage(stack) - getAnimationFrames());
 					}
 				}
 
-				if(!level.isClientSide){
+				if(!world.isClientSide){
 					EntityFlamecatcherArrow arrow = new EntityFlamecatcherArrow(world);
 					arrow.aim(player, EntityFlamecatcherArrow.SPEED * velocity);
 					world.addFreshEntity(arrow);

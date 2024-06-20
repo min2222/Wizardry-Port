@@ -1,5 +1,9 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
 import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.event.SpellCastEvent.Source;
 import electroblob.wizardry.packet.PacketNPCCastSpell;
@@ -7,17 +11,12 @@ import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.EntityAIBase;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Entity AI class for use by instances of {@link ISpellCaster}. This deals with pathing, the spell casting itself and
@@ -73,11 +72,11 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 		this.continuousSpellDuration = continuousSpellDuration;
 		this.speed = speed;
 		this.maxAttackDistance = maxDistance * maxDistance;
-		this.setMutexBits(3);
+        this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.TARGET));
 	}
 
 	@Override
-	public boolean shouldExecute(){
+	public boolean canUse(){
 
 		LivingEntity entitylivingbase = this.attacker.getTarget();
 
@@ -90,37 +89,37 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 	}
 
 	@Override
-	public boolean shouldContinueExecuting(){
-		return this.shouldExecute() || !this.attacker.getNavigator().noPath();
+	public boolean canContinueToUse(){
+		return this.canUse() || !this.attacker.getNavigation().isDone();
 	}
 
 	@Override
-	public void resetTask(){
+	public void stop(){
 		this.target = null;
 		this.seeTime = 0;
 		this.cooldown = -1;
-		this.setContinuousSpellAndNotify(Spells.none, new SpellModifiers());
+		this.setContinuousSpellAndNotify(Spells.NONE, new SpellModifiers());
 		this.continuousSpellTimer = 0;
 	}
 
 	private void setContinuousSpellAndNotify(Spell spell, SpellModifiers modifiers){
 		attacker.setContinuousSpell(spell);
 		WizardryPacketHandler.net.sendToAllAround(
-				new PacketNPCCastSpell.Message(attacker.getEntityId(), target == null ? -1 : target.getEntityId(),
+				new PacketNPCCastSpell.Message(attacker.getId(), target == null ? -1 : target.getId(),
 						InteractionHand.MAIN_HAND, spell, modifiers),
 				// Particles are usually only visible from 16 blocks away, so 128 is more than far enough.
 				// TODO: Why is this one a 128 block radius, whilst the other one is all in dimension?
-				new TargetPoint(attacker.dimension, attacker.getX(), attacker.getY(), attacker.getZ(), 128));
+				new TargetPoint(attacker.level.dimension(), attacker.getX(), attacker.getY(), attacker.getZ(), 128));
 	}
 
 	@Override
-	public void updateTask(){
+	public void tick(){
 
 		// Only executed server side.
 
 		double distanceSq = this.attacker.distanceToSqr(this.target.getX(), this.target.getY(),
 				this.target.getZ());
-		boolean targetIsVisible = this.attacker.getEntitySenses().canSee(this.target);
+		boolean targetIsVisible = this.attacker.getSensing().hasLineOfSight(this.target);
 
 		if(targetIsVisible){
 			++this.seeTime;
@@ -129,12 +128,12 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 		}
 
 		if(distanceSq <= (double)this.maxAttackDistance && this.seeTime >= 20){
-			this.attacker.getNavigator().clearPath();
+			this.attacker.getNavigation().stop();
 		}else{
-			this.attacker.getNavigator().tryMoveToEntityLiving(this.target, this.speed);
+			this.attacker.getNavigation().moveTo(this.target, this.speed);
 		}
 
-		this.attacker.getLookHelper().setLookPositionWithEntity(this.target, 30.0F, 30.0F);
+		this.attacker.getLookControl().setLookAt(this.target, 30.0F, 30.0F);
 
 		if(this.continuousSpellTimer > 0){
 
@@ -155,7 +154,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 				// ...reset the continuous spell timer and start the cooldown.
 				this.continuousSpellTimer = 0;
 				this.cooldown = attacker.getContinuousSpell().getCooldown() + this.baseCooldown;
-				setContinuousSpellAndNotify(Spells.none, new SpellModifiers());
+				setContinuousSpellAndNotify(Spells.NONE, new SpellModifiers());
 				return;
 
 			}else if(this.continuousSpellDuration - this.continuousSpellTimer == 1){
@@ -185,13 +184,13 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 
 					while(!spells.isEmpty()){
 
-						spell = spells.get(attacker.world.random.nextInt(spells.size()));
+						spell = spells.get(attacker.level.random.nextInt(spells.size()));
 
 						SpellModifiers modifiers = attacker.getModifiers();
 
 						if(spell != null && attemptCastSpell(spell, modifiers)){
 							// The spell worked, so we're done!
-							attacker.rotationYaw = (float)(Math.atan2(dz, dx) * 180.0D / Math.PI) - 90.0F;
+							attacker.setYRot((float)(Math.atan2(dz, dx) * 180.0D / Math.PI) - 90.0F);
 							return;
 						}else{
 							spells.remove(spell);
@@ -215,7 +214,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 		}
 
 		// This is only called when spell casting starts so ticksInUse is always zero
-		if(spell.cast(attacker.world, attacker, InteractionHand.MAIN_HAND, 0, target, modifiers)){
+		if(spell.cast(attacker.level, attacker, InteractionHand.MAIN_HAND, 0, target, modifiers)){
 
 			if(spell.isContinuous){
 				// -1 because the spell has been cast once already!
@@ -232,9 +231,9 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 
 				if(spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
-					IMessage msg = new PacketNPCCastSpell.Message(attacker.getEntityId(), target.getEntityId(),
+					PacketNPCCastSpell.Message msg = new PacketNPCCastSpell.Message(attacker.getId(), target.getId(),
 							InteractionHand.MAIN_HAND, spell, modifiers);
-					WizardryPacketHandler.net.sendToDimension(msg, attacker.world.provider.getDimension());
+					WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> attacker.level.dimension()), msg);
 				}
 			}
 

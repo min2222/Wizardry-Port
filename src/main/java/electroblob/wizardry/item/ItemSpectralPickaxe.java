@@ -1,31 +1,27 @@
 package electroblob.wizardry.item;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tier;
-import net.minecraft.item.ItemPickaxe;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PickaxeItem;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
 
 public class ItemSpectralPickaxe extends PickaxeItem implements IConjuredItem {
 
 	private Rarity rarity = Rarity.COMMON;
 
-	public ItemSpectralPickaxe(Tier material){
-		super(material);
-		setMaxDamage(1200);
-		setNoRepair();
-		setCreativeTab(null);
+	public ItemSpectralPickaxe(Tier material, int damage, float speed){
+		super(material, damage, speed, new Item.Properties().durability(1200).setNoRepair());
 		addAnimationPropertyOverrides();
 	}
 
@@ -41,11 +37,11 @@ public class ItemSpectralPickaxe extends PickaxeItem implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		return this.getMaxDamageFromNBT(stack, Spells.conjure_pickaxe);
+		return this.getMaxDamageFromNBT(stack, Spells.CONJURE_PICKAXE);
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
@@ -63,10 +59,10 @@ public class ItemSpectralPickaxe extends PickaxeItem implements IConjuredItem {
 	}
 
 	@Override
-	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
-		int damage = stack.getItemDamage();
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
-		stack.setItemDamage(damage + 1);
+		stack.setDamageValue(damage + 1);
 	}
 
 	@Override
@@ -88,12 +84,12 @@ public class ItemSpectralPickaxe extends PickaxeItem implements IConjuredItem {
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack par2ItemStack){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	@Override
-	public int getItemEnchantability(){
+	public int getEnchantmentValue(){
 		return 0;
 	}
 

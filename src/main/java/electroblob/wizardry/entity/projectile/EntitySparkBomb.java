@@ -45,7 +45,7 @@ public class EntitySparkBomb extends EntityBomb {
 
 		if(entityHit != null){
 			// This is if the spark bomb gets a direct hit
-			float damage = Spells.spark_bomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.SPARK_BOMB.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
 			this.playSound(WizardrySounds.ENTITY_SPARK_BOMB_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 
@@ -60,12 +60,12 @@ public class EntitySparkBomb extends EntityBomb {
 			ParticleBuilder.spawnShockParticles(level, getX(), getY() + getBbHeight()/2, getZ());
 		}
 
-		double seekerRange = Spells.spark_bomb.getProperty(Spell.EFFECT_RADIUS).doubleValue() * blastMultiplier;
+		double seekerRange = Spells.SPARK_BOMB.getProperty(Spell.EFFECT_RADIUS).doubleValue() * blastMultiplier;
 
 		List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.getX(), this.getY(),
 				this.getZ(), this.level);
 
-		for(int i = 0; i < Math.min(targets.size(), Spells.spark_bomb.getProperty(SECONDARY_MAX_TARGETS).intValue()); i++){
+		for(int i = 0; i < Math.min(targets.size(), Spells.SPARK_BOMB.getProperty(SECONDARY_MAX_TARGETS).intValue()); i++){
 
 			boolean flag = targets.get(i) != entityHit && targets.get(i) != this.getOwner()
 					&& !(targets.get(i) instanceof Player
@@ -84,7 +84,7 @@ public class EntitySparkBomb extends EntityBomb {
 
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.SHOCK),
-							Spells.spark_bomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
+							Spells.SPARK_BOMB.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 
 				}else{
 					ParticleBuilder.create(Type.LIGHTNING).pos(this.position()).target(target).spawn(level);

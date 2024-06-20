@@ -332,7 +332,7 @@ public class ItemArtefact extends Item {
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
-				if(artefact == WizardryItems.ring_condensing){
+				if(artefact == WizardryItems.RING_CONDENSING.get()){
 
 					if(player.tickCount % 150 == 0){
 						for(ItemStack stack : InventoryUtils.getHotbar(player)){
@@ -343,7 +343,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.amulet_arcane_defence){
+				}else if(artefact == WizardryItems.AMULET_ARCANE_DEFENCE.get()){
 
 					if(player.tickCount % 300 == 0){
 						for(ItemStack stack : player.getArmorSlots()){
@@ -353,7 +353,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.amulet_recovery){
+				}else if(artefact == WizardryItems.AMULET_RECOVERY.get()){
 
 					if(player.isHurt() && player.getHealth() < player.getMaxHealth()/2
 						&& player.tickCount % 50 == 0){
@@ -381,7 +381,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.amulet_glide){
+				}else if(artefact == WizardryItems.AMULET_GLIDE.get()){
 					// This should be a chance per fall, so we can't just check fall distance is greater than 3 each tick
 					// Based on a stationary start and a gravity acceleration of 0.02 blocks/tick^2, at 3 blocks of fall
 					// distance the player should be falling at about 0.35b/t, so 0.5 blocks should be enough of a window
@@ -392,9 +392,9 @@ public class ItemArtefact extends Item {
 						if(data.currentlyCasting() == Spells.glide) data.stopCastingContinuousSpell();
 					}
 
-				}else if(artefact == WizardryItems.amulet_auto_shield){
+				}else if(artefact == WizardryItems.AMULET_AUTO_SHIELD.get()){
 
-					findMatchingWandAndExecute(player, Spells.shield, wand -> {
+					findMatchingWandAndExecute(player, Spells.SHIELD, wand -> {
 
 						if(wand.getItem() instanceof ItemScroll) return; // Ignore scrolls since they shouldn't work
 
@@ -411,15 +411,15 @@ public class ItemArtefact extends Item {
 							double angle1 = Math.acos(vec.dot(velocity));
 							if(angle1 < Math.PI * 0.2f){
 								SpellModifiers modifiers = new SpellModifiers();
-								if(((ISpellCastingItem)wand.getItem()).canCast(wand, Spells.shield, player, InteractionHand.MAIN_HAND, 0, modifiers)){
-									((ISpellCastingItem)wand.getItem()).cast(wand, Spells.shield, player, InteractionHand.MAIN_HAND, 0, modifiers);
+								if(((ISpellCastingItem)wand.getItem()).canCast(wand, Spells.SHIELD, player, InteractionHand.MAIN_HAND, 0, modifiers)){
+									((ISpellCastingItem)wand.getItem()).cast(wand, Spells.SHIELD, player, InteractionHand.MAIN_HAND, 0, modifiers);
 								}
 								break;
 							}
 						}
 					});
 
-				}else if(artefact == WizardryItems.amulet_frost_warding){
+				}else if(artefact == WizardryItems.AMULET_FROST_WARDING.get()){
 
 					if(!world.isClientSide && player.tickCount % 40 == 0){
 
@@ -432,14 +432,14 @@ public class ItemArtefact extends Item {
 
 					}
 
-				}else if(artefact == WizardryItems.charm_feeding){
+				}else if(artefact == WizardryItems.CHARM_FEEDING.get()){
 					// Every 5 seconds, feed the player if they are hungry enough
 					if(player.tickCount % 100 == 0){
 						if(player.getFoodData().getFoodLevel() < 20 - Spells.satiety.getProperty(Satiety.HUNGER_POINTS).intValue()){
 							if(findMatchingWandAndCast(player, Spells.satiety)) continue;
 						}
-						if(player.getFoodData().getFoodLevel() < 20 - Spells.replenish_hunger.getProperty(ReplenishHunger.HUNGER_POINTS).intValue()){
-							findMatchingWandAndCast(player, Spells.replenish_hunger);
+						if(player.getFoodData().getFoodLevel() < 20 - Spells.REPLENISH_HUNGER.getProperty(ReplenishHunger.HUNGER_POINTS).intValue()){
+							findMatchingWandAndCast(player, Spells.REPLENISH_HUNGER);
 						}
 					}
 				}
@@ -458,17 +458,17 @@ public class ItemArtefact extends Item {
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
 				float potency = modifiers.get(SpellModifiers.POTENCY);
-				float cooldown = modifiers.get(WizardryItems.cooldown_upgrade);
+				float cooldown = modifiers.get(WizardryItems.COOLDOWN_UPGRADE.get());
 				Holder<Biome> biome = player.level.getBiome(player.blockPosition());
 
-				if(artefact == WizardryItems.ring_battlemage){
+				if(artefact == WizardryItems.RING_BATTLEMAGE.get()){
 
 					if(player.getOffhandItem().getItem() instanceof ISpellCastingItem
 						&& ImbueWeapon.isSword(player.getMainHandItem())){
 						modifiers.set(SpellModifiers.POTENCY, 1.1f * potency, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_fire_biome){
+				}else if(artefact == WizardryItems.RING_FIRE_BIOME.get()){
 
 					if(event.getSpell().getElement() == Element.FIRE
 							&& biome.is(Biomes.IS_HOT)
@@ -476,14 +476,14 @@ public class ItemArtefact extends Item {
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_ice_biome){
+				}else if(artefact == WizardryItems.RING_ICE_BIOME.get()){
 
 					if(event.getSpell().getElement() == Element.ICE
 							&& biome.is(Biomes.IS_SNOWY)){
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_earth_biome){
+				}else if(artefact == WizardryItems.RING_EARTH_BIOME.get()){
 
 					if(event.getSpell().getElement() == Element.EARTH
 							// If it was any forest that would be far too many, so taigas and jungles are excluded
@@ -493,46 +493,46 @@ public class ItemArtefact extends Item {
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_storm){
+				}else if(artefact == WizardryItems.RING_STORM.get()){
 
 					if(event.getSpell().getElement() == Element.LIGHTNING && player.level.isThundering()){
-						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
+						modifiers.set(WizardryItems.COOLDOWN_UPGRADE.get(), cooldown * 0.3f, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_full_moon){
+				}else if(artefact == WizardryItems.RING_FULL_MOON.get()){
 
 					if(event.getSpell().getElement() == Element.EARTH && !player.level.isDay()
 							&& player.level.getMoonPhase() == 0){
-						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
+						modifiers.set(WizardryItems.COOLDOWN_UPGRADE.get(), cooldown * 0.3f, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_blockwrangler){
+				}else if(artefact == WizardryItems.RING_BLOCKWRANGLER.get()){
 
 					if(event.getSpell() == Spells.greater_telekinesis){
 						modifiers.set(SpellModifiers.POTENCY, modifiers.get(SpellModifiers.POTENCY) * 2, false);
 					}
 
-				}else if(artefact == WizardryItems.ring_conjurer){
+				}else if(artefact == WizardryItems.RING_CONJURER.get()){
 
 					if(event.getSpell() instanceof SpellConjuration){
-						modifiers.set(WizardryItems.duration_upgrade, modifiers.get(WizardryItems.duration_upgrade) * 2, false);
+						modifiers.set(WizardryItems.DURATION_UPGRADE.get(), modifiers.get(WizardryItems.DURATION_UPGRADE.get()) * 2, false);
 					}
 
-				}else if(artefact == WizardryItems.charm_minion_health){
+				}else if(artefact == WizardryItems.CHARM_MINION_HEALTH.get()){
 					// We COULD check the spell is a SpellMinion here, but there's really no point
 					modifiers.set(SpellMinion.HEALTH_MODIFIER, 1.25f * modifiers.get(SpellMinion.HEALTH_MODIFIER), true);
 
-				}else if(artefact == WizardryItems.charm_flight){
+				}else if(artefact == WizardryItems.CHARM_FLIGHT.get()){
 
 					if(event.getSpell() == Spells.flight || event.getSpell() == Spells.glide){
 						modifiers.set(SpellModifiers.POTENCY, 1.5f * potency, true);
 					}
 
-				}else if(artefact == WizardryItems.charm_experience_tome){
+				}else if(artefact == WizardryItems.CHARM_EXPERIENCE_TOME.get()){
 
 					modifiers.set(SpellModifiers.PROGRESSION, modifiers.get(SpellModifiers.PROGRESSION) * 1.5f, false);
 
-				}else if(artefact == WizardryItems.charm_hunger_casting){
+				}else if(artefact == WizardryItems.CHARM_HUNGER_CASTING.get()){
 
 					if(!player.getAbilities().instabuild && event.getSource() == Source.WAND && !event.getSpell().isContinuous){ // TODO: Continuous spells?
 
@@ -567,7 +567,7 @@ public class ItemArtefact extends Item {
 
 			Player player = (Player)event.getCaster();
 
-			if(isArtefactActive(player, WizardryItems.ring_paladin)){
+			if(isArtefactActive(player, WizardryItems.RING_PALADIN.get())){
 
 				if(event.getSpell() instanceof Heal || event.getSpell() instanceof HealAlly || event.getSpell() instanceof GreaterHeal){
 					// Spell properties allow all three of the above spells to be dealt with the same way - neat!
@@ -602,7 +602,7 @@ public class ItemArtefact extends Item {
 
 				if(caster instanceof Player){
 
-					if(isArtefactActive((Player)caster, WizardryItems.ring_mind_control)){
+					if(isArtefactActive((Player)caster, WizardryItems.RING_MIND_CONTROL.get())){
 
 						EntityUtils.getEntitiesWithinRadius(3, entity.getX(), entity.getY(), entity.getZ(), entity.level, Mob.class).stream()
 								.filter(e -> e.level.random.nextInt(10) == 0)
@@ -626,23 +626,23 @@ public class ItemArtefact extends Item {
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
-				if(artefact == WizardryItems.amulet_warding){
+				if(artefact == WizardryItems.AMULET_WARDING.get()){
 
 					if(!event.getSource().isBypassArmor() && event.getSource().isMagic()){
 						event.setAmount(event.getAmount() * 0.9f);
 					}
 
-				}else if(artefact == WizardryItems.amulet_fire_protection){
+				}else if(artefact == WizardryItems.AMULET_FIRE_PROTECTION.get()){
 
 					if(event.getSource().isFire()) event.setAmount(event.getAmount() * 0.7f);
 
-				}else if(artefact == WizardryItems.amulet_ice_protection){
+				}else if(artefact == WizardryItems.AMULET_ICE_PROTECTION.get()){
 
 					if(event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FROST)
 						event.setAmount(event.getAmount() * 0.7f);
 
-				}else if(artefact == WizardryItems.amulet_channeling){
+				}else if(artefact == WizardryItems.AMULET_CHANNELING.get()){
 
 					if(player.level.random.nextFloat() < 0.3f && event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.SHOCK){
@@ -650,7 +650,7 @@ public class ItemArtefact extends Item {
 						return;
 					}
 
-				}else if(artefact == WizardryItems.amulet_fire_cloaking){
+				}else if(artefact == WizardryItems.AMULET_FIRE_CLOAKING.get()){
 
 					if(!event.getSource().isBypassArmor()){
 
@@ -664,7 +664,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.amulet_potential){
+				}else if(artefact == WizardryItems.AMULET_POTENTIAL.get()){
 
 					if(player.level.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 						&& event.getSource().getEntity() instanceof LivingEntity){
@@ -686,7 +686,7 @@ public class ItemArtefact extends Item {
 
 					}
 
-				}else if(artefact == WizardryItems.amulet_lich){
+				}else if(artefact == WizardryItems.AMULET_LICH.get()){
 
 					if(!event.getSource().isBypassArmor() && player.level.random.nextFloat() < 0.15f){
 
@@ -702,7 +702,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.amulet_banishing){
+				}else if(artefact == WizardryItems.AMULET_BANISHING.get()){
 
 					if(player.level.random.nextFloat() < 0.2f && EntityUtils.isMeleeDamage(event.getSource())
 							&& event.getSource().getEntity() instanceof LivingEntity){
@@ -711,7 +711,7 @@ public class ItemArtefact extends Item {
 						((Banish)Spells.banish).teleport(target, target.level, 8 + target.level.random.nextDouble() * 8);
 					}
 
-				}else if(artefact == WizardryItems.amulet_transience){
+				}else if(artefact == WizardryItems.AMULET_TRANSIENCE.get()){
 
 					if(player.getHealth() <= 6 && player.level.random.nextFloat() < 0.25f){
 						player.addEffect(new MobEffectInstance(WizardryPotions.TRANSIENCE.get(), 300));
@@ -729,7 +729,7 @@ public class ItemArtefact extends Item {
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
-				if(artefact == WizardryItems.ring_fire_melee){
+				if(artefact == WizardryItems.RING_FIRE_MELEE.get()){
 					// Used ItemWand intentionally because we need the element
 					// Other mods can always make their own events if they want their own spellcasting items to do this
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
@@ -737,14 +737,14 @@ public class ItemArtefact extends Item {
 						event.getEntity().setSecondsOnFire(5);
 					}
 
-				}else if(artefact == WizardryItems.ring_ice_melee){
+				}else if(artefact == WizardryItems.RING_ICE_MELEE.get()){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.ICE){
 						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 200, 0));
 					}
 
-				}else if(artefact == WizardryItems.ring_lightning_melee){
+				}else if(artefact == WizardryItems.RING_LIGHTNING_MELEE.get()){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.LIGHTNING){
@@ -770,21 +770,21 @@ public class ItemArtefact extends Item {
 								});
 					}
 
-				}else if(artefact == WizardryItems.ring_necromancy_melee){
+				}else if(artefact == WizardryItems.RING_NECROMANCY_MELEE.get()){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.NECROMANCY){
 						event.getEntity().addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 0));
 					}
 
-				}else if(artefact == WizardryItems.ring_earth_melee){
+				}else if(artefact == WizardryItems.RING_EARTH_MELEE.get()){
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.EARTH){
 						event.getEntity().addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
-				}else if(artefact == WizardryItems.ring_shattering){
+				}else if(artefact == WizardryItems.RING_SHATTERING.get()){
 
 					if(!player.level.isClientSide && player.level.random.nextFloat() < 0.15f
 							&& event.getEntity().getHealth() < 12f // Otherwise it's a bit overpowered!
@@ -807,7 +807,7 @@ public class ItemArtefact extends Item {
 						}
 					}
 
-				}else if(artefact == WizardryItems.ring_soulbinding){
+				}else if(artefact == WizardryItems.RING_SOULBINDING.get()){
 
 					// Best guess at necromancy spell damage: either it's wither damage...
 					if((event.getSource() instanceof IElementalDamage
@@ -821,7 +821,7 @@ public class ItemArtefact extends Item {
 						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUUID());
 					}
 
-				}else if(artefact == WizardryItems.ring_leeching){
+				}else if(artefact == WizardryItems.RING_LEECHING.get()){
 
 					// Best guess at necromancy spell damage: either it's wither damage...
 					if(player.level.random.nextFloat() < 0.3f && ((event.getSource() instanceof IElementalDamage
@@ -830,14 +830,14 @@ public class ItemArtefact extends Item {
 							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
 							&& Streams.stream(player.getHandSlots()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY
-							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s) != Spells.life_drain)))){
+							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s) != Spells.LIFE_DRAIN)))){
 
 						if(player.isHurt()){
-							player.heal(event.getAmount() * Spells.life_drain.getProperty(LifeDrain.HEAL_FACTOR).floatValue());
+							player.heal(event.getAmount() * Spells.LIFE_DRAIN.getProperty(LifeDrain.HEAL_FACTOR).floatValue());
 						}
 					}
 
-				}else if(artefact == WizardryItems.ring_poison){
+				}else if(artefact == WizardryItems.RING_POISON.get()){
 
 					// Best guess at earth spell damage: either it's poison damage...
 					if((event.getSource() instanceof IElementalDamage
@@ -852,7 +852,7 @@ public class ItemArtefact extends Item {
 						event.getEntity().addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
 					}
 
-				}else if(artefact == WizardryItems.ring_extraction){
+				}else if(artefact == WizardryItems.RING_EXTRACTION.get()){
 
 					// Best guess at sorcery spell damage: either it's force damage...
 					if((event.getSource() instanceof IElementalDamage
@@ -886,21 +886,21 @@ public class ItemArtefact extends Item {
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
-				if(artefact == WizardryItems.ring_combustion){
+				if(artefact == WizardryItems.RING_COMBUSTION.get()){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
 						event.getEntity().level.explode(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
 								event.getEntity().getZ(), 1.5f, BlockInteraction.NONE);
 					}
 
-				}else if(artefact == WizardryItems.ring_disintegration){
+				}else if(artefact == WizardryItems.RING_DISINTEGRATION.get()){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
 						Disintegration.spawnEmbers(event.getEntity().level, player, event.getEntity(),
 								Spells.disintegration.getProperty(Disintegration.EMBER_COUNT).intValue());
 					}
 
-				}else if(artefact == WizardryItems.ring_arcane_frost){
+				}else if(artefact == WizardryItems.RING_ARCANE_FROST.get()){
 
 					if(!player.level.isClientSide && event.getSource() instanceof IElementalDamage
 							&& ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FROST){
@@ -930,7 +930,7 @@ public class ItemArtefact extends Item {
 		// This needs to happen or we can't cast the spell with it and use up the mana
 		if(!(event.getEntity() instanceof Player))
 			return;
-		if(isArtefactActive((Player) event.getEntity(), WizardryItems.amulet_resurrection)){
+		if(isArtefactActive((Player) event.getEntity(), WizardryItems.AMULET_RESURRECTION.get())){
 
 			ItemEntity item = event.getDrops().stream()
 					.filter(e -> Resurrection.canStackResurrect(e.getItem(), (Player) event.getEntity()))
@@ -955,11 +955,11 @@ public class ItemArtefact extends Item {
 
 			for(ItemArtefact artefact : getActiveArtefacts(player)){
 
-				if(artefact == WizardryItems.amulet_ice_immunity){
+				if(artefact == WizardryItems.AMULET_ICE_IMMUNITY.get()){
 
 					if(event.getEffectInstance().getEffect() == WizardryPotions.FROST.get()) event.setResult(Event.Result.DENY);
 
-				}else if(artefact == WizardryItems.amulet_wither_immunity){
+				}else if(artefact == WizardryItems.AMULET_WITHER_IMMUNITY.get()){
 
 					if(event.getEffectInstance().getEffect() == MobEffects.WITHER) event.setResult(Event.Result.DENY);
 				}
@@ -971,7 +971,7 @@ public class ItemArtefact extends Item {
 	public static void onItemPickupEvent(PlayerEvent.ItemPickupEvent event){
 
 		// ItemPickupEvent is just a convenient trigger for this; we don't actually care what got picked up
-		if(isArtefactActive(event.getEntity(), WizardryItems.charm_auto_smelt)){
+		if(isArtefactActive(event.getEntity(), WizardryItems.CHARM_AUTO_SMELT.get())){
 
 			// So this doesn't waste mana, only cast pocket furnace when it would smelt the maximum number of items
 			if(event.getEntity().getInventory().items.stream()

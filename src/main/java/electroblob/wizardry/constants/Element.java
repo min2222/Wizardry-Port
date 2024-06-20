@@ -96,7 +96,7 @@ public class Element {
 	}
 
 	/** Returns the translated display name of this element, without formatting. */
-	public String getDisplayName(){
+	public Component getDisplayName(){
 		return Wizardry.proxy.translate("element." + getName());
 	}
 

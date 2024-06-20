@@ -49,6 +49,7 @@ import electroblob.wizardry.tileentity.*;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.WandHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -322,7 +323,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public Font getFontRenderer(ItemStack stack){
 
-		Spell spell = Spells.none;
+		Spell spell = Spells.NONE;
 
 		if(stack.getItem() instanceof ItemWand){
 			spell = WandHelper.getCurrentSpell(stack);
@@ -338,7 +339,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	@Override
-	public String getScrollDisplayName(ItemStack scroll){
+	public Component getScrollDisplayName(ItemStack scroll){
 
 		Spell spell = Spell.byMetadata(scroll.getItemDamage());
 
@@ -353,9 +354,9 @@ public class ClientProxy extends CommonProxy {
 		}
 
 		if(discovered){
-			return I18n.format("item." + Wizardry.MODID + ":scroll.name", spell.getDisplayName()).trim();
+			return String.format("item." + Wizardry.MODID + ":scroll.name", spell.getDisplayName()).trim();
 		}else{
-			return I18n.format("item." + Wizardry.MODID + ":scroll.undiscovered.name", "#" + SpellGlyphData.getGlyphName(spell, player.world) + "#").trim();
+			return String.format("item." + Wizardry.MODID + ":scroll.undiscovered.name", "#" + SpellGlyphData.getGlyphName(spell, player.level) + "#").trim();
 		}
 	}
 

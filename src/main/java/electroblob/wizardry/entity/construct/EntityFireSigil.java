@@ -22,12 +22,12 @@ public class EntityFireSigil extends EntityScaledConstruct {
 
 	public EntityFireSigil(Level world){
 		this(WizardryEntities.FIRE_SIGIL.get(), world);
-		setSize(Spells.fire_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.FIRE_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 	
 	public EntityFireSigil(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.fire_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.FIRE_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 
 	@Override
@@ -52,14 +52,14 @@ public class EntityFireSigil extends EntityScaledConstruct {
 
 					target.hurt(this.getCaster() != null
 							? MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.FIRE)
-							: DamageSource.MAGIC, Spells.fire_sigil.getProperty(Spell.DAMAGE).floatValue()
+							: DamageSource.MAGIC, Spells.FIRE_SIGIL.getProperty(Spell.DAMAGE).floatValue()
 							* damageMultiplier);
 
 					// Removes knockback
 					target.setDeltaMovement(velocity);
 
 					if(!MagicDamage.isEntityImmune(DamageType.FIRE, target))
-						target.setSecondsOnFire(Spells.fire_sigil.getProperty(Spell.BURN_DURATION).intValue());
+						target.setSecondsOnFire(Spells.FIRE_SIGIL.getProperty(Spell.BURN_DURATION).intValue());
 
 					this.playSound(WizardrySounds.ENTITY_FIRE_SIGIL_TRIGGER, 1, 1);
 

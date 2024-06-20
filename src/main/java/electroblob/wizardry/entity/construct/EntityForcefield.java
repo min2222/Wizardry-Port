@@ -96,7 +96,7 @@ public class EntityForcefield extends EntityScaledConstruct implements ICustomHi
 
 		// Ring of the defender allows players to shoot through their own forcefields
 		if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
-				WizardryItems.ring_defender)){
+				WizardryItems.RING_DEFENDER.get())){
 			targets.removeIf(t -> t instanceof EntityMagicArrow && !this.isValidTarget(((EntityMagicArrow)t).getCaster())
 								|| t instanceof Projectile && !this.isValidTarget(((Projectile)t).getOwner()));
 		}	
@@ -131,7 +131,7 @@ public class EntityForcefield extends EntityScaledConstruct implements ICustomHi
 
 					// Ring of interdiction
 					if(getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
-							WizardryItems.ring_interdiction) && EntityUtils.isLiving(target)){
+							WizardryItems.RING_INTERDICTION.get()) && EntityUtils.isLiving(target)){
 						target.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),
 								MagicDamage.DamageType.MAGIC), 1);
 					}
@@ -272,7 +272,7 @@ public class EntityForcefield extends EntityScaledConstruct implements ICustomHi
 	public static void onLivingAttackEvent(LivingAttackEvent event){
 
 		if(event.getSource().getEntity() instanceof Player && event.getSource().isProjectile()
-				&& ItemArtefact.isArtefactActive((Player)event.getSource().getEntity(), WizardryItems.ring_defender)){
+				&& ItemArtefact.isArtefactActive((Player)event.getSource().getEntity(), WizardryItems.RING_DEFENDER.get())){
 				return; // Players wearing a ring of the defender can shoot stuff as normal, so don't cancel the event
 		}
 

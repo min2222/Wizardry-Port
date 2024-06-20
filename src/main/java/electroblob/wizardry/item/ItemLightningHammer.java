@@ -1,6 +1,11 @@
 package electroblob.wizardry.item;
 
+import java.util.List;
+import java.util.UUID;
+
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+
 import electroblob.wizardry.entity.construct.EntityHammer;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardrySounds;
@@ -12,26 +17,23 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.List;
-import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class ItemLightningHammer extends Item implements IConjuredItem {
@@ -49,11 +51,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	private static final double MOVEMENT_SPEED_REDUCTION = -0.25;
 
 	public ItemLightningHammer(){
-		super();
-		setMaxDamage(600);
-		setMaxStackSize(1);
-		setNoRepair();
-		setCreativeTab(null);
+		super(new Item.Properties().durability(600).setNoRepair());
 	}
 
 	@Override
@@ -63,38 +61,39 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		if(stack.hasTagCompound() && stack.getTag().contains(DURATION_NBT_KEY)){
+		if(stack.hasTag() && stack.getTag().contains(DURATION_NBT_KEY)){
 			return stack.getTag().getInt(DURATION_NBT_KEY);
 		}
 		return super.getMaxDamage(stack);
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
 	private float getDamageMultiplier(ItemStack stack){
-		if(stack.hasTagCompound() && stack.getTag().contains(DAMAGE_MULTIPLIER_NBT_KEY)){
+		if(stack.hasTag() && stack.getTag().contains(DAMAGE_MULTIPLIER_NBT_KEY)){
 			return stack.getTag().getFloat(DAMAGE_MULTIPLIER_NBT_KEY);
 		}
 		return 1;
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EquipmentSlot slot){
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
 
-		Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
-
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+        builder.putAll(multimap);
 		if(slot == EquipmentSlot.MAINHAND){
 			float attackDamage = Spells.lightning_hammer.arePropertiesInitialised() ?
 					Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() : 10; // Fallback for search tree init, value doesn't really matter
-			multimap.put(Attributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamage, EntityUtils.Operations.ADD));
-			multimap.put(Attributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", ATTACK_SPEED, EntityUtils.Operations.ADD));
-			multimap.put(Attributes.MOVEMENT_SPEED.getName(), new AttributeModifier(MOVEMENT_SPEED_MODIFIER, "Weapon modifier", MOVEMENT_SPEED_REDUCTION, EntityUtils.Operations.MULTIPLY_FLAT));
+			builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, EntityUtils.Operations.ADD));
+			builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", ATTACK_SPEED, EntityUtils.Operations.ADD));
+			builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(MOVEMENT_SPEED_MODIFIER, "Weapon modifier", MOVEMENT_SPEED_REDUCTION, EntityUtils.Operations.MULTIPLY_FLAT));
 		}
 
-		return multimap;
+		return builder.build();
 	}
 
 	@Override
@@ -111,10 +110,10 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 	}
 
 	@Override
-	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
-		int damage = stack.getItemDamage();
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
-		stack.setItemDamage(damage + 1);
+		stack.setDamageValue(damage + 1);
 	}
 
 	@Override
@@ -122,19 +121,19 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 		ItemStack stack = player.getItemInHand(hand);
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			EntityHammer hammer = new EntityHammer(world);
-			Vec3 look = player.getLookVec();
-			Vec3 vec = player.getPositionEyes(1).add(look);
-			hammer.setPositionAndRotation(vec.x, vec.y - hammer.getBbHeight()/2, vec.z, player.rotationYawHead - 90, 0);
+			Vec3 look = player.getLookAngle();
+			Vec3 vec = player.getEyePosition(1).add(look);
+			hammer.moveTo(vec.x, vec.y - hammer.getBbHeight()/2, vec.z, player.yHeadRot - 90, 0);
 			// For some reason the above method insists on clamping the pitch to between -90 and 90
-			hammer.rotationPitch = 180 + player.rotationPitch;
-			hammer.prevRotationPitch = hammer.rotationPitch;
+			hammer.setXRot(180 + player.getXRot());
+			hammer.xRotO = hammer.getXRot();
 
-			float attackStrength = player.getCooledAttackStrength(0);
+			float attackStrength = player.getAttackStrengthScale(0);
 			double speed = THROW_SPEED * attackStrength; // Throw distance depends on the attack meter
-			hammer.addVelocity(look.x * speed, look.y * speed, look.z * speed);
-			hammer.lifetime = stack.getMaxDamage() - stack.getItemDamage();
+			hammer.push(look.x * speed, look.y * speed, look.z * speed);
+			hammer.lifetime = stack.getMaxDamage() - stack.getDamageValue();
 			hammer.setCaster(player);
 			hammer.damageMultiplier = getDamageMultiplier(stack);
 			hammer.spin = true;
@@ -146,18 +145,18 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 		//player.swingArm(hand);
 
 		// Use this instead of stack.shrink so it works regardless of whether the player is in creative mode or not
-		player.setHeldItem(hand, ItemStack.EMPTY);
+		player.setItemInHand(hand, ItemStack.EMPTY);
 
-		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
+		return InteractionResultHolder.success(stack);
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack par2ItemStack){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	@Override
-	public int getItemEnchantability(){
+	public int getEnchantmentValue(){
 		return 0;
 	}
 
@@ -188,7 +187,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 			Player wielder = event.getEntity();
 			LivingEntity hit = (LivingEntity)event.getTarget();
 
-			float attackStrength = wielder.getCooledAttackStrength(0);
+			float attackStrength = wielder.getAttackStrengthScale(0);
 
 			double dx = wielder.getX() - hit.getX();
 			double dz;
@@ -197,11 +196,11 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 				dx = (Math.random() - Math.random()) * 0.01D;
 			}
 
-			hit.knockBack(wielder, 2 * attackStrength, dx, dz);
+			hit.knockback(2 * attackStrength, dx, dz);
 
 			if(attackStrength == 1){ // Only chains when the attack meter is full
 
-				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.getX(), hit.getY(), hit.getZ(), hit.world);
+				List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(CHAINING_RANGE, hit.getX(), hit.getY(), hit.getZ(), hit.level);
 
 				nearby.remove(hit);
 				nearby.remove(wielder);
@@ -215,8 +214,8 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 
 					if(hit.level.isClientSide){
 						ParticleBuilder.create(Type.LIGHTNING).pos(hit.position().add(0, hit.getBbHeight() / 2, 0))
-								.target(target).spawn(hit.world);
-						ParticleBuilder.spawnShockParticles(hit.world, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
+								.target(target).spawn(hit.level);
+						ParticleBuilder.spawnShockParticles(hit.level, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ());
 					}
 
 					//target.playSound(WizardrySounds.SPELL_SPARK, 1, 1.5f + 0.4f * world.random.nextFloat());

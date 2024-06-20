@@ -41,14 +41,14 @@ public class EntityFirebomb extends EntityBomb {
 
 		if(entityHit != null){
 			// This is if the firebomb gets a direct hit
-			float damage = Spells.firebomb.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.FIREBOMB.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
 			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FIRE).setProjectile(),
 					damage);
 
 			if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit))
-				entityHit.setSecondsOnFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
+				entityHit.setSecondsOnFire(Spells.FIREBOMB.getProperty(Spell.BURN_DURATION).intValue());
 		}
 
 		// Particle effect
@@ -74,7 +74,7 @@ public class EntityFirebomb extends EntityBomb {
 			this.playSound(WizardrySounds.ENTITY_FIREBOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_FIREBOMB_FIRE, 1, 1);
 
-			double range = Spells.firebomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
+			double range = Spells.FIREBOMB.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
 					this.getZ(), this.level);
@@ -85,8 +85,8 @@ public class EntityFirebomb extends EntityBomb {
 					// Splash damage does not count as projectile damage
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FIRE),
-							Spells.firebomb.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
-					target.setSecondsOnFire(Spells.firebomb.getProperty(Spell.BURN_DURATION).intValue());
+							Spells.FIREBOMB.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
+					target.setSecondsOnFire(Spells.FIREBOMB.getProperty(Spell.BURN_DURATION).intValue());
 				}
 			}
 

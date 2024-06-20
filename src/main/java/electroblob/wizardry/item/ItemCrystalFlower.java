@@ -3,6 +3,7 @@ package electroblob.wizardry.item;
 import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.stats.StatList;
@@ -12,10 +13,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
-public class ItemCrystalFlower extends ItemBlock {
+public class ItemCrystalFlower extends BlockItem {
 
 	public ItemCrystalFlower(){
-		super(WizardryBlocks.crystal_flower);
+		super(WizardryBlocks.CRYSTAL_FLOWER.get());
 	}
 
 	@Override

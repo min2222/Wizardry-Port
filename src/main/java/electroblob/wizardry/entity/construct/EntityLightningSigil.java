@@ -25,12 +25,12 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 	public EntityLightningSigil(Level world){
 		this(WizardryEntities.LIGHTNING_SIGIL.get(), world);
-		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.LIGHTNING_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 	
 	public EntityLightningSigil(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.LIGHTNING_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 				// Only works if target is actually damaged to account for hurtResistantTime
 				if(target.hurt(getCaster() != null ? MagicDamage.causeIndirectMagicDamage(this, getCaster(),
-						DamageType.SHOCK) : DamageSource.MAGIC, Spells.lightning_sigil.getProperty(Spell.DIRECT_DAMAGE)
+						DamageType.SHOCK) : DamageSource.MAGIC, Spells.LIGHTNING_SIGIL.getProperty(Spell.DIRECT_DAMAGE)
 						.floatValue() * damageMultiplier)){
 
 					// Removes knockback
@@ -67,13 +67,13 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 					this.playSound(WizardrySounds.ENTITY_LIGHTNING_SIGIL_TRIGGER, 1.0f, 1.0f);
 
 					// Secondary chaining effect
-					double seekerRange = Spells.lightning_sigil.getProperty(SECONDARY_RANGE).doubleValue();
+					double seekerRange = Spells.LIGHTNING_SIGIL.getProperty(SECONDARY_RANGE).doubleValue();
 
 					List<LivingEntity> secondaryTargets = EntityUtils.getLivingWithinRadius(seekerRange,
 							target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), level);
 
 					for(int j = 0; j < Math.min(secondaryTargets.size(),
-							Spells.lightning_sigil.getProperty(SECONDARY_MAX_TARGETS).floatValue()); j++){
+							Spells.LIGHTNING_SIGIL.getProperty(SECONDARY_MAX_TARGETS).floatValue()); j++){
 
 						LivingEntity secondaryTarget = secondaryTargets.get(j);
 
@@ -94,7 +94,7 @@ public class EntityLightningSigil extends EntityScaledConstruct {
 
 							secondaryTarget.hurt(
 									MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK),
-									Spells.lightning_sigil.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
+									Spells.LIGHTNING_SIGIL.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier);
 						}
 
 					}

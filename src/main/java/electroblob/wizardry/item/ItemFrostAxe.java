@@ -1,6 +1,8 @@
 package electroblob.wizardry.item;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.Spell;
@@ -8,19 +10,19 @@ import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.item.ItemAxe;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -30,24 +32,22 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 	private Rarity rarity = Rarity.COMMON;
 
 	public ItemFrostAxe(Tier material){
-		super(material, 8, -3);
-		setMaxDamage(1200);
-		setNoRepair();
-		setCreativeTab(null);
+		super(material, 8, -3, new Item.Properties().durability(1200).setNoRepair());
 		addAnimationPropertyOverrides();
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
 
-		Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
-
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+        builder.putAll(multimap);
 		if(slot == EquipmentSlot.MAINHAND){
-			multimap.put(Attributes.ATTACK_DAMAGE.getName(), new AttributeModifier(POTENCY_MODIFIER,
+			builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(POTENCY_MODIFIER,
 					"Potency modifier", IConjuredItem.getDamageMultiplier(stack) - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
 		}
 
-		return multimap;
+		return builder.build();
 	}
 
 	public Item setRarity(Rarity rarity){
@@ -66,7 +66,7 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
@@ -84,22 +84,22 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 	}
 
 	@Override
-	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
-		int damage = stack.getItemDamage();
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected){
+		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
-		stack.setItemDamage(damage + 1);
+		stack.setDamageValue(damage + 1);
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getItemAttributeModifiers(EquipmentSlot equipmentSlot){
-		attackDamage = Spells.frost_axe.getProperty(Spell.DAMAGE).floatValue();
-		return super.getItemAttributeModifiers(equipmentSlot);
+	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot){
+		attackDamageBaseline = Spells.frost_axe.getProperty(Spell.DAMAGE).floatValue();
+		return super.getDefaultAttributeModifiers(equipmentSlot);
 	}
 
 	@Override
-	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity wielder){
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
-			target.addEffect(new MobEffectInstance(WizardryPotions.frost, 160, 1));
+			target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 160, 1));
 		return false;
 	}
 
@@ -110,12 +110,12 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack par2ItemStack){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	@Override
-	public int getItemEnchantability(){
+	public int getEnchantmentValue(){
 		return 0;
 	}
 

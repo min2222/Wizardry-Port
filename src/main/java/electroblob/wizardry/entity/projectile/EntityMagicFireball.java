@@ -63,11 +63,11 @@ public class EntityMagicFireball extends EntityMagicProjectile {
 
 	public float getDamage(){
 		// I'm lazy, I'd rather not have an entire fireball spell class just to set two fields on the entity
-		return damage == -1 ? Spells.fireball.getProperty(Spell.DAMAGE).floatValue() : damage;
+		return damage == -1 ? Spells.FIREBALL.getProperty(Spell.DAMAGE).floatValue() : damage;
 	}
 
 	public int getBurnDuration(){
-		return burnDuration == -1 ? Spells.fireball.getProperty(Spell.BURN_DURATION).intValue() : burnDuration;
+		return burnDuration == -1 ? Spells.FIREBALL.getProperty(Spell.BURN_DURATION).intValue() : burnDuration;
 	}
 
 	@Override

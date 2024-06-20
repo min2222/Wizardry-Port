@@ -31,14 +31,14 @@ public class EntityFirebolt extends EntityMagicProjectile {
 
 		if(entityHit != null){
 
-			float damage = Spells.firebolt.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.FIREBOLT.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FIRE).setProjectile(),
 					damage);
 
 			if(!MagicDamage.isEntityImmune(DamageType.FIRE, entityHit))
-				entityHit.setSecondsOnFire(Spells.firebolt.getProperty(Spell.BURN_DURATION).intValue());
+				entityHit.setSecondsOnFire(Spells.FIREBOLT.getProperty(Spell.BURN_DURATION).intValue());
 		}
 
 		this.playSound(WizardrySounds.ENTITY_FIREBOLT_HIT, 2, 0.8f + random.nextFloat() * 0.3f);

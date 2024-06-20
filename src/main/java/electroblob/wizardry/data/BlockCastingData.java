@@ -40,7 +40,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 	public BlockCastingData(T tileEntity){
 		this.tileEntity = tileEntity;
-		this.spell = Spells.none;
+		this.spell = Spells.NONE;
 		this.modifiers = new SpellModifiers();
 		this.castingTick = 0;
 	}
@@ -74,7 +74,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 	/** Stops casting the current spell. */
 	protected void stopCasting(){
-		this.spell = Spells.none;
+		this.spell = Spells.NONE;
 		this.castingTick = 0;
 		this.modifiers.reset();
 	}
@@ -87,7 +87,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 		if(!tileEntity.getLevel().isClientSide){
 			IMessage msg = new PacketDispenserCastSpell.Message(x, y, z, getDirection(), tileEntity.getPos(), spell, 0, modifiers);
-			WizardryPacketHandler.net.sendToDimension(msg, tileEntity.getWorld().provider.getDimension());
+			WizardryPacketHandler.net.sendToDimension(msg, tileEntity.getLevel().provider.getDimension());
 		}
 	}
 

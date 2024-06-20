@@ -82,7 +82,7 @@ public class ItemSpellBook extends Item implements IMetadata{
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
 		player.openGui(Wizardry.instance, WizardryGuiHandler.SPELL_BOOK, world, 0, 0, 0);
-		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
+		return InteractionResultHolder.success(stack);
 	}
 
 	// This is accessed during loading (before we even get to the main menu) for search tree population
@@ -96,15 +96,15 @@ public class ItemSpellBook extends Item implements IMetadata{
 		if(world == null) world = Wizardry.proxy.getTheWorld(); // But... I need the world!
 
 		// Tooltip is left blank for wizards buying generic spell books.
-		if(world != null && itemstack.getItemDamage() != OreDictionary.WILDCARD_VALUE){
+		if(world != null && getMetadata(itemstack) != Short.MAX_VALUE){
 
-			Spell spell = Spell.byMetadata(itemstack.getItemDamage());
+			Spell spell = Spell.byMetadata(getMetadata(itemstack));
 
 			boolean discovered = Wizardry.proxy.shouldDisplayDiscovered(spell, itemstack);
 
 			// Element colour is not given for undiscovered spells
-			tooltip.add(discovered ? "\u00A77" + spell.getDisplayNameWithFormatting()
-					: "#\u00A79" + SpellGlyphData.getGlyphName(spell, world));
+			tooltip.add(discovered ? spell.getDisplayNameWithFormatting()
+					: SpellGlyphData.getGlyphName(spell, world));
 
 			tooltip.add(spell.getTier().getDisplayNameWithFormatting());
 
@@ -113,7 +113,7 @@ public class ItemSpellBook extends Item implements IMetadata{
 			// If the spell should *appear* discovered but isn't *actually* discovered, show a 'new spell' message
 			// A bit annoying to check this again but it's the easiest way
 			if(Wizardry.settings.discoveryMode && !player.isCreative() && discovered && WizardData.get(player) != null && !WizardData.get(player).hasSpellBeenDiscovered(spell)){
-				tooltip.add(Wizardry.proxy.translate("item." + this.getRegistryName() + ".new", new Style().setColor(ChatFormatting.LIGHT_PURPLE)));
+				tooltip.add(Wizardry.proxy.translate(this.getOrCreateDescriptionId() + ".new", Style.EMPTY.withColor(ChatFormatting.LIGHT_PURPLE)));
 			}
 
 			// Advanced tooltips display more information, mainly for searching purposes in creative

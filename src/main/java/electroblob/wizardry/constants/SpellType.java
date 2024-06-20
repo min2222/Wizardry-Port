@@ -1,6 +1,7 @@
 package electroblob.wizardry.constants;
 
 import electroblob.wizardry.Wizardry;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -37,7 +38,7 @@ public enum SpellType {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public String getDisplayName(){
+	public Component getDisplayName(){
 		return Wizardry.proxy.translate("spelltype." + unlocalisedName);
 	}
 }

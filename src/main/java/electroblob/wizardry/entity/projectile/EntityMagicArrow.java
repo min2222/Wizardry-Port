@@ -191,7 +191,7 @@ public abstract class EntityMagicArrow extends Projectile implements IEntityAddi
 	 */
 	public float getSeekingStrength(){
 		return getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(),
-				WizardryItems.ring_seeking) ? 2 : 0;
+				WizardryItems.RING_SEEKING.get()) ? 2 : 0;
 	}
 
 	// Setters and getters

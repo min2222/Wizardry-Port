@@ -51,7 +51,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 					.clr(0.3f, 0.3f, 0.3f).shaded(true).spawn(level);
 		}
 
-		boolean stormcloudRingActive = getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.ring_stormcloud);
+		boolean stormcloudRingActive = getCaster() instanceof Player && ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.RING_STORMCLOUD.get());
 
 		List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class,
 				this.getBoundingBox().expandTowards(0, -10, 0));

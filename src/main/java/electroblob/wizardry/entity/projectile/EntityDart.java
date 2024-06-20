@@ -24,7 +24,7 @@ public class EntityDart extends EntityMagicArrow {
 		super(type, world);
 	}
 
-	@Override public double getDamage(){ return Spells.dart.getProperty(Spell.DAMAGE).doubleValue(); }
+	@Override public double getDamage(){ return Spells.DART.getProperty(Spell.DAMAGE).doubleValue(); }
 
 	@Override public boolean doGravity(){ return true; }
 
@@ -33,8 +33,8 @@ public class EntityDart extends EntityMagicArrow {
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		// Adds a weakness effect to the target.
-		entityHit.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, Spells.dart.getProperty(Spell.EFFECT_DURATION).intValue(),
-				Spells.dart.getProperty(Spell.EFFECT_STRENGTH).intValue(), false, false));
+		entityHit.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, Spells.DART.getProperty(Spell.EFFECT_DURATION).intValue(),
+				Spells.DART.getProperty(Spell.EFFECT_STRENGTH).intValue(), false, false));
 		this.playSound(WizardrySounds.ENTITY_DART_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 

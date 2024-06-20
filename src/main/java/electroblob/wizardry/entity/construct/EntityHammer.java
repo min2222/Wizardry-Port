@@ -196,12 +196,12 @@ public class EntityHammer extends EntityMagicConstruct {
 	@Override
 	public InteractionResult interact(Player player, InteractionHand hand){
 
-		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.ring_hammer)
+		if(player == this.getCaster() && ItemArtefact.isArtefactActive(player, WizardryItems.RING_HAMMER.get())
 				&& player.getMainHandItem().isEmpty() && tickCount > 10){
 
 			this.discard();
 
-			ItemStack hammer = new ItemStack(WizardryItems.lightning_hammer);
+			ItemStack hammer = new ItemStack(WizardryItems.LIGHTNING_HAMMER.get());
 			if(!hammer.hasTag()) hammer.setTag(new CompoundTag());
 			hammer.getTag().putInt(ItemLightningHammer.DURATION_NBT_KEY, lifetime);
 			hammer.setDamageValue(tickCount);

@@ -41,6 +41,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -74,7 +75,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
@@ -241,7 +242,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	public int getMaxDamage(ItemStack stack){
 		// + 0.5f corrects small float errors rounding down
 		return (int)(super.getMaxDamage(stack) * (1.0f + Constants.STORAGE_INCREASE_PER_LEVEL
-				* WandHelper.getUpgradeLevel(stack, WizardryItems.storage_upgrade)) + 0.5f);
+				* WandHelper.getUpgradeLevel(stack, WizardryItems.STORAGE_UPGRADE.get())) + 0.5f);
 	}
 
 	@Override
@@ -263,7 +264,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
 		if(!world.isClientSide && !this.isManaFull(stack) && world.getGameTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
-			this.rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
+			this.rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.CONDENSER_UPGRADE.get()));
 		}
 	}
 
@@ -273,7 +274,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
         ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 
 		if(slot == EquipmentSlot.MAINHAND){
-			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
+			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.MELEE_UPGRADE.get());
 			// This check doesn't affect the damage output, but it does stop a blank line from appearing in the tooltip.
 			if(level > 0 && !this.isManaEmpty(stack)){
 				builder.put(Attributes.ATTACK_DAMAGE,
@@ -288,7 +289,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity wielder){
 
-		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
+		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.MELEE_UPGRADE.get());
 		int mana = this.getMana(stack);
 
 		if(level > 0 && mana > 0) this.consumeMana(stack, level * 4, wielder);
@@ -298,7 +299,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity player){
-		return WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade) == 0;
+		return WandHelper.getUpgradeLevel(stack, WizardryItems.MELEE_UPGRADE.get()) == 0;
 	}
 
 	// A proper hook was introduced for this in Forge build 14.23.5.2805 - Hallelujah, finally!
@@ -372,7 +373,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 
 		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", Style.EMPTY.withColor(ChatFormatting.GRAY),
-				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.world)));
+				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.level)));
 
 		if(advanced.isAdvanced()){
 			// Advanced tooltips for debugging
@@ -386,7 +387,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public Component getName(ItemStack stack){
-		return (this.element == null ? "" : this.element.getFormattingCode()) + super.getName(stack);
+		return this.element == null ? super.getName(stack) : ((MutableComponent) super.getName(stack)).withStyle(this.element.getColour());
 	}
 
 	// Continuous spells use the onUsingItemTick method instead of this one.
@@ -514,8 +515,8 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
-					IMessage msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
-					WizardryPacketHandler.net.sendToDimension(msg, world.provider.getDimension());
+					PacketCastSpell.Message msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
+					WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> world.dimension()), msg);
 				}
 
 				// Mana cost
@@ -531,7 +532,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 			// Cooldown
 			if(!spell.isContinuous && !caster.isCreative()){ // Spells only have a cooldown in survival
-				WandHelper.setCurrentCooldown(stack, (int)(spell.getCooldown() * modifiers.get(WizardryItems.cooldown_upgrade)));
+				WandHelper.setCurrentCooldown(stack, (int)(spell.getCooldown() * modifiers.get(WizardryItems.COOLDOWN_UPGRADE.get())));
 			}
 
 			// Progression
@@ -593,7 +594,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				spell.finishCasting(world, player, Double.NaN, Double.NaN, Double.NaN, null, castingTick, modifiers);
 
 				if(!player.isCreative()){ // Spells only have a cooldown in survival
-					WandHelper.setCurrentCooldown(stack, (int)(spell.getCooldown() * modifiers.get(WizardryItems.cooldown_upgrade)));
+					WandHelper.setCurrentCooldown(stack, (int)(spell.getCooldown() * modifiers.get(WizardryItems.COOLDOWN_UPGRADE.get())));
 				}
 			}
 		}
@@ -637,21 +638,21 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		SpellModifiers modifiers = new SpellModifiers();
 
 		// Now we only need to add multipliers if they are not 1.
-		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.range_upgrade);
+		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.RANGE_UPGRADE.get());
 		if(level > 0)
-			modifiers.set(WizardryItems.range_upgrade, 1.0f + level * Constants.RANGE_INCREASE_PER_LEVEL, true);
+			modifiers.set(WizardryItems.RANGE_UPGRADE.get(), 1.0f + level * Constants.RANGE_INCREASE_PER_LEVEL, true);
 
-		level = WandHelper.getUpgradeLevel(stack, WizardryItems.duration_upgrade);
+		level = WandHelper.getUpgradeLevel(stack, WizardryItems.DURATION_UPGRADE.get());
 		if(level > 0)
-			modifiers.set(WizardryItems.duration_upgrade, 1.0f + level * Constants.DURATION_INCREASE_PER_LEVEL, false);
+			modifiers.set(WizardryItems.DURATION_UPGRADE.get(), 1.0f + level * Constants.DURATION_INCREASE_PER_LEVEL, false);
 
-		level = WandHelper.getUpgradeLevel(stack, WizardryItems.blast_upgrade);
+		level = WandHelper.getUpgradeLevel(stack, WizardryItems.BLAST_UPGRADE.get());
 		if(level > 0)
-			modifiers.set(WizardryItems.blast_upgrade, 1.0f + level * Constants.BLAST_RADIUS_INCREASE_PER_LEVEL, true);
+			modifiers.set(WizardryItems.BLAST_UPGRADE.get(), 1.0f + level * Constants.BLAST_RADIUS_INCREASE_PER_LEVEL, true);
 
-		level = WandHelper.getUpgradeLevel(stack, WizardryItems.cooldown_upgrade);
+		level = WandHelper.getUpgradeLevel(stack, WizardryItems.COOLDOWN_UPGRADE.get());
 		if(level > 0)
-			modifiers.set(WizardryItems.cooldown_upgrade, 1.0f - level * Constants.COOLDOWN_REDUCTION_PER_LEVEL, true);
+			modifiers.set(WizardryItems.COOLDOWN_UPGRADE.get(), 1.0f - level * Constants.COOLDOWN_REDUCTION_PER_LEVEL, true);
 
 		float progressionModifier = 1.0f - ((float)WizardData.get(player).countRecentCasts(spell) / WizardData.MAX_RECENT_SPELLS)
 				* MAX_PROGRESSION_REDUCTION;
@@ -709,7 +710,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 	@Override
 	public int getSpellSlotCount(ItemStack stack){
-		return BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack, WizardryItems.attunement_upgrade);
+		return BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack, WizardryItems.ATTUNEMENT_UPGRADE.get());
 	}
 
 	@Override
@@ -717,7 +718,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 		// Upgrades wand if necessary. Damage is copied, preserving remaining durability,
 		// and also the entire NBT tag compound.
-		if(upgrade.getItem() == WizardryItems.arcane_tome){
+		if(upgrade.getItem() == WizardryItems.ARCANE_TOME.get()){
 
 			Tier tier = Tier.values()[((IMetadata) upgrade.getItem()).getMetadata(upgrade)];
 
@@ -768,20 +769,20 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				WandHelper.applyUpgrade(wand, specialUpgrade);
 
 				// Special behaviours for specific upgrades
-				if(specialUpgrade == WizardryItems.storage_upgrade){
+				if(specialUpgrade == WizardryItems.STORAGE_UPGRADE.get()){
 
 					this.setMana(wand, prevMana);
 
-				}else if(specialUpgrade == WizardryItems.attunement_upgrade){
+				}else if(specialUpgrade == WizardryItems.ATTUNEMENT_UPGRADE.get()){
 
 					int newSlotCount = BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(wand,
-							WizardryItems.attunement_upgrade);
+							WizardryItems.ATTUNEMENT_UPGRADE.get());
 
 					Spell[] spells = WandHelper.getSpells(wand);
 					Spell[] newSpells = new Spell[newSlotCount];
 
 					for(int i = 0; i < newSpells.length; i++){
-						newSpells[i] = i < spells.length && spells[i] != null ? spells[i] : Spells.none;
+						newSpells[i] = i < spells.length && spells[i] != null ? spells[i] : Spells.NONE;
 					}
 
 					WandHelper.setSpells(wand, newSpells);
@@ -900,7 +901,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			CompoundTag nbt = stack.getTag();
 			int[] spells = nbt.getIntArray(WandHelper.SPELL_ARRAY_KEY);
 			int expectedSlotCount = BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack,
-					WizardryItems.attunement_upgrade);
+					WizardryItems.ATTUNEMENT_UPGRADE.get());
 
 			// unbrick broken wands
 			if (spells.length < expectedSlotCount) {
@@ -925,7 +926,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		if(stack.getItem() instanceof IManaStoringItem){
 
 			// Nobody said it had to be a wand, as long as it's got a melee upgrade it counts
-			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
+			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.MELEE_UPGRADE.get());
 			int mana = ((IManaStoringItem)stack.getItem()).getMana(stack);
 
 			if(level > 0 && mana > 0){

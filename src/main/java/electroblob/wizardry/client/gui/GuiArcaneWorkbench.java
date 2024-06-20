@@ -1,5 +1,17 @@
 package electroblob.wizardry.client.gui;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.constants.Element;
@@ -7,7 +19,11 @@ import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.data.SpellGlyphData;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.inventory.SlotBookList;
-import electroblob.wizardry.item.*;
+import electroblob.wizardry.item.IManaStoringItem;
+import electroblob.wizardry.item.ISpellCastingItem;
+import electroblob.wizardry.item.IWorkbenchItem;
+import electroblob.wizardry.item.ItemSpellBook;
+import electroblob.wizardry.item.ItemWand;
 import electroblob.wizardry.packet.PacketControlInput;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardrySounds;
@@ -21,35 +37,28 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.GlStateManager.DestFactor;
-import net.minecraft.client.renderer.GlStateManager.SourceFactor;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.Item;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.InventoryPlayer;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 @Mod.EventBusSubscriber(Dist.CLIENT)
-public class GuiArcaneWorkbench extends GuiContainer {
+public class GuiArcaneWorkbench extends AbstractContainerScreen<ContainerArcaneWorkbench> {
 
 	public static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID,
 			"textures/gui/container/arcane_workbench.png");
@@ -85,18 +94,18 @@ public class GuiArcaneWorkbench extends GuiContainer {
 
 	private static final int SEARCH_TOOLTIP_HOVER_TIME = 20;
 
-	private static final Style TOOLTIP_SYNTAX = new Style().setColor(ChatFormatting.YELLOW);
-	private static final Style TOOLTIP_BODY = new Style().setColor(ChatFormatting.WHITE);
+	private static final Style TOOLTIP_SYNTAX = Style.EMPTY.withColor(ChatFormatting.YELLOW);
+	private static final Style TOOLTIP_BODY = Style.EMPTY.withColor(ChatFormatting.WHITE);
 
-	private InventoryPlayer playerInventory;
-	private IInventory arcaneWorkbenchInventory;
+	private Inventory playerInventory;
+	private TileEntityArcaneWorkbench arcaneWorkbenchInventory;
 	private ContainerArcaneWorkbench arcaneWorkbenchContainer;
 
-	private GuiButton applyBtn;
-	private GuiButton clearBtn;
-	private GuiButton[] sortButtons = new GuiButton[3];
+	private AbstractWidget applyBtn;
+	private AbstractWidget clearBtn;
+	private AbstractWidget[] sortButtons = new AbstractWidget[3];
 
-	private GuiTextField searchField;
+	private EditBox searchField;
 	private boolean searchNeedsClearing;
 	private int searchBarHoverTime;
 
@@ -107,13 +116,13 @@ public class GuiArcaneWorkbench extends GuiContainer {
 	private float scroll = 0;
 	private boolean scrolling = false;
 
-	public GuiArcaneWorkbench(InventoryPlayer invPlayer, TileEntityArcaneWorkbench entity){
-		super(new ContainerArcaneWorkbench(invPlayer, entity));
-		this.arcaneWorkbenchContainer = (ContainerArcaneWorkbench)slots;
-		this.playerInventory = invPlayer;
-		this.arcaneWorkbenchInventory = entity;
-		xSize = MAIN_GUI_WIDTH;
-		ySize = 220;
+	public GuiArcaneWorkbench(ContainerArcaneWorkbench container, Inventory inventory, Component component){
+		super(container, inventory, component);
+		this.arcaneWorkbenchContainer = this.menu;
+		this.playerInventory = inventory;
+		this.arcaneWorkbenchInventory = container.tileentity;
+		imageWidth = MAIN_GUI_WIDTH;
+		imageHeight = 220;
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class ItemBlankScroll extends Item implements IWorkbenchItem {
 			// Spells can only be bound to scrolls if the player has already cast them (prevents casting of master
 			// spells without getting a master wand)
 			// This restriction does not apply in creative mode
-			if(spell != Spells.none && player.isCreative() || (data != null
+			if(spell != Spells.NONE && player.isCreative() || (data != null
 					&& data.hasSpellBeenDiscovered(spell)) && spell.isEnabled(SpellProperties.Context.SCROLL)){
 				
 				int cost = spell.getCost() * centre.getItem().getCount();
@@ -53,13 +53,13 @@ public class ItemBlankScroll extends Item implements IWorkbenchItem {
 				if(spell.isContinuous) cost *= ItemScroll.CASTING_TIME / 20;
 
 				int manaPerItem = Constants.MANA_PER_CRYSTAL;
-				if(crystals.getItem().getItem() == WizardryItems.crystal_shard) manaPerItem = Constants.MANA_PER_SHARD;
-				if(crystals.getItem().getItem() == WizardryItems.grand_crystal) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
+				if(crystals.getItem().getItem() == WizardryItems.CRYSTAL_SHARD.get()) manaPerItem = Constants.MANA_PER_SHARD;
+				if(crystals.getItem().getItem() == WizardryItems.GRAND_CRYSTAL.get()) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
 				
 				if(crystals.getItem().getCount() * manaPerItem > cost){
 					// Rounds up to the nearest whole crystal
 					crystals.remove(Mth.ceil((float)cost / manaPerItem));
-                    ItemStack stack = new ItemStack(WizardryItems.scroll, centre.getItem().getCount());
+                    ItemStack stack = new ItemStack(WizardryItems.SCROLL.get(), centre.getItem().getCount());
                     CompoundTag tag = new CompoundTag();
                     tag.putInt("Spell", spell.metadata());
                     stack.addTagElement("Spells", tag);

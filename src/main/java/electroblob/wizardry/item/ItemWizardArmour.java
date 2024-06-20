@@ -24,12 +24,12 @@ import electroblob.wizardry.registry.WizardryItems.Materials.WizardryArmorMateri
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardryRecipes;
 import electroblob.wizardry.registry.WizardryTabs;
+import electroblob.wizardry.registry.WizardryTags;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils.Operations;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
-import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -52,6 +52,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.MendingEnchantment;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -60,6 +61,7 @@ import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber
 public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IManaStoringItem {
@@ -275,14 +277,14 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack material){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	// This is misleadingly-named, it also applies to enchanting with books at an anvil
 	@Override
 	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment){
-		return !(enchantment instanceof EnchantmentMending) && super.canApplyAtEnchantingTable(stack, enchantment);
+		return !(enchantment instanceof MendingEnchantment) && super.canApplyAtEnchantingTable(stack, enchantment);
 	}
 
 	// Workbench stuff
@@ -302,7 +304,7 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 		if(this.armourClass == ArmourClass.WIZARD){
 			for(ArmourClass armourClass : ArmourClass.values()){
 				if(upgrade.getItem() == armourClass.upgradeItem.get()){
-					Item newArmour = getArmour(this.element, armourClass, this.armorType);
+					Item newArmour = getArmour(this.element, armourClass, this.slot);
 					ItemStack newStack = new ItemStack(newArmour);
 					((ItemWizardArmour)newArmour).setMana(newStack, this.getMana(stack));
 					newStack.setTag(stack.getTag());
@@ -320,10 +322,10 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 		
 		boolean changed = false;
 
-		if(upgrade.getHasStack()){
+		if(upgrade.hasItem()){
 			ItemStack original = centre.getItem().copy();
 			centre.set(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
-			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
+			changed = !ItemStack.isSame(centre.getItem(), original);
 		}
 		
 		// Charges armour by appropriate amount
@@ -335,10 +337,10 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 			// previously this was defaulted to the regular crystal's amount, allowing players to exploit it if a crystal was worth less mana than that.
 			int manaPerItem = crystals.getItem().getItem() instanceof IManaStoringItem ?
 					((IManaStoringItem) crystals.getItem().getItem()).getMana(crystals.getItem()) :
-					crystals.getItem().getItem() instanceof ItemCrystal ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
+					crystals.getItem().is(WizardryTags.WizardryItemTags.CRYSTALS) ? Constants.MANA_PER_CRYSTAL : Constants.MANA_PER_SHARD;
 
-			if(crystals.getItem().getItem() == WizardryItems.crystal_shard) manaPerItem = Constants.MANA_PER_SHARD;
-			if(crystals.getItem().getItem() == WizardryItems.grand_crystal) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
+			if(crystals.getItem().getItem() == WizardryItems.CRYSTAL_SHARD.get()) manaPerItem = Constants.MANA_PER_SHARD;
+			if(crystals.getItem().getItem() == WizardryItems.GRAND_CRYSTAL.get()) manaPerItem = Constants.GRAND_CRYSTAL_MANA;
 
 			if(crystals.getItem().getCount() * manaPerItem < chargeDepleted){
 				// If there aren't enough crystals to fully charge the armour
@@ -363,12 +365,12 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	@SubscribeEvent
 	public static void onLivingEquipmentChangeEvent(LivingEquipmentChangeEvent event){
 
-		AttributeInstance movementSpeed = event.getEntity().getAttributeMap().getAttributeInstance(Attributes.MOVEMENT_SPEED);
+		AttributeInstance movementSpeed = event.getEntity().getAttributes().getInstance(Attributes.MOVEMENT_SPEED);
 
 		if(isWearingFullSet(event.getEntity(), null, ArmourClass.WARLOCK) && doAllArmourPiecesHaveMana(event.getEntity())){
 			// Only apply the modifier once (can't just check this is the helmet since it might not be the last piece equipped)
 			if(movementSpeed.getModifier(WARLOCK_SPEED_BOOST_UUID) == null){
-				movementSpeed.applyModifier(new AttributeModifier(WARLOCK_SPEED_BOOST_UUID, "Warlock set bonus", WARLOCK_SPEED_BOOST, Operations.MULTIPLY_FLAT));
+				movementSpeed.addTransientModifier(new AttributeModifier(WARLOCK_SPEED_BOOST_UUID, "Warlock set bonus", WARLOCK_SPEED_BOOST, Operations.MULTIPLY_FLAT));
 			}
 		}else{
 			movementSpeed.removeModifier(WARLOCK_SPEED_BOOST_UUID);
@@ -382,7 +384,7 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 
 		final SpellModifiers armourModifiers = new SpellModifiers();
 
-		Arrays.stream(InventoryUtils.ARMOUR_SLOTS).map(s -> event.getCaster().getItemStackFromSlot(s).getItem())
+		Arrays.stream(InventoryUtils.ARMOUR_SLOTS).map(s -> event.getCaster().getItemBySlot(s).getItem())
 				.filter(i -> i instanceof ItemWizardArmour)
 				.forEach(i -> ((ItemWizardArmour)i).applySpellModifiers(event.getCaster(), event.getSpell(), armourModifiers));
 
@@ -398,7 +400,7 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	@Deprecated
 	public static int getMatchingArmourCount(LivingEntity entity, Element element){
 		return (int)Arrays.stream(InventoryUtils.ARMOUR_SLOTS)
-				.map(s -> entity.getItemStackFromSlot(s).getItem())
+				.map(s -> entity.getItemBySlot(s).getItem())
 				.filter(i -> i instanceof ItemWizardArmour && ((ItemWizardArmour)i).element == element)
 				.count();
 	}
@@ -420,12 +422,12 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	// which I'm not going to spend the time making in the near future). Wizard trades and gear have been left using the
 	// WizardryItems version because they need to be replaced with a better system that doesn't use this at all.
 	public static Item getArmour(Element element, ArmourClass armourClass, EquipmentSlot slot){
-		if(slot == null || slot.getSlotType() != Type.ARMOR)
+		if(slot == null || slot.getType() != Type.ARMOR)
 			throw new IllegalArgumentException("Must be a valid armour slot");
 		if(element == null) element = Element.MAGIC;
 		String registryName = armourClass.name + "_" + armourClass.armourPieceNames.get(slot);
 		if(element != Element.MAGIC) registryName = registryName + "_" + element.getName();
-		return Item.REGISTRY.getObject(new ResourceLocation(Wizardry.MODID,  registryName));
+		return ForgeRegistries.ITEMS.getValue(new ResourceLocation(Wizardry.MODID,  registryName));
 	}
 
 	/**
@@ -436,14 +438,14 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	 * @return True if the entity is wearing a full set of the given element and class, false otherwise.
 	 */
 	public static boolean isWearingFullSet(LivingEntity entity, @Nullable Element element, @Nullable ArmourClass armourClass){
-		ItemStack helmet = entity.getItemStackFromSlot(EquipmentSlot.HEAD);
+		ItemStack helmet = entity.getItemBySlot(EquipmentSlot.HEAD);
 		if(!(helmet.getItem() instanceof ItemWizardArmour)) return false;
 		Element e = element == null ? ((ItemWizardArmour)helmet.getItem()).element : element;
 		ArmourClass ac = armourClass == null ? ((ItemWizardArmour)helmet.getItem()).armourClass : armourClass;
 		return Arrays.stream(InventoryUtils.ARMOUR_SLOTS)
-				.allMatch(s -> entity.getItemStackFromSlot(s).getItem() instanceof ItemWizardArmour
-						&& ((ItemWizardArmour)entity.getItemStackFromSlot(s).getItem()).element == e
-						&& ((ItemWizardArmour)entity.getItemStackFromSlot(s).getItem()).armourClass == ac);
+				.allMatch(s -> entity.getItemBySlot(s).getItem() instanceof ItemWizardArmour
+						&& ((ItemWizardArmour)entity.getItemBySlot(s).getItem()).element == e
+						&& ((ItemWizardArmour)entity.getItemBySlot(s).getItem()).armourClass == ac);
 	}
 
 	/**
@@ -452,8 +454,8 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 	 * @return True if all armour pieces which implement {@link IManaStoringItem} has mana, false otherwise.
 	 */
 	public static boolean doAllArmourPiecesHaveMana(LivingEntity entity){
-		return Arrays.stream(InventoryUtils.ARMOUR_SLOTS).noneMatch(s -> entity.getItemStackFromSlot(s).getItem() instanceof IManaStoringItem
-						&& ((IManaStoringItem) entity.getItemStackFromSlot(s).getItem()).isManaEmpty(entity.getItemStackFromSlot(s)));
+		return Arrays.stream(InventoryUtils.ARMOUR_SLOTS).noneMatch(s -> entity.getItemBySlot(s).getItem() instanceof IManaStoringItem
+						&& ((IManaStoringItem) entity.getItemBySlot(s).getItem()).isManaEmpty(entity.getItemBySlot(s)));
 	}
 
 	@SubscribeEvent
@@ -463,21 +465,21 @@ public class ItemWizardArmour extends ArmorItem implements IWorkbenchItem, IMana
 		if(event.getTarget() instanceof Player && event.getEntity() instanceof Mob
 				&& event.getEntity().isInvisible()){
 
-			int armourPieces = (int)Streams.stream(event.getTarget().getArmorInventoryList())
+			int armourPieces = (int)Streams.stream(event.getTarget().getArmorSlots())
 					.filter(s -> !s.isEmpty() && !(s.getItem() instanceof ItemWizardArmour))
 					.count();
 
 			if(armourPieces == 0) return;
 
 			// Repeat the calculation from EntityAIFindNearestPlayer, but ignoring wizard armour
-			AttributeInstance attribute = event.getEntity().getEntityAttribute(Attributes.FOLLOW_RANGE);
-			double followRange = attribute == null ? 16 : attribute.getAttributeValue();
+			AttributeInstance attribute = event.getEntity().getAttribute(Attributes.FOLLOW_RANGE);
+			double followRange = attribute == null ? 16 : attribute.getValue();
 			if(event.getTarget().isShiftKeyDown()) followRange *= 0.8;
-			float f = (float)armourPieces / ((Player)event.getTarget()).inventory.armorInventory.size();
+			float f = (float)armourPieces / ((Player)event.getTarget()).getInventory().armor.size();
 			if(f < 0.1F) f = 0.1F;
 			followRange *= 0.7F * f;
 			// Don't need to worry about the isSuitableTarget check since it must already have been checked to get this far
-			if(event.getTarget().getDistance(event.getEntity()) > followRange) ((Mob)event.getEntity()).setAttackTarget(null);
+			if(event.getTarget().distanceTo(event.getEntity()) > followRange) ((Mob)event.getEntity()).setTarget(null);
 		}
 	}
 

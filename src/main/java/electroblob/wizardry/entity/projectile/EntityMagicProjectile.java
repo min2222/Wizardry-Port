@@ -96,7 +96,7 @@ public abstract class EntityMagicProjectile extends ThrowableProjectile implemen
 	 */
 	public float getSeekingStrength(){
 		return getOwner() instanceof Player && ItemArtefact.isArtefactActive((Player)getOwner(),
-				WizardryItems.ring_seeking) ? 2 : 0;
+				WizardryItems.RING_SEEKING.get()) ? 2 : 0;
 	}
 
 	@Override

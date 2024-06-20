@@ -91,7 +91,7 @@ public class Tier {
 	}
 
 	/** Returns the translated display name of this tier, without formatting. */
-	public String getDisplayName(){
+	public Component getDisplayName(){
 		return Wizardry.proxy.translate("tier." + unlocalisedName);
 	}
 
@@ -104,7 +104,7 @@ public class Tier {
 	}
 
 	/** Returns the translated display name of this tier, with formatting. */
-	public String getDisplayNameWithFormatting(){
+	public Component getDisplayNameWithFormatting(){
 		return Wizardry.proxy.translate("tier." + unlocalisedName, this.colour);
 	}
 

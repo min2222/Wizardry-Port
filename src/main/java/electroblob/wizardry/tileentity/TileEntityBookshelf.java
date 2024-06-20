@@ -1,29 +1,31 @@
 package electroblob.wizardry.tileentity;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerBookshelf;
+import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.util.NBTExtras;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.tileentity.TileEntityLockableLoot;
-import net.minecraft.util.ITickable;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
-
-public class TileEntityBookshelf extends TileEntityLockableLoot implements ITickable {
+public class TileEntityBookshelf extends RandomizableContainerBlockEntity {
 
 	/** NBT key for the boolean flag specifying if this bookshelf was generated naturally as part of a structure or not.
 	 * This flag is set via {@link TileEntityBookshelf#markAsNatural(CompoundTag)}. */
@@ -42,7 +44,8 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	private boolean natural;
 	private boolean doNotSync;
 
-	public TileEntityBookshelf(){
+	public TileEntityBookshelf(BlockPos pos, BlockState state){
+        super(WizardryBlocks.BOOKSHELF_BLOCK_ENTITY.get(), pos, state);
 		inventory = NonNullList.withSize(BlockBookshelf.SLOT_COUNT, ItemStack.EMPTY);
 		// Prevent sync() happening when loading from NBT or weirdness ensues when loading a world
 		// Normally I'd pass this as a flag to setInventorySlotContents but we can't change the method signature
@@ -52,96 +55,95 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	/** Called to manually sync the tile entity with clients. */
 	public void sync(){
 		if(!this.doNotSync)
-			this.world.markAndNotifyBlock(pos, null, level.getBlockState(pos), level.getBlockState(pos), 3);
+            this.level.markAndNotifyBlock(worldPosition, level.getChunkAt(worldPosition), level.getBlockState(worldPosition), level.getBlockState(worldPosition), 3, 512);
 	}
 
-	@Override
-	public void update(){
+    public static void tick(Level world, BlockPos pos, BlockState state, TileEntityBookshelf tileEntity) {
 
-		this.doNotSync = false;
+    	tileEntity.doNotSync = false;
 
 		// When a player gets near, generate the books so they can actually see them (if it was generated naturally)
-		if(lootTable != null && natural){
-			Player player = level.getClosestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+		if(tileEntity.lootTable != null && tileEntity.natural){
+			Player player = world.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
 					LOOT_GEN_DISTANCE, false);
 			if(player != null){
-				natural = false; // It's a normal bookshelf now (unlikely to matter but you never know)
-				fillWithLoot(player);
-				sync();
+				tileEntity.natural = false; // It's a normal bookshelf now (unlikely to matter but you never know)
+				tileEntity.unpackLootTable(player);
+				tileEntity.sync();
 			}
 		}
 	}
 
 	@Override
-	public int getSizeInventory(){
+	public int getContainerSize(){
 		return inventory.size();
 	}
 
 	// Still better to override these three because then we can sync only when necessary
 
 	@Override
-	public ItemStack remove(int slot, int amount){
+	public ItemStack removeItem(int slot, int amount){
 
-		this.fillWithLoot(null);
+		this.unpackLootTable(null);
 
-		ItemStack stack = getStackInSlot(slot);
+		ItemStack stack = getItem(slot);
 
 		if(!stack.isEmpty()){
 			if(stack.getCount() <= amount){
-				setInventorySlotContents(slot, ItemStack.EMPTY);
+				setItem(slot, ItemStack.EMPTY);
 			}else{
-				stack = stack.splitStack(amount);
+				stack = stack.split(amount);
 				if(stack.getCount() == 0){
-					setInventorySlotContents(slot, ItemStack.EMPTY);
+					setItem(slot, ItemStack.EMPTY);
 				}
 			}
-			this.markDirty();
+			this.setChanged();
 		}
 
 		return stack;
 	}
 
 	@Override
-	public ItemStack removeStackFromSlot(int slot){
+	public ItemStack removeItemNoUpdate(int slot){
 
-		this.fillWithLoot(null);
+		this.unpackLootTable(null);
 
-		ItemStack stack = getStackInSlot(slot);
+		ItemStack stack = getItem(slot);
 
 		if(!stack.isEmpty()){
-			setInventorySlotContents(slot, ItemStack.EMPTY);
+			setItem(slot, ItemStack.EMPTY);
 		}
 
 		return stack;
 	}
 
 	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack){
-		this.fillWithLoot(null);
+	public void setItem(int slot, ItemStack stack){
+		this.unpackLootTable(null);
 		boolean wasEmpty = inventory.get(slot).isEmpty();
-		super.setInventorySlotContents(slot, stack);
+		super.setItem(slot, stack);
 		// This must be done in the tile entity because containers only exist for player interaction, not hoppers etc.
 		if(wasEmpty != stack.isEmpty()) this.sync();
-		this.markDirty();
+		this.setChanged();
 	}
 
 	/** Sets the {@value NATURAL_NBT_KEY} flag to true in the given NBT tag compound, <b>if</b> the compound belongs to
 	 * a bookshelf tile entity (more specifically, if it has an "id" tag matching the bookshelf TE's registry name). */
 	public static void markAsNatural(CompoundTag nbt){
 		if(nbt != null && nbt.getString("id").equals(BlockEntity.getKey(TileEntityBookshelf.class).toString())){
-			nbt.setBoolean(NATURAL_NBT_KEY, true);
+			nbt.putBoolean(NATURAL_NBT_KEY, true);
 		}
 	}
 
 	@Override
-	public void fillWithLoot(@Nullable Player player){
-		if(world != null && level.getLootTableManager() != null) super.fillWithLoot(player); // IntelliJ is wrong, it can be null
+	public void unpackLootTable(@Nullable Player player){
+		if(level != null && level.getServer().getLootTables() != null) super.unpackLootTable(player); // IntelliJ is wrong, it can be null
 	}
 
-	@Override
-	public String getName(){
-		return "container." + Wizardry.MODID + ":bookshelf";
-	}
+    @Override
+    public Component getDefaultName() {
+        return Component.translatable("container." + Wizardry.MODID + ".bookshelf");
+    }
 
 	@Override
 	public boolean hasCustomName(){
@@ -150,129 +152,100 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 
 	@Override
 	public Component getDisplayName(){
-		return this.hasCustomName() ? new TextComponentString(this.getName()) : Component.translatable(this.getName());
+		return this.getName();
 	}
 
 	@Override
-	public int getInventoryStackLimit(){
+	public int getMaxStackSize(){
 		return 64;
 	}
 
 	@Override
-	public boolean isUsableByPlayer(Player player){
-		return level.getTileEntity(pos) == this && player.distanceToSqrToCenter(pos) < 64;
+	public boolean stillValid(Player player){
+		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(Vec3.atCenterOf(worldPosition)) < 64;
 	}
 
 	@Override
-	public void openInventory(Player player){
-
-	}
-
-	@Override
-	public void closeInventory(Player player){
+	public void startOpen(Player player){
 
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int slotNumber, ItemStack stack){
+	public void stopOpen(Player player){
+
+	}
+
+	@Override
+	public boolean canPlaceItem(int slotNumber, ItemStack stack){
 		return stack.isEmpty() || ContainerBookshelf.isBook(stack);
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag nbt){
+	public void load(CompoundTag nbt){
 
-		super.readFromNBT(nbt);
+		super.load(nbt);
 
 		natural = nbt.getBoolean(NATURAL_NBT_KEY);
 
-		if(!this.checkLootAndRead(nbt)){
+		if(!this.tryLoadLootTable(nbt)){
 
-			ListTag tagList = nbt.getTagList("Inventory", NBT.TAG_COMPOUND);
+			ListTag tagList = nbt.getList("Inventory", Tag.TAG_COMPOUND);
 
-			for(int i = 0; i < tagList.tagCount(); i++){
-				CompoundTag tag = tagList.getCompoundTagAt(i);
+			for(int i = 0; i < tagList.size(); i++){
+				CompoundTag tag = tagList.getCompound(i);
 				byte slot = tag.getByte("Slot");
-				if(slot >= 0 && slot < getSizeInventory()){
-					setInventorySlotContents(slot, new ItemStack(tag));
+				if(slot >= 0 && slot < getContainerSize()){
+					setItem(slot, ItemStack.of(tag));
 				}
 			}
 		}
 
-		if(nbt.contains("CustomName", NBT.TAG_STRING)) this.customName = nbt.getString("CustomName");
+		if(nbt.contains("CustomName", Tag.TAG_STRING)) this.setCustomName(Component.literal(nbt.getString("CustomName")));
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag nbt){
+	public void saveAdditional(CompoundTag nbt){
 
-		super.writeToNBT(nbt);
+		super.saveAdditional(nbt);
 
 		// Need to save this in case the block was generated but no players came near enough to trigger loot gen
-		nbt.setBoolean(NATURAL_NBT_KEY, natural);
+		nbt.putBoolean(NATURAL_NBT_KEY, natural);
 
-		if(!this.checkLootAndWrite(nbt)){
+		if(!this.trySaveLootTable(nbt)){
 
 			ListTag itemList = new ListTag();
 
-			for(int i = 0; i < getSizeInventory(); i++){
-				ItemStack stack = getStackInSlot(i);
+			for(int i = 0; i < getContainerSize(); i++){
+				ItemStack stack = getItem(i);
 				CompoundTag tag = new CompoundTag();
-				tag.setByte("Slot", (byte)i);
-				stack.writeToNBT(tag);
-				itemList.appendTag(tag);
+				tag.putByte("Slot", (byte)i);
+				stack.save(tag);
+				itemList.add(tag);
 			}
 
 			NBTExtras.storeTagSafely(nbt, "Inventory", itemList);
 		}
 
-		if(this.hasCustomName()) nbt.setString("CustomName", this.customName);
-
-		return nbt;
+		if(this.hasCustomName()) nbt.putString("CustomName", this.getCustomName().getString());
 	}
 
 	@Override
-	public final CompoundTag getUpdateTag(){
-		return this.writeToNBT(new CompoundTag());
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
+		super.onDataPacket(net, pkt);
+		Wizardry.proxy.notifyBookshelfChange(level, worldPosition);
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		return new SPacketUpdateTileEntity(pos, 0, this.getUpdateTag());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		readFromNBT(pkt.getNbtCompound());
-		Wizardry.proxy.notifyBookshelfChange(world, pos);
-	}
-
-	// What are all these for?
-
-	@Override
-	public int getField(int id){
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value){
-
-	}
-
-	@Override
-	public int getFieldCount(){
-		return 0;
-	}
-
-	@Override
-	public void clear(){
-		for(int i = 0; i < getSizeInventory(); i++){
-			setInventorySlotContents(i, ItemStack.EMPTY);
+	public void clearContent(){
+		for(int i = 0; i < getContainerSize(); i++){
+			setItem(i, ItemStack.EMPTY);
 		}
 	}
 
 	@Override
 	public boolean isEmpty(){
-		for(int i = 0; i < getSizeInventory(); i++){
-			if(!getStackInSlot(i).isEmpty()){
+		for(int i = 0; i < getContainerSize(); i++){
+			if(!getItem(i).isEmpty()){
 				return false;
 			}
 		}
@@ -285,14 +258,12 @@ public class TileEntityBookshelf extends TileEntityLockableLoot implements ITick
 	}
 
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, Player player){
-		this.fillWithLoot(player);
-		return new ContainerBookshelf(playerInventory, this);
+	protected AbstractContainerMenu createMenu(int id, Inventory playerInventory) {
+		return new ContainerBookshelf(id, playerInventory, this);
 	}
 
 	@Override
-	public String getGuiID(){
-		return Wizardry.MODID + ":bookshelf";
+	protected void setItems(NonNullList<ItemStack> p_59625_) {
+		
 	}
-
 }

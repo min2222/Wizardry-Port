@@ -114,7 +114,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 			double radius = 2 * getBbHeight() * sizeMultiplier;
 
 			boolean suckInBlocks = getCaster() instanceof Player && EntityUtils.canDamageBlocks(getCaster(), level)
-					&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_black_hole);
+					&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.CHARM_BLACK_HOLE.get());
 
 			if(suckInBlocks){
 
@@ -156,7 +156,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 					// If the target can't be moved, it isn't sucked in but is still damaged if it gets too close
 					if(!(target instanceof Player && ((getCaster() instanceof Player && !Wizardry.settings.playersMoveEachOther)
-							|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring)))){
+							|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.AMULET_ANCHORING.get())))){
 
 						EntityUtils.undoGravity(target);
 						if(target instanceof EntityLevitatingBlock) ((EntityLevitatingBlock)target).suspend();

@@ -25,7 +25,7 @@ public class EntityMagicMissile extends EntityMagicArrow {
 		super(type, world);
 	}
 
-	@Override public double getDamage(){ return Spells.magic_missile.getProperty(Spell.DAMAGE).floatValue(); }
+	@Override public double getDamage(){ return Spells.MAGIC_MISSILE.getProperty(Spell.DAMAGE).floatValue(); }
 
 	@Override public int getLifetime(){ return 12; }
 

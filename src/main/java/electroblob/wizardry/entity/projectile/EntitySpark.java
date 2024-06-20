@@ -31,7 +31,7 @@ public class EntitySpark extends EntityMagicProjectile {
 
 		if(entityHit != null){
 
-			float damage = Spells.homing_spark.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.HOMING_SPARK.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getOwner(),
 					DamageType.SHOCK), damage);
 
@@ -54,7 +54,7 @@ public class EntitySpark extends EntityMagicProjectile {
 
 	@Override
 	public float getSeekingStrength(){
-		return Spells.homing_spark.getProperty(Spell.SEEKING_STRENGTH).floatValue();
+		return Spells.HOMING_SPARK.getProperty(Spell.SEEKING_STRENGTH).floatValue();
 	}
 
 	@Override

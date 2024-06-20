@@ -37,7 +37,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.network.PacketDistributor;
 
 public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchItem, IMetadata {
 	
@@ -129,7 +129,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
 			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":scroll") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				String name = Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true).getFormattingCode() +
+				Component name = Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true).getFormattingCode() +
 						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
 				tooltip.add(name);
 			}
@@ -220,8 +220,8 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
-					IMessage msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
-					WizardryPacketHandler.net.sendToDimension(msg, world.provider.getDimension());
+					PacketCastSpell.Message msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
+					WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> world.dimension()), msg);
 				}
 
 				// Scrolls are consumed upon successful use in survival mode

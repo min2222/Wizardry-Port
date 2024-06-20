@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
@@ -16,9 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 
 	public ItemSpectralArmour(ArmorMaterial material, EquipmentSlot armourType){
-		super(material, renderIndex, armourType);
-		setCreativeTab(null);
-		setMaxDamage(1200);
+		super(material, armourType, new Item.Properties().durability(1200));
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
@@ -51,10 +50,13 @@ public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 	}
 
 	@Override
-	public void onArmorTick(Level world, Player player, ItemStack stack){
-		int damage = stack.getItemDamage();
-		if(damage > stack.getMaxDamage()) player.inventory.clearMatchingItems(this, -1, 1, null);
-		stack.setItemDamage(damage + 1);
+	public void onArmorTick(ItemStack stack, Level world, Player player){
+		int damage = stack.getDamageValue();
+		if(damage > stack.getMaxDamage()) 
+			player.getInventory().clearOrCountMatchingItems((item) -> { 
+			return item.is(this);
+		}, 1, player.inventoryMenu.getCraftSlots());
+		stack.setDamageValue(damage + 1);
 	}
 
 	@Override
@@ -64,12 +66,12 @@ public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 	}
 
 	@Override
-	public boolean getIsRepairable(ItemStack stack, ItemStack par2ItemStack){
+	public boolean isRepairable(ItemStack stack){
 		return false;
 	}
 
 	@Override
-	public int getItemEnchantability(){
+	public int getEnchantmentValue(){
 		return 0;
 	}
 

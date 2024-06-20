@@ -23,12 +23,12 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 
 	public EntityFrostSigil(Level world){
 		this(WizardryEntities.FROST_SIGIL.get(), world);
-		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.FROST_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 	
 	public EntityFrostSigil(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.frost_sigil.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
+		setSize(Spells.FROST_SIGIL.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 0.2f);
 	}
 
 	@Override
@@ -52,13 +52,13 @@ public class EntityFrostSigil extends EntityScaledConstruct {
 					
 					EntityUtils.attackEntityWithoutKnockback(target, this.getCaster() != null
 							? MagicDamage.causeIndirectMagicDamage(this, this.getCaster(), DamageType.FROST)
-							: DamageSource.MAGIC, Spells.frost_sigil.getProperty(Spell.DAMAGE).floatValue()
+							: DamageSource.MAGIC, Spells.FROST_SIGIL.getProperty(Spell.DAMAGE).floatValue()
 							* damageMultiplier);
 
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
 						target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-								Spells.frost_sigil.getProperty(Spell.EFFECT_DURATION).intValue(),
-								Spells.frost_sigil.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+								Spells.FROST_SIGIL.getProperty(Spell.EFFECT_DURATION).intValue(),
+								Spells.FROST_SIGIL.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 					this.playSound(WizardrySounds.ENTITY_FROST_SIGIL_TRIGGER, 1.0f, 1.0f);
 

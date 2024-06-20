@@ -17,6 +17,7 @@ import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.event.SpellBindEvent;
 import electroblob.wizardry.item.IWorkbenchItem;
 import electroblob.wizardry.item.ItemSpellBook;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
@@ -25,11 +26,11 @@ import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -39,6 +40,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * The container for the arcane workbench GUI.
@@ -47,7 +49,7 @@ import net.minecraftforge.common.MinecraftForge;
  * - The container has two types of slots: {@link SlotBookList} and {@link VirtualSlot}.<br>
  * - The {@code SlotBookList}s are the ones that actually get displayed. They essentially delegate all their
  * functions to the relevant {@code VirtualSlot}.<br>
- * - Each {@code VirtualSlot} refers to a specific slot in another {@link IInventory} nearby, but is not displayed
+ * - Each {@code VirtualSlot} refers to a specific slot in another {@link Container} nearby, but is not displayed
  * directly on the GUI. They are sorted and filtered according to the GUI input via
  * {@link ContainerArcaneWorkbench#getActiveBookshelfSlots()}.<br>
  * - When a stack is <i>taken</i> from a {@code SlotBookList} (or its current stack is queried), the {@code VirtualSlot}
@@ -103,16 +105,16 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		}
 
 		this.addSlot(new SlotItemList(tileentity, CRYSTAL_SLOT, 13, 101, 64,
-				WizardryItems.magic_crystal, WizardryItems.crystal_shard, WizardryItems.grand_crystal))
+				WizardryItems.MAGIC_CRYSTAL.get(), WizardryItems.CRYSTAL_SHARD.get(), WizardryItems.GRAND_CRYSTAL.get()))
 				.setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_CRYSTAL);
 
 		this.addSlot(new SlotWorkbenchItem(tileentity, CENTRE_SLOT, 80, 64, this));
 
 		Set<Item> upgrades = new HashSet<>(WandHelper.getSpecialUpgrades()); // Can't be done statically.
-		upgrades.add(WizardryItems.arcane_tome);
-		upgrades.add(WizardryItems.resplendent_thread);
-		upgrades.add(WizardryItems.crystal_silver_plating);
-		upgrades.add(WizardryItems.ethereal_crystalweave);
+		upgrades.add(WizardryItems.ARCANE_TOME.get());
+		upgrades.add(WizardryItems.RESPLENDENT_THREAD.get());
+		upgrades.add(WizardryItems.CRYSTAL_SILVER_PLATING.get());
+		upgrades.add(WizardryItems.ETHEREAL_CRYSTALWEAVE.get());
 
 		this.addSlot(new SlotItemList(tileentity, UPGRADE_SLOT, 147, 17, 1, upgrades.toArray(new Item[0])))
 				.setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_UPGRADE);
@@ -158,8 +160,8 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 	private void showSlot(int index, int x, int y){
 		
 		Slot slot = this.getSlot(index);
-		slot.xPos = x;
-		slot.yPos = y;
+        ObfuscationReflectionHelper.setPrivateValue(Slot.class, slot, x, "f_40220_");
+        ObfuscationReflectionHelper.setPrivateValue(Slot.class, slot, y, "f_40221_");
 	}
 	
 	/**
@@ -176,18 +178,18 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		Slot slot = this.getSlot(index);
 		
 		// 'Removes' the slot from the container (moves it off the screen)
-		slot.xPos = -999;
-		slot.yPos = -999;
+        ObfuscationReflectionHelper.setPrivateValue(Slot.class, slot, -999, "f_40220_");
+        ObfuscationReflectionHelper.setPrivateValue(Slot.class, slot, -999, "f_40221_");
 
 		ItemStack stack = slot.getItem();
 		// This doesn't cause an infinite loop because slot i can never be a SlotWandArmour. In effect, it's
 		// exactly the same as shift-clicking the slot, so why re-invent the wheel?
-		ItemStack remainder = this.transferStackInSlot(player, index);
+		ItemStack remainder = this.quickMoveStack(player, index);
 
 		if(remainder == ItemStack.EMPTY && stack != ItemStack.EMPTY){
 			slot.set(ItemStack.EMPTY);
 			// The second parameter is never used...
-			if(player != null) player.dropItem(stack, false);
+			if(player != null) player.drop(stack, false);
 		}
 	}
 
@@ -209,8 +211,8 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 					
 					int spellSlots = ((IWorkbenchItem)stack.getItem()).getSpellSlotCount(stack);
 					
-					int centreX = this.getSlot(CENTRE_SLOT).xPos;
-					int centreY = this.getSlot(CENTRE_SLOT).yPos;
+					int centreX = this.getSlot(CENTRE_SLOT).x;
+					int centreY = this.getSlot(CENTRE_SLOT).y;
 
 					// Show however many spell book slots are necessary
 					for(int i = 0; i < spellSlots; i++){
@@ -248,7 +250,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 	//		  bottles into a brewing stand). I have at least made it so only one gets used now, so it has no impact on
 	//		  the game.
 	@Override
-	public ItemStack transferStackInSlot(Player player, int clickedSlotId){
+	public ItemStack quickMoveStack(Player player, int clickedSlotId){
 
 		ItemStack remainder = ItemStack.EMPTY;
 		Slot slot = this.slots.get(clickedSlotId);
@@ -263,7 +265,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 				// Try to move the stack into the bookshelves. If this fails...
 				if(!mergeStackIntoBookshelves(stack)){
 					// ...try to move the stack into the player's inventory. If this fails...
-					if(!this.mergeItemStack(stack, UPGRADE_SLOT + 1, UPGRADE_SLOT + 1 + PLAYER_INVENTORY_SIZE, true)){
+					if(!this.moveItemStackTo(stack, UPGRADE_SLOT + 1, UPGRADE_SLOT + 1 + PLAYER_INVENTORY_SIZE, true)){
 						return ItemStack.EMPTY; // ...nothing else happens.
 					}
 				}
@@ -274,9 +276,9 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 				int[] slotRange = findSlotRangeForItem(stack);
 
 				// Try to move the stack into the workbench. If this fails...
-				if(slotRange == null || !this.mergeItemStack(stack, slotRange[0], slotRange[1] + 1, false)){
+				if(slotRange == null || !this.moveItemStackTo(stack, slotRange[0], slotRange[1] + 1, false)){
 					// ...try to move the stack into the player's inventory. If this fails...
-					if(!this.mergeItemStack(stack, UPGRADE_SLOT + 1, UPGRADE_SLOT + 1 + PLAYER_INVENTORY_SIZE, true)){
+					if(!this.moveItemStackTo(stack, UPGRADE_SLOT + 1, UPGRADE_SLOT + 1 + PLAYER_INVENTORY_SIZE, true)){
 						return ItemStack.EMPTY; // ...nothing else happens.
 					}
 				}
@@ -287,7 +289,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 				int[] slotRange = findSlotRangeForItem(stack);
 
 				// Try to move the stack into the workbench. If this fails...
-				if(slotRange == null || !this.mergeItemStack(stack, slotRange[0], slotRange[1] + 1, false)){
+				if(slotRange == null || !this.moveItemStackTo(stack, slotRange[0], slotRange[1] + 1, false)){
 					// ...try to move the stack into the bookshelves. If this fails...
 					if(!mergeStackIntoBookshelves(stack)){
 						return ItemStack.EMPTY; // ...nothing else happens.
@@ -298,7 +300,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 			if(stack.getCount() == 0){
 				slot.set(ItemStack.EMPTY);
 			}else{
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 
 			if(stack.getCount() == remainder.getCount()){
@@ -349,20 +351,19 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, Player player){
+	public void  clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
 
 		// -999 is used for slots in the player inventory
 		if(slotId > 0 && getSlot(slotId) instanceof SlotBookList){
 
-			ItemStack stack = player.inventory.getItemStack();
+			ItemStack stack = player.getInventory().getSelected();
 
 			if(!stack.isEmpty() && !getBookshelfSlots().isEmpty()){
 				mergeStackIntoBookshelves(stack);
-				return stack;
 			}
 		}
 
-		return super.slotClick(slotId, dragType, clickTypeIn, player);
+		super.clicked(slotId, dragType, clickTypeIn, player);
 	}
 
 	/**
@@ -382,7 +383,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 
 		// As far as the client is concerned, which stacks were *previously* in which slots never affects whether a
 		// given book can fit or not, so as long as it refreshes it doesn't matter where the book actually gets put
-		if(tileentity.getWorld().isRemote) this.needsRefresh = true; // It's a bit clunky but it works!
+		if(tileentity.getLevel().isClientSide) this.needsRefresh = true; // It's a bit clunky but it works!
 
 		// LinkedHashSet preserves iteration order whilst ignoring duplicates - neat!
 		Set<VirtualSlot> slots = new LinkedHashSet<>(bookshelfSlots.size());
@@ -395,7 +396,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		// Then add all slots that did not previously contain anything
 		slots.addAll(bookshelfSlots.stream().filter(s -> s.getPrevStack().isEmpty()).collect(Collectors.toList()));
 		// Finally add all other empty slots (these will be the ones that used to contain something else)
-		slots.addAll(bookshelfSlots.stream().filter(s -> !s.getHasStack()).collect(Collectors.toList()));
+		slots.addAll(bookshelfSlots.stream().filter(s -> !s.hasItem()).collect(Collectors.toList()));
 
 		slots.removeIf(s -> !s.mayPlace(stack)); // Should never be true, but just in case...
 
@@ -412,7 +413,7 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 
 				// Not sure why mergeItemStack differentiates between full/partial merging, as far as I can tell the
 				// following line will work for both cases
-				slot.set(stack.splitStack(contents.getMaxStackSize()));
+				slot.set(stack.split(contents.getMaxStackSize()));
 				//slot.onSlotChanged();
 
 				if(stack.isEmpty()) return true; // The whole stack has been merged, so we're done!
@@ -420,20 +421,20 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 			}else{
 
 				int totalItemCount = contents.getCount() + stack.getCount();
-				int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+				int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
 
 				if(totalItemCount <= maxSize){
 
 					stack.setCount(0);
 					contents.setCount(totalItemCount);
-					slot.onSlotChanged();
+					slot.setChanged();
 					return true; // The whole stack has been merged, so we're done!
 
 				}else if(contents.getCount() < maxSize){
 
 					stack.shrink(maxSize - contents.getCount());
 					contents.setCount(maxSize);
-					slot.onSlotChanged();
+					slot.setChanged();
 				}
 			}
 		}
@@ -533,9 +534,9 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		activeBookshelfSlots = bookshelfSlots.stream().filter(s -> s.isValid() && !s.getItem().isEmpty()
 				// Slot 0 is a convenient way of testing if the item is a valid spell book
 				&& this.getSlot(0).mayPlace(s.getItem())
-				&& Spell.byMetadata(s.getItem().getMetadata()).matches(searchText))
+				&& Spell.byMetadata(((IMetadata) s.getItem().getItem()).getMetadata(s.getItem())).matches(searchText))
 				// TODO: This doesn't account for non-spell book items at the moment
-				.sorted(Comparator.comparing(s -> Spell.byMetadata(s.getItem().getMetadata()),
+				.sorted(Comparator.comparing(s -> Spell.byMetadata(((IMetadata) ((Slot) s).getItem().getItem()).getMetadata(((Slot) s).getItem())),
 						sortDescending ? sortType.comparator.reversed() : sortType.comparator))
 				.collect(Collectors.toList());
 	}
@@ -573,14 +574,16 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		this.slots.removeIf(s -> s instanceof VirtualSlot && !((VirtualSlot)s).isValid());
 		bookshelfSlots.removeIf(s -> !s.isValid());
 
-		List<IInventory> bookshelves = BlockBookshelf.findNearbyBookshelves(tileentity.getWorld(), tileentity.getPos(), tileentity);
+		List<Container> bookshelves = BlockBookshelf.findNearbyBookshelves(tileentity.getLevel(), tileentity.getBlockPos(), tileentity);
 
 		if(bookshelves.isEmpty() == hasBookshelves){ // If the bookshelf status changed
 
 			// Move all the slots appropriately
 			for(Slot slot : this.slots){
 				if(!(slot instanceof SlotBookList || slot instanceof VirtualSlot)){
-					slot.xPos += bookshelves.isEmpty() ? -BOOKSHELF_UI_WIDTH : BOOKSHELF_UI_WIDTH;
+                    int slotX = ObfuscationReflectionHelper.getPrivateValue(Slot.class, slot, "f_40220_");
+                    int width = bookshelves.isEmpty() ? -BOOKSHELF_UI_WIDTH : BOOKSHELF_UI_WIDTH;
+                    ObfuscationReflectionHelper.setPrivateValue(Slot.class, slot, slotX + width, "f_40220_");
 				}
 			}
 
@@ -588,20 +591,20 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		}
 
 		// Ignore bookshelves we already have slots for
-		bookshelves.removeIf(b -> bookshelfSlots.stream().anyMatch(s -> s.inventory == b));
+		bookshelves.removeIf(b -> bookshelfSlots.stream().anyMatch(s -> s.container == b));
 
 		if(!bookshelves.isEmpty()){
 
-			for(IInventory bookshelf : bookshelves){
-				for(int i = 0; i < bookshelf.getSizeInventory(); i++){
+			for(Container bookshelf : bookshelves){
+				for(int i = 0; i < bookshelf.getContainerSize(); i++){
 					VirtualSlot slot = new VirtualSlot(bookshelf, i); // This sets the slot INDEX (for the INVENTORY)
 					bookshelfSlots.add(slot);
-					this.addSlotToContainer(slot); // This sets the slot NUMBER (for the CONTAINER)
+					this.addSlot(slot); // This sets the slot NUMBER (for the CONTAINER)
 				}
 			}
 		}
 
-		if(tileentity.getWorld().isRemote) updateActiveBookshelfSlots();
+		if(tileentity.getLevel().isClientSide) updateActiveBookshelfSlots();
 
 	}
 

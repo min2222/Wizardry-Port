@@ -22,7 +22,7 @@ public class EntityLightningArrow extends EntityMagicArrow {
 		super(type, world);
 	}
 
-	@Override public double getDamage(){ return Spells.lightning_arrow.getProperty(Spell.DAMAGE).doubleValue(); }
+	@Override public double getDamage(){ return Spells.LIGHTNING_ARROW.getProperty(Spell.DAMAGE).doubleValue(); }
 
 	@Override public int getLifetime(){ return 20; }
 
