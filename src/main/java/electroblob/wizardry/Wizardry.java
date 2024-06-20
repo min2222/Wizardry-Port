@@ -123,6 +123,7 @@ public class Wizardry {
 		WizardryItems.ITEMS.register(bus);
 		WizardryBlocks.BLOCKS.register(bus);
 		WizardryBlocks.BLOCK_ENTITIES.register(bus);
+		WizardryGuiHandler.MENUS.register(bus);
 	}
 
 	@EventHandler

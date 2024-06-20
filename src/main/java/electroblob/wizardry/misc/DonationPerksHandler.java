@@ -1,23 +1,26 @@
 package electroblob.wizardry.misc;
 
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableMap;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.packet.PacketRequestDonationPerks;
 import electroblob.wizardry.packet.PacketSyncDonationPerks;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.util.Box;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 /** Class responsible for storing and handling the donation perk settings for all eligible connected players */
 // We probably could have used WizardData for this, but since this is config-based and only for rendering it makes more
@@ -62,7 +65,7 @@ public class DonationPerksHandler {
 		Box<Element> box = DONOR_UUID_MAP.get(player.getUUID());
 		if(box != null && box.get() != element){
 			box.set(element);
-			syncAll(player.dimension);
+			syncAll(player.level.dimension());
 		}
 	}
 
@@ -74,23 +77,23 @@ public class DonationPerksHandler {
 	}
 
 	/** Sends the current donor perk information to all players in the given dimension (server-side only). */
-	private static void syncAll(int dimension){
+	private static void syncAll(ResourceKey<Level> dimension){
 		Wizardry.logger.info("Sending global donation perk settings to all players");
 		PacketSyncDonationPerks.Message packet = new PacketSyncDonationPerks.Message(DONOR_UUID_MAP.values().stream().map(Box::get).collect(Collectors.toList()));
-		WizardryPacketHandler.net.sendToDimension(packet, dimension);
+		WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> dimension), packet);
 	}
 
 	/** Sends the current donor perk information to the given player (server-side only). */
 	private static void syncWith(ServerPlayer player){
 		Wizardry.logger.info("Sending global donation perk settings to {}", player.getName());
 		PacketSyncDonationPerks.Message packet = new PacketSyncDonationPerks.Message(DONOR_UUID_MAP.values().stream().map(Box::get).collect(Collectors.toList()));
-		WizardryPacketHandler.net.sendTo(packet, player);
+		WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> player), packet);
 	}
 
 	/** Sends the client player's donor perk setting to the server (client-side only) */
 	public static void sendToServer(Player player){
 		Wizardry.logger.info("Sending donation perk settings for {} to server", player.getName());
-		IMessage message = new PacketRequestDonationPerks.Message(Wizardry.settings.donationPerkElement);
+		PacketRequestDonationPerks.Message message = new PacketRequestDonationPerks.Message(Wizardry.settings.donationPerkElement);
 		WizardryPacketHandler.net.sendToServer(message);
 	}
 

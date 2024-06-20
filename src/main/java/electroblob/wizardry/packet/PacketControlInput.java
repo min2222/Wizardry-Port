@@ -1,63 +1,61 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.event.ResurrectionEvent;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.ISpellCastingItem;
-import electroblob.wizardry.packet.PacketControlInput.Message;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Possession;
 import electroblob.wizardry.spell.Resurrection;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Client -> Server]</b> This packet is for control events such as buttons in GUIs and key presses. */
-public class PacketControlInput implements IMessageHandler<Message, IMessage> {
+public class PacketControlInput {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isServer()){
+		if(ctx.get().getDirection().getReceptionSide().isServer()){
 
-			final ServerPlayer player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.get().getSender();
 
-			player.getServerWorld().addScheduledTask(() -> {
-
+			ctx.get().enqueueWork(() -> {
 				ItemStack wand = player.getMainHandItem();
 
 				if(!(wand.getItem() instanceof ISpellCastingItem)){
-					wand = player.getOffHandItem();
+					wand = player.getOffhandItem();
 				}
 
 				switch(message.controlType){
 
 				case APPLY_BUTTON:
 
-					if(!(player.openContainer instanceof ContainerArcaneWorkbench)){
+					if(!(player.containerMenu instanceof ContainerArcaneWorkbench)){
 						Wizardry.logger.warn("Received a PacketControlInput, but the player that sent it was not " +
 								"currently using an arcane workbench. This should not happen!");
 					}else{
-						((ContainerArcaneWorkbench)player.openContainer).onApplyButtonPressed(player);
+						((ContainerArcaneWorkbench)player.containerMenu).onApplyButtonPressed(player);
 					}
 
 					break;
 
 				case CLEAR_BUTTON:
 
-					if(!(player.openContainer instanceof ContainerArcaneWorkbench)){
+					if(!(player.containerMenu instanceof ContainerArcaneWorkbench)){
 						Wizardry.logger.warn("Received a PacketControlInput, but the player that sent it was not " +
 								"currently using an arcane workbench. This should not happen!");
 					}else{
-						((ContainerArcaneWorkbench)player.openContainer).onClearButtonPressed(player);
+						((ContainerArcaneWorkbench)player.containerMenu).onClearButtonPressed(player);
 					}
 
 					break;
@@ -68,7 +66,7 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 
 						((ISpellCastingItem)wand.getItem()).selectNextSpell(wand);
 						// This line fixes the bug with continuous spells casting when they shouldn't be
-						player.stopActiveHand();
+						player.stopUsingItem();
 					}
 
 					break;
@@ -79,14 +77,14 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 
 						((ISpellCastingItem)wand.getItem()).selectPreviousSpell(wand);
 						// This line fixes the bug with continuous spells casting when they shouldn't be
-						player.stopActiveHand();
+						player.stopUsingItem();
 					}
 
 					break;
 
 				case RESURRECT_BUTTON:
 
-					if(player.isDead && Resurrection.getRemainingWaitTime(player.deathTime) == 0){
+					if(!player.isAlive() && Resurrection.getRemainingWaitTime(player.deathTime) == 0){
 
 						ItemStack stack = InventoryUtils.getHotbar(player).stream()
 								.filter(s -> Resurrection.canStackResurrect(s, player)).findFirst().orElse(null);
@@ -106,16 +104,16 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 
 				case CANCEL_RESURRECT:
 
-					if(player.level.getGameRules().getBoolean("keepInventory")) break; // Shouldn't even receive this
+					if(player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) break; // Shouldn't even receive this
 
-					if(player.isDead){
+					if(!player.isAlive()){
 
 						ItemStack stack = InventoryUtils.getHotbar(player).stream()
 								.filter(s -> Resurrection.canStackResurrect(s, player)).findFirst().orElse(null);
 
 						if(stack != null){
-							player.dropItem(stack, true, false);
-							player.inventory.deleteStack(stack); // Might as well
+							player.drop(stack, true, false);
+							player.getInventory().removeItem(stack); // Might as well
 							break;
 						}
 
@@ -139,15 +137,17 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 				}
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
 	public enum ControlType {
 		APPLY_BUTTON, NEXT_SPELL_KEY, PREVIOUS_SPELL_KEY, RESURRECT_BUTTON, CANCEL_RESURRECT, POSSESSION_PROJECTILE, CLEAR_BUTTON
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		private ControlType controlType;
 
@@ -159,14 +159,12 @@ public class PacketControlInput implements IMessageHandler<Message, IMessage> {
 			this.controlType = type;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			this.controlType = ControlType.values()[buf.readInt()];
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(controlType.ordinal());
 		}
 	}

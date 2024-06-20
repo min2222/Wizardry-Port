@@ -1,48 +1,40 @@
 package electroblob.wizardry.packet;
 
 import electroblob.wizardry.Wizardry;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class WizardryPacketHandler {
 
-	public static SimpleNetworkWrapper net;
-
-	public static void initPackets(){
-		net = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID.toUpperCase());
-		registerMessage(PacketControlInput.class, 			PacketControlInput.Message.class);
-		registerMessage(PacketCastSpell.class, 				PacketCastSpell.Message.class);
-		registerMessage(PacketTransportation.class, 		PacketTransportation.Message.class);
-		registerMessage(PacketPlayerSync.class, 			PacketPlayerSync.Message.class);
-		registerMessage(PacketGlyphData.class, 				PacketGlyphData.Message.class);
-		registerMessage(PacketCastContinuousSpell.class, 	PacketCastContinuousSpell.Message.class);
-		registerMessage(PacketClairvoyance.class, 			PacketClairvoyance.Message.class);
-		registerMessage(PacketSyncSettings.class, 			PacketSyncSettings.Message.class);
-		registerMessage(PacketNPCCastSpell.class, 			PacketNPCCastSpell.Message.class);
-		registerMessage(PacketDispenserCastSpell.class, 	PacketDispenserCastSpell.Message.class);
-		registerMessage(PacketSpellProperties.class, 		PacketSpellProperties.Message.class);
-		registerMessage(PacketSyncAdvancements.class, 		PacketSyncAdvancements.Message.class);
-		registerMessage(PacketRequestAdvancementSync.class, PacketRequestAdvancementSync.Message.class);
-		registerMessage(PacketResurrection.class, 			PacketResurrection.Message.class);
-		registerMessage(PacketCastSpellAtPos.class, 		PacketCastSpellAtPos.Message.class);
-		registerMessage(PacketEmitterData.class, 			PacketEmitterData.Message.class);
-		registerMessage(PacketPossession.class, 			PacketPossession.Message.class);
-		registerMessage(PacketConquerShrine.class, 			PacketConquerShrine.Message.class);
-		registerMessage(PacketLectern.class, 				PacketLectern.Message.class);
-		registerMessage(PacketSpellQuickAccess.class, 		PacketSpellQuickAccess.Message.class);
-		registerMessage(PacketRequestDonationPerks.class, 	PacketRequestDonationPerks.Message.class);
-		registerMessage(PacketSyncDonationPerks.class, 		PacketSyncDonationPerks.Message.class);
-	}
+    private static final String PROTOCOL_VERSION = "1";
+    public static SimpleChannel net = 
+    		NetworkRegistry.newSimpleChannel(new ResourceLocation(Wizardry.MODID, "ebwizardry"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
 
 	private static int nextPacketId = 0;
-
-	private static <REQ extends IMessage, REPLY extends IMessage> void registerMessage(
-			Class<? extends IMessageHandler<REQ, REPLY>> packet, Class<REQ> message){
-		net.registerMessage(packet, message, nextPacketId, Dist.CLIENT);
-		net.registerMessage(packet, message, nextPacketId, Dist.SERVER);
-		nextPacketId++;
+	
+	public static void initPackets(){
+		net.registerMessage(nextPacketId++, PacketControlInput.Message.class,           PacketControlInput.Message::toBytes, PacketControlInput.Message::new, PacketControlInput::onMessage);
+		net.registerMessage(nextPacketId++, PacketCastSpell.Message.class,              PacketCastSpell.Message::toBytes, PacketCastSpell.Message::new, PacketCastSpell::onMessage);
+		net.registerMessage(nextPacketId++, PacketTransportation.Message.class, 		PacketTransportation.Message::toBytes, PacketTransportation.Message::new, PacketTransportation::onMessage);
+		net.registerMessage(nextPacketId++, PacketPlayerSync.Message.class, 			PacketPlayerSync.Message::toBytes, PacketPlayerSync.Message::new, PacketPlayerSync::onMessage);
+		net.registerMessage(nextPacketId++, PacketGlyphData.Message.class, 				PacketGlyphData.Message::toBytes, PacketGlyphData.Message::new, PacketGlyphData::onMessage);
+		net.registerMessage(nextPacketId++, PacketCastContinuousSpell.Message.class, 	PacketCastContinuousSpell.Message::toBytes, PacketCastContinuousSpell.Message::new, PacketCastContinuousSpell::onMessage);
+		net.registerMessage(nextPacketId++, PacketClairvoyance.Message.class, 			PacketClairvoyance.Message::toBytes, PacketClairvoyance.Message::new, PacketClairvoyance::onMessage);
+		net.registerMessage(nextPacketId++, PacketSyncSettings.Message.class, 			PacketSyncSettings.Message::toBytes, PacketSyncSettings.Message::new, PacketSyncSettings::onMessage);
+		net.registerMessage(nextPacketId++, PacketNPCCastSpell.Message.class, 			PacketNPCCastSpell.Message::toBytes, PacketNPCCastSpell.Message::new, PacketNPCCastSpell::onMessage);
+		net.registerMessage(nextPacketId++, PacketDispenserCastSpell.Message.class, 	PacketDispenserCastSpell.Message::toBytes, PacketDispenserCastSpell.Message::new, PacketDispenserCastSpell::onMessage);
+		net.registerMessage(nextPacketId++, PacketSpellProperties.Message.class, 		PacketSpellProperties.Message::toBytes, PacketSpellProperties.Message::new, PacketSpellProperties::onMessage);
+		net.registerMessage(nextPacketId++, PacketSyncAdvancements.Message.class, 		PacketSyncAdvancements.Message::toBytes, PacketSyncAdvancements.Message::new, PacketSyncAdvancements::onMessage);
+		net.registerMessage(nextPacketId++, PacketRequestAdvancementSync.Message.class, PacketRequestAdvancementSync.Message::toBytes, PacketRequestAdvancementSync.Message::new, PacketRequestAdvancementSync::onMessage);
+		net.registerMessage(nextPacketId++, PacketResurrection.Message.class, 			PacketResurrection.Message::toBytes, PacketResurrection.Message::new, PacketResurrection::onMessage);
+		net.registerMessage(nextPacketId++, PacketCastSpellAtPos.Message.class, 		PacketCastSpellAtPos.Message::toBytes, PacketCastSpellAtPos.Message::new, PacketCastSpellAtPos::onMessage);
+		net.registerMessage(nextPacketId++, PacketEmitterData.Message.class, 			PacketEmitterData.Message::toBytes, PacketEmitterData.Message::new, PacketEmitterData::onMessage);
+		net.registerMessage(nextPacketId++, PacketPossession.Message.class, 			PacketPossession.Message::toBytes, PacketPossession.Message::new, PacketPossession::onMessage);
+		net.registerMessage(nextPacketId++, PacketConquerShrine.Message.class, 			PacketConquerShrine.Message::toBytes, PacketConquerShrine.Message::new, PacketConquerShrine::onMessage);
+		net.registerMessage(nextPacketId++, PacketLectern.Message.class, 				PacketLectern.Message::toBytes, PacketLectern.Message::new, PacketLectern::onMessage);
+		net.registerMessage(nextPacketId++, PacketSpellQuickAccess.Message.class, 		PacketSpellQuickAccess.Message::toBytes, PacketSpellQuickAccess.Message::new, PacketSpellQuickAccess::onMessage);
+		net.registerMessage(nextPacketId++, PacketRequestDonationPerks.Message.class, 	PacketRequestDonationPerks.Message::toBytes, PacketRequestDonationPerks.Message::new, PacketRequestDonationPerks::onMessage);
+		net.registerMessage(nextPacketId++, PacketSyncDonationPerks.Message.class, 		PacketSyncDonationPerks.Message::toBytes, PacketSyncDonationPerks.Message::new, PacketSyncDonationPerks::onMessage);
 	}
 }

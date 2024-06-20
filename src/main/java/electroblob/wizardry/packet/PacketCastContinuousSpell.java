@@ -1,36 +1,36 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
-import electroblob.wizardry.packet.PacketCastContinuousSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when the /cast command is used with a continuous spell, in order to
  * sync the relevant variables in {@link WizardData WizardData}.
  */
-public class PacketCastContinuousSpell implements IMessageHandler<Message, IMessage> {
+public class PacketCastContinuousSpell {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleCastContinuousSpellPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleCastContinuousSpellPacket(message));
 		}
+		
+        ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** EntityID of the caster */
 		public int casterID;
@@ -45,14 +45,13 @@ public class PacketCastContinuousSpell implements IMessageHandler<Message, IMess
 		public Message(){}
 
 		public Message(Player caster, Spell spell, SpellModifiers modifiers, int duration){
-			this.casterID = caster.getEntityId();
+			this.casterID = caster.getId();
 			this.spellID = spell.networkID();
 			this.modifiers = modifiers;
 			this.duration = duration;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			this.casterID = buf.readInt();
 			this.spellID = buf.readInt();
@@ -61,8 +60,7 @@ public class PacketCastContinuousSpell implements IMessageHandler<Message, IMess
 			this.duration = buf.readInt();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(casterID);
 			buf.writeInt(spellID);
 			this.modifiers.write(buf);

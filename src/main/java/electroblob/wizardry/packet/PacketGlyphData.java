@@ -1,35 +1,33 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.packet.PacketGlyphData.Message;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.Wizardry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent each time a player joins a world to synchronise the client-side spell
  * glyph names with the server-side ones.
  */
-public class PacketGlyphData implements IMessageHandler<Message, IMessage> {
+public class PacketGlyphData {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleGlyphDataPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleGlyphDataPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** The list of randomised spell names. */
 		public List<String> names;
@@ -45,21 +43,19 @@ public class PacketGlyphData implements IMessageHandler<Message, IMessage> {
 			this.descriptions = descriptions;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			names = new ArrayList<>();
 			descriptions = new ArrayList<>();
 			while(buf.isReadable()){
-				names.add(ByteBufUtils.readUTF8String(buf));
-				descriptions.add(ByteBufUtils.readUTF8String(buf));
+				names.add(buf.readUtf());
+				descriptions.add(buf.readUtf());
 			}
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			for(int i = 0; i < names.size(); i++){
-				ByteBufUtils.writeUTF8String(buf, names.get(i) == null ? "error" : names.get(i));
-				ByteBufUtils.writeUTF8String(buf, descriptions.get(i) == null ? "error" : descriptions.get(i));
+				buf.writeUtf(names.get(i) == null ? "error" : names.get(i));
+				buf.writeUtf(descriptions.get(i) == null ? "error" : descriptions.get(i));
 			}
 		}
 	}

@@ -53,6 +53,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -345,10 +346,9 @@ public abstract class Forfeit {
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("storm", (w, p) -> {
 			if(!Spells.invoke_weather.isEnabled(Context.WANDS)) return;
 			int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
-			w.getWorldInfo().setRaining(true);
-			w.getWorldInfo().setRainTime(standardWeatherTime);
-			w.getWorldInfo().setThundering(true);
-			w.getWorldInfo().setThunderTime(standardWeatherTime);
+			if(!w.isClientSide) {
+				((ServerLevel)w).setWeatherParameters(standardWeatherTime, standardWeatherTime, true, true);
+			}
 		}));
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("lightning_sigils", (w, p) -> {

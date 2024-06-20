@@ -9,6 +9,7 @@ import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -89,8 +90,8 @@ public final class WizardryTabs {
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
-		public String getBackgroundImageName(){
-			return searchable ? "item_search.png" : super.getBackgroundImageName();
+		public ResourceLocation getBackgroundImage(){
+            return searchable ? new ResourceLocation("textures/gui/container/creative_inventory/tab_" + "item_search.png") : super.getBackgroundImage();
 		}
 	}
 	

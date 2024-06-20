@@ -9,6 +9,7 @@ import electroblob.wizardry.spell.SlowTime;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.ParticleBuilder;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.IProjectile;
@@ -34,8 +35,8 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 
 	public static final String NBT_KEY = "time_slowed";
 
-	public PotionSlowTime(boolean isBadEffect, int liquidColour){
-		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/slow_time.png"));
+	public PotionSlowTime(MobEffectCategory category, int liquidColour){
+		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/slow_time.png"));
 		this.setPotionName("potion." + Wizardry.MODID + ":slow_time");
 	}
 

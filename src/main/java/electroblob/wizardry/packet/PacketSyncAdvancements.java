@@ -1,32 +1,31 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.ArrayList;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.Wizardry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Server -> Client]</b> This packet is fired on login and on advancement gain to update the handbook progress. */
-public class PacketSyncAdvancements implements IMessageHandler<PacketSyncAdvancements.Message, IMessage> {
+public class PacketSyncAdvancements {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleAdvancementSyncPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleAdvancementSyncPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public boolean showToasts;
 		public ResourceLocation[] completedAdvancements;
@@ -40,21 +39,19 @@ public class PacketSyncAdvancements implements IMessageHandler<PacketSyncAdvance
 			this.completedAdvancements = completed;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			showToasts = buf.readBoolean();
 			ArrayList<ResourceLocation> advancements = new ArrayList<>();
 			while(buf.isReadable()){
-				advancements.add(new ResourceLocation(ByteBufUtils.readUTF8String(buf)));
+				advancements.add(new ResourceLocation(buf.readUtf()));
 			}
 			this.completedAdvancements = advancements.toArray(new ResourceLocation[0]);
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeBoolean(showToasts);
 			for(ResourceLocation advancement : completedAdvancements){
-				ByteBufUtils.writeUTF8String(buf, advancement.toString());
+				buf.writeUtf(advancement.toString());
 			}
 		}
 	}

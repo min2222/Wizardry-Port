@@ -1,29 +1,30 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent to clients in the same dimension when a player is resurrected.
  */
-public class PacketResurrection implements IMessageHandler<PacketResurrection.Message, IMessage> {
+public class PacketResurrection {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleResurrectionPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleResurrectionPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public int playerID;
 
@@ -34,13 +35,11 @@ public class PacketResurrection implements IMessageHandler<PacketResurrection.Me
 			this.playerID = playerID;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			this.playerID = buf.readInt();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(playerID);
 		}
 	}

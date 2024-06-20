@@ -1,35 +1,35 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.spell.Spell;
-import electroblob.wizardry.util.SpellProperties;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.spell.Spell;
+import electroblob.wizardry.util.SpellProperties;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Server -> Client]</b> This packet is sent to sync server-side spell properties with clients on login. */
-public class PacketSpellProperties implements IMessageHandler<PacketSpellProperties.Message, IMessage> {
+public class PacketSpellProperties {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> {
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> {
 				for(int i=0; i<message.propertiesArray.length; i++){
 					Spell.byNetworkID(i).setPropertiesClient(message.propertiesArray[i]);
 				}
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		private SpellProperties[] propertiesArray;
 
@@ -40,8 +40,7 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 			this.propertiesArray = properties;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			List<SpellProperties> propertiesList = new ArrayList<>();
 			int i = 0;
@@ -53,8 +52,7 @@ public class PacketSpellProperties implements IMessageHandler<PacketSpellPropert
 			propertiesArray = propertiesList.toArray(new SpellProperties[0]);
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			for(SpellProperties properties : propertiesArray) properties.write(buf);
 		}
 	}

@@ -1,36 +1,37 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when a spell is cast at a position by commands and returns true, and is
  * sent to clients so they can spawn the particles themselves.
  */
 // Soooo many spell casting packets...
-public class PacketCastSpellAtPos implements IMessageHandler<PacketCastSpellAtPos.Message, IMessage> {
+public class PacketCastSpellAtPos {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleCastSpellAtPosPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleCastSpellAtPosPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** Position for the spell */
 		public Vec3 position;
@@ -58,25 +59,23 @@ public class PacketCastSpellAtPos implements IMessageHandler<PacketCastSpellAtPo
 			this.duration = duration;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			// The order is important
 			position = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
-			direction = Direction.byIndex(buf.readInt());
+			direction = Direction.from3DDataValue(buf.readInt());
 			this.spellID = buf.readInt();
 			this.modifiers = new SpellModifiers();
 			this.modifiers.read(buf);
 			this.duration = buf.readInt();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeDouble(position.x);
 			buf.writeDouble(position.y);
 			buf.writeDouble(position.z);
-			buf.writeInt(direction.getIndex());
+			buf.writeInt(direction.get3DDataValue());
 			buf.writeInt(spellID);
 			this.modifiers.write(buf);
 			buf.writeInt(duration);

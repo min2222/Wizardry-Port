@@ -1,31 +1,29 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.tileentity.TileEntityLectern;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Client -> Server]</b> This packet is sent when a player closes the lectern GUI to send the last-viewed spell to
  * the server. */
-public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMessage> {
+public class PacketLectern {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isServer()){
+		if(ctx.get().getDirection().getReceptionSide().isServer()){
 
-			final ServerPlayer player = ctx.getServerHandler().player;
-
-			player.getServerWorld().addScheduledTask(() -> {
-
-				BlockEntity tileentity = player.level.getTileEntity(message.pos);
+			ctx.get().enqueueWork(() -> {
+				final ServerPlayer player = ctx.get().getSender();
+				
+				BlockEntity tileentity = player.level.getBlockEntity(message.pos);
 
 				if(tileentity instanceof TileEntityLectern){
 
@@ -35,14 +33,15 @@ public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMe
 				}else{
 					Wizardry.logger.warn("Received a PacketLectern, but no lectern existed at the position specified!");
 				}
-
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		private BlockPos pos;
 		private Spell spell;
@@ -55,15 +54,13 @@ public class PacketLectern implements IMessageHandler<PacketLectern.Message, IMe
 			this.spell = spell;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 			spell = Spell.byNetworkID(buf.readInt());
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(pos.getX());
 			buf.writeInt(pos.getY());
 			buf.writeInt(pos.getZ());

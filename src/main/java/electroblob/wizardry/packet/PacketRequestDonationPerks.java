@@ -1,39 +1,42 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.misc.DonationPerksHandler;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Client -> Server]</b> This packet is sent when a player logs in and whenever the setting changes to set their
  * donation perk element. */
-public class PacketRequestDonationPerks implements IMessageHandler<PacketRequestDonationPerks.Message, IMessage> {
+public class PacketRequestDonationPerks {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isServer()){
+		if(ctx.get().getDirection().getReceptionSide().isServer()){
 
-			final ServerPlayer player = ctx.getServerHandler().player;
+			ctx.get().enqueueWork(() -> {
+				final ServerPlayer player = ctx.get().getSender();
 
-			// The UUID key set itself is immutable so we can safely access it from the networking thread
-			if(DonationPerksHandler.isDonor(player)){
-				player.getServerWorld().addScheduledTask(() -> DonationPerksHandler.setElement(player, message.element));
-			}else{
-				Wizardry.logger.warn("Received a donation perk packet from a player that isn't a donor!");
-			}
+				// The UUID key set itself is immutable so we can safely access it from the networking thread
+				if(DonationPerksHandler.isDonor(player)){
+					DonationPerksHandler.setElement(player, message.element);
+				}else{
+					Wizardry.logger.warn("Received a donation perk packet from a player that isn't a donor!");
+				}
+			});
 
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		private Element element;
 
@@ -44,15 +47,13 @@ public class PacketRequestDonationPerks implements IMessageHandler<PacketRequest
 			this.element = element;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			int i = buf.readShort();
 			element = i == -1 ? null : Element.values()[i];
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeShort(element == null ? -1 : element.ordinal());
 		}
 	}

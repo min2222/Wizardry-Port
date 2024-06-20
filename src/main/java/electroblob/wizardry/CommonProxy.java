@@ -1,32 +1,45 @@
 package electroblob.wizardry;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.ItemSpectralBow;
-import electroblob.wizardry.packet.*;
+import electroblob.wizardry.packet.PacketCastContinuousSpell;
+import electroblob.wizardry.packet.PacketCastSpell;
+import electroblob.wizardry.packet.PacketCastSpellAtPos;
+import electroblob.wizardry.packet.PacketClairvoyance;
+import electroblob.wizardry.packet.PacketConquerShrine;
+import electroblob.wizardry.packet.PacketDispenserCastSpell;
+import electroblob.wizardry.packet.PacketEmitterData;
+import electroblob.wizardry.packet.PacketGlyphData;
+import electroblob.wizardry.packet.PacketNPCCastSpell;
+import electroblob.wizardry.packet.PacketPlayerSync;
+import electroblob.wizardry.packet.PacketPossession;
+import electroblob.wizardry.packet.PacketResurrection;
+import electroblob.wizardry.packet.PacketSyncAdvancements;
+import electroblob.wizardry.packet.PacketTransportation;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.config.Property;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Set;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * The common proxy for wizardry, serving the usual purpose of dealing with all things that need to be handled

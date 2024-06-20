@@ -1,37 +1,37 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.packet.PacketDispenserCastSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when a spell is cast by a dispenser and returns true, and is sent to
  * clients so they can spawn the particles. Unlike the player packets, this is for both continuous <b>and</b>
  * non-continuous spells.
  */
-public class PacketDispenserCastSpell implements IMessageHandler<Message, IMessage> {
+public class PacketDispenserCastSpell {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleDispenserCastSpellPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleDispenserCastSpellPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** ID of the spell being cast */
 		public int spellID;
@@ -63,29 +63,27 @@ public class PacketDispenserCastSpell implements IMessageHandler<Message, IMessa
 			
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			// The order is important
 			this.x = buf.readDouble();
 			this.y = buf.readDouble();
 			this.z = buf.readDouble();
 			this.direction = Direction.values()[buf.readInt()];
-			this.pos = BlockPos.fromLong(buf.readLong());
+			this.pos = BlockPos.of(buf.readLong());
 			this.spellID = buf.readInt();
 			this.duration = buf.readInt();
 			this.modifiers = new SpellModifiers();
 			this.modifiers.read(buf);
 		}
 
-		@Override 
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeDouble(x);
 			buf.writeDouble(y);
 			buf.writeDouble(z);
 			buf.writeInt(direction.ordinal());
-			buf.writeLong(pos.toLong());
+			buf.writeLong(pos.asLong());
 			buf.writeInt(spellID);
 			buf.writeInt(duration);
 			this.modifiers.write(buf);

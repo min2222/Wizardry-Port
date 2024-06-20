@@ -15,25 +15,25 @@ public class TileEntityTimer extends BlockEntity {
 	public int timer = 0;
 	public int maxTimer;
 
-    public TileEntityTimer(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
-        super(p_155228_, p_155229_, p_155230_);
+    public TileEntityTimer(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
-    public TileEntityTimer(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_, int maxTimer) {
-        this(p_155228_, p_155229_, p_155230_);
+    public TileEntityTimer(BlockEntityType<?> type, BlockPos pos, BlockState state, int maxTimer) {
+        this(type, pos, state);
         this.maxTimer = maxTimer;
     }
 
-    public static void update(Level p_155014_, BlockPos p_155015_, BlockState p_155016_, TileEntityTimer p_155017_) {
-    	p_155017_.timer++;
+    public static void update(Level world, BlockPos pos, BlockState state, TileEntityTimer tileEntity) {
+    	tileEntity.timer++;
 
-		if(p_155017_.maxTimer > 0 && p_155017_.timer > p_155017_.maxTimer && !p_155014_.isClientSide){// && this.level.getBlockId(xCoord, yCoord, zCoord) ==
+		if(tileEntity.maxTimer > 0 && tileEntity.timer > tileEntity.maxTimer && !world.isClientSide){// && this.level.getBlockId(xCoord, yCoord, zCoord) ==
 														// Wizardry.magicLight.blockID){
-			if(p_155017_.getBlockState() == WizardryBlocks.VANISHING_COBWEB.get().defaultBlockState()){
+			if(tileEntity.getBlockState() == WizardryBlocks.VANISHING_COBWEB.get().defaultBlockState()){
 				// destroyBlock breaks the block as if broken by a player, with sound and particles.
-                p_155014_.destroyBlock(p_155015_, false);
+				world.destroyBlock(pos, false);
 			}else{
-				p_155014_.setBlockAndUpdate(p_155015_, Blocks.AIR.defaultBlockState());
+				world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 			}
 		}
 	}

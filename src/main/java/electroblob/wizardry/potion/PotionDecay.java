@@ -6,6 +6,7 @@ import electroblob.wizardry.entity.construct.EntityDecay;
 import electroblob.wizardry.registry.WizardryPotions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -18,8 +19,8 @@ import java.util.List;
 @Mod.EventBusSubscriber
 public class PotionDecay extends PotionMagicEffect {
 
-	public PotionDecay(boolean isBadEffect, int liquidColour){
-		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/decay.png"));
+	public PotionDecay(MobEffectCategory category, int liquidColour){
+		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/decay.png"));
 		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
 		this.setPotionName("potion." + Wizardry.MODID + ":decay");
 		this.registerPotionAttributeModifier(Attributes.MOVEMENT_SPEED,

@@ -1,34 +1,34 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.command.SpellEmitter;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.command.SpellEmitter;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent each time a player joins a world to synchronise the client-side spell
  * emitters with the server-side ones.
  */
-public class PacketEmitterData implements IMessageHandler<PacketEmitterData.Message, IMessage> {
+public class PacketEmitterData {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleEmitterDataPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleEmitterDataPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public List<SpellEmitter> emitters;
 
@@ -39,16 +39,14 @@ public class PacketEmitterData implements IMessageHandler<PacketEmitterData.Mess
 			this.emitters = emitters;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			emitters = new ArrayList<>();
 			while(buf.isReadable()){
 				emitters.add(SpellEmitter.read(buf));
 			}
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			emitters.forEach(s -> s.write(buf));
 		}
 	}

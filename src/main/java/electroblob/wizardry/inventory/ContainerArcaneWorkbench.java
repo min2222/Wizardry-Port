@@ -1,6 +1,18 @@
 package electroblob.wizardry.inventory;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.event.SpellBindEvent;
 import electroblob.wizardry.item.IWorkbenchItem;
@@ -12,23 +24,21 @@ import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import electroblob.wizardry.util.ISpellSortable;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.WandHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The container for the arcane workbench GUI.
@@ -81,22 +91,22 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 
 	public boolean needsRefresh;
 
-	public ContainerArcaneWorkbench(IInventory inventory, TileEntityArcaneWorkbench tileentity){
-
+	public ContainerArcaneWorkbench(int id, Inventory inventory, TileEntityArcaneWorkbench tileentity){
+        super(WizardryGuiHandler.ARCANE_WORKBENCH_MENU.get(), id);
 		this.tileentity = tileentity;
 
-		ItemStack wand = tileentity.getStackInSlot(CENTRE_SLOT);
+		ItemStack wand = tileentity.getItem(CENTRE_SLOT);
 
 		for(int i = 0; i < 8; i++){
 			Slot slot = new SlotItemClassList(tileentity, i, -999, -999, 1, ItemSpellBook.class);
-			this.addSlotToContainer(slot);
+			this.addSlot(slot);
 		}
 
-		this.addSlotToContainer(new SlotItemList(tileentity, CRYSTAL_SLOT, 13, 101, 64,
+		this.addSlot(new SlotItemList(tileentity, CRYSTAL_SLOT, 13, 101, 64,
 				WizardryItems.magic_crystal, WizardryItems.crystal_shard, WizardryItems.grand_crystal))
-				.setBackgroundName(EMPTY_SLOT_CRYSTAL.toString());
+				.setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_CRYSTAL);
 
-		this.addSlotToContainer(new SlotWorkbenchItem(tileentity, CENTRE_SLOT, 80, 64, this));
+		this.addSlot(new SlotWorkbenchItem(tileentity, CENTRE_SLOT, 80, 64, this));
 
 		Set<Item> upgrades = new HashSet<>(WandHelper.getSpecialUpgrades()); // Can't be done statically.
 		upgrades.add(WizardryItems.arcane_tome);
@@ -104,23 +114,23 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 		upgrades.add(WizardryItems.crystal_silver_plating);
 		upgrades.add(WizardryItems.ethereal_crystalweave);
 
-		this.addSlotToContainer(new SlotItemList(tileentity, UPGRADE_SLOT, 147, 17, 1, upgrades.toArray(new Item[0])))
-				.setBackgroundName(EMPTY_SLOT_UPGRADE.toString());
+		this.addSlot(new SlotItemList(tileentity, UPGRADE_SLOT, 147, 17, 1, upgrades.toArray(new Item[0])))
+				.setBackground(InventoryMenu.BLOCK_ATLAS, EMPTY_SLOT_UPGRADE);
 
 		for(int x = 0; x < 9; x++){
-			this.addSlotToContainer(new Slot(inventory, x, 8 + x * 18, 196));
+			this.addSlot(new Slot(inventory, x, 8 + x * 18, 196));
 		}
 
 		for(int y = 0; y < 3; y++){
 			for(int x = 0; x < 9; x++){
-				this.addSlotToContainer(new Slot(inventory, 9 + x + y * 9, 8 + x * 18, 138 + y * 18));
+				this.addSlot(new Slot(inventory, 9 + x + y * 9, 8 + x * 18, 138 + y * 18));
 			}
 		}
 
 		for(int y = 0; y < BOOKSHELF_SLOTS_Y; y++){
 			for(int x = 0; x < BOOKSHELF_SLOTS_X; x++){
 				int index = x + y * BOOKSHELF_SLOTS_X;
-				this.addSlotToContainer(new SlotBookList(tileentity, UPGRADE_SLOT + 1 + index, 8 + x * 18, 34 + y * 18, this, index));
+				this.addSlot(new SlotBookList(tileentity, UPGRADE_SLOT + 1 + index, 8 + x * 18, 34 + y * 18, this, index));
 			}
 		}
 
@@ -128,10 +138,14 @@ public class ContainerArcaneWorkbench extends AbstractContainerMenu implements I
 
 		this.onSlotChanged(CENTRE_SLOT, wand, null);
 	}
+	
+    public ContainerArcaneWorkbench(int i, Inventory playerInventory, FriendlyByteBuf buf) {
+        this(i, playerInventory, (TileEntityArcaneWorkbench) Minecraft.getInstance().level.getBlockEntity(buf.readBlockPos()));
+    }
 
 	@Override
-	public boolean canInteractWith(Player player){
-		return this.tileentity.isUsableByPlayer(player);
+	public boolean stillValid(Player player){
+		return this.tileentity.stillValid(player);
 	}
 	
 	/**

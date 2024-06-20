@@ -1,41 +1,40 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.packet.PacketClairvoyance.Message;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathPoint;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.Wizardry;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.pathfinding.PathPoint;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when a player casts the clairvoyance spell to allow pathing to chunks
  * outside the render distance.
  */
-public class PacketClairvoyance implements IMessageHandler<Message, IMessage> {
+public class PacketClairvoyance {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(new Runnable(){
+			net.minecraft.client.Minecraft.getInstance().doRunTask(new Runnable(){
 				@Override
 				public void run(){
 					Wizardry.proxy.handleClairvoyancePacket(message);
 				}
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public Path path;
 		public float durationMultiplier;
@@ -50,8 +49,7 @@ public class PacketClairvoyance implements IMessageHandler<Message, IMessage> {
 			this.durationMultiplier = durationMultiplier;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			// The order is important
 			this.durationMultiplier = buf.readFloat();
@@ -65,8 +63,7 @@ public class PacketClairvoyance implements IMessageHandler<Message, IMessage> {
 			this.path = new Path(points.toArray(new PathPoint[0]));
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeFloat(durationMultiplier);
 

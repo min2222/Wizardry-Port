@@ -1,15 +1,14 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.packet.PacketCastSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.world.item.Item;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when a spell is cast by a player and returns true, and is sent to other
@@ -18,22 +17,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  * {@link Item#onUsingTick} is client-consistent already, so continuous spells don't need to send packets from there
  * (this is probably something to do with eating particles or usage actions).
  */
-public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
+public class PacketCastSpell {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handleCastSpellPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleCastSpellPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** EntityID of the caster */
 		public int casterID;
@@ -56,8 +56,7 @@ public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
 			this.hand = hand == null ? InteractionHand.MAIN_HAND : hand;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			// The order is important
 			this.casterID = buf.readInt();
@@ -67,8 +66,7 @@ public class PacketCastSpell implements IMessageHandler<Message, IMessage> {
 			this.hand = buf.readBoolean() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeInt(casterID);
 			buf.writeInt(spellID);

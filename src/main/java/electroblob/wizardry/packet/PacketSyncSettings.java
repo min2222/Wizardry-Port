@@ -1,37 +1,36 @@
 package electroblob.wizardry.packet;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Tier;
-import electroblob.wizardry.packet.PacketSyncSettings.Message;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent to synchronise the config settings with clients on player login.
  * 
  * @see Settings
  */
-public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
+public class PacketSyncSettings {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> copySettings(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> copySettings(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
 	private static void copySettings(Message message){
@@ -48,7 +47,7 @@ public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
 		Wizardry.settings.passiveMobsAreAllies = message.settings.passiveMobsAreAllies;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** Instance of wizardry's settings object */
 		public Settings settings;
@@ -61,8 +60,7 @@ public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
 			this.settings = settings;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// I'm guessing the settings field will be null here, so it needs initialising.
 			// This is also a great reason to have the settings as an actual object.
 			settings = new Settings();
@@ -81,8 +79,7 @@ public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
 			settings.passiveMobsAreAllies = buf.readBoolean();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeBoolean(settings.discoveryMode);
 			buf.writeBoolean(settings.creativeBypassesArcaneLock);
 			buf.writeBoolean(settings.slowTimeAffectsPlayers);
@@ -97,19 +94,19 @@ public class PacketSyncSettings implements IMessageHandler<Message, IMessage> {
 		}
 
 		@SuppressWarnings("unchecked")
-		private static Pair<ResourceLocation, Short>[] readMetaItems(ByteBuf buf){
+		private static Pair<ResourceLocation, Short>[] readMetaItems(FriendlyByteBuf buf){
 			int length = buf.readInt();
 			List<Pair<ResourceLocation, Short>> entries = new ArrayList<>();
 			for(int i=0; i<length; i++){
-				entries.add(Pair.of(new ResourceLocation(ByteBufUtils.readUTF8String(buf)), buf.readShort()));
+				entries.add(Pair.of(new ResourceLocation(buf.readUtf()), buf.readShort()));
 			}
 			return entries.toArray(new Pair[0]);
 		}
 
-		private static void writeMetaItems(ByteBuf buf, Pair<ResourceLocation, Short>[] items){
+		private static void writeMetaItems(FriendlyByteBuf buf, Pair<ResourceLocation, Short>[] items){
 			buf.writeInt(items.length);
 			for(Pair<ResourceLocation, Short> entry : items){
-				ByteBufUtils.writeUTF8String(buf, entry.getLeft().toString());
+				buf.writeUtf(entry.getLeft().toString());
 				buf.writeShort(entry.getRight());
 			}
 		}

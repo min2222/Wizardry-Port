@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
  * @author Electroblob
  * @since Wizardry 2.1
  */
-@ObjectHolder(Wizardry.MODID)
 @Mod.EventBusSubscriber
 public final class Spells {
 

@@ -4,13 +4,14 @@ import electroblob.wizardry.data.DispenserCastingData;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.resources.sounds.AbstractSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.level.Level;
 
 /** Abstract base class for sound loops associated with spells; see subclasses below for implementations. */
 public abstract class SoundLoopSpell extends SoundLoop {
@@ -23,13 +24,13 @@ public abstract class SoundLoopSpell extends SoundLoop {
 	}
 
 	@Override
-	public void update(){
+	public void tick(){
 		// This may be a bit overkill but I might as well put functionality in superclasses where possible
 		if(stillCasting(spell)){
 			// This can't called in the same tick as endLoop because otherwise, if the spell casting stops during the
 			// same tick as the transition to the loop sound it will try and stop the loop immediately after it has
 			// started - and for whatever reason, this causes the 'Channel null in method stop' error.
-			super.update();
+			super.tick();
 		}else{
 			endLoop();
 		}
@@ -58,12 +59,12 @@ public abstract class SoundLoopSpell extends SoundLoop {
 		public SoundLoopSpellPosition (SoundEvent start, SoundEvent loop, SoundEvent end, Spell spell,
 									   double x, double y, double z, float sndVolume, float sndPitch){
 			// Huh, I actually found a use for a non-static initialiser block - hence the double curly brackets...
-			super(start, loop, end, sndVolume, (sound, category, v, r) -> new PositionedSound(sound, category){{
+			super(start, loop, end, sndVolume, (sound, category, v, r) -> new AbstractSoundInstance(sound, category, RandomSource.create()){{
 				// ...et voila, we can just set protected fields as we please using external variables
-				this.xPosF = (float)x;
-				this.yPosF = (float)y;
-				this.zPosF = (float)z;
-				this.repeat = r;
+				this.x = (float)x;
+				this.y = (float)y;
+				this.z = (float)z;
+				this.looping = r;
 				this.volume = v;
 				this.pitch = sndPitch;
 			}}, spell);
@@ -79,7 +80,7 @@ public abstract class SoundLoopSpell extends SoundLoop {
 									   double x, double y, double z, float sndVolume, float sndPitch){
 			super(start, loop, end, spell, x, y, z, sndVolume, sndPitch);
 
-			BlockEntity tileentity = level.getTileEntity(new BlockPos(x, y, z));
+			BlockEntity tileentity = world.getBlockEntity(new BlockPos(x, y, z));
 
 			if(tileentity instanceof DispenserBlockEntity) this.source = (DispenserBlockEntity)tileentity;
 			else throw new NullPointerException(String.format("Playing continuous spell sound: no dispenser found at %s, %s, %s", x, y, z));
@@ -104,8 +105,8 @@ public abstract class SoundLoopSpell extends SoundLoop {
 		}
 
 		@Override
-		public void update(){
-			super.update();
+		public void tick(){
+			super.tick();
 			timeLeft--;
 		}
 

@@ -1,31 +1,32 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import electroblob.wizardry.Wizardry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.NetworkEvent;
+
 /** <b>[Server -> Client]</b> This packet is sent when a player possesses an entity or when a player stops possessing
  * to update all clients. */
-public class PacketPossession implements IMessageHandler<PacketPossession.Message, IMessage> {
+public class PacketPossession {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handlePossessionPacket(message));
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handlePossessionPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public int playerID;
 		public int targetID;
@@ -36,20 +37,18 @@ public class PacketPossession implements IMessageHandler<PacketPossession.Messag
 		}
 
 		public Message(Player host, @Nullable Mob target, int duration){
-			this.playerID = host.getEntityId();
-			this.targetID = target == null ? -1 : target.getEntityId();
+			this.playerID = host.getId();
+			this.targetID = target == null ? -1 : target.getId();
 			this.duration = duration;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			this.playerID = buf.readInt();
 			this.targetID = buf.readInt();
 			this.duration = buf.readInt();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(playerID);
 			buf.writeInt(targetID);
 			buf.writeInt(duration);

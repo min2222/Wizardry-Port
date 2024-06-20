@@ -2,6 +2,7 @@ package electroblob.wizardry.potion;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
@@ -9,8 +10,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class PotionDiamondflesh extends PotionMagicEffect {
 
-	public PotionDiamondflesh(boolean isBadEffect, int liquidColour) {
-		super(isBadEffect, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/diamondflesh.png"));
+	public PotionDiamondflesh(MobEffectCategory category, int liquidColour) {
+		super(category, liquidColour, new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/diamondflesh.png"));
 		// This needs to be here because registerPotionAttributeModifier doesn't like it if the potion has no name yet.
 		this.setPotionName("potion." + Wizardry.MODID + ":ironflesh");
 		this.registerPotionAttributeModifier(Attributes.MOVEMENT_SPEED,

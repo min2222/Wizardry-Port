@@ -1,42 +1,42 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.living.ISpellCaster;
-import electroblob.wizardry.packet.PacketNPCCastSpell.Message;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent when an {@link ISpellCaster} casts a spell which returns true, and is
  * sent to clients so they can spawn the particles. Unlike the player packets, this is for both continuous <b>and</b>
  * non-continuous spells.
  */
-public class PacketNPCCastSpell implements IMessageHandler<Message, IMessage> {
+public class PacketNPCCastSpell {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(new Runnable(){
+			net.minecraft.client.Minecraft.getInstance().doRunTask(new Runnable(){
 				@Override
 				public void run(){
 					Wizardry.proxy.handleNPCCastSpellPacket(message);
 				}
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		/** EntityID of the caster */
 		public int casterID;
@@ -61,8 +61,7 @@ public class PacketNPCCastSpell implements IMessageHandler<Message, IMessage> {
 			this.hand = hand == null ? InteractionHand.MAIN_HAND : hand;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			this.casterID = buf.readInt();
 			this.targetID = buf.readInt();
@@ -72,8 +71,7 @@ public class PacketNPCCastSpell implements IMessageHandler<Message, IMessage> {
 			this.hand = buf.readBoolean() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(casterID);
 			buf.writeInt(targetID);
 			buf.writeInt(spellID);

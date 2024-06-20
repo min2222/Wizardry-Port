@@ -1,41 +1,40 @@
 package electroblob.wizardry.packet;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.data.IVariable;
-import electroblob.wizardry.data.WizardData;
-import electroblob.wizardry.packet.PacketPlayerSync.Message;
-import electroblob.wizardry.spell.Spell;
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
+
+import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.data.IVariable;
+import electroblob.wizardry.data.WizardData;
+import electroblob.wizardry.spell.Spell;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 /**
  * <b>[Server -> Client]</b> This packet is sent to synchronise any fields that need synchronising in
  * {@link WizardData WizardData}. This packet is not sent often enough and is too small to warrant
  * having separate packets for each field that needs synchronising.
  */
-public class PacketPlayerSync implements IMessageHandler<Message, IMessage> {
+public class PacketPlayerSync {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 		// Just to make sure that the side is correct
-		if(ctx.side.isClient()){
+		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().addScheduledTask(() -> Wizardry.proxy.handlePlayerSyncPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handlePlayerSyncPacket(message));
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		public long seed;
 		public Set<Spell> spellsDiscovered;
@@ -53,8 +52,7 @@ public class PacketPlayerSync implements IMessageHandler<Message, IMessage> {
 			this.spellData = spellData;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 
 			this.seed = buf.readLong();
 			this.selectedMinionID = buf.readInt();
@@ -69,9 +67,8 @@ public class PacketPlayerSync implements IMessageHandler<Message, IMessage> {
 			}
 		}
 
-		@Override
 		@SuppressWarnings("unchecked") // We know it's ok
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeLong(seed);
 			buf.writeInt(selectedMinionID);

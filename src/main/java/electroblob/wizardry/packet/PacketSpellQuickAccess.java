@@ -1,46 +1,45 @@
 package electroblob.wizardry.packet;
 
+import java.util.function.Supplier;
+
 import electroblob.wizardry.item.ISpellCastingItem;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.network.NetworkEvent;
 
 /** <b>[Client -> Server]</b> This packet is for the spell quick access keys. */
-public class PacketSpellQuickAccess implements IMessageHandler<PacketSpellQuickAccess.Message, IMessage> {
+public class PacketSpellQuickAccess {
 
-	@Override
-	public IMessage onMessage(Message message, MessageContext ctx){
+	public static boolean onMessage(Message message, Supplier<NetworkEvent.Context> ctx){
 
 		// Just to make sure that the side is correct
-		if(ctx.side.isServer()){
+		if(ctx.get().getDirection().getReceptionSide().isServer()){
 
-			final ServerPlayer player = ctx.getServerHandler().player;
+			final ServerPlayer player = ctx.get().getSender();
 
-			player.getServerWorld().addScheduledTask(() -> {
-
+			ctx.get().enqueueWork(() -> {
 				ItemStack wand = player.getMainHandItem();
 
 				if(!(wand.getItem() instanceof ISpellCastingItem)){
-					wand = player.getOffHandItem();
+					wand = player.getOffhandItem();
 				}
 
 				if(wand.getItem() instanceof ISpellCastingItem){
 
 					((ISpellCastingItem)wand.getItem()).selectSpell(wand, message.index);
 					// This line fixes the bug with continuous spells casting when they shouldn't be
-					player.stopActiveHand();
+					player.stopUsingItem();
 				}
-
 			});
 		}
+		
+		ctx.get().setPacketHandled(true);
 
-		return null;
+		return true;
 	}
 
-	public static class Message implements IMessage {
+	public static class Message {
 
 		private int index;
 
@@ -52,14 +51,12 @@ public class PacketSpellQuickAccess implements IMessageHandler<PacketSpellQuickA
 			this.index = index;
 		}
 
-		@Override
-		public void fromBytes(ByteBuf buf){
+		public Message(FriendlyByteBuf buf){
 			// The order is important
 			this.index = buf.readInt();
 		}
 
-		@Override
-		public void toBytes(ByteBuf buf){
+		public void toBytes(FriendlyByteBuf buf){
 			buf.writeInt(index);
 		}
 	}
