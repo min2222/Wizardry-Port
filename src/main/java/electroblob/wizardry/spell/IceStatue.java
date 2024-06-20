@@ -34,8 +34,8 @@ public class IceStatue extends SpellRay {
 		
 		if(target instanceof Mob && !world.isClientSide){
 			// Unchecked cast is fine because the block is a static final field
-			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
-					caster, (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
+			if(((BlockStatue)WizardryBlocks.ICE_STATUE.get()).convertToStatue((Mob)target,
+					caster, (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())))){
 
 				//target.playSound(WizardrySounds.SPELL_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}

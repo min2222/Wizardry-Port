@@ -122,7 +122,7 @@ public class FrostBarrier extends Spell {
 		EntityIceBarrier barrier = new EntityIceBarrier(world);
 		barrier.setPos(position.x, position.y - yOffset, position.z);
 		barrier.setCaster(caster);
-		barrier.lifetime = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+		barrier.lifetime = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 		barrier.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 		barrier.setRot((float)Math.toDegrees(Mth.atan2(-direction.x, direction.z)), barrier.getXRot());
 		barrier.setSizeMultiplier(scale);

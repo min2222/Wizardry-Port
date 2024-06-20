@@ -2,6 +2,7 @@ package electroblob.wizardry.client.particle;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -31,7 +32,7 @@ public abstract class ParticleTargeted extends ParticleWizardry {
 	@Nullable
 	protected Entity target = null;
 	
-	public ParticleTargeted(Level world, double x, double y, double z, ResourceLocation... textures){
+	public ParticleTargeted(ClientLevel world, double x, double y, double z, ResourceLocation... textures){
 		super(world, x, y, z, textures);
 	}
 	

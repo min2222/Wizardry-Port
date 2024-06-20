@@ -84,7 +84,7 @@ public class Firestorm extends SpellAreaEffect {
 
 		if(!world.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
-			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 			for(int i = -(int)radius; i <= (int)radius; i++){
 				for(int j = -(int)radius; j <= (int)radius; j++){

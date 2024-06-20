@@ -67,7 +67,7 @@ public class Fangs extends Spell {
 	protected boolean spawnFangs(Level world, Vec3 origin, Vec3 direction, @Nullable LivingEntity caster, SpellModifiers modifiers){
 
 		boolean defensiveCircle = caster instanceof Player && caster.isShiftKeyDown()
-				&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.ring_evoker);
+				&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.RING_EVOKER.get());
 
 		if(!defensiveCircle && direction.lengthSqr() == 0) return false; // Prevent casting directly down/up
 
@@ -100,7 +100,7 @@ public class Fangs extends Spell {
 
 			}else{
 
-				int count = (int)(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
+				int count = (int)(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()));
 				float yaw = (float) Mth.atan2(direction.z, direction.x); // Yes, this is the right way round!
 
 				for(int i = 0; i < count; i++){

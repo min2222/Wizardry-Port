@@ -42,7 +42,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
 
 			target.addEffect(new MobEffectInstance(WizardryPotions.EMPOWERMENT.get(),
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}
 

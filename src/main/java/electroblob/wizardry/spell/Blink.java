@@ -34,10 +34,10 @@ public class Blink extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		boolean teleportMount = caster.isPassenger() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_mount_teleporting);
+		boolean teleportMount = caster.isPassenger() && ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_MOUNT_TELEPORTING.get());
 		boolean hitLiquids = teleportMount && caster.getVehicle() instanceof Boat; // Boats teleport to the surface
 
-		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		HitResult rayTrace = RayTracer.standardBlockRayTrace(world, caster, range, hitLiquids, !hitLiquids,false);
 

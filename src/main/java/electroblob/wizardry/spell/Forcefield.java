@@ -16,6 +16,6 @@ public class Forcefield extends SpellConstruct<EntityForcefield> {
 
 	@Override
 	protected void addConstructExtras(EntityForcefield construct, Direction side, LivingEntity caster, SpellModifiers modifiers){
-		construct.setRadius(getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade));
+		construct.setRadius(getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 	}
 }

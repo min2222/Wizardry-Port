@@ -17,10 +17,10 @@ import java.util.Map;
 public class ConjureArmour extends SpellConjuration {
 	
 	private static final Map<EquipmentSlot, Item> SPECTRAL_ARMOUR_MAP = ImmutableMap.of(
-			EquipmentSlot.HEAD, WizardryItems.spectral_helmet,
-			EquipmentSlot.CHEST, WizardryItems.spectral_chestplate,
-			EquipmentSlot.LEGS, WizardryItems.spectral_leggings,
-			EquipmentSlot.FEET, WizardryItems.spectral_boots);
+			EquipmentSlot.HEAD, WizardryItems.SPECTRAL_HELMET.get(),
+			EquipmentSlot.CHEST, WizardryItems.SPECTRAL_CHESTPLATE.get(),
+			EquipmentSlot.LEGS, WizardryItems.SPECTRAL_LEGGINGS.get(),
+			EquipmentSlot.FEET, WizardryItems.SPECTRAL_BOOTS.get());
 
 	public ConjureArmour(){
 		super("conjure_armour", null);
@@ -39,7 +39,7 @@ public class ConjureArmour extends SpellConjuration {
 					!InventoryUtils.doesPlayerHaveItem(caster, SPECTRAL_ARMOUR_MAP.get(slot))){
 				
 				armour = new ItemStack(SPECTRAL_ARMOUR_MAP.get(slot));
-				IConjuredItem.setDurationMultiplier(armour, modifiers.get(WizardryItems.duration_upgrade));
+				IConjuredItem.setDurationMultiplier(armour, modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 				// Sets a blank "ench" tag to trick the renderer into showing the enchantment effect on the armour model
 				NBTExtras.storeTagSafely(armour.getTag(), "ench", new ListTag());
 				caster.setItemSlot(slot, armour);

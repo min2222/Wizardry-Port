@@ -58,7 +58,7 @@ public class FireBreath extends SpellRay {
 			// This now only damages in line with the maxHurtResistantTime. Some mods don't play nicely and fiddle
 			// with this mechanic for their own purposes, so this line makes sure that doesn't affect wizardry.
 			}else if(ticksInUse % 10 == 0){
-				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				EntityUtils.attackEntityWithoutKnockback(target,
 						MagicDamage.causeDirectMagicDamage(caster, DamageType.FIRE),
 						getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));

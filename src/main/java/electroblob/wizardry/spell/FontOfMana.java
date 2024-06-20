@@ -35,7 +35,7 @@ public class FontOfMana extends SpellAreaEffect {
 
 		if(target instanceof Player){ // Font of mana is only useful to players
 			target.addEffect(new MobEffectInstance(WizardryPotions.FONT_OF_MANA.get(),
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					(int)(getProperty(EFFECT_STRENGTH).intValue() + (modifiers.get(SpellModifiers.POTENCY) - 1) * 2)));
 		}
 
@@ -54,7 +54,7 @@ public class FontOfMana extends SpellAreaEffect {
 		// Moved from ItemWand (quite why this wasn't done with modifiers before I don't know!)
 		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.FONT_OF_MANA.get())){
 			// Dividing by this rather than setting it takes upgrades and font of mana into account simultaneously
-			event.getModifiers().set(WizardryItems.cooldown_upgrade, event.getModifiers().get(WizardryItems.cooldown_upgrade)
+			event.getModifiers().set(WizardryItems.COOLDOWN_UPGRADE.get(), event.getModifiers().get(WizardryItems.COOLDOWN_UPGRADE.get())
 					/ (2 + event.getCaster().getEffect(WizardryPotions.FONT_OF_MANA.get()).getAmplifier()), false);
 		}
 	}

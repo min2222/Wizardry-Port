@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockStateContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,7 +36,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 
 @Mod.EventBusSubscriber
-public class BlockThorns extends BlockBush implements ITileEntityProvider {
+public class BlockThorns extends BushBlock implements ITileEntityProvider {
 
 	public static final int GROWTH_STAGES = 8;
 	public static final int GROWTH_STAGE_DURATION = 2;

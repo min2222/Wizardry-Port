@@ -17,7 +17,7 @@ public class Flamecatcher extends SpellConjuration {
 	public static final String SHOTS_REMAINING_NBT_KEY = "shotsRemaining";
 
 	public Flamecatcher(){
-		super("flamecatcher", WizardryItems.flamecatcher);
+		super("flamecatcher", () -> WizardryItems.FLAMECATCHER.get());
 		addProperties(RANGE, SHOT_COUNT, DAMAGE, BURN_DURATION);
 	}
 

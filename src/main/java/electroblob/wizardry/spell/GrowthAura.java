@@ -37,7 +37,7 @@ public class GrowthAura extends Spell {
 		boolean flag = false;
 
 		List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.blockPosition(),
-				getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade));
+				getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 
 		for(BlockPos pos : sphere){
 
@@ -51,7 +51,7 @@ public class GrowthAura extends Spell {
 
 					if(!world.isClientSide){
 						if(plant.isBonemealSuccess(world, world.random, pos, state)){
-							if(world.random.nextFloat() < 0.35f && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_growth)){
+							if(world.random.nextFloat() < 0.35f && ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_GROWTH.get())){
 								int i = 0;
 								while(plant.isValidBonemealTarget(world, pos, state, false) && i++ < FULL_GROWTH_TIMEOUT){
 									plant.performBonemeal((ServerLevel) world, world.random, pos, state);

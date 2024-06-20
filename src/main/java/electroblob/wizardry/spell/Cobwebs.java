@@ -38,11 +38,11 @@ public class Cobwebs extends SpellRay {
 		
 		pos = pos.relative(side);
 
-		int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
+		int blastUpgradeCount = (int)((modifiers.get(WizardryItems.BLAST_UPGRADE.get()) - 1) / Constants.RANGE_INCREASE_PER_LEVEL + 0.5f);
 
 		float radius = getProperty(EFFECT_RADIUS).floatValue() + 0.73f * blastUpgradeCount;
 
-		List<BlockPos> sphere = BlockUtils.getBlockSphere(pos, radius * modifiers.get(WizardryItems.blast_upgrade));
+		List<BlockPos> sphere = BlockUtils.getBlockSphere(pos, radius * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 
 		for(BlockPos pos1 : sphere){
 
@@ -52,7 +52,7 @@ public class Cobwebs extends SpellRay {
 					if(world.getBlockEntity(pos1) instanceof TileEntityTimer){
 						((TileEntityTimer)world.getBlockEntity(pos1))
 								.setLifetime((int)(getProperty(DURATION).doubleValue()
-										* modifiers.get(WizardryItems.duration_upgrade)));
+										* modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 					}
 				}
 				flag = true;

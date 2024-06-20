@@ -73,15 +73,15 @@ public class Clairvoyance extends Spell {
 						}
 					};
 					arbitraryZombie.getAttribute(Attributes.FOLLOW_RANGE)
-							.setBaseValue(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.range_upgrade));
+							.setBaseValue(getProperty(RANGE).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()));
 					arbitraryZombie.setPos(caster.getX(), caster.getY(), caster.getZ());
 					arbitraryZombie.setPathPriority(PathNodeType.WATER, 0.0F);
 					arbitraryZombie.setOnGround(true);
 
-					WizardryPathFinder pathfinder = new WizardryPathFinder(arbitraryZombie.getNavigator().getNodeProcessor());
+					WizardryPathFinder pathfinder = new WizardryPathFinder(arbitraryZombie.getNavigation().getNodeProcessor());
 
 					Path path = pathfinder.findPath(world, arbitraryZombie, location,
-							getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade));
+							getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()));
 
 					if(path != null && path.getFinalPathPoint() != null){
 
@@ -94,7 +94,7 @@ public class Clairvoyance extends Spell {
 							this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 							if(!world.isClientSide && caster instanceof ServerPlayer){
-								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.duration_upgrade)),
+								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 										(ServerPlayer)caster);
 							}
 

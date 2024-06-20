@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 		// Calculates the lifetime based on the base radius and spread speed
 		// Also overwrites the -1 lifetime set due to permanent being true
 		construct.lifetime = (int)(getProperty(EFFECT_RADIUS).floatValue()/getProperty(SPREAD_SPEED).floatValue()
-				* modifiers.get(WizardryItems.blast_upgrade));
+				* modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 	}
 	
 	@Override

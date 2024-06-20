@@ -35,7 +35,7 @@ public class ForestsCurse extends SpellAreaEffect {
 			target.hurt(source, getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));
 
 			int bonusAmplifier = SpellBuff.getStandardBonusAmplifier(modifiers.get(SpellModifiers.POTENCY));
-			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 			int amplifier = (int)(getProperty(EFFECT_STRENGTH).floatValue() + bonusAmplifier);
 
 			target.addEffect(new MobEffectInstance(MobEffects.POISON, duration, amplifier));

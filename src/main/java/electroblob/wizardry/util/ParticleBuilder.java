@@ -631,7 +631,7 @@ public final class ParticleBuilder {
 		
 		// Anything with an if statement here allows default values to be set in particle constructors
 		if(!Double.isNaN(vx) && !Double.isNaN(vy) && !Double.isNaN(vz)) 	particle.setVelocity(vx, vy, vz);
-		if(r >= 0 && g >= 0 && b >= 0) 										particle.setRBGColorF(r, g, b);
+		if(r >= 0 && g >= 0 && b >= 0) 										particle.setColor(r, g, b);
 		if(fr >= 0 && fg >= 0 && fb >= 0)									particle.setFadeColour(fr, fg, fb);
 		if(lifetime >= 0) 													particle.setLifetime(lifetime);
 		if(radius > 0) 														particle.setSpin(radius, rpt);

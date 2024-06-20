@@ -78,7 +78,7 @@ public class Mine extends SpellRay {
 
 				boolean flag = false;
 
-				int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
+				int blastUpgradeCount = (int)((modifiers.get(WizardryItems.BLAST_UPGRADE.get()) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
 				// Results in the following patterns:
 				// 0 blast upgrades: single block
 				// 1 blast upgrade: 3x3 without corners or edges
@@ -99,7 +99,7 @@ public class Mine extends SpellRay {
 						if(caster instanceof ServerPlayer){ // Everything in here is server-side only so this is fine
 
 							boolean silkTouch = state1.getBlock().canSilkHarvest(world, pos1, state1, (Player)caster)
-									&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.charm_silk_touch);
+									&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.CHARM_SILK_TOUCH.get());
 
 							int xp = BlockUtils.checkBlockBreakXP(caster, world, pos);
 

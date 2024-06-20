@@ -47,7 +47,7 @@ public class FreezingWeapon extends Spell {
 											/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f));
 
 					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.freezing_weapon,
-							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 					if(world.isClientSide){
 						for(int i=0; i<10; i++){

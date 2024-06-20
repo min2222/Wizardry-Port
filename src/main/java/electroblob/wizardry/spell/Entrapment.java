@@ -39,7 +39,7 @@ public class Entrapment extends SpellRay {
 				EntityBubble bubble = new EntityBubble(world);
 				bubble.setPos(target.getX(), target.getY(), target.getZ());
 				bubble.setCaster(caster);
-				bubble.lifetime = ((int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				bubble.lifetime = ((int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				bubble.isDarkOrb = true;
 				bubble.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				

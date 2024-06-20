@@ -47,7 +47,7 @@ public class Freeze extends SpellRay {
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
 				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 						getProperty(EFFECT_STRENGTH).intValue()));
 			}
 

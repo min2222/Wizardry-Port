@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 public class FlamingAxe extends SpellConjuration {
 
 	public FlamingAxe(){
-		super("flaming_axe", WizardryItems.flaming_axe);
+		super("flaming_axe", () -> WizardryItems.FLAMING_AXE.get());
 		addProperties(DAMAGE, BURN_DURATION);
 	}
 	

@@ -62,7 +62,7 @@ public class ConjureBlock extends SpellRay {
 				
 				if(world.getBlockEntity(pos) instanceof TileEntityTimer){
 					((TileEntityTimer)world.getBlockEntity(pos)).setLifetime((int)(getProperty(BLOCK_LIFETIME).floatValue()
-							* modifiers.get(WizardryItems.duration_upgrade)));
+							* modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				}
 			}
 

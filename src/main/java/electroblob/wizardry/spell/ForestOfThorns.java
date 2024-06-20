@@ -1,5 +1,10 @@
 package electroblob.wizardry.spell;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.block.BlockThorns;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryBlocks;
@@ -9,18 +14,13 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ForestOfThorns extends Spell {
 
@@ -58,7 +58,7 @@ public class ForestOfThorns extends Spell {
 
 		if(!world.isClientSide){
 
-			double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.blast_upgrade);
+			double radius = getProperty(EFFECT_RADIUS).doubleValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 			List<BlockPos> ring = new ArrayList<>((int)(7 * radius)); // 7 is a bit more than 2 pi
 
@@ -82,14 +82,14 @@ public class ForestOfThorns extends Spell {
 
 				if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.above())){
 
-					((BlockThorns)WizardryBlocks.thorns).placeAt(world, pos, 3);
+					((BlockThorns)WizardryBlocks.THORNS.get()).placeAt(world, pos, 3);
 
 					BlockEntity tileentity = world.getBlockEntity(pos);
 
 					if(tileentity instanceof TileEntityThorns){
 
 						((TileEntityThorns)tileentity).setLifetime((int)(getProperty(DURATION).floatValue()
-								* modifiers.get(WizardryItems.duration_upgrade)));
+								* modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 						if(caster != null) ((TileEntityThorns)tileentity).setCaster(caster);
 						((TileEntityThorns)tileentity).damageMultiplier = modifiers.get(SpellModifiers.POTENCY);

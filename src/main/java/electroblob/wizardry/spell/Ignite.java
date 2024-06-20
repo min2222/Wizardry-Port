@@ -34,7 +34,7 @@ public class Ignite extends SpellRay {
 				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 			}else{
-				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 			}
 			
 			return true;

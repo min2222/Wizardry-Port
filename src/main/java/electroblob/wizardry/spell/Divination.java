@@ -65,7 +65,7 @@ public class Divination extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		List<BlockPos> sphere = BlockUtils.getBlockSphere(caster.blockPosition(), range);
 

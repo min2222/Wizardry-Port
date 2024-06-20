@@ -31,10 +31,10 @@ public class Decay extends SpellConstructRanged<EntityDecay> {
 		super.spawnConstruct(world, x, y, z, side, caster, modifiers);
 
 		float decayCount = getProperty(DECAY_PATCHES_SPAWNED).floatValue();
-		int quantity = (int)(decayCount * modifiers.get(WizardryItems.blast_upgrade));
+		int quantity = (int)(decayCount * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 		// If there are more decay patches, they need more space to spawn in
-		int horizontalRange = (int)(0.4 * decayCount * modifiers.get(WizardryItems.blast_upgrade));
-		int verticalRange = (int)(6 * modifiers.get(WizardryItems.blast_upgrade));
+		int horizontalRange = (int)(0.4 * decayCount * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
+		int verticalRange = (int)(6 * modifiers.get(WizardryItems.BLAST_UPGRADE.get()));
 
 		for(int i=0; i<quantity; i++){
 			BlockPos pos = BlockUtils.findNearbyFloorSpace(world, origin, horizontalRange, verticalRange, false);

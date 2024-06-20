@@ -39,9 +39,9 @@ public class IceSpikes extends SpellConstructRanged<EntityIceSpike> {
 		// Now always spawns a spike exactly at the position aimed at
 		super.spawnConstruct(world, pos.x, pos.y, pos.z, side, caster, modifiers);
 		// -1 because of the one spawned above
-		int quantity = (int)(getProperty(ICE_SPIKE_COUNT).floatValue() * modifiers.get(WizardryItems.blast_upgrade)) - 1;
+		int quantity = (int)(getProperty(ICE_SPIKE_COUNT).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get())) - 1;
 
-		float maxRadius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+		float maxRadius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 		for(int i=0; i<quantity; i++){
 

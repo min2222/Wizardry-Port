@@ -44,7 +44,7 @@ public class ImbueWeapon extends Spell {
 							: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f) / Constants.POTENCY_INCREASE_PER_TIER
 									+ 0.5f));
 					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.magic_sword,
-							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 				}else if(isBow(stack)
 						&& !EnchantmentHelper.getEnchantments(stack).containsKey(WizardryEnchantments.magic_bow)
@@ -56,7 +56,7 @@ public class ImbueWeapon extends Spell {
 							: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f) / Constants.POTENCY_INCREASE_PER_TIER
 									+ 0.5f));
 					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.magic_bow,
-							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 				}else{
 					continue;

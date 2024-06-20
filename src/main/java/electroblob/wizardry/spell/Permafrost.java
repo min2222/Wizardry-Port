@@ -56,7 +56,7 @@ public class Permafrost extends SpellRay {
 
 		if(!world.isClientSide){
 
-			int blastUpgradeCount = (int)((modifiers.get(WizardryItems.blast_upgrade) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
+			int blastUpgradeCount = (int)((modifiers.get(WizardryItems.BLAST_UPGRADE.get()) - 1) / Constants.BLAST_RADIUS_INCREASE_PER_LEVEL + 0.5f);
 			// Results in the following patterns:
 			// 0 blast upgrades: single block
 			// 1 blast upgrade: 3x3 without corners or edges
@@ -64,7 +64,7 @@ public class Permafrost extends SpellRay {
 			// 3 blast upgrades: 5x5 without corners or edges
 			float radius = 0.5f + 0.73f * blastUpgradeCount;
 
-			int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+			int duration = (int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 
 			List<BlockPos> sphere = BlockUtils.getBlockSphere(pos.above(), radius);
 
@@ -84,8 +84,8 @@ public class Permafrost extends SpellRay {
 
 		if(world.getBlockState(pos.below()).isFaceSturdy(world, pos.below(), Direction.UP) && BlockUtils.canBlockBeReplaced(world, pos)){
 			if(BlockUtils.canPlaceBlock(caster, world, pos)){
-				world.setBlockAndUpdate(pos, WizardryBlocks.permafrost.defaultBlockState());
-				world.scheduleTick(pos.immutable(), WizardryBlocks.permafrost, duration);
+				world.setBlockAndUpdate(pos, WizardryBlocks.PERMAFROST.get().defaultBlockState());
+				world.scheduleTick(pos.immutable(), WizardryBlocks.PERMAFROST.get(), duration);
 				return true;
 			}
 		}

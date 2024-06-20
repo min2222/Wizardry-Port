@@ -43,7 +43,7 @@ public class Bubble extends SpellRay {
 				EntityBubble bubble = new EntityBubble(world);
 				bubble.setPos(target.getX(), target.getY(), target.getZ());
 				bubble.setCaster(caster);
-				bubble.lifetime = ((int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+				bubble.lifetime = ((int)(getProperty(DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 				bubble.isDarkOrb = false;
 				bubble.damageMultiplier = modifiers.get(SpellModifiers.POTENCY);
 				

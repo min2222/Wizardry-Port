@@ -93,7 +93,7 @@ public class Grapple extends Spell {
 			caster.swing(hand);
 			// This condition prevents the sound playing every tick after a missed shot has finished extending
 			if(hit.getType() != HitResult.Type.MISS
-					|| ticksInUse * extensionSpeed < getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade)){
+					|| ticksInUse * extensionSpeed < getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get())){
 				this.playSound(world, caster, ticksInUse, -1, modifiers, "shoot");
 			}
 		}
@@ -109,7 +109,7 @@ public class Grapple extends Spell {
 		double distance = origin.distanceTo(target);
 		Vec3 direction = target.subtract(origin).normalize();
 
-		double maxLength = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT;
+		double maxLength = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()) * STRETCH_LIMIT;
 
 		// If the vine stretched too far
 		if(distance > maxLength){
@@ -141,7 +141,7 @@ public class Grapple extends Spell {
 
 				case BLOCK:
 					// Payout
-					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
+					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_ABSEILING.get()))
 						velocity = new Vec3(velocity.x, distance < maxLength-1 ? -PAYOUT_SPEED : distance-maxLength+1, velocity.z);
 
 					// Reel the caster towards the block hit
@@ -166,7 +166,7 @@ public class Grapple extends Spell {
 
 				case ENTITY:
 					// Payout
-					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.charm_abseiling))
+					if(caster.isShiftKeyDown() && ItemArtefact.isArtefactActive(caster, WizardryItems.CHARM_ABSEILING.get()))
 						velocity = new Vec3(velocity.x, distance < maxLength-1 ? PAYOUT_SPEED : maxLength-1-distance, velocity.z);
 
 					// Reel the entity hit towards the caster
@@ -227,7 +227,7 @@ public class Grapple extends Spell {
 		double distance = origin.distanceTo(targetVec);
 
 		// Can't cast the spell at all if the target is too far away
-		if(ticksInUse <= 1 && distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade))
+		if(ticksInUse <= 1 && distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()))
 			return false;
 
 		Vec3 vec = targetVec.subtract(origin).normalize();
@@ -235,7 +235,7 @@ public class Grapple extends Spell {
 		float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
 		// If the vine stretched too far
-		if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
+		if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()) * STRETCH_LIMIT){
 			if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 				spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 			}
@@ -297,7 +297,7 @@ public class Grapple extends Spell {
 			float extensionSpeed = getProperty(EXTENSION_SPEED).floatValue() * modifiers.get(SpellModifiers.POTENCY);
 
 			// If the vine stretched too far
-			if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade) * STRETCH_LIMIT){
+			if(distance > getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()) * STRETCH_LIMIT){
 				if(world.isClientSide && (ticksInUse-1) * extensionSpeed < distance){
 					spawnLeafParticles(world, origin.subtract(0, SpellRay.Y_OFFSET, 0), vec, distance);
 				}
@@ -397,7 +397,7 @@ public class Grapple extends Spell {
 
 	private HitResult findTarget(Level world, @Nullable LivingEntity caster, Vec3 origin, Vec3 direction, SpellModifiers modifiers){
 
-		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+		double range = getProperty(RANGE).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 		Vec3 endpoint = origin.add(direction.scale(range));
 

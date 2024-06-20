@@ -56,7 +56,7 @@ public class Intimidate extends SpellAreaEffect {
 			if(entityNBT != null) entityNBT.putUUID(NBT_KEY, caster.getUUID());
 
 			target.addEffect(new MobEffectInstance(WizardryPotions.FEAR.get(),
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					getProperty(EFFECT_STRENGTH).intValue() + bonusAmplifier));
 		}
 

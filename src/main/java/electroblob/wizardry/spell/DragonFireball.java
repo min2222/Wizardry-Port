@@ -35,7 +35,7 @@ public class DragonFireball extends Spell {
 
 			fireball.setPos(caster.getX() + look.x, caster.getY() + look.y + 1.3, caster.getZ() + look.z);
 
-			double acceleration = getProperty(ACCELERATION).doubleValue() * modifiers.get(WizardryItems.range_upgrade);
+			double acceleration = getProperty(ACCELERATION).doubleValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
 			fireball.xPower = look.x * acceleration;
 			fireball.yPower = look.y * acceleration;

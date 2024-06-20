@@ -39,7 +39,7 @@ public class Heal extends SpellBuff {
 
 		// If the player is able to heal, they can't possibly have absorption hearts, so no need to check!
 		if(excessHealth > entity.getAbsorptionAmount() && entity instanceof Player
-				&& ItemArtefact.isArtefactActive((Player)entity, WizardryItems.amulet_absorption)){
+				&& ItemArtefact.isArtefactActive((Player)entity, WizardryItems.AMULET_ABSORPTION.get())){
 			entity.setAbsorptionAmount(excessHealth);
 		}
 

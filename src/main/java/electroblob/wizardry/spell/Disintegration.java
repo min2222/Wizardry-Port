@@ -41,7 +41,7 @@ public class Disintegration extends SpellRay {
 					Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
 		}else{
 
-			target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)));
+			target.setSecondsOnFire((int)(getProperty(BURN_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 			EntityUtils.attackEntityWithoutKnockback(target, caster == null ? DamageSource.MAGIC :
 					MagicDamage.causeDirectMagicDamage(caster, DamageType.FIRE),
 					getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY));

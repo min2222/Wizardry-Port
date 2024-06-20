@@ -36,7 +36,7 @@ public class Banish extends SpellRay {
 
 			double minRadius = getProperty(MINIMUM_TELEPORT_DISTANCE).doubleValue();
 			double maxRadius = getProperty(MAXIMUM_TELEPORT_DISTANCE).doubleValue();
-			double radius = (minRadius + world.random.nextDouble() * maxRadius-minRadius) * modifiers.get(WizardryItems.blast_upgrade);
+			double radius = (minRadius + world.random.nextDouble() * maxRadius-minRadius) * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 			teleport(entity, world, radius);
 		}

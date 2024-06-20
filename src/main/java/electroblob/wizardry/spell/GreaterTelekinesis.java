@@ -71,7 +71,7 @@ public class GreaterTelekinesis extends SpellRay {
 		if(caster != null && (target instanceof LivingEntity || target instanceof EntityLevitatingBlock || target instanceof PrimedTnt)){
 
 			if(target instanceof Player && ((caster instanceof Player && !Wizardry.settings.playersMoveEachOther)
-					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.amulet_anchoring))){
+					|| ItemArtefact.isArtefactActive((Player)target, WizardryItems.AMULET_ANCHORING.get()))){
 
 				if(!world.isClientSide && caster instanceof Player) ((Player)caster).displayClientMessage(
 						Component.translatable("spell.resist", target.getName(), this.getNameForTranslationFormatted()), true);
@@ -87,7 +87,7 @@ public class GreaterTelekinesis extends SpellRay {
 			
 			if(caster.isShiftKeyDown()){
 				
-				Vec3 look = caster.getLookAngle().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.range_upgrade));
+				Vec3 look = caster.getLookAngle().scale(getProperty(THROW_VELOCITY).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get()));
 				target.push(look.x, look.y, look.z);
 				// No IntelliJ, it's not always false, that's not how polymorphism works
 				if(caster instanceof Player) caster.swing(caster.getUsedItemHand() == null ? InteractionHand.MAIN_HAND : caster.getUsedItemHand());

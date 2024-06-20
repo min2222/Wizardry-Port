@@ -56,13 +56,13 @@ public class IceAge extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(target instanceof Mob){
-			if(((BlockStatue)WizardryBlocks.ice_statue).convertToStatue((Mob)target,
-					caster, (int)(getProperty(FREEZE_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)))){
+			if(((BlockStatue)WizardryBlocks.ICE_STATUE.get()).convertToStatue((Mob)target,
+					caster, (int)(getProperty(FREEZE_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())))){
 				target.playSound(WizardrySounds.MISC_FREEZE, 1.0F, world.random.nextFloat() * 0.4F + 0.8F);
 			}
 		}else if(target instanceof Player){
 			target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+					(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 					getProperty(EFFECT_STRENGTH).intValue()));
 		}
 
@@ -100,7 +100,7 @@ public class IceAge extends SpellAreaEffect {
 
 		if(!world.isClientSide && EntityUtils.canDamageBlocks(caster, world)){
 
-			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.blast_upgrade);
+			double radius = getProperty(EFFECT_RADIUS).floatValue() * modifiers.get(WizardryItems.BLAST_UPGRADE.get());
 
 			for(int i = -(int)radius; i <= (int)radius; i++){
 				for(int j = -(int)radius; j <= (int)radius; j++){

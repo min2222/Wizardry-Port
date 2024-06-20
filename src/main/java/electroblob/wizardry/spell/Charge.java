@@ -46,7 +46,7 @@ public class Charge extends Spell {
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
 		WizardData.get(caster).setVariable(CHARGE_TIME, (int)(getProperty(DURATION).floatValue()
-				* modifiers.get(WizardryItems.duration_upgrade)));
+				* modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 		WizardData.get(caster).setVariable(CHARGE_MODIFIERS, modifiers);
 
@@ -68,7 +68,7 @@ public class Charge extends Spell {
 
 			Vec3 look = player.getLookAngle();
 
-			float speed = Spells.charge.getProperty(Charge.CHARGE_SPEED).floatValue() * modifiers.get(WizardryItems.range_upgrade);
+			float speed = Spells.charge.getProperty(Charge.CHARGE_SPEED).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
             player.setDeltaMovement(look.x * speed, player.getDeltaMovement().y, look.z * speed);
 

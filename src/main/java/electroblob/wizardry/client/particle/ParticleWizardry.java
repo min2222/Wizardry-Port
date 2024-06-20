@@ -1,28 +1,34 @@
 package electroblob.wizardry.client.particle;
 
-import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.client.ClientProxy;
-import electroblob.wizardry.entity.ICustomHitbox;
-import electroblob.wizardry.util.EntityUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.client.ClientProxy;
+import electroblob.wizardry.entity.ICustomHitbox;
+import electroblob.wizardry.util.EntityUtils;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
 
 /**
  * Abstract superclass for all of wizardry's particles. This replaces {@code ParticleCustomTexture} (the functionality of
@@ -46,7 +52,7 @@ import java.util.stream.Collectors;
  * @see electroblob.wizardry.util.ParticleBuilder ParticleBuilder
  */
 //@SideOnly(Side.CLIENT)
-public abstract class ParticleWizardry extends Particle {
+public abstract class ParticleWizardry extends TextureSheetParticle {
 
 	/** Implementation of animated particles using the TextureAtlasSprite system. Why vanilla doesn't support this I
 	 * don't know, considering it too has animated particles. */
@@ -102,6 +108,8 @@ public abstract class ParticleWizardry extends Particle {
 
 	/** Previous-tick velocity, used in collision detection. */
 	private double prevVelX, prevVelY, prevVelZ;
+	
+    public boolean adjustQuadSize = true;
 
 	/**
 	 * Creates a new particle in the given world at the given position. All other parameters are set via the various
@@ -116,7 +124,7 @@ public abstract class ParticleWizardry extends Particle {
 	 * shown in order for an equal proportion of the particle's lifetime. If this argument is omitted (or a zero-length
 	 * array is given), the particle will use the vanilla system instead (based on the X/Y texture indices).
 	 */
-	public ParticleWizardry(Level world, double x, double y, double z, ResourceLocation... textures){
+	public ParticleWizardry(ClientLevel world, double x, double y, double z, ResourceLocation... textures){
 		
 		super(world, x, y, z);
 		
@@ -128,10 +136,10 @@ public abstract class ParticleWizardry extends Particle {
 		// Deals with the textures
 		if(textures.length > 0){
 			
-			sprites = Arrays.stream(textures).map(t -> Minecraft.getInstance().getTextureMapBlocks().getAtlasSprite(
-					t.toString())).collect(Collectors.toList()).toArray(new TextureAtlasSprite[0]);
+			sprites = Arrays.stream(textures).map(t -> Minecraft.getInstance().getModelManager().getAtlas(
+					InventoryMenu.BLOCK_ATLAS).getSprite(t)).collect(Collectors.toList()).toArray(new TextureAtlasSprite[0]);
 			
-			this.setParticleTexture(sprites[0]);
+			this.setSprite(sprites[0]);
 					
 		}else{
 			sprites = new TextureAtlasSprite[0];
@@ -160,12 +168,12 @@ public abstract class ParticleWizardry extends Particle {
 	
 	/** Sets this particle's gravity. True to enable gravity, false to disable. Defaults to false.*/
 	public void setGravity(boolean gravity){
-		this.particleGravity = gravity ? 1 : 0;
+		this.gravity = gravity ? 1 : 0;
 	}
 	
 	/** Sets this particle's collisions. True to enable block collisions, false to disable. Defaults to false.*/
 	public void setCollisions(boolean canCollide){
-		this.canCollide = canCollide;
+		this.hasPhysics = canCollide;
 	}
 	
 	/**
@@ -175,9 +183,9 @@ public abstract class ParticleWizardry extends Particle {
 	 * @param vz The z velocity
 	 */
 	public void setVelocity(double vx, double vy, double vz){
-		this.motionX = vx;
-		this.motionY = vy;
-		this.motionZ = vz;
+		this.xd = vx;
+		this.yd = vy;
+		this.zd = vz;
 	}
 	
 	/**
@@ -190,12 +198,12 @@ public abstract class ParticleWizardry extends Particle {
 		this.speed = speed * 2 * Math.PI; // Converts rotations per tick into radians per tick for the trig functions
 		this.angle = this.random.nextFloat() * (float)Math.PI * 2; // Random start angle
 		// Need to set the start position or the circle won't be centred on the correct position
-		this.getX() = relativeX - radius * Mth.cos(angle);
-		this.getZ() = relativeZ + radius * Mth.sin(angle);
+		this.y = relativeX - radius * Mth.cos(angle);
+		this.z = relativeZ + radius * Mth.sin(angle);
 		// Set these to the correct values
-		this.relativeMotionX = motionX;
-		this.relativeMotionY = motionY;
-		this.relativeMotionZ = motionZ;
+		this.relativeMotionX = xd;
+		this.relativeMotionY = yd;
+		this.relativeMotionZ = zd;
 	}
 	
 	/**
@@ -206,15 +214,15 @@ public abstract class ParticleWizardry extends Particle {
 		this.entity = entity;
 		// Set these to the correct values
 		if(entity != null){
-			this.setPosition(this.entity.getX() + relativeX, this.entity.getY()
+			this.setPos(this.entity.getX() + relativeX, this.entity.getY()
 					+ relativeY, this.entity.getZ() + relativeZ);
-			this.prevgetX() = this.getX();
-			this.prevgetY() = this.getY();
-			this.prevgetZ() = this.getZ();
+            this.xo = this.x;
+            this.yo = this.y;
+            this.zo = this.z;
 			// Set these to the correct values
-			this.relativeMotionX = motionX;
-			this.relativeMotionY = motionY;
-			this.relativeMotionZ = motionZ;
+			this.relativeMotionX = xd;
+			this.relativeMotionY = yd;
+			this.relativeMotionZ = zd;
 		}
 	}
 	
@@ -227,8 +235,8 @@ public abstract class ParticleWizardry extends Particle {
 	 * @param b The blue colour component
 	 */
 	@Override
-	public void setRBGColorF(float r, float g, float b){
-		super.setRBGColorF(r, g, b);
+	public void setColor(float r, float g, float b){
+		super.setColor(r, g, b);
 		initialRed = r;
 		initialGreen = g;
 		initialBlue = b;
@@ -303,14 +311,14 @@ public abstract class ParticleWizardry extends Particle {
 	
 	// ============================================== Method Overrides ==============================================
 	
-	@Override
-	public int getFXLayer(){
-		return sprites.length == 0 ? super.getFXLayer() : 1; // This has to be 1 for the TextureAtlasSprites to work
-	}
+    @Override
+    public ParticleRenderType getRenderType() {
+        return sprites.length == 0 ? ParticleRenderType.PARTICLE_SHEET_OPAQUE : ParticleRenderType.TERRAIN_SHEET; // This has to be 1 for the TextureAtlasSprites to work
+    }
 
 	@Override
-	public int getBrightnessForRender(float partialTick){
-		return shaded ? super.getBrightnessForRender(partialTick) : 15728880;
+	public int getLightColor(float partialTick){
+		return shaded ? super.getLightColor(partialTick) : 15728880;
 	}
 	
 	/**
@@ -333,14 +341,15 @@ public abstract class ParticleWizardry extends Particle {
 	 */
 	// Fun fact: unlike entities, particles don't seem to bother checking the camera frustum...
 	@Override
-	public void renderParticle(BufferBuilder buffer, Entity viewer, float partialTicks, float lookZ, float lookY,
-			float lookX, float lookXY, float lookYZ){
+	public void render(VertexConsumer consumer, Camera camera, float partialTicks) {
 
+		Entity viewer = camera.getEntity();
+		
 		updateEntityLinking(viewer, partialTicks);
 		
 		if(Float.isNaN(this.yaw) || Float.isNaN(this.pitch)){
 			// Normal behaviour (rotates to face the viewer)
-			drawParticle(buffer, viewer, partialTicks, lookZ, lookY, lookX, lookXY, lookYZ);
+			super.render(consumer, camera, partialTicks);
 		}else{
 			
 			// Specific rotation
@@ -356,7 +365,7 @@ public abstract class ParticleWizardry extends Particle {
 	        float rotationYZ = -rotationZ * Mth.sin(pitch * degToRadFactor);
 	        float rotationXY = rotationX * Mth.sin(pitch * degToRadFactor);
 	        
-			drawParticle(buffer, viewer, partialTicks, rotationX, rotationY, rotationZ, rotationYZ, rotationXY);
+			drawParticle(consumer, camera, partialTicks, rotationX, rotationY, rotationZ, rotationYZ, rotationXY);
 		}
 	}
 
@@ -365,22 +374,52 @@ public abstract class ParticleWizardry extends Particle {
 	 * does the actual rendering. Subclasses should override this method instead of renderParticle. By default, this
 	 * method simply calls super.renderParticle.
 	 */
-	protected void drawParticle(BufferBuilder buffer, Entity viewer, float partialTicks, float rotationX, float rotationY, float rotationZ, float rotationYZ, float rotationXY){
-		super.renderParticle(buffer, viewer, partialTicks, rotationX, rotationY, rotationZ, rotationYZ, rotationXY);
+	protected void drawParticle(VertexConsumer buffer, Camera camera, float partialTicks, float rotationX, float rotationY, float rotationZ, float rotationYZ, float rotationXY){
+        Vec3 vec3 = camera.getPosition();
+
+        float s = this.adjustQuadSize ? 0.1f : 1;
+        float f4 = s * this.getQuadSize(partialTicks);
+
+        float f = this.getU0();
+        float f1 = this.getU1();
+        float f2 = this.getV0();
+        float f3 = this.getV1();
+
+        float f5 = (float) (Mth.lerp((double) partialTicks, this.xo, this.x) - vec3.x());
+        float f6 = (float) (Mth.lerp((double) partialTicks, this.yo, this.y) - vec3.y());
+        float f7 = (float) (Mth.lerp((double) partialTicks, this.zo, this.z) - vec3.z());
+
+        int i = this.getLightColor(partialTicks);
+        int j = i >> 16 & 65535;
+        int k = i & 65535;
+        Vec3[] avec3d = new Vec3[]{new Vec3((double) (-rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4), (double) (-rotationYZ * f4 - rotationXY * f4)), new Vec3((double) (-rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4), (double) (-rotationYZ * f4 + rotationXY * f4)), new Vec3((double) (rotationX * f4 + rotationXY * f4), (double) (rotationZ * f4), (double) (rotationYZ * f4 + rotationXY * f4)), new Vec3((double) (rotationX * f4 - rotationXY * f4), (double) (-rotationZ * f4), (double) (rotationYZ * f4 - rotationXY * f4))};
+
+        if (this.roll != 0.0F) {
+            float f8 = this.roll + (this.roll - this.oRoll) * partialTicks;
+            float f9 = Mth.cos(f8 * 0.5F);
+            float f10 = Mth.sin(f8 * 0.5F) * (float) camera.rotation().i();
+            float f11 = Mth.sin(f8 * 0.5F) * (float) camera.rotation().j();
+            float f12 = Mth.sin(f8 * 0.5F) * (float) camera.rotation().k();
+            Vec3 vec3d = new Vec3((double) f10, (double) f11, (double) f12);
+
+            for (int l = 0; l < 4; ++l) {
+                avec3d[l] = vec3d.scale(2.0D * avec3d[l].dot(vec3d)).add(avec3d[l].scale((double) (f9 * f9) - vec3d.dot(vec3d))).add(vec3d.cross(avec3d[l]).scale((double) (2.0F * f9)));
+            }
+        }
+
+        buffer.vertex((double) f5 + avec3d[0].x, (double) f6 + avec3d[0].y, (double) f7 + avec3d[0].z).uv(f1, f3).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j, k).endVertex();
+        buffer.vertex((double) f5 + avec3d[1].x, (double) f6 + avec3d[1].y, (double) f7 + avec3d[1].z).uv(f1, f2).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j, k).endVertex();
+        buffer.vertex((double) f5 + avec3d[2].x, (double) f6 + avec3d[2].y, (double) f7 + avec3d[2].z).uv(f, f2).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j, k).endVertex();
+        buffer.vertex((double) f5 + avec3d[3].x, (double) f6 + avec3d[3].y, (double) f7 + avec3d[3].z).uv(f, f3).color(this.rCol, this.gCol, this.bCol, this.alpha).uv2(j, k).endVertex();
 	}
 
 	protected void updateEntityLinking(Entity viewer, float partialTicks){
 		// TODO: Still not working, it seems this bug was a thing back in 4.2.x anyway
 		if(this.entity != null){
 			// This is kind of cheating but we know it's always a constant velocity so it works fine
-			prevgetX() = getX() + entity.prevgetX() - entity.getX() - relativeMotionX * (1-partialTicks);
-			prevgetY() = getY() + entity.prevgetY() - entity.getY() - relativeMotionY * (1-partialTicks);
-			prevgetZ() = getZ() + entity.prevgetZ() - entity.getZ() - relativeMotionZ * (1-partialTicks);
-		}else if(this.getFXLayer() == 3){
-			// Not sure why, but when fx layer is 3, the interp pos is wrong when not linked to an entity
-			interpgetX() = viewer.lastTickgetX() + (viewer.getX() - viewer.lastTickgetX()) * (double)partialTicks;
-			interpgetY() = viewer.lastTickgetY() + (viewer.getY() - viewer.lastTickgetY()) * (double)partialTicks;
-			interpgetZ() = viewer.lastTickgetZ() + (viewer.getZ() - viewer.lastTickgetZ()) * (double)partialTicks;
+            xo = x + entity.xo - entity.getX() - relativeMotionX * (1 - partialTicks);
+            yo = y + entity.yo - entity.getY() - relativeMotionY * (1 - partialTicks);
+            zo = z + entity.zo - entity.getZ() - relativeMotionZ * (1 - partialTicks);
 		}
 	}
 	
@@ -389,10 +428,10 @@ public abstract class ParticleWizardry extends Particle {
 
 		super.tick();
 
-		if(this.canCollide && this.onGround){
+		if(this.hasPhysics && this.onGround){
 			// I reject your friction and substitute my own!
-			this.motionX /= 0.699999988079071D;
-			this.motionZ /= 0.699999988079071D;
+			this.xd /= 0.699999988079071D;
+			this.zd /= 0.699999988079071D;
 		}
 
 		if(entity != null || radius > 0){
@@ -403,8 +442,8 @@ public abstract class ParticleWizardry extends Particle {
 			
 			// Entity linking
 			if(this.entity != null){
-				if(this.entity.isDead){
-					this.setExpired();
+				if(!this.entity.isAlive()){
+					this.remove();
 				}else{
 					x += this.entity.getX();
 					y += this.entity.getY();
@@ -420,7 +459,7 @@ public abstract class ParticleWizardry extends Particle {
 				z += radius * Mth.sin(angle);
 			}
 
-			this.setPosition(x, y, z);
+			this.setPos(x, y, z);
 
 			this.relativeX += relativeMotionX;
 			this.relativeY += relativeMotionY;
@@ -428,105 +467,88 @@ public abstract class ParticleWizardry extends Particle {
 		}
 		
 		// Colour fading
-		float ageFraction = (float)this.particleAge / (float)this.particleMaxAge;
+		float ageFraction = (float)this.age / (float)this.lifetime;
 		// No longer uses setRBGColorF because that method now also sets the initial values
-		this.particleRed   = this.initialRed   + (this.fadeRed   - this.initialRed)   * ageFraction;
-		this.particleGreen = this.initialGreen + (this.fadeGreen - this.initialGreen) * ageFraction;
-		this.particleBlue  = this.initialBlue  + (this.fadeBlue  - this.initialBlue)  * ageFraction;
+		this.rCol = this.initialRed   + (this.fadeRed   - this.initialRed)   * ageFraction;
+		this.gCol = this.initialGreen + (this.fadeGreen - this.initialGreen) * ageFraction;
+		this.bCol = this.initialBlue  + (this.fadeBlue  - this.initialBlue)  * ageFraction;
 		
 		// Animation
 		if(sprites.length > 1){
 			// Math.min included for safety so the index cannot possibly exceed the length - 1 an cause an AIOOBE
 			// (which would probably otherwise happen if particleAge == particleMaxAge)
-			this.setParticleTexture(sprites[Math.min((int)(ageFraction * sprites.length), sprites.length - 1)]);
+			this.setSprite(sprites[Math.min((int)(ageFraction * sprites.length), sprites.length - 1)]);
 		}
 
 		// Collision spreading
-		if(canCollide){
+		if(hasPhysics){
 
-			if(this.motionX == 0 && this.prevVelX != 0){ // If the particle just collided in x
+			if(this.xd == 0 && this.prevVelX != 0){ // If the particle just collided in x
 				// Reduce lateral velocity so the added spread speed actually has an effect
-				this.motionY *= IMPACT_FRICTION;
-				this.motionZ *= IMPACT_FRICTION;
+				this.yd *= IMPACT_FRICTION;
+				this.zd *= IMPACT_FRICTION;
 				// Add random velocity in y and z proportional to the impact velocity
-				this.motionY += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
-				this.motionZ += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
+				this.yd += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
+				this.zd += (random.nextDouble()*2 - 1) * this.prevVelX * SPREAD_FACTOR;
 			}
 
-			if(this.motionY == 0 && this.prevVelY != 0){ // If the particle just collided in y
+			if(this.yd == 0 && this.prevVelY != 0){ // If the particle just collided in y
 				// Reduce lateral velocity so the added spread speed actually has an effect
-				this.motionX *= IMPACT_FRICTION;
-				this.motionZ *= IMPACT_FRICTION;
+				this.xd *= IMPACT_FRICTION;
+				this.zd *= IMPACT_FRICTION;
 				// Add random velocity in x and z proportional to the impact velocity
-				this.motionX += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
-				this.motionZ += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
+				this.xd += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
+				this.zd += (random.nextDouble()*2 - 1) * this.prevVelY * SPREAD_FACTOR;
 			}
 
-			if(this.motionZ == 0 && this.prevVelZ != 0){ // If the particle just collided in z
+			if(this.zd == 0 && this.prevVelZ != 0){ // If the particle just collided in z
 				// Reduce lateral velocity so the added spread speed actually has an effect
-				this.motionX *= IMPACT_FRICTION;
-				this.motionY *= IMPACT_FRICTION;
+				this.xd *= IMPACT_FRICTION;
+				this.yd *= IMPACT_FRICTION;
 				// Add random velocity in x and y proportional to the impact velocity
-				this.motionX += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
-				this.motionY += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
+				this.xd += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
+				this.yd += (random.nextDouble()*2 - 1) * this.prevVelZ * SPREAD_FACTOR;
 			}
 
 			double searchRadius = 20;
 
-			List<Entity> nearbyEntities = EntityUtils.getEntitiesWithinRadius(searchRadius, this.getX(),
-					this.getY(), this.getZ(), world, Entity.class);
+			List<Entity> nearbyEntities = EntityUtils.getEntitiesWithinRadius(searchRadius, this.x,
+					this.y, this.z, level, Entity.class);
 
 			if(nearbyEntities.stream().anyMatch(e -> e instanceof ICustomHitbox
-					&& ((ICustomHitbox)e).calculateIntercept(new Vec3(getX(), getY(), getZ()),
-					new Vec3(prevgetX(), prevgetY(), prevgetZ()), 0) != null)) this.setExpired();
+					&& ((ICustomHitbox)e).calculateIntercept(new Vec3(x, y, z),
+					new Vec3(xo, yo, zo), 0) != null)) this.remove();
 
 		}
 
-		this.prevVelX = motionX;
-		this.prevVelY = motionY;
-		this.prevVelZ = motionZ;
+		this.prevVelX = xd;
+		this.prevVelY = yd;
+		this.prevVelZ = zd;
 	}
 
 	// Overridden and copied to fix the collision behaviour
 	@Override
 	public void move(double x, double y, double z){
 
-		double origY = y;
-		double origX = x;
-		double origZ = z;
+        double origX = x;
+        double origY = y;
+        double origZ = z;
+        if (this.hasPhysics && (x != 0.0D || y != 0.0D || z != 0.0D) && x * x + y * y + z * z < Mth.square(100.0D)) {
+            Vec3 vec3 = Entity.collideBoundingBox((Entity) null, new Vec3(x, y, z), this.getBoundingBox(), this.level, List.of());
+            x = vec3.x;
+            y = vec3.y;
+            z = vec3.z;
+        }
 
-		if(this.canCollide){
-
-			List<AABB> list = this.level.getCollisionBoxes(null, this.getBoundingBox().expand(x, y, z));
-
-			for(AABB axisalignedbb : list){
-				y = axisalignedbb.calculateYOffset(this.getBoundingBox(), y);
-			}
-
-			this.setBoundingBox(this.getBoundingBox().offset(0.0D, y, 0.0D));
-
-			for(AABB axisalignedbb1 : list){
-				x = axisalignedbb1.calculateXOffset(this.getBoundingBox(), x);
-			}
-
-			this.setBoundingBox(this.getBoundingBox().offset(x, 0.0D, 0.0D));
-
-			for(AABB axisalignedbb2 : list){
-				z = axisalignedbb2.calculateZOffset(this.getBoundingBox(), z);
-			}
-
-			this.setBoundingBox(this.getBoundingBox().offset(0.0D, 0.0D, z));
-
-		}else{
-			this.setBoundingBox(this.getBoundingBox().offset(x, y, z));
-		}
-
-		this.resetPositionToBB();
+        if (x != 0.0D || y != 0.0D || z != 0.0D) {
+            this.setBoundingBox(this.getBoundingBox().move(x, y, z));
+            this.setLocationFromBoundingbox();
+        }
 		this.onGround = origY != y && origY < 0.0D;
 
-		if(origX != x) this.motionX = 0.0D;
-		if(origY != y) this.motionY = 0.0D; // Why doesn't Particle do this for y?
-		if(origZ != z) this.motionZ = 0.0D;
+		if(origX != x) this.xd = 0.0D;
+		if(origY != y) this.yd = 0.0D; // Why doesn't Particle do this for y?
+		if(origZ != z) this.zd = 0.0D;
 	}
 
 

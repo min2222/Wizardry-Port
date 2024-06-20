@@ -26,7 +26,7 @@ public class BlindingFlash extends SpellAreaEffect {
 	protected boolean affectEntity(Level world, Vec3 origin, @Nullable LivingEntity caster, LivingEntity target, int targetCount, int ticksInUse, SpellModifiers modifiers){
 
 		if(EntityUtils.isLiving(target)){
-			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade));
+			int duration = (int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get()));
 			target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));
 		}
 

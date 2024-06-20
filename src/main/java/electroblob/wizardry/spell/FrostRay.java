@@ -62,7 +62,7 @@ public class FrostRay extends SpellRay {
 			}else{
 				// For frost ray the entity can move slightly, unlike freeze
 				((LivingEntity)target).addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.duration_upgrade)),
+						(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
 						getProperty(EFFECT_STRENGTH).intValue()));
 
 				if(ticksInUse % 10 == 0){
