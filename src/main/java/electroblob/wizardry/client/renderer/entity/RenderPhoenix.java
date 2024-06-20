@@ -5,13 +5,13 @@ import electroblob.wizardry.client.model.ModelPhoenix;
 import electroblob.wizardry.entity.living.EntityPhoenix;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 //@SideOnly(Side.CLIENT)
-public class RenderPhoenix extends RenderLiving<EntityPhoenix> {
+public class RenderPhoenix extends LivingEntityRenderer<EntityPhoenix> {
 
 	private static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/entity/phoenix.png");
 

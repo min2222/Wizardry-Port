@@ -25,9 +25,7 @@ public class ItemWizardHandbook extends Item {
 	private static final String AUTHOR = "Electroblob";
 
 	public ItemWizardHandbook(){
-		super();
-		setMaxStackSize(1);
-		setCreativeTab(WizardryTabs.WIZARDRY);
+        super(new Item.Properties().stacksTo(1).tab(WizardryTabs.WIZARDRY));
 	}
 
 	@Override
@@ -44,7 +42,7 @@ public class ItemWizardHandbook extends Item {
 		} else if (!world.isClientSide){
 			player.displayClientMessage(Component.translatable("item." + Wizardry.MODID + ":wizard_handbook.disabled"), false);
 		}
-		return InteractionResultHolder.newResult(InteractionResult.SUCCESS, stack);
+		return InteractionResultHolder.success(stack);
 	}
 
 }

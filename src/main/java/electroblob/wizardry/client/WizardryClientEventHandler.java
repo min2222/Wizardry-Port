@@ -59,18 +59,18 @@ public final class WizardryClientEventHandler {
 
 			// Reset shaders if their respective potions aren't active
 			// This is a player so the potion effects are synced by vanilla
-			if(Minecraft.getInstance().entityRenderer.getShaderGroup() != null){ // IntelliJ is wrong, this can be null
+			if(Minecraft.getInstance().gameRenderer.getShaderGroup() != null){ // IntelliJ is wrong, this can be null
 
-				String activeShader = Minecraft.getInstance().entityRenderer.getShaderGroup().getShaderGroupName();
+				String activeShader = Minecraft.getInstance().gameRenderer.getShaderGroup().getShaderGroupName();
 
-				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.slow_time))
-						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.sixth_sense))
-						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.transience))){
+				if((activeShader.equals(SlowTime.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.SLOW_TIME.get()))
+						|| (activeShader.equals(SixthSense.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.SIXTH_SENSE.get()))
+						|| (activeShader.equals(Transience.SHADER.toString()) && !Minecraft.getInstance().player.hasEffect(WizardryPotions.TRANSIENCE.get()))){
 
 					if(activeShader.equals(SixthSense.SHADER.toString())
 					|| activeShader.equals(Transience.SHADER.toString())) RenderBlinkEffect.playBlinkEffect();
 
-					Minecraft.getInstance().entityRenderer.stopUseShader();
+					Minecraft.getInstance().gameRenderer.shutdownEffect();
 				}
 			}
 		}
@@ -81,9 +81,9 @@ public final class WizardryClientEventHandler {
 	@SubscribeEvent
 	public static void onClientTickEvent(TickEvent.ClientTickEvent event){
 
-		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getInstance().isGamePaused()){
+		if(event.phase == TickEvent.Phase.END && !net.minecraft.client.Minecraft.getInstance().isPaused()){
 
-			Level world = net.minecraft.client.Minecraft.getInstance().world;
+			Level world = net.minecraft.client.Minecraft.getInstance().level;
 
 			if(world == null) return;
 

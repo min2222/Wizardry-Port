@@ -56,11 +56,13 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.level.entity.IProjectile;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -68,24 +70,29 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Tags.Biomes;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.PotionEvent;
-import net.minecraftforge.event.entity.player.PlayerDropsEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -148,8 +155,7 @@ public class ItemArtefact extends Item {
 	private boolean enabled = true;
 
 	public ItemArtefact(Rarity rarity, Type type){
-		setMaxStackSize(1);
-		setCreativeTab(WizardryTabs.GEAR);
+        super(new Item.Properties().stacksTo(1).tab(WizardryTabs.GEAR));
 		this.rarity = rarity;
 		this.type = type;
 	}
@@ -177,9 +183,9 @@ public class ItemArtefact extends Item {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
-		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
-		if(!enabled) tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":generic.disabled", new Style().setColor(ChatFormatting.RED)));
+	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag advanced){
+		Wizardry.proxy.addMultiLineDescription(tooltip, this.getOrCreateDescriptionId() + ".desc");
+		if(!enabled) tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":generic.disabled", Style.EMPTY.withColor(ChatFormatting.RED)));
 	}
 
 	@Nullable
@@ -339,7 +345,7 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_arcane_defence){
 
 					if(player.tickCount % 300 == 0){
-						for(ItemStack stack : player.getArmorInventoryList()){
+						for(ItemStack stack : player.getArmorSlots()){
 							// IManaStoringItem is sufficient, since anything in the armour slots is probably armour
 							if(stack.getItem() instanceof IManaStoringItem)
 								((IManaStoringItem)stack.getItem()).rechargeMana(stack, 1);
@@ -348,10 +354,10 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_recovery){
 
-					if(player.shouldHeal() && player.getHealth() < player.getMaxHealth()/2
+					if(player.isHurt() && player.getHealth() < player.getMaxHealth()/2
 						&& player.tickCount % 50 == 0){
 
-						int totalArmourMana = Streams.stream(player.getArmorInventoryList())
+						int totalArmourMana = Streams.stream(player.getArmorSlots())
 								.filter(s -> s.getItem() instanceof IManaStoringItem)
 								.mapToInt(s -> ((IManaStoringItem)s.getItem()).getMana(s))
 								.sum();
@@ -359,7 +365,7 @@ public class ItemArtefact extends Item {
 						if(totalArmourMana >= 2){
 							player.heal(1);
 							// 2 mana per half-heart, randomly distributed
-							List<ItemStack> chargedArmour = Streams.stream(player.getArmorInventoryList())
+							List<ItemStack> chargedArmour = Streams.stream(player.getArmorSlots())
 									.filter(s -> s.getItem() instanceof IManaStoringItem)
 									.filter(s -> !((IManaStoringItem)s.getItem()).isManaEmpty(s))
 									.collect(Collectors.toList());
@@ -380,7 +386,7 @@ public class ItemArtefact extends Item {
 					// distance the player should be falling at about 0.35b/t, so 0.5 blocks should be enough of a window
 					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.level.random.nextFloat() < 0.5f){
 						if(!WizardData.get(player).isCasting()) WizardData.get(player).startCastingContinuousSpell(Spells.glide, new SpellModifiers(), 600);
-					}else if(player.onGround){
+					}else if(player.isOnGround()){
 						WizardData data = WizardData.get(player);
 						if(data.currentlyCasting() == Spells.glide) data.stopCastingContinuousSpell();
 					}
@@ -392,16 +398,16 @@ public class ItemArtefact extends Item {
 						if(wand.getItem() instanceof ItemScroll) return; // Ignore scrolls since they shouldn't work
 
 						List<Entity> projectiles = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), world, Entity.class);
-						projectiles.removeIf(e -> !(e instanceof IProjectile));
-						Vec3 look = player.getLookVec();
+						projectiles.removeIf(e -> !(e instanceof Projectile));
+						Vec3 look = player.getLookAngle();
 						Vec3 playerPos = player.position().add(0, player.getBbHeight()/2, 0);
 
 						for(Entity projectile : projectiles){
 							Vec3 vec = playerPos.subtract(projectile.position()).normalize();
-							double angle = Math.acos(vec.scale(-1).dotProduct(look));
+							double angle = Math.acos(vec.scale(-1).dot(look));
 							if(angle > Math.PI * 0.4f) continue; // (Roughly) the angle the shield will protect
-							Vec3 velocity = new Vec3(projectile.motionX, projectile.motionY, projectile.motionZ).normalize();
-							double angle1 = Math.acos(vec.dotProduct(velocity));
+							Vec3 velocity = projectile.getDeltaMovement().normalize();
+							double angle1 = Math.acos(vec.dot(velocity));
 							if(angle1 < Math.PI * 0.2f){
 								SpellModifiers modifiers = new SpellModifiers();
 								if(((ISpellCastingItem)wand.getItem()).canCast(wand, Spells.shield, player, InteractionHand.MAIN_HAND, 0, modifiers)){
@@ -414,13 +420,13 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_frost_warding){
 
-					if(!level.isClientSide && player.tickCount % 40 == 0){
+					if(!world.isClientSide && player.tickCount % 40 == 0){
 
-						List<EntityIceBarrier> barriers = level.getEntitiesWithinAABB(EntityIceBarrier.class, player.getBoundingBox().grow(1.5));
+						List<EntityIceBarrier> barriers = world.getEntitiesOfClass(EntityIceBarrier.class, player.getBoundingBox().inflate(1.5));
 
 						// Check whether any barriers near the player are facing away from them, meaning the player is behind them
-						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookVec().dotProduct(b.position().subtract(player.position())) > 0)){
-							player.addEffect(new MobEffectInstance(WizardryPotions.ward, 50, 1));
+						if(!barriers.isEmpty() && barriers.stream().anyMatch(b -> b.getLookAngle().dot(b.position().subtract(player.position())) > 0)){
+							player.addEffect(new MobEffectInstance(WizardryPotions.WARD.get(), 50, 1));
 						}
 
 					}
@@ -428,10 +434,10 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.charm_feeding){
 					// Every 5 seconds, feed the player if they are hungry enough
 					if(player.tickCount % 100 == 0){
-						if(player.getFoodStats().getFoodLevel() < 20 - Spells.satiety.getProperty(Satiety.HUNGER_POINTS).intValue()){
+						if(player.getFoodData().getFoodLevel() < 20 - Spells.satiety.getProperty(Satiety.HUNGER_POINTS).intValue()){
 							if(findMatchingWandAndCast(player, Spells.satiety)) continue;
 						}
-						if(player.getFoodStats().getFoodLevel() < 20 - Spells.replenish_hunger.getProperty(ReplenishHunger.HUNGER_POINTS).intValue()){
+						if(player.getFoodData().getFoodLevel() < 20 - Spells.replenish_hunger.getProperty(ReplenishHunger.HUNGER_POINTS).intValue()){
 							findMatchingWandAndCast(player, Spells.replenish_hunger);
 						}
 					}
@@ -452,11 +458,11 @@ public class ItemArtefact extends Item {
 
 				float potency = modifiers.get(SpellModifiers.POTENCY);
 				float cooldown = modifiers.get(WizardryItems.cooldown_upgrade);
-				Biome biome = player.level.getBiome(player.getPosition());
+				Holder<Biome> biome = player.level.getBiome(player.blockPosition());
 
 				if(artefact == WizardryItems.ring_battlemage){
 
-					if(player.getOffHandItem().getItem() instanceof ISpellCastingItem
+					if(player.getOffhandItem().getItem() instanceof ISpellCastingItem
 						&& ImbueWeapon.isSword(player.getMainHandItem())){
 						modifiers.set(SpellModifiers.POTENCY, 1.1f * potency, false);
 					}
@@ -464,15 +470,15 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.ring_fire_biome){
 
 					if(event.getSpell().getElement() == Element.FIRE
-							&& BiomeDictionary.hasType(biome, BiomeDictionary.Type.HOT)
-							&& BiomeDictionary.hasType(biome, BiomeDictionary.Type.DRY)){
+							&& biome.is(Biomes.IS_HOT)
+							&& biome.is(Biomes.IS_DRY)){
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
 				}else if(artefact == WizardryItems.ring_ice_biome){
 
 					if(event.getSpell().getElement() == Element.ICE
-							&& BiomeDictionary.hasType(biome, BiomeDictionary.Type.SNOWY)){
+							&& biome.is(Biomes.IS_SNOWY)){
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
@@ -480,9 +486,9 @@ public class ItemArtefact extends Item {
 
 					if(event.getSpell().getElement() == Element.EARTH
 							// If it was any forest that would be far too many, so taigas and jungles are excluded
-							&& BiomeDictionary.hasType(biome, BiomeDictionary.Type.FOREST)
-							&& !BiomeDictionary.hasType(biome, BiomeDictionary.Type.CONIFEROUS)
-							&& !BiomeDictionary.hasType(biome, BiomeDictionary.Type.JUNGLE)){
+							&& biome.is(BiomeTags.IS_FOREST)
+							&& !biome.is(Biomes.IS_CONIFEROUS)
+							&& !biome.is(BiomeTags.IS_JUNGLE)){
 						modifiers.set(SpellModifiers.POTENCY, 1.3f * potency, false);
 					}
 
@@ -494,8 +500,8 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.ring_full_moon){
 
-					if(event.getSpell().getElement() == Element.EARTH && !player.level.isDaytime()
-							&& player.level.provider.getMoonPhase(player.level.getWorldTime()) == 0){
+					if(event.getSpell().getElement() == Element.EARTH && !player.level.isDay()
+							&& player.level.getMoonPhase() == 0){
 						modifiers.set(WizardryItems.cooldown_upgrade, cooldown * 0.3f, false);
 					}
 
@@ -527,12 +533,12 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.charm_hunger_casting){
 
-					if(!player.capabilities.isCreativeMode && event.getSource() == Source.WAND && !event.getSpell().isContinuous){ // TODO: Continuous spells?
+					if(!player.getAbilities().instabuild && event.getSource() == Source.WAND && !event.getSpell().isContinuous){ // TODO: Continuous spells?
 
 						ItemStack wand = player.getMainHandItem();
 
 						if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)){
-							wand = player.getOffHandItem();
+							wand = player.getOffhandItem();
 							if(!(wand.getItem() instanceof ISpellCastingItem && wand.getItem() instanceof IManaStoringItem)) return;
 						}
 
@@ -540,8 +546,8 @@ public class ItemArtefact extends Item {
 
 							int hunger = event.getSpell().getCost() / 5;
 
-							if(player.getFoodStats().getFoodLevel() >= hunger){
-								player.getFoodStats().addStats(-hunger, 0);
+							if(player.getFoodData().getFoodLevel() >= hunger){
+								player.getFoodData().eat(-hunger, 0);
 								modifiers.set(SpellModifiers.COST, 0, false);
 							}
 						}
@@ -571,7 +577,7 @@ public class ItemArtefact extends Item {
 					for(LivingEntity entity : nearby){
 						if(AllyDesignationSystem.isAllied(player, entity) && entity.getHealth() > 0 && entity.getHealth() < entity.getMaxHealth()){
 							entity.heal(healthGained * 0.2f); // 1/5 of the amount healed by the spell itself
-							if(event.getWorld().isRemote) ParticleBuilder.spawnHealParticles(event.getWorld(), entity);
+							if(event.getWorld().isClientSide) ParticleBuilder.spawnHealParticles(event.getWorld(), entity);
 						}
 					}
 				}
@@ -580,12 +586,12 @@ public class ItemArtefact extends Item {
 	}
 
 	@SubscribeEvent
-	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event){
+	public static void onLivingUpdateEvent(LivingEvent.LivingTickEvent event){
 
 		LivingEntity entity = event.getEntity();
 
 		// No point doing this every tick, every 2.5 seconds should be enough
-		if(entity.tickCount % 50 == 0 && entity.hasEffect(WizardryPotions.mind_control)){
+		if(entity.tickCount % 50 == 0 && entity.hasEffect(WizardryPotions.MIND_CONTROL.get())){
 
 			CompoundTag entityNBT = entity.getPersistentData();
 
@@ -603,7 +609,7 @@ public class ItemArtefact extends Item {
 								.filter(e -> AllyDesignationSystem.isValidTarget(caster, e))
 								.forEach(target -> MindControl.startControlling(target, (Player)caster,
 										// Control the new target for only the remaining duration, otherwise it could go on forever!
-										entity.getActivePotionEffect(WizardryPotions.mind_control).getDuration()));
+										entity.getEffect(WizardryPotions.MIND_CONTROL.get()).getDuration()));
 					}
 				}
 			}
@@ -621,13 +627,13 @@ public class ItemArtefact extends Item {
 
 				if(artefact == WizardryItems.amulet_warding){
 
-					if(!event.getSource().isUnblockable() && event.getSource().isMagicDamage()){
+					if(!event.getSource().isBypassArmor() && event.getSource().isMagic()){
 						event.setAmount(event.getAmount() * 0.9f);
 					}
 
 				}else if(artefact == WizardryItems.amulet_fire_protection){
 
-					if(event.getSource().isFireDamage()) event.setAmount(event.getAmount() * 0.7f);
+					if(event.getSource().isFire()) event.setAmount(event.getAmount() * 0.7f);
 
 				}else if(artefact == WizardryItems.amulet_ice_protection){
 
@@ -645,9 +651,9 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.amulet_fire_cloaking){
 
-					if(!event.getSource().isUnblockable()){
+					if(!event.getSource().isBypassArmor()){
 
-						List<EntityFireRing> fireRings = player.level.getEntitiesWithinAABB(EntityFireRing.class, player.getBoundingBox());
+						List<EntityFireRing> fireRings = player.level.getEntitiesOfClass(EntityFireRing.class, player.getBoundingBox());
 
 						for(EntityFireRing fireRing : fireRings){
 							if(fireRing.getCaster() instanceof Player && (fireRing.getCaster() == player
@@ -674,14 +680,14 @@ public class ItemArtefact extends Item {
 						}
 
 						DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
-								MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
+								MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
 						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.level.random.nextFloat() * 0.4F + 1.5F);
 
 					}
 
 				}else if(artefact == WizardryItems.amulet_lich){
 
-					if(!event.getSource().isUnblockable() && player.level.random.nextFloat() < 0.15f){
+					if(!event.getSource().isBypassArmor() && player.level.random.nextFloat() < 0.15f){
 
 						List<Mob> nearbyMobs = EntityUtils.getEntitiesWithinRadius(5, player.getX(), player.getY(), player.getZ(), player.level, Mob.class);
 						nearbyMobs.removeIf(e -> !(e instanceof ISummonedCreature && ((ISummonedCreature)e).getCaster() == player));
@@ -689,7 +695,7 @@ public class ItemArtefact extends Item {
 						if(!nearbyMobs.isEmpty()){
 							Collections.shuffle(nearbyMobs);
 							// Even though we're passing the same damage source through, we still need the safety check
-							DamageSafetyChecker.attackEntitySafely(nearbyMobs.get(0), event.getSource(), event.getAmount(), event.getSource().getDamageType());
+							DamageSafetyChecker.attackEntitySafely(nearbyMobs.get(0), event.getSource(), event.getAmount(), event.getSource().getMsgId());
 							event.setCanceled(true);
 							return; // Standard practice: stop as soon as the event is canceled
 						}
@@ -707,7 +713,7 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.amulet_transience){
 
 					if(player.getHealth() <= 6 && player.level.random.nextFloat() < 0.25f){
-						player.addEffect(new MobEffectInstance(WizardryPotions.transience, 300));
+						player.addEffect(new MobEffectInstance(WizardryPotions.TRANSIENCE.get(), 300));
 						player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0, false, false));
 					}
 				}
@@ -734,7 +740,7 @@ public class ItemArtefact extends Item {
 
 					if(EntityUtils.isMeleeDamage(event.getSource()) && mainhandItem.getItem() instanceof ItemWand
 							&& ((ItemWand)mainhandItem.getItem()).element == Element.ICE){
-						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.frost, 200, 0));
+						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), 200, 0));
 					}
 
 				}else if(artefact == WizardryItems.ring_lightning_melee){
@@ -748,7 +754,7 @@ public class ItemArtefact extends Item {
 								.min(Comparator.comparingDouble(player::distanceToSqr))
 								.ifPresent(target -> {
 
-									if(level.isClientSide){
+									if(world.isClientSide){
 
 										ParticleBuilder.create(ParticleBuilder.Type.LIGHTNING).entity(event.getEntity())
 												.pos(0, event.getEntity().getBbHeight()/2, 0).target(target).spawn(world);
@@ -758,7 +764,7 @@ public class ItemArtefact extends Item {
 									}
 
 									DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
-											MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
+											MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
 									target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 								});
 					}
@@ -781,7 +787,7 @@ public class ItemArtefact extends Item {
 
 					if(!player.level.isClientSide && player.level.random.nextFloat() < 0.15f
 							&& event.getEntity().getHealth() < 12f // Otherwise it's a bit overpowered!
-							&& event.getEntity().hasEffect(WizardryPotions.frost)
+							&& event.getEntity().hasEffect(WizardryPotions.FROST.get())
 							&& EntityUtils.isMeleeDamage(event.getSource())){
 
 						event.setAmount(12f);
@@ -791,12 +797,10 @@ public class ItemArtefact extends Item {
 							double dy = event.getEntity().level.random.nextDouble() - 0.5;
 							double dz = event.getEntity().level.random.nextDouble() - 0.5;
 							EntityIceShard iceshard = new EntityIceShard(event.getEntity().level);
-							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
+							iceshard.setPos(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().getBbWidth(),
 									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
-									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
-							iceshard.motionX = dx * 1.5;
-							iceshard.motionY = dy * 1.5;
-							iceshard.motionZ = dz * 1.5;
+									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().getBbWidth());
+							iceshard.setDeltaMovement(dx * 1.5, dy * 1.5, dz * 1.5);
 							iceshard.setCaster(player);
 							event.getEntity().level.addFreshEntity(iceshard);
 						}
@@ -809,10 +813,10 @@ public class ItemArtefact extends Item {
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 						// or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
 						|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
-							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
+							&& Streams.stream(player.getHandSlots()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY))){
 
-						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.curse_of_soulbinding, 400));
+						event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.CURSE_OF_SOULBINDING.get(), 400));
 						CurseOfSoulbinding.getSoulboundCreatures(WizardData.get(player)).add(event.getEntity().getUUID());
 					}
 
@@ -823,11 +827,11 @@ public class ItemArtefact extends Item {
 							&& (((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.WITHER))
 							// ...or it's direct, non-melee damage and the player is holding a wand with a necromancy spell selected
 							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
-							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
+							&& Streams.stream(player.getHandSlots()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.NECROMANCY
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s) != Spells.life_drain)))){
 
-						if(player.shouldHeal()){
+						if(player.isHurt()){
 							player.heal(event.getAmount() * Spells.life_drain.getProperty(LifeDrain.HEAL_FACTOR).floatValue());
 						}
 					}
@@ -841,7 +845,7 @@ public class ItemArtefact extends Item {
 							|| event.getSource().getDirectEntity() instanceof EntityDart
 							// ...or it's direct, non-melee damage and the player is holding a wand with an earth spell selected
 							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
-							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
+							&& Streams.stream(player.getHandSlots()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.EARTH))){
 
 						event.getEntity().addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0));
@@ -856,7 +860,7 @@ public class ItemArtefact extends Item {
 							|| event.getSource().getDirectEntity() instanceof EntityForceOrb
 							// ...or it's direct, non-melee damage and the player is holding a wand with a sorcery spell selected
 							|| (event.getSource().getDirectEntity() == player && !EntityUtils.isMeleeDamage(event.getSource())
-							&& Streams.stream(player.getHeldEquipment()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
+							&& Streams.stream(player.getHandSlots()).anyMatch(s -> s.getItem() instanceof ISpellCastingItem
 							&& ((ISpellCastingItem)s.getItem()).getCurrentSpell(s).getElement() == Element.SORCERY))){
 
 						InventoryUtils.getPrioritisedHotbarAndOffhand(player).stream()
@@ -884,8 +888,8 @@ public class ItemArtefact extends Item {
 				if(artefact == WizardryItems.ring_combustion){
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
-						event.getEntity().level.createExplosion(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
-								event.getEntity().getZ(), 1.5f, false);
+						event.getEntity().level.explode(event.getEntity(), event.getEntity().getX(), event.getEntity().getY(),
+								event.getEntity().getZ(), 1.5f, BlockInteraction.NONE);
 					}
 
 				}else if(artefact == WizardryItems.ring_disintegration){
@@ -905,12 +909,10 @@ public class ItemArtefact extends Item {
 							double dy = event.getEntity().level.random.nextDouble() - 0.5;
 							double dz = event.getEntity().level.random.nextDouble() - 0.5;
 							EntityIceShard iceshard = new EntityIceShard(event.getEntity().level);
-							iceshard.setPosition(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().width,
+							iceshard.setPos(event.getEntity().getX() + dx + Math.signum(dx) * event.getEntity().getBbWidth(),
 									event.getEntity().getY() + event.getEntity().getBbHeight()/2 + dy,
-									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().width);
-							iceshard.motionX = dx * 1.5;
-							iceshard.motionY = dy * 1.5;
-							iceshard.motionZ = dz * 1.5;
+									event.getEntity().getZ() + dz + Math.signum(dz) * event.getEntity().getBbWidth());
+							iceshard.setDeltaMovement(dx * 1.5, dy * 1.5, dz * 1.5);
 							iceshard.setCaster(player);
 							event.getEntity().level.addFreshEntity(iceshard);
 						}
@@ -922,27 +924,29 @@ public class ItemArtefact extends Item {
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH) // Needs to happen before gravestones, etc.
-	public static void onPlayerDropsEvent(PlayerDropsEvent event){
+	public static void onPlayerDropsEvent(LivingDropsEvent event){
 		// Amulet of the immortal allows players to hold onto a wand with resurrection
 		// This needs to happen or we can't cast the spell with it and use up the mana
-		if(isArtefactActive(event.getEntity(), WizardryItems.amulet_resurrection)){
+		if(!(event.getEntity() instanceof Player))
+			return;
+		if(isArtefactActive((Player) event.getEntity(), WizardryItems.amulet_resurrection)){
 
 			ItemEntity item = event.getDrops().stream()
-					.filter(e -> Resurrection.canStackResurrect(e.getItem(), event.getEntity()))
+					.filter(e -> Resurrection.canStackResurrect(e.getItem(), (Player) event.getEntity()))
 					.findFirst().orElse(null);
 
 			if(item == null) return; // The player didn't have a wand with resurrection on it
-			if(!InventoryUtils.getHotbar(event.getEntity()).contains(ItemStack.EMPTY)) return; // No space on hotbar
+			if(!InventoryUtils.getHotbar((Player) event.getEntity()).contains(ItemStack.EMPTY)) return; // No space on hotbar
 
 			event.getDrops().remove(item);
 			// At this point the player probably has nothing in their hand, but if not just find a free space somewhere
-			if(event.getEntity().getMainHandItem().isEmpty()) event.getEntity().setHeldItem(InteractionHand.MAIN_HAND, item.getItem());
-			else event.getEntity().addItemStackToInventory(item.getItem()); // Always chooses hotbar slots first
+			if(event.getEntity().getMainHandItem().isEmpty()) event.getEntity().setItemInHand(InteractionHand.MAIN_HAND, item.getItem());
+			else ((Player) event.getEntity()).getInventory().add(item.getItem()); // Always chooses hotbar slots first
 		}
 	}
 
 	@SubscribeEvent
-	public static void onPotionApplicableEvent(PotionEvent.PotionApplicableEvent event){
+	public static void onPotionApplicableEvent(MobEffectEvent.Applicable event){
 
 		if(event.getEntity() instanceof Player){
 
@@ -952,11 +956,11 @@ public class ItemArtefact extends Item {
 
 				if(artefact == WizardryItems.amulet_ice_immunity){
 
-					if(event.getPotionEffect().getPotion() == WizardryPotions.frost) event.setResult(Event.Result.DENY);
+					if(event.getEffectInstance().getEffect() == WizardryPotions.FROST.get()) event.setResult(Event.Result.DENY);
 
 				}else if(artefact == WizardryItems.amulet_wither_immunity){
 
-					if(event.getPotionEffect().getPotion() == MobEffects.WITHER) event.setResult(Event.Result.DENY);
+					if(event.getEffectInstance().getEffect() == MobEffects.WITHER) event.setResult(Event.Result.DENY);
 				}
 			}
 		}
@@ -966,15 +970,15 @@ public class ItemArtefact extends Item {
 	public static void onItemPickupEvent(PlayerEvent.ItemPickupEvent event){
 
 		// ItemPickupEvent is just a convenient trigger for this; we don't actually care what got picked up
-		if(isArtefactActive(event.player, WizardryItems.charm_auto_smelt)){
+		if(isArtefactActive(event.getEntity(), WizardryItems.charm_auto_smelt)){
 
 			// So this doesn't waste mana, only cast pocket furnace when it would smelt the maximum number of items
-			if(event.player.inventory.mainInventory.stream()
-					.filter(s -> !FurnaceRecipes.instance().getSmeltingResult(s).isEmpty())
+			if(event.getEntity().getInventory().items.stream()
+					.filter(s -> !event.getEntity().level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(s), event.getEntity().level).isEmpty())
 					.mapToInt(ItemStack::getCount)
 					.sum() >= Spells.pocket_furnace.getProperty(PocketFurnace.ITEMS_SMELTED).intValue()){
 
-				findMatchingWandAndCast(event.player, Spells.pocket_furnace);
+				findMatchingWandAndCast(event.getEntity(), Spells.pocket_furnace);
 			}
 		}
 	}

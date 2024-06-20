@@ -19,6 +19,7 @@ import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentMending;
 import net.minecraft.network.chat.Style;
@@ -172,7 +173,7 @@ public class ItemWizardArmour extends ItemArmor implements IWorkbenchItem, IMana
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, Level world, List<String> tooltip, TooltipFlag advanced){
 
 		if(element != null){
 			tooltip.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wizard_armour.element_cost_reduction",

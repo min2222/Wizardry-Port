@@ -1,6 +1,14 @@
 package electroblob.wizardry.item;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.constants.Constants;
@@ -11,45 +19,63 @@ import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.entity.living.ISummonedCreature;
 import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.event.SpellCastEvent.Source;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.packet.PacketCastSpell;
 import electroblob.wizardry.packet.WizardryPacketHandler;
-import electroblob.wizardry.registry.*;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryAdvancementTriggers;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryRecipes;
+import electroblob.wizardry.registry.WizardrySounds;
+import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.RayTracer;
+import electroblob.wizardry.util.SpellModifiers;
+import electroblob.wizardry.util.SpellProperties;
+import electroblob.wizardry.util.WandHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * This class is (literally) where the magic happens! All of wizardry's wand items are instances of this class. As of
@@ -88,12 +114,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	public Element element;
 
 	public ItemWand(Tier tier, Element element){
-		super();
-		setMaxStackSize(1);
-		setCreativeTab(WizardryTabs.GEAR);
+        super(new Item.Properties().durability(tier.maxCharge).tab(WizardryTabs.GEAR));
 		this.tier = tier;
 		this.element = element;
-		setMaxDamage(this.tier.maxCharge);
 		WizardryRecipes.addToManaFlaskCharging(this);
 		// TODO: Hook to allow addon devs to have this override apply to their own animations
 		addPropertyOverride(new ResourceLocation("pointing"),
@@ -181,17 +204,15 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	public int getManaCapacity(ItemStack stack){
 		return this.getMaxDamage(stack);
 	}
-
+	
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public boolean isFull3D(){
-		return true;
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public Font getFontRenderer(ItemStack stack){
-		return Wizardry.proxy.getFontRenderer(stack);
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			@Override
+			public @org.jetbrains.annotations.Nullable Font getFont(ItemStack stack, FontContext context) {
+				return Wizardry.proxy.getFontRenderer(stack);
+			}
+		});
 	}
 
 	@Override
@@ -211,8 +232,8 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
-		return DrawingUtils.mix(0xff8bfe, 0x8e2ee4, (float)getDurabilityForDisplay(stack));
+	public int getBarColor(ItemStack stack){
+		return DrawingUtils.mix(0xff8bfe, 0x8e2ee4, (float)getBarColor(stack));
 	}
 
 	// Max damage is modifiable with upgrades.
@@ -224,13 +245,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onCreated(ItemStack stack, Level worldIn, Player playerIn){
+	public void onCraftedBy(ItemStack stack, Level worldIn, Player playerIn){
 		setMana(stack, 0); // Wands are empty when first crafted
 	}
 
 	@Override
-	public void tick(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
-		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.areItemStacksEqual(stack, ((LivingEntity) entity).getOffHandItem());
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean isHeldInMainhand){
+		boolean isHeld = isHeldInMainhand || entity instanceof LivingEntity && ItemStack.isSame(stack, ((LivingEntity) entity).getOffhandItem());
 
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is false, the cooldowns will be decremented.
 		// If Wizardry.settings.wandsMustBeHeldToDecrementCooldown is true and isHeld is true, the cooldowns will also be decremented.
@@ -240,32 +261,32 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 
 		// Decrements wand damage (increases mana) every 1.5 seconds if it has a condenser upgrade
-		if(!level.isClientSide && !this.isManaFull(stack) && level.getTotalWorldTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
+		if(!world.isClientSide && !this.isManaFull(stack) && world.getGameTime() % Constants.CONDENSER_TICK_INTERVAL == 0){
 			// If the upgrade level is 0, this does nothing anyway.
 			this.rechargeMana(stack, WandHelper.getUpgradeLevel(stack, WizardryItems.condenser_upgrade));
 		}
 	}
 
 	@Override
-	public Multimap<String, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
+	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack){
 
-		Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
 
 		if(slot == EquipmentSlot.MAINHAND){
 			int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 			// This check doesn't affect the damage output, but it does stop a blank line from appearing in the tooltip.
 			if(level > 0 && !this.isManaEmpty(stack)){
-				multimap.put(Attributes.ATTACK_DAMAGE.getName(),
-						new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Melee upgrade modifier", 2 * level, 0));
-				multimap.put(Attributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Melee upgrade modifier", -2.4000000953674316D, 0));
+				builder.put(Attributes.ATTACK_DAMAGE,
+						new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Melee upgrade modifier", 2 * level, Operation.ADDITION));
+				builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Melee upgrade modifier", -2.4000000953674316D, Operation.ADDITION));
 			}
 		}
 
-		return multimap;
+		return builder.build();
 	}
 
 	@Override
-	public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity wielder){
+	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity wielder){
 
 		int level = WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade);
 		int mana = this.getMana(stack);
@@ -276,7 +297,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean canDestroyBlockInCreative(Level world, BlockPos pos, ItemStack stack, Player player){
+	public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity player){
 		return WandHelper.getUpgradeLevel(stack, WizardryItems.melee_upgrade) == 0;
 	}
 
@@ -292,14 +313,14 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@Override
 	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return true;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return true;
 		return super.canContinueUsing(oldStack, newStack);
 	}
 
 	@Override
 	public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return false;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return false;
 		return super.shouldCauseBlockBreakReset(oldStack, newStack);
 	}
 
@@ -322,24 +343,24 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public UseAnim getItemUseAction(ItemStack itemstack){
+	public UseAnim getUseAnimation(ItemStack itemstack){
 		return WandHelper.getCurrentSpell(itemstack).action;
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack stack){
+	public int getUseDuration(ItemStack stack){
 		return 72000;
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void addInformation(ItemStack stack, Level world, List<String> text, net.minecraft.client.util.ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, Level world, List<Component> text, TooltipFlag advanced){
 
 		Player player = net.minecraft.client.Minecraft.getInstance().player;
 		if (player == null) { return; }
 		// +0.5f is necessary due to the error in the way floats are calculated.
 		if(element != null) text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.buff",
-				new Style().setColor(ChatFormatting.DARK_GRAY),
+				Style.EMPTY.withColor(ChatFormatting.DARK_GRAY),
 				(int)((tier.level + 1) * Constants.POTENCY_INCREASE_PER_TIER * 100 + 0.5f), element.getDisplayName()));
 
 		Spell spell = WandHelper.getCurrentSpell(stack);
@@ -350,22 +371,22 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 			discovered = false;
 		}
 
-		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", new Style().setColor(ChatFormatting.GRAY),
+		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", Style.EMPTY.withColor(ChatFormatting.GRAY),
 				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.world)));
 
 		if(advanced.isAdvanced()){
 			// Advanced tooltips for debugging
-			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.mana", new Style().setColor(ChatFormatting.BLUE),
+			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.mana", Style.EMPTY.withColor(ChatFormatting.BLUE),
 					this.getMana(stack), this.getManaCapacity(stack)));
 
-			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.progression", new Style().setColor(ChatFormatting.GRAY),
+			text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.progression", Style.EMPTY.withColor(ChatFormatting.GRAY),
 					WandHelper.getProgression(stack), this.tier.level < Tier.MASTER.level ? tier.next().getProgression() : 0));
 		}
 	}
 
 	@Override
-	public String getItemStackDisplayName(ItemStack stack){
-		return (this.element == null ? "" : this.element.getFormattingCode()) + super.getItemStackDisplayName(stack);
+	public Component getName(ItemStack stack){
+		return (this.element == null ? "" : this.element.getFormattingCode()) + super.getName(stack);
 	}
 
 	// Continuous spells use the onUsingItemTick method instead of this one.
@@ -373,12 +394,12 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	 * holding the item (I call this client-inconsistency). This means if you spawn particles here they will not show up
 	 * on other players' screens. Instead, this must be done via packets. */
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, EnumHand hand){
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 
 		ItemStack stack = player.getItemInHand(hand);
 
 		// Alternate right-click function; overrides spell casting.
-		if(this.selectMinionTarget(player, world)) return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+		if(this.selectMinionTarget(player, world)) return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 
 		Spell spell = WandHelper.getCurrentSpell(stack);
 		SpellModifiers modifiers = this.calculateModifiers(stack, player, spell);
@@ -389,22 +410,22 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 			if(spell.isContinuous || chargeup > 0){
 				// Spells that need the mouse to be held (continuous, charge-up or both)
-				if(!player.isHandActive()){
-					player.setActiveHand(hand);
+				if(!player.isUsingItem()){
+					player.startUsingItem(hand);
 					// Store the modifiers for use later
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
-					if(chargeup > 0 && level.isClientSide) Wizardry.proxy.playChargeupSound(player);
-					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+					if(chargeup > 0 && world.isClientSide) Wizardry.proxy.playChargeupSound(player);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 				}
 			}else{
 				// All other (instant) spells
 				if(cast(stack, spell, player, hand, 0, modifiers)){
-					return new InteractionResultHolder<>(EnumActionResult.SUCCESS, stack);
+					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 				}
 			}
 		}
 
-		return new InteractionResultHolder<>(EnumActionResult.FAIL, stack);
+		return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
 	}
 
 	// For continuous spells and spells with a charge-up time. The count argument actually decrements by 1 each tick.
@@ -426,7 +447,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				modifiers = this.calculateModifiers(stack, (Player)user, spell); // Fallback to the old way, should never be used
 			}
 
-			int useTick = stack.getMaxItemUseDuration() - count;
+			int useTick = stack.getUseDuration() - count;
 			int chargeup = (int)(spell.getChargeup() * modifiers.get(SpellModifiers.CHARGEUP));
 
 			if(spell.isContinuous){
@@ -437,25 +458,25 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 					// Continuous spells (these must check if they can be cast each tick since the mana changes)
 					// Don't call canCast when castingTick == 0 because we already did it in use - even
 					// with charge-up times, because we don't want to trigger events twice
-					if(castingTick == 0 || canCast(stack, spell, player, player.getActiveHand(), castingTick, modifiers)){
-						cast(stack, spell, player, player.getActiveHand(), castingTick, modifiers);
+					if(castingTick == 0 || canCast(stack, spell, player, player.getUsedItemHand(), castingTick, modifiers)){
+						cast(stack, spell, player, player.getUsedItemHand(), castingTick, modifiers);
 					}else{
 						// Stops the casting if it was interrupted, either by events or because the wand ran out of mana
-						player.stopActiveHand();
+						player.stopUsingItem();
 					}
 				}
 			}else{
 				// Non-continuous spells need to check they actually have a charge-up since ALL spells call setActiveHand
 				if(chargeup > 0 && useTick == chargeup){
 					// Once the spell is charged, it's exactly the same as in use
-					cast(stack, spell, player, player.getActiveHand(), 0, modifiers);
+					cast(stack, spell, player, player.getUsedItemHand(), 0, modifiers);
 				}
 			}
 		}
 	}
 
 	@Override
-	public boolean canCast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean canCast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers){
 
 		// Spells can only be cast if the casting events aren't cancelled...
 		if(castingTick == 0){
@@ -478,22 +499,22 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean cast(ItemStack stack, Spell spell, Player caster, EnumHand hand, int castingTick, SpellModifiers modifiers){
+	public boolean cast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers){
 
-		Level world = caster.world;
+		Level world = caster.level;
 
-		if(level.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
+		if(world.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
 
 		if(spell.cast(world, caster, hand, castingTick, modifiers)){
 
 			if(castingTick == 0) MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.WAND, spell, caster, modifiers));
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
-					IMessage msg = new PacketCastSpell.Message(caster.getEntityId(), hand, spell, modifiers);
+					IMessage msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
 					WizardryPacketHandler.net.sendToDimension(msg, world.provider.getDimension());
 				}
 
@@ -506,7 +527,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 			}
 
-			caster.setActiveHand(hand);
+			caster.startUsingItem(hand);
 
 			// Cooldown
 			if(!spell.isContinuous && !caster.isCreative()){ // Spells only have a cooldown in survival
@@ -528,9 +549,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 						// ...display a message above the player's hotbar
 						caster.playSound(WizardrySounds.ITEM_WAND_LEVELUP, 1.25f, 1);
 						WizardryAdvancementTriggers.wand_levelup.triggerFor(caster);
-						if(!level.isClientSide)
-							caster.sendMessage(Component.translatable("item." + Wizardry.MODID + ":wand.levelup",
-									this.getItemStackDisplayName(stack), nextTier.getNameForTranslationFormatted()));
+						if(!world.isClientSide)
+							caster.sendSystemMessage(Component.translatable("item." + Wizardry.MODID + ":wand.levelup",
+									this.getName(stack), nextTier.getNameForTranslationFormatted()));
 					}
 				}
 
@@ -544,7 +565,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
+	public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
 
 		if(user instanceof Player){
 
@@ -560,7 +581,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				modifiers = this.calculateModifiers(stack, (Player)user, spell); // Fallback to the old way, should never be used
 			}
 
-			int castingTick = stack.getMaxItemUseDuration() - timeLeft; // Might as well include this
+			int castingTick = stack.getUseDuration() - timeLeft; // Might as well include this
 
 			int cost = getDistributedCost((int)(spell.getCost() * modifiers.get(SpellModifiers.COST) + 0.1f), castingTick);
 
@@ -579,16 +600,16 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	}
 
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, Player player, LivingEntity entity, EnumHand hand){
+	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand){
 
 		if(player.isShiftKeyDown() && entity instanceof Player && WizardData.get(player) != null){
 			String string = WizardData.get(player).toggleAlly((Player)entity) ? "item." + Wizardry.MODID + ":wand.addally"
 					: "item." + Wizardry.MODID + ":wand.removeally";
-			if(!player.level.isClientSide) player.sendMessage(Component.translatable(string, entity.getName()));
-			return true;
+			if(!player.level.isClientSide) player.sendSystemMessage(Component.translatable(string, entity.getName()));
+			return InteractionResult.SUCCESS;
 		}
 
-		return false;
+		return InteractionResult.FAIL;
 	}
 
 	/** Distributes the given cost (which should be the per-second cost of a continuous spell) over a second and
@@ -662,9 +683,9 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 		HitResult rayTrace = RayTracer.standardEntityRayTrace(world, player, 16, false);
 
-		if(rayTrace != null && EntityUtils.isLiving(rayTrace.entityHit)){
+		if(rayTrace != null && EntityUtils.isLiving(((EntityHitResult) rayTrace).getEntity())){
 
-			LivingEntity entity = (LivingEntity)rayTrace.entityHit;
+			LivingEntity entity = (LivingEntity)((EntityHitResult) rayTrace).getEntity();
 
 			// Sets the selected minion's target to the right-clicked entity
 			if(player.isShiftKeyDown() && WizardData.get(player) != null && WizardData.get(player).selectedMinion != null){
@@ -673,7 +694,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 				if(minion instanceof Mob && minion != entity){
 					// There is now only the new AI! (which greatly improves things)
-					((Mob)minion).setAttackTarget(entity);
+					((Mob)minion).setTarget(entity);
 					// Deselects the selected minion
 					WizardData.get(player).selectedMinion = null;
 					return true;
@@ -698,7 +719,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		// and also the entire NBT tag compound.
 		if(upgrade.getItem() == WizardryItems.arcane_tome){
 
-			Tier tier = Tier.values()[upgrade.getItemDamage()];
+			Tier tier = Tier.values()[((IMetadata) upgrade.getItem()).getMetadata(upgrade)];
 
 			// Checks the wand upgrade is for the tier above the wand's tier, and that either the wand has enough
 			// progression or the player is in creative mode.
@@ -813,7 +834,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		String registryName = tier == Tier.NOVICE && element == Element.MAGIC ? "magic" : tier.getUnlocalisedName();
 		if(element != Element.MAGIC) registryName = registryName + "_" + element.getName();
 		registryName = registryName + "_wand";
-		return Item.REGISTRY.getObject(new ResourceLocation(Wizardry.MODID,  registryName));
+		return ForgeRegistries.ITEMS.getValue(new ResourceLocation(Wizardry.MODID,  registryName));
 	}
 
 	@Override
@@ -821,10 +842,10 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		
 		boolean changed = false; // Used for advancements
 
-		if(upgrade.getHasStack()){
+		if(upgrade.hasItem()){
 			ItemStack original = centre.getItem().copy();
 			centre.set(this.applyUpgrade(player, centre.getItem(), upgrade.getItem()));
-			changed = !ItemStack.areItemStacksEqual(centre.getItem(), original);
+			changed = !ItemStack.isSame(centre.getItem(), original);
 		}
 
 		// Reads NBT spell metadata array to variable, edits this, then writes it back to NBT.
@@ -842,7 +863,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		for(int i = 0; i < spells.length; i++){
 			if(spellBooks[i].getItem() != ItemStack.EMPTY){
 				
-				Spell spell = Spell.byMetadata(spellBooks[i].getItem().getItemDamage());
+				Spell spell = Spell.byMetadata(((IMetadata) spellBooks[i].getItem().getItem()).getMetadata(spellBooks[i].getItem()));
 				// If the wand is powerful enough for the spell, it's not already bound to that slot and it's enabled for wands
 				if(!(spell.getTier().level > this.tier.level) && spells[i] != spell && spell.isEnabled(SpellProperties.Context.WANDS)){
 
@@ -875,7 +896,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 	@Override
 	public void onClearButtonPressed(Player player, Slot centre, Slot crystals, Slot upgrade, Slot[] spellBooks){
 		ItemStack stack = centre.getItem();
-		if (stack.hasTagCompound() && stack.getTag().contains(WandHelper.SPELL_ARRAY_KEY)) {
+		if (stack.hasTag() && stack.getTag().contains(WandHelper.SPELL_ARRAY_KEY)) {
 			CompoundTag nbt = stack.getTag();
 			int[] spells = nbt.getIntArray(WandHelper.SPELL_ARRAY_KEY);
 			int expectedSlotCount = BASE_SPELL_SLOTS + WandHelper.getUpgradeLevel(stack,
@@ -886,7 +907,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 				spells = new int[expectedSlotCount];
 			}
 			Arrays.fill(spells, 0);
-			nbt.setIntArray(WandHelper.SPELL_ARRAY_KEY, spells);
+			nbt.putIntArray(WandHelper.SPELL_ARRAY_KEY, spells);
 			stack.setTag(nbt);
 		}
 	}
@@ -909,23 +930,23 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 
 			if(level > 0 && mana > 0){
 
-				Random random = player.world.rand;
+				RandomSource random = player.level.random;
 
-				player.world.playSound(player.getX(), player.getY(), player.getZ(), WizardrySounds.ITEM_WAND_MELEE, SoundCategory.PLAYERS, 0.75f, 1, false);
+				player.level.playLocalSound(player.getX(), player.getY(), player.getZ(), WizardrySounds.ITEM_WAND_MELEE, SoundSource.PLAYERS, 0.75f, 1, false);
 
 				if(player.level.isClientSide){
 
-					Vec3 origin = player.getPositionEyes(1);
-					Vec3 hit = origin.add(player.getLookVec().scale(player.getDistance(event.getTarget())));
+					Vec3 origin = player.getEyePosition(1);
+					Vec3 hit = origin.add(player.getLookAngle().scale(player.distanceTo(event.getTarget())));
 					// Generate two perpendicular vectors in the plane perpendicular to the look vec
-					Vec3 vec1 = player.getLookVec().rotatePitch(90);
-					Vec3 vec2 = player.getLookVec().crossProduct(vec1);
+					Vec3 vec1 = player.getLookAngle().xRot(90);
+					Vec3 vec2 = player.getLookAngle().cross(vec1);
 
 					for(int i = 0; i < 15; i++){
 						ParticleBuilder.create(Type.SPARKLE).pos(hit)
 								.vel(vec1.scale(random.nextFloat() * 0.3f - 0.15f).add(vec2.scale(random.nextFloat() * 0.3f - 0.15f)))
 								.clr(1f, 1f, 1f).fade(0.3f, 0.5f, 1)
-								.time(8 + random.nextInt(4)).spawn(player.world);
+								.time(8 + random.nextInt(4)).spawn(player.level);
 					}
 				}
 			}

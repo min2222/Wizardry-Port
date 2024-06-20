@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
@@ -75,7 +76,7 @@ public class Element {
 	 * element exists. */
 	public static Element fromName(String name){
 
-		for(Element element : registry.get().getValues()){
+		for(Element element : values()){
 			if(element.unlocalisedName.equals(name)) return element;
 		}
 
@@ -87,7 +88,7 @@ public class Element {
 	@Nullable
 	public static Element fromName(String name, @Nullable Element fallback){
 
-		for(Element element : registry.get().getValues()){
+		for(Element element : values()){
 			if(element.unlocalisedName.equals(name)) return element;
 		}
 
@@ -122,5 +123,13 @@ public class Element {
 	/** Returns the {@link ResourceLocation} for this element's 8x8 icon (displayed in the arcane workbench GUI). */
 	public ResourceLocation getIcon(){
 		return icon;
+	}
+	
+	public static Element[] values() {
+		return registry.get().getValues().toArray(new Element[registry.get().getValues().size()]);
+	}
+	
+	public int ordinal() {
+		return ((ForgeRegistry<Element>) registry.get()).getID(this);
 	}
 }

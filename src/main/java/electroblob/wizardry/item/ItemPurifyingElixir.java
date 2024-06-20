@@ -1,32 +1,37 @@
 package electroblob.wizardry.item;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class ItemPurifyingElixir extends Item {
 
 	public ItemPurifyingElixir(){
-		this.setMaxStackSize(1);
-		this.setCreativeTab(WizardryTabs.WIZARDRY);
+        super(new Item.Properties().stacksTo(1).tab(WizardryTabs.WIZARDRY));
 	}
 
 	@Override
@@ -41,14 +46,14 @@ public class ItemPurifyingElixir extends Item {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
-		Wizardry.proxy.addMultiLineDescription(tooltip, "item." + this.getRegistryName() + ".desc");
+	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+		Wizardry.proxy.addMultiLineDescription(tooltip, this.getOrCreateDescriptionId() + ".desc");
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity entity){
+	public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entity){
 
-		if(!level.isClientSide){
+		if(!world.isClientSide){
 			entity.curePotionEffects(stack);
 		}else{
 
@@ -64,14 +69,14 @@ public class ItemPurifyingElixir extends Item {
 			}
 		}
 
-		world.playSound(entity.getX(), entity.getY(), entity.getZ(), WizardrySounds.ITEM_PURIFYING_ELIXIR_DRINK, SoundSource.PLAYERS, 1, 1, false);
+		world.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), WizardrySounds.ITEM_PURIFYING_ELIXIR_DRINK, SoundSource.PLAYERS, 1, 1, false);
 
 		if(entity instanceof ServerPlayer){
 			ServerPlayer entityplayermp = (ServerPlayer)entity;
 			CriteriaTriggers.CONSUME_ITEM.trigger(entityplayermp, stack);
 		}
 
-		if(entity instanceof Player && !((Player)entity).capabilities.isCreativeMode){
+		if(entity instanceof Player && !((Player)entity).getAbilities().instabuild){
 			stack.shrink(1);
 		}
 
@@ -79,18 +84,18 @@ public class ItemPurifyingElixir extends Item {
 	}
 
 	@Override
-	public int getMaxItemUseDuration(ItemStack stack){
+	public int getUseDuration(ItemStack stack){
 		return 32;
 	}
 
 	@Override
-	public UseAnim getItemUseAction(ItemStack stack){
+	public UseAnim getUseAnimation(ItemStack stack){
 		return UseAnim.DRINK;
 	}
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
-		playerIn.setActiveHand(handIn);
+		playerIn.startUsingItem(handIn);
 		return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 	}
 }

@@ -116,7 +116,7 @@ public class CommonProxy {
 	 * @return The resulting translated text.
 	 */
 	public String translate(String key, Object... args){
-		return translate(key, new Style(), args);
+		return translate(key, Style.EMPTY, args);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class CommonProxy {
 
 	/** Like {@link CommonProxy#addMultiLineDescription(List, String, Style, Object...)}, but style defaults to light grey. */
 	public void addMultiLineDescription(List<String> tooltip, String key, Object... args){
-		this.addMultiLineDescription(tooltip, key, new Style().setColor(ChatFormatting.GRAY), args);
+		this.addMultiLineDescription(tooltip, key, Style.EMPTY.withColor(ChatFormatting.GRAY), args);
 	}
 
 	/**
@@ -326,8 +326,8 @@ public class CommonProxy {
 	public void notifyBookshelfChange(Level world, BlockPos pos){
 		for(Player player : world.players()){
 			if(player.distanceToSqr(Vec3.atCenterOf(pos)) < BlockBookshelf.PLAYER_NOTIFY_RANGE * BlockBookshelf.PLAYER_NOTIFY_RANGE){
-				if(player.openContainer instanceof ContainerArcaneWorkbench){
-					((ContainerArcaneWorkbench)player.openContainer).refreshBookshelfSlots();
+				if(player.containerMenu instanceof ContainerArcaneWorkbench){
+					((ContainerArcaneWorkbench)player.containerMenu).refreshBookshelfSlots();
 				}
 			}
 		}

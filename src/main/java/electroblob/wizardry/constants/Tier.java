@@ -1,19 +1,49 @@
 package electroblob.wizardry.constants;
 
+import java.util.Random;
+import java.util.function.Supplier;
+
 import electroblob.wizardry.Wizardry;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 
-import java.util.Random;
+@Mod.EventBusSubscriber
+public class Tier {
 
-public enum Tier {
-
-	NOVICE(700, 3, 12, new Style().setColor(ChatFormatting.WHITE), "novice"),
-	APPRENTICE(1000, 5, 5, new Style().setColor(ChatFormatting.AQUA), "apprentice"),
-	ADVANCED(1500, 7, 2, new Style().setColor(ChatFormatting.DARK_BLUE), "advanced"),
-	MASTER(2500, 9, 1, new Style().setColor(ChatFormatting.DARK_PURPLE), "master");
+	public static final Tier NOVICE = new Tier(700, 3, 12, Style.EMPTY.withColor(ChatFormatting.WHITE), "novice");
+	public static final Tier APPRENTICE = new Tier(1000, 5, 5, Style.EMPTY.withColor(ChatFormatting.AQUA), "apprentice");
+	public static final Tier ADVANCED = new Tier(1500, 7, 2, Style.EMPTY.withColor(ChatFormatting.DARK_BLUE), "advanced");
+	public static final Tier MASTER = new Tier(2500, 9, 1, Style.EMPTY.withColor(ChatFormatting.DARK_PURPLE), "master");
+	
+    public static Supplier<IForgeRegistry<Tier>> registry = null;
+    
+    @SubscribeEvent
+    public static void createRegistry(NewRegistryEvent event) {
+        RegistryBuilder<Tier> builder = new RegistryBuilder<>();
+        builder.setName(new ResourceLocation(Wizardry.MODID, "tier"));
+        builder.setIDRange(0, 5000);
+        registry = event.create(builder);
+    }
+    
+    @SubscribeEvent
+    public static void register(RegisterEvent event) {
+        event.register(registry.get().getRegistryKey(), helper -> {
+            helper.register("novice", NOVICE);
+            helper.register("apprentice", APPRENTICE);
+            helper.register("advanced", ADVANCED);
+            helper.register("master", MASTER);
+        });
+    }
 
 	/** Maximum mana a wand of this tier can store. */
 	public final int maxCharge;
@@ -29,7 +59,7 @@ public enum Tier {
 
 	private final String unlocalisedName;
 
-	Tier(int maxCharge, int upgradeLimit, int weight, Style colour, String name){
+	public Tier(int maxCharge, int upgradeLimit, int weight, Style colour, String name){
 		this.maxCharge = maxCharge;
 		this.level = ordinal();
 		this.upgradeLimit = upgradeLimit;
@@ -68,7 +98,7 @@ public enum Tier {
 	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the tier, without
 	 * formatting (i.e. not coloured).
 	 */
-	public TextComponentTranslation getNameForTranslation(){
+	public MutableComponent getNameForTranslation(){
 		return Component.translatable("tier." + unlocalisedName);
 	}
 
@@ -124,4 +154,11 @@ public enum Tier {
 		return tiers[tiers.length - 1];
 	}
 
+	public static Tier[] values() {
+		return registry.get().getValues().toArray(new Tier[registry.get().getValues().size()]);
+	}
+	
+	public int ordinal() {
+		return ((ForgeRegistry<Tier>) registry.get()).getID(this);
+	}
 }

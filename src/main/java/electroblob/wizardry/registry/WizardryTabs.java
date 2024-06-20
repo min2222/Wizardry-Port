@@ -1,7 +1,12 @@
 package electroblob.wizardry.registry;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import electroblob.wizardry.item.ItemScroll;
 import electroblob.wizardry.item.ItemSpellBook;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.CreativeModeTab;
@@ -9,10 +14,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Class responsible for defining and storing all of wizardry's creative tabs. Also handles sorting of the items.
@@ -33,8 +34,8 @@ public final class WizardryTabs {
 	            if((stack1.getItem() instanceof ItemSpellBook && stack2.getItem() instanceof ItemSpellBook)
 	                    || (stack1.getItem() instanceof ItemScroll && stack2.getItem() instanceof ItemScroll)){
 
-	                Spell spell1 = Spell.byMetadata(stack1.getItemDamage());
-	                Spell spell2 = Spell.byMetadata(stack2.getItemDamage());
+	                Spell spell1 = Spell.byMetadata(((IMetadata) stack1.getItem()).getMetadata(stack2));
+	                Spell spell2 = Spell.byMetadata(((IMetadata) stack2.getItem()).getMetadata(stack2));
 
 	                return spell1.compareTo(spell2);
 
@@ -66,7 +67,7 @@ public final class WizardryTabs {
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
-		public ItemStack createIcon(){
+		public ItemStack makeIcon(){
 			return iconItem;
 		}
 		
@@ -76,8 +77,8 @@ public final class WizardryTabs {
 
 		@Override
 		@OnlyIn(Dist.CLIENT)
-		public void displayAllRelevantItems(NonNullList<ItemStack> items){
-			super.displayAllRelevantItems(items);
+		public void fillItemList(NonNullList<ItemStack> items){
+			super.fillItemList(items);
 			items.sort(sorter);
 		}
 

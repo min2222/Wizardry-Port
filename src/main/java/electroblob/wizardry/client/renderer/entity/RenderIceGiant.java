@@ -5,11 +5,11 @@ import electroblob.wizardry.client.model.ModelIceGiant;
 import electroblob.wizardry.entity.living.EntityIceGiant;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 //@SideOnly(Side.CLIENT)
-public class RenderIceGiant extends RenderLiving<EntityIceGiant> {
+public class RenderIceGiant extends LivingEntityRenderer<EntityIceGiant> {
 
 	private static final ResourceLocation texture = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/ice_giant.png");

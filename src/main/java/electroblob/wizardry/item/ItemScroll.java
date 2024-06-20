@@ -1,53 +1,67 @@
 package electroblob.wizardry.item;
 
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.event.SpellCastEvent;
 import electroblob.wizardry.event.SpellCastEvent.Source;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.packet.PacketCastSpell;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-import java.util.List;
-
-public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchItem {
+public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchItem, IMetadata {
 	
 	/** The maximum number of ticks a continuous spell scroll can be cast for (by holding the use item button). */
 	public static final int CASTING_TIME = 120;
 
 	public ItemScroll(){
-		super();
-		setHasSubtypes(true);
-		setMaxStackSize(16);
-		setCreativeTab(WizardryTabs.SPELLS);
+        super(new Item.Properties().stacksTo(16).tab(WizardryTabs.SPELLS));
 		this.addPropertyOverride(new ResourceLocation("festive"), (s, w, e) -> Wizardry.tisTheSeason ? 1 : 0);
 	}
 	
 	@Override
+	public boolean getHasSubtypes(ItemStack stack) {
+		return true;
+	}
+	
+    @Override
+    public int getMetadata(ItemStack stack) {
+        return stack.getTagElement("Spells") != null ? stack.getTagElement("Spells").getInt("Spell") : 0;
+    }
+	
+	@Override
 	public Spell getCurrentSpell(ItemStack stack){
-		return Spell.byMetadata(stack.getItemDamage());
+		return Spell.byMetadata(getMetadata(stack));
 	}
 
 	@Override
@@ -56,7 +70,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 
 	@Override
-	public void getSubItems(CreativeModeTab tab, NonNullList<ItemStack> list){
+	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list){
 
 		if(tab == WizardryTabs.SPELLS){
 
@@ -64,7 +78,11 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			spells.removeIf(s -> !s.applicableForItem(this));
 
 			for(Spell spell : spells){
-				list.add(new ItemStack(this, 1, spell.metadata()));
+                ItemStack stack = new ItemStack(this, 1);
+                CompoundTag tag = new CompoundTag();
+                tag.putInt("Spell", spell.metadata());
+                stack.addTagElement("Spells", tag);
+                list.add(stack);
 			}
 		}
 	}
@@ -78,7 +96,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	@Override
 	// Item's version of this method is, quite frankly, an abomination. Why is a deprecated method being used as such
 	// an integral part of the code? And what's the point in getUnlocalisedNameInefficiently?
-	public String getItemStackDisplayName(ItemStack stack){
+	public Component getName(ItemStack stack){
 
 		/* Ok, so this method can be called from either the client or the server side. Obviously, on the client the
 		 * spell name is either translated or obfuscated, then it is put into the item name as part of that translation.
@@ -94,11 +112,11 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack itemstack, Level world, List<String> tooltip, net.minecraft.client.util.ITooltipFlag advanced){
+	public void appendHoverText(ItemStack itemstack, Level world, List<Component> tooltip, TooltipFlag advanced){
 
 		if(world != null){
 
-			Spell spell = Spell.byMetadata(itemstack.getItemDamage());
+			Spell spell = Spell.byMetadata(getMetadata(itemstack));
 
 			boolean discovered = Wizardry.proxy.shouldDisplayDiscovered(spell, itemstack);
 
@@ -111,7 +129,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
 			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":scroll") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				String name = new Style().setColor(ChatFormatting.BLUE).setItalic(true).getFormattingCode() +
+				String name = Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true).getFormattingCode() +
 						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
 				tooltip.add(name);
 			}
@@ -119,7 +137,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 	
 	@Override
-	public int getMaxItemUseDuration(ItemStack stack){
+	public int getUseDuration(ItemStack stack){
 		return CASTING_TIME;
 	}
 
@@ -128,15 +146,15 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 		ItemStack stack = player.getItemInHand(hand);
 
-		Spell spell = Spell.byMetadata(stack.getItemDamage());
+		Spell spell = Spell.byMetadata(getMetadata(stack));
 		// By default, scrolls have no modifiers - but with the event system, they could be added.
 		SpellModifiers modifiers = new SpellModifiers();
 
 		if(canCast(stack, spell, player, hand, 0, modifiers)){
 			// Now we can cast continuous spells with scrolls!
 			if(spell.isContinuous){
-				if(!player.isHandActive()){
-					player.setActiveHand(hand);
+				if(!player.isUsingItem()){
+					player.startUsingItem(hand);
 					// Store the modifiers for use each tick (there aren't any by default but there could be, as above)
 					if(WizardData.get(player) != null) WizardData.get(player).itemCastingModifiers = modifiers;
 					return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
@@ -159,19 +177,19 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 			Player player = (Player)user;
 
-			Spell spell = Spell.byMetadata(stack.getItemDamage());
+			Spell spell = Spell.byMetadata(getMetadata(stack));
 			// By default, scrolls have no modifiers - but with the event system, they could be added.
 			SpellModifiers modifiers = new SpellModifiers();
-			int castingTick = stack.getMaxItemUseDuration() - count;
+			int castingTick = stack.getUseDuration() - count;
 
 			// Continuous spells (these must check if they can be cast each tick since the mana changes)
 			// In theory the spell is always continuous here but just in case it isn't...
-			if(spell.isContinuous && canCast(stack, spell, player, player.getActiveHand(), castingTick, modifiers)){
-				cast(stack, spell, player, player.getActiveHand(), castingTick, modifiers);
+			if(spell.isContinuous && canCast(stack, spell, player, player.getUsedItemHand(), castingTick, modifiers)){
+				cast(stack, spell, player, player.getUsedItemHand(), castingTick, modifiers);
 			}else{
 				// Scrolls normally work on the max use duration so this isn't ever reached by wizardry, but if the
 				// casting was interrupted by SpellCastEvent.Tick it will be used
-				player.stopActiveHand();
+				player.stopUsingItem();
 			}
 		}
 	}
@@ -189,20 +207,20 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	@Override
 	public boolean cast(ItemStack stack, Spell spell, Player caster, InteractionHand hand, int castingTick, SpellModifiers modifiers){
 
-		Level world = caster.world;
+		Level world = caster.level;
 
-		if(level.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
+		if(world.isClientSide && !spell.isContinuous && spell.requiresPacket()) return false;
 
 		if(spell.cast(world, caster, hand, castingTick, modifiers)){
 
 			if(castingTick == 0) MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.SCROLL, spell, caster, modifiers));
 
-			if(!level.isClientSide){
+			if(!world.isClientSide){
 
 				// Continuous spells never require packets so don't rely on the requiresPacket method to specify it
 				if(!spell.isContinuous && spell.requiresPacket()){
 					// Sends a packet to all players in dimension to tell them to spawn particles.
-					IMessage msg = new PacketCastSpell.Message(caster.getEntityId(), hand, spell, modifiers);
+					IMessage msg = new PacketCastSpell.Message(caster.getId(), hand, spell, modifiers);
 					WizardryPacketHandler.net.sendToDimension(msg, world.provider.getDimension());
 				}
 
@@ -220,13 +238,13 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 	}
 	
 	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
+	public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int timeLeft){
 		// Casting has stopped before the full time has elapsed
 		finishCasting(stack, user, timeLeft);
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(ItemStack stack, Level world, LivingEntity user){
+	public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user){
 		// Full casting time has elapsed
 		finishCasting(stack, user, 0);
 		return stack;
@@ -234,27 +252,31 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 	private void finishCasting(ItemStack stack, LivingEntity user, int timeLeft){
 
-		if(Spell.byMetadata(stack.getItemDamage()).isContinuous){
+		if(Spell.byMetadata(getMetadata(stack)).isContinuous){
 			// Consume scrolls in survival mode
 			if(!(user instanceof Player) || !((Player)user).isCreative()) stack.shrink(1);
 
-			Spell spell = Spell.byMetadata(stack.getItemDamage());
+			Spell spell = Spell.byMetadata(getMetadata(stack));
 			SpellModifiers modifiers = new SpellModifiers();
-			int castingTick = stack.getMaxItemUseDuration() - timeLeft;
+			int castingTick = stack.getUseDuration() - timeLeft;
 
 			MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Finish(Source.SCROLL, spell, user, modifiers, castingTick));
-			spell.finishCasting(user.world, user, Double.NaN, Double.NaN, Double.NaN, null, castingTick, modifiers);
+			spell.finishCasting(user.level, user, Double.NaN, Double.NaN, Double.NaN, null, castingTick, modifiers);
 
 			if(user instanceof Player && !((Player)user).isCreative()){
 				((Player)user).getCooldowns().addCooldown(this, spell.getCooldown());
 			}
 		}
 	}
-
+	
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public Font getFontRenderer(ItemStack stack){
-		return Wizardry.proxy.getFontRenderer(stack);
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			@Override
+			public @Nullable Font getFont(ItemStack stack, FontContext context) {
+				return Wizardry.proxy.getFontRenderer(stack);
+			}
+		});
 	}
 
 	@Override

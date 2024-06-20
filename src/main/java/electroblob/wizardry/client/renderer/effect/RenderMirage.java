@@ -23,7 +23,7 @@ public class RenderMirage {
 
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Pre<?> event){
-		if(event.getEntity().hasEffect(WizardryPotions.mirage)){
+		if(event.getEntity().hasEffect(WizardryPotions.MIRAGE.get())){
 			random.setSeed(event.getEntity().tickCount / BLINK_PERIOD_1
 						 + event.getEntity().tickCount / BLINK_PERIOD_2);
 			GlStateManager.pushMatrix();
@@ -36,7 +36,7 @@ public class RenderMirage {
 
 	@SubscribeEvent
 	public static void onRenderLivingEvent(RenderLivingEvent.Post<?> event){
-		if(event.getEntity().hasEffect(WizardryPotions.mirage)){
+		if(event.getEntity().hasEffect(WizardryPotions.MIRAGE.get())){
 			GlStateManager.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
 			GlStateManager.popMatrix();
 		}

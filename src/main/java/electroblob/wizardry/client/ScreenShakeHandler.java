@@ -18,7 +18,7 @@ public class ScreenShakeHandler {
 	public static void shakeScreen(float intensity){
 		if(Wizardry.settings.screenShake){
 			screenShakeCounter = (int)(intensity / SHAKINESS);
-			Minecraft.getInstance().player.rotationPitch -= intensity * 0.5f; // Start halfway down
+			Minecraft.getInstance().player.setXRot(Minecraft.getInstance().player.getXRot() - intensity * 0.5f); // Start halfway down
 		}
 	}
 
@@ -30,7 +30,7 @@ public class ScreenShakeHandler {
 			if(Wizardry.settings.screenShake){
 				if(screenShakeCounter > 0){
 					float magnitude = screenShakeCounter * SHAKINESS;
-					Minecraft.getInstance().player.rotationPitch += screenShakeCounter % 2 == 0 ? magnitude : -magnitude;
+					Minecraft.getInstance().player.setXRot(Minecraft.getInstance().player.getXRot() + screenShakeCounter % 2 == 0 ? magnitude : -magnitude);
 					screenShakeCounter--;
 				}
 			}else{

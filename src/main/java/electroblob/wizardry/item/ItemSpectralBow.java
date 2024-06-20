@@ -1,30 +1,29 @@
 package electroblob.wizardry.item;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.entity.projectile.EntityConjuredArrow;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.util.InventoryUtils;
+import net.minecraft.item.IItemPropertyGetter;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.stats.StatList;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.init.Enchantments;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.ItemArrow;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemSpectralArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.stats.StatList;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
-
-public class ItemSpectralBow extends ItemBow implements IConjuredItem {
+public class ItemSpectralBow extends BowItem implements IConjuredItem {
 
 	public ItemSpectralBow(){
 		super();
@@ -55,19 +54,12 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	// Why does this still exist? Item models deal with this now, right?
-	public boolean isFull3D(){
-		return true;
-	}
-
-	@Override
 	public int getMaxDamage(ItemStack stack){
 		return this.getMaxDamageFromNBT(stack, Spells.conjure_bow);
 	}
 
 	@Override
-	public int getRGBDurabilityForDisplay(ItemStack stack){
+	public int getBarColor(ItemStack stack){
 		return IConjuredItem.getTimerBarColour(stack);
 	}
 
@@ -93,14 +85,14 @@ public class ItemSpectralBow extends ItemBow implements IConjuredItem {
 	@Override
 	public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return true;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return true;
 		return super.canContinueUsing(oldStack, newStack);
 	}
 
 	@Override
 	public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack){
 		// Ignore durability changes
-		if(ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack)) return false;
+		if(ItemStack.isSameIgnoreDurability(oldStack, newStack)) return false;
 		return super.shouldCauseBlockBreakReset(oldStack, newStack);
 	}
 
