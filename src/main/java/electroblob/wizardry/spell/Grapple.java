@@ -28,6 +28,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -406,11 +407,11 @@ public class Grapple extends Spell {
 
 		// Non-solid blocks (or if the result is null) count as misses
 		if(result == null || result.getType() == HitResult.Type.BLOCK
-				&& !level.getBlockState(result.getBlockPos()).getMaterial().isSolid()){
-			return new HitResult(HitResult.Type.MISS, endpoint, Direction.DOWN, new BlockPos(endpoint));
+				&& !world.getBlockState(((BlockHitResult) result).getBlockPos()).getMaterial().isSolid()){
+			return BlockHitResult.miss(endpoint, Direction.DOWN, new BlockPos(endpoint));
 		// Immovable entities count as misses too, but the endpoint is the hit vector instead
-		}else if(result.getEntity() != null && !result.getEntity().canBePushed()){
-			return new HitResult(HitResult.Type.MISS, result.getLocation(), Direction.DOWN, new BlockPos(endpoint));
+		}else if(((EntityHitResult) result).getEntity() != null && !((EntityHitResult) result).getEntity().isPushable()){
+			return BlockHitResult.miss(result.getLocation(), Direction.DOWN, new BlockPos(endpoint));
 		}
 		// If the ray trace missed, result.hitVec will be the endpoint anyway - neat!
 		return result;
@@ -418,8 +419,8 @@ public class Grapple extends Spell {
 
 	private static HitResult update(Player player, HitResult grapplingTarget){
 
-		if(grapplingTarget != null && (!EntityUtils.isCasting(player, Spells.grapple)
-				|| (grapplingTarget.getEntity() != null && !grapplingTarget.getEntity().isAlive()))){
+		if(grapplingTarget != null && (!EntityUtils.isCasting(player, Spells.GRAPPLE)
+				|| (((EntityHitResult) grapplingTarget).getEntity() != null && !((EntityHitResult) grapplingTarget).getEntity().isAlive()))){
 			return null;
 		}
 

@@ -70,10 +70,10 @@ public class Resurrection extends Spell {
 				// from playerEntityList (and probably a few other places) until respawn is clicked, and since that
 				// never happens here we need to clean up those references or the player will have duplicate entries
 				// in some entity lists - and weirdness will ensue!
-				world.removeEntity(nearestDeadAlly); // Clean up the old entity references
+				nearestDeadAlly.discard(); // Clean up the old entity references
 				resurrect(nearestDeadAlly); // Reset isDead, must be before spawning the player again
 				world.addFreshEntity(nearestDeadAlly); // Re-add the player to all the relevant entity lists
-
+				
 				// Notify clients to reset the appropriate fields, spawn particles and play sounds
 				PacketResurrection.Message msg = new PacketResurrection.Message(nearestDeadAlly.getId());
 				WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> caster.level.dimension()), msg);
@@ -113,14 +113,14 @@ public class Resurrection extends Spell {
 	}
 
 	public static int getRemainingWaitTime(int timeSinceDeath){
-		return Math.max(0, Mth.ceil((Spells.resurrection.getProperty(Resurrection.WAIT_TIME).floatValue() - timeSinceDeath) / 20));
+		return Math.max(0, Mth.ceil((Spells.RESURRECTION.getProperty(Resurrection.WAIT_TIME).floatValue() - timeSinceDeath) / 20));
 	}
 
 	/** Helper method for detecting if a stack can be used to cast the resurrection spell. */
 	public static boolean canStackResurrect(ItemStack stack, Player player){
 		return stack.getItem() instanceof ISpellCastingItem
-				&& Arrays.asList(((ISpellCastingItem)stack.getItem()).getSpells(stack)).contains(Spells.resurrection)
-				&& ((ISpellCastingItem)stack.getItem()).canCast(stack, Spells.resurrection, player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
+				&& Arrays.asList(((ISpellCastingItem)stack.getItem()).getSpells(stack)).contains(Spells.RESURRECTION)
+				&& ((ISpellCastingItem)stack.getItem()).canCast(stack, Spells.RESURRECTION, player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 	}
 
 	@SubscribeEvent
@@ -143,10 +143,10 @@ public class Resurrection extends Spell {
 						if(!(wand.getItem() instanceof ISpellCastingItem)) return;
 					}
 
-					if(((ISpellCastingItem)wand.getItem()).getCurrentSpell(wand) == Spells.resurrection){
+					if(((ISpellCastingItem)wand.getItem()).getCurrentSpell(wand) == Spells.RESURRECTION){
 
 						// TODO: Find some way of getting at the modifiers before the spell is cast
-						int waitTime = Spells.resurrection.getProperty(WAIT_TIME).intValue();
+						int waitTime = Spells.RESURRECTION.getProperty(WAIT_TIME).intValue();
 
 						if(player.deathTime > waitTime){
 							ParticleBuilder.create(Type.SPARKLE, player.level.random, player.getX(), player.getY() + 0.5, player.getZ(), 0.5, false)

@@ -34,7 +34,7 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 
 		if(target != null && !MagicDamage.isEntityImmune(DamageType.WITHER, target)){
 
-			float damage = Spells.darkness_orb.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.DARKNESS_ORB.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 			target.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.WITHER).setProjectile(),
@@ -42,8 +42,8 @@ public class EntityDarknessOrb extends EntityMagicProjectile {
 
 			if(target instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.WITHER, target))
 				((LivingEntity)target).addEffect(new MobEffectInstance(MobEffects.WITHER,
-						Spells.darkness_orb.getProperty(Spell.EFFECT_DURATION).intValue(),
-						Spells.darkness_orb.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+						Spells.DARKNESS_ORB.getProperty(Spell.EFFECT_DURATION).intValue(),
+						Spells.DARKNESS_ORB.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 			this.playSound(WizardrySounds.ENTITY_DARKNESS_ORB_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 		}

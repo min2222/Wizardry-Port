@@ -62,7 +62,7 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		return this.getMaxDamageFromNBT(stack, Spells.frost_axe);
+		return this.getMaxDamageFromNBT(stack, Spells.FROST_AXE);
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 
 	@Override
 	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot){
-		attackDamageBaseline = Spells.frost_axe.getProperty(Spell.DAMAGE).floatValue();
+		attackDamageBaseline = Spells.FROST_AXE.getProperty(Spell.DAMAGE).floatValue();
 		return super.getDefaultAttributeModifiers(equipmentSlot);
 	}
 

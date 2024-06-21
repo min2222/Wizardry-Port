@@ -39,6 +39,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -187,6 +188,15 @@ public final class WizardryItems {
 	// This is the most concise way I can think of to register the items. Really, I'd prefer it if there was only one
 	// point where all the items were listed, but that's not possible within the current system unless you use an array,
 	// which means you lose the individual fields...
+    
+    public static final RegistryObject<Item> MAGIC_CRYSTAL_BLOCK = ITEMS.register("magic_crystal_block", () -> new BlockItem(WizardryBlocks.MAGIC_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> FIRE_CRYSTAL_BLOCK = ITEMS.register("fire_crystal_block", () -> new BlockItem(WizardryBlocks.FIRE_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> ICE_CRYSTAL_BLOCK = ITEMS.register("ice_crystal_block", () -> new BlockItem(WizardryBlocks.ICE_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> LIGHTNING_CRYSTAL_BLOCK = ITEMS.register("lightning_crystal_block", () -> new BlockItem(WizardryBlocks.LIGHTNING_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> NECROMANCY_CRYSTAL_BLOCK = ITEMS.register("necromancy_crystal_block", () -> new BlockItem(WizardryBlocks.NECROMANCY_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> EARTH_CRYSTAL_BLOCK = ITEMS.register("earth_crystal_block", () -> new BlockItem(WizardryBlocks.EARTH_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> SORCERY_CRYSTAL_BLOCK = ITEMS.register("sorcery_crystal_block", () -> new BlockItem(WizardryBlocks.SORCERY_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
+    public static final RegistryObject<Item> HEALING_CRYSTAL_BLOCK = ITEMS.register("healing_crystal_block", () -> new BlockItem(WizardryBlocks.HEALING_CRYSTAL_BLOCK.get(), new Item.Properties().tab(WizardryTabs.WIZARDRY)));
 
     public static final RegistryObject<Item> MAGIC_CRYSTAL = ITEMS.register("magic_crystal", () -> new Item(new Item.Properties().tab(WizardryTabs.WIZARDRY)));
     public static final RegistryObject<Item> FIRE_CRYSTAL = ITEMS.register("fire_crystal", () -> new Item(new Item.Properties().tab(WizardryTabs.WIZARDRY)));

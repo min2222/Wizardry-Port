@@ -48,6 +48,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,8 +57,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -66,6 +69,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.animal.SnowGolem;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Creeper;
@@ -87,10 +91,10 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -102,9 +106,11 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber
 public class Possession extends SpellRay {
@@ -139,8 +145,8 @@ public class Possession extends SpellRay {
 				Attributes.ATTACK_DAMAGE, UUID.fromString("ab67c89e-74a5-4e27-9621-40bffb4f7a03"),
 				Attributes.KNOCKBACK_RESISTANCE, UUID.fromString("05529535-9bcf-42bb-8822-45f5ce6a8f08"));
 
-		addAbility(Spider.class, (spider, player) -> { if(player.horizontalCollision) player.motionY = 0.2; });
-		addAbility(Chicken.class, (chicken, player) -> { if(!player.isOnGround() && player.getDeltaMovement().y < 0) player.motionY *= 0.6D; });
+		addAbility(Spider.class, (spider, player) -> { if(player.horizontalCollision) player.setDeltaMovement(player.getDeltaMovement().x, 0.2, player.getDeltaMovement().z); });
+		addAbility(Chicken.class, (chicken, player) -> { if(!player.isOnGround() && player.getDeltaMovement().y < 0) player.setDeltaMovement(player.getDeltaMovement().multiply(1, 0.6D, 1)); });
 		addAbility(Mob.class, (entity, player) -> { if(!entity.getType().fireImmune() && player.isOnFire()) player.clearFire(); });
 
 		addProjectile(SnowGolem.class, t -> new Snowball(EntityType.SNOWBALL, t)); // Woooo snowballs!
@@ -255,9 +261,9 @@ public class Possession extends SpellRay {
 
 			// Attributes
 
-			if(target instanceof EntityFlying || target instanceof net.minecraft.world.entity.passive.EntityFlying){
-				possessor.capabilities.allowFlying = true;
-				possessor.capabilities.isFlying = true;
+			if(target instanceof FlyingMob || target instanceof FlyingAnimal){
+				possessor.getAbilities().mayfly = true;
+				possessor.getAbilities().flying = true;
 			}
 
 			// Apply attribute modifiers which change the player's attribute value to the target's value
@@ -272,10 +278,10 @@ public class Possession extends SpellRay {
 					double targetValue = instance.getValue();
 					double currentValue = possessor.getAttributes().getInstance(attribute).getValue();
 					// Don't ask me why, but the player's base movement speed seems to be 0.1
-					if(attribute == Attributes.MOVEMENT_SPEED) currentValue /= possessor.capabilities.getWalkSpeed();
+					if(attribute == Attributes.MOVEMENT_SPEED) currentValue /= possessor.getAbilities().getWalkingSpeed();
 
 					for(EquipmentSlot slot : EquipmentSlot.values()){
-						if(target.getItemBySlot(slot).getAttributeModifiers(slot).containsKey(attribute.getName())){
+						if(target.getItemBySlot(slot).getAttributeModifiers(slot).containsKey(attribute)){
 							// If the mob has equipment, use the modifiers for that equipment instead of the mob's normal ones
 							// Not doing this results in the player being able to one-hit most mobs when possessing a zombie pigman!
 							continue attributes;
@@ -308,11 +314,11 @@ public class Possession extends SpellRay {
 				// Inventory and items
 
 				if(possessor.getPersistentData() != null){
-					NBTExtras.storeTagSafely(possessor.getPersistentData(), INVENTORY_NBT_KEY, possessor.inventory.writeToNBT(new ListTag()));
+					NBTExtras.storeTagSafely(possessor.getPersistentData(), INVENTORY_NBT_KEY, possessor.getInventory().save(new ListTag()));
 				}
 
 				possessor.getInventory().clearContent();
-				possessor.inventoryContainer.detectAndSendChanges();
+                possessor.containerMenu.broadcastChanges();
 
 				ItemStack stack = target.getMainHandItem().copy();
 
@@ -335,9 +341,9 @@ public class Possession extends SpellRay {
 
 				// Packets
 
-				WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(possessor, target, duration), possessor);
+				WizardryPacketHandler.net.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> possessor), new PacketPossession.Message(possessor, target, duration));
 				if(possessor instanceof ServerPlayer){
-					WizardryPacketHandler.net.sendTo(new PacketPossession.Message(possessor, target, duration), (ServerPlayer)possessor);
+					WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) possessor), new PacketPossession.Message(possessor, target, duration));
 				}
 			}
 
@@ -371,45 +377,45 @@ public class Possession extends SpellRay {
 
 		// Reverts the player back to normal
 
-		player.clearActivePotions();
+		player.removeAllEffects();
 
-		player.eyeHeight = player.getDefaultEyeHeight(); // How convenient!
+		player.eyeHeight = player.getEyeHeight(); // How convenient!
 
 		if(WizardData.get(player) != null){
 			WizardData.get(player).setVariable(TIMER_KEY, 0);
 			WizardData.get(player).setVariable(POSSESSEE_KEY, null);
 		}
 
-		if(!player.capabilities.isCreativeMode){
-			player.capabilities.allowFlying = false;
-			player.capabilities.isFlying = false;
+		if(!player.getAbilities().instabuild){
+            player.getAbilities().mayfly = false;
+            player.getAbilities().flying = false;
 		}
 
-		if(player.world.isClientSide && player == net.minecraft.client.Minecraft.getInstance().player){
-			net.minecraft.client.Minecraft.getInstance().entityRenderer.stopUseShader();
+		if(player.level.isClientSide && player == net.minecraft.client.Minecraft.getInstance().player){
+			net.minecraft.client.Minecraft.getInstance().gameRenderer.shutdownEffect();
 			Wizardry.proxy.playBlinkEffect(player);
 		}
 
 		for(Attribute attribute : INHERITED_ATTRIBUTES.keySet()){
-			player.getAttributeMap().getAttributeInstance(attribute).removeModifier(INHERITED_ATTRIBUTES.get(attribute));
+			player.getAttributes().getInstance(attribute).removeModifier(INHERITED_ATTRIBUTES.get(attribute));
 		}
 
 		if(player instanceof ServerPlayer){
 
-			player.inventory.clear();
+			player.getInventory().clearContent();
 
 			if(player.getPersistentData() != null){
-				player.inventory.readFromNBT(player.getPersistentData().getTagList(INVENTORY_NBT_KEY, NBT.TAG_COMPOUND));
+				player.getInventory().load(player.getPersistentData().getList(INVENTORY_NBT_KEY, Tag.TAG_COMPOUND));
 			}
 
-			player.inventoryContainer.detectAndSendChanges();
+            player.containerMenu.broadcastChanges();
 		}
 
-		this.playSound(player.world, player, 0, -1, null, "end");
+		this.playSound(player.level, player, 0, -1, null, "end");
 
-		if(!player.world.isClientSide && player instanceof ServerPlayer){
-			WizardryPacketHandler.net.sendToAllTracking(new PacketPossession.Message(player, null, 0), player);
-			WizardryPacketHandler.net.sendTo(new PacketPossession.Message(player, null, 0), (ServerPlayer)player);
+		if(!player.level.isClientSide && player instanceof ServerPlayer){
+            WizardryPacketHandler.net.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new PacketPossession.Message(player, null, 0));
+            WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new PacketPossession.Message(player, null, 0));
 		}
 	}
 
@@ -436,18 +442,18 @@ public class Possession extends SpellRay {
 
 				possessionTimer--;
 
-				if(player.world.isClientSide){
-					ParticleBuilder.create(Type.DARK_MAGIC, player).clr(0.1f, 0, 0.3f).spawn(player.world);
+				if(player.level.isClientSide){
+					ParticleBuilder.create(Type.DARK_MAGIC, player).clr(0.1f, 0, 0.3f).spawn(player.level);
 					Wizardry.proxy.loadShader(player, SHADER);
 				}
 
 			}else{
-				((Possession)Spells.possession).endPossession(player);
+				((Possession)Spells.POSSESSION).endPossession(player);
 				return 0;
 			}
 
 		}else if(isPossessing(player)){
-			((Possession)Spells.possession).endPossession(player);
+			((Possession)Spells.POSSESSION).endPossession(player);
 		}
 
 		return possessionTimer;
@@ -472,7 +478,7 @@ public class Possession extends SpellRay {
 
 	/** Adds the given factory to the list of projectiles. When a player right-clicks while possessing an entity of the
 	 * given type, the given projectile factory will be invoked to create a projectile, which is then aimed and spawned. */
-	public static <T extends Entity & Projectile> void addProjectile(Class<? extends Mob> entityType, Function<Level, T> factory){
+	public static <T extends Projectile> void addProjectile(Class<? extends Mob> entityType, Function<Level, T> factory){
 		projectiles.put(entityType, factory);
 	}
 
@@ -482,11 +488,10 @@ public class Possession extends SpellRay {
 
 		if(width != entity.getBbWidth() || height != entity.getBbHeight()){
 
-			entity.getBbWidth() = width;
-			entity.getBbHeight() = height;
+			entity.dimensions = EntityDimensions.scalable(width, height);
 
-			double halfwidth = (double)width / 2.0D;
-			entity.setBoundingBox(new AABB(entity.getX() - halfgetBbWidth(), entity.getY(), entity.getZ() - halfgetBbWidth(), entity.getX() + halfgetBbWidth(), entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfgetBbWidth()));
+			double halfWidth = (double)width / 2.0D;
+			entity.setBoundingBox(new AABB(entity.getX() - halfWidth, entity.getY(), entity.getZ() - halfWidth, entity.getX() + halfWidth, entity.getY() + (double)entity.getBbHeight(), entity.getZ() + halfWidth));
 		}
 	}
 
@@ -511,7 +516,7 @@ public class Possession extends SpellRay {
 				possessee.tickCount++; // Normally gets updated from World
 
 				if(possessee.getHealth() <= 0){
-					((Possession)Spells.possession).endPossession(event.player);
+					((Possession)Spells.POSSESSION).endPossession(event.player);
 				}
 
 				performAbilities(possessee, event.player);
@@ -563,9 +568,9 @@ public class Possession extends SpellRay {
 							DamageSource.OUT_OF_WORLD.getMsgId());
 				}
 
-				if(player.getHealth() <= Spells.possession.getProperty(CRITICAL_HEALTH).floatValue()){
-					player.setHealth(Spells.possession.getProperty(CRITICAL_HEALTH).floatValue());
-					((Possession)Spells.possession).endPossession(player);
+				if(player.getHealth() <= Spells.POSSESSION.getProperty(CRITICAL_HEALTH).floatValue()){
+					player.setHealth(Spells.POSSESSION.getProperty(CRITICAL_HEALTH).floatValue());
+					((Possession)Spells.POSSESSION).endPossession(player);
 				}
 			}
 		}
@@ -631,7 +636,7 @@ public class Possession extends SpellRay {
 					}
 
 					if(possessee instanceof Creeper){
-						((Possession)Spells.possession).endPossession(possessor);
+						((Possession)Spells.POSSESSION).endPossession(possessor);
 						((Creeper)possessee).ignite(); // Aaaaaaand.... RUN!
 					}
 
@@ -673,13 +678,13 @@ public class Possession extends SpellRay {
 	@SubscribeEvent
 	public static void onLivingDeathEvent(LivingDeathEvent event){
 		if(event.getEntity() instanceof Player && isPossessing((Player)event.getEntity())){
-			((Possession)Spells.possession).endPossession((Player)event.getEntity()); // Just in case, to make sure the player drops their items
+			((Possession)Spells.POSSESSION).endPossession((Player)event.getEntity()); // Just in case, to make sure the player drops their items
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event){
-		if(isPossessing(event.getEntity())) ((Possession)Spells.possession).endPossession(event.player);
+		if(isPossessing(event.getEntity())) ((Possession)Spells.POSSESSION).endPossession(event.getEntity());
 	}
 
 	@SubscribeEvent
@@ -688,11 +693,11 @@ public class Possession extends SpellRay {
 		Mob possessee = getPossessee(event.getPlayer());
 
 		if(possessee instanceof EnderMan){
-			if(((EntityEnderman)possessee).getHeldBlockState() == null){
-				((EntityEnderman)possessee).setHeldBlockState(event.getState());
-				event.getPlayer().setHeldItem(EnumHand.MAIN_HAND, new ItemStack(event.getState().getBlock()));
+			if(((EnderMan)possessee).getCarriedBlock() == null){
+				((EnderMan)possessee).setCarriedBlock(event.getState());
+				event.getPlayer().setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(event.getState().getBlock()));
 				event.setExpToDrop(0);
-				event.getWorld().setBlockToAir(event.getPos()); // Remove block before it can drop
+				((Level) event.getLevel()).setBlockAndUpdate(event.getPos(), Blocks.AIR.defaultBlockState()); // Remove block before it can drop
 			}else{
 				event.setCanceled(true);
 			}
@@ -700,9 +705,10 @@ public class Possession extends SpellRay {
 	}
 
 	@SubscribeEvent
-	public static void onBlockPlaceEvent(BlockEvent.PlaceEvent event){
-
-		Mob possessee = getPossessee(event.getPlayer());
+	public static void onBlockPlaceEvent(EntityPlaceEvent event){
+		if(!(event.getEntity() instanceof Player))
+			return;
+		Mob possessee = getPossessee((Player) event.getEntity());
 
 		if(possessee instanceof EnderMan){
 			if(((EnderMan)possessee).getCarriedBlock() == event.getState()){

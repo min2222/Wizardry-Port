@@ -1,10 +1,7 @@
 package electroblob.wizardry.spell;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 
-import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
@@ -17,7 +14,9 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,15 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 public class Mine extends SpellRay {
-
-	private static final Method getSilkTouchDrop;
-
-	static {
-		getSilkTouchDrop = ObfuscationReflectionHelper.findMethod(Block.class, "func_180643_i", ItemStack.class, BlockState.class);
-	}
 
 	public Mine(){
 		super("mine", SpellActions.POINT, false);
@@ -74,7 +66,7 @@ public class Mine extends SpellRay {
 			if(harvestLevel > 0) harvestLevel--; // Shifts them all down one since normally novice wands give some potency
 
 			// The >= 3 is to allow master earth wands to break anything.
-			if(state.getBlock().getHarvestLevel(state) <= harvestLevel || harvestLevel >= 3){
+			if(isCorrectTierVanilla(harvestLevel, state) || harvestLevel >= 3){
 
 				boolean flag = false;
 
@@ -94,7 +86,7 @@ public class Mine extends SpellRay {
 
 					BlockState state1 = world.getBlockState(pos1);
 
-					if(state1.getBlock().getHarvestLevel(state1) <= harvestLevel || harvestLevel >= 3){
+					if(isCorrectTierVanilla(harvestLevel, state1) || harvestLevel >= 3){
 
 						if(caster instanceof ServerPlayer){ // Everything in here is server-side only so this is fine
 
@@ -113,7 +105,7 @@ public class Mine extends SpellRay {
 								}
 							}else{
 								flag = world.destroyBlock(pos1, true);
-								if(flag) state1.getBlock().dropXpOnBlockBreak(world, pos1, xp);
+								if(flag) state1.getBlock().popExperience((ServerLevel) world, pos1, xp);
 							}
 
 						}else if(BlockUtils.canBreakBlock(caster, world, pos)){
@@ -143,15 +135,20 @@ public class Mine extends SpellRay {
 				.shaded(false).spawn(world);
 	}
 
-	private static ItemStack getSilkTouchDrop(BlockState state){
-
-		try {
-			return (ItemStack)getSilkTouchDrop.invoke(state.getBlock(), state);
-		}catch(IllegalAccessException | InvocationTargetException e){
-			Wizardry.logger.error("Error while reflectively retrieving silk touch drop", e);
-		}
-
-		return null;
-	}
-
+    private static boolean isCorrectTierVanilla(int i, BlockState state)
+    {
+        if (i < 3 && state.is(BlockTags.NEEDS_DIAMOND_TOOL))
+        {
+            return false;
+        }
+        else if (i < 2 && state.is(BlockTags.NEEDS_IRON_TOOL))
+        {
+            return false;
+        }
+        else if (i < 1 && state.is(BlockTags.NEEDS_STONE_TOOL))
+        {
+            return false;
+        }
+        return true;
+    }
 }

@@ -60,7 +60,7 @@ public class ItemFlamingAxe extends AxeItem implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		return this.getMaxDamageFromNBT(stack, Spells.flaming_axe);
+		return this.getMaxDamageFromNBT(stack, Spells.FLAMING_AXE);
 	}
 
 	@Override
@@ -90,14 +90,14 @@ public class ItemFlamingAxe extends AxeItem implements IConjuredItem {
 
 	@Override
 	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot){
-		attackDamageBaseline = Spells.flaming_axe.getProperty(Spell.DAMAGE).floatValue();
+		attackDamageBaseline = Spells.FLAMING_AXE.getProperty(Spell.DAMAGE).floatValue();
 		return super.getDefaultAttributeModifiers(equipmentSlot);
 	}
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity wielder){
 		if(!MagicDamage.isEntityImmune(DamageType.FIRE, target))
-			target.setSecondsOnFire(Spells.flaming_axe.getProperty(Spell.BURN_DURATION).intValue());
+			target.setSecondsOnFire(Spells.FLAMING_AXE.getProperty(Spell.BURN_DURATION).intValue());
 		return false;
 	}
 

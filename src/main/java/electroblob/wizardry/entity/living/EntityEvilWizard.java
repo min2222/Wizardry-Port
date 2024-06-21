@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -65,14 +66,14 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	protected Predicate<Entity> targetSelector;
 
 	/** Data parameter for the cooldown time for wizards healing themselves. */
-	private static final EntityDataSerializer<Integer> HEAL_COOLDOWN = SynchedEntityData.createKey(EntityEvilWizard.class,
-			EntityDataSerializers.VARINT);
+	private static final EntityDataAccessor<Integer> HEAL_COOLDOWN = SynchedEntityData.defineId(EntityEvilWizard.class,
+			EntityDataSerializers.INT);
 	/** Data parameter for the wizard's element. */
-	private static final EntityDataSerializer<Integer> ELEMENT = SynchedEntityData.createKey(EntityEvilWizard.class,
-			EntityDataSerializers.VARINT);
+	private static final EntityDataAccessor<Integer> ELEMENT = SynchedEntityData.defineId(EntityEvilWizard.class,
+			EntityDataSerializers.INT);
 	/** Data parameters for the wizard's current continuous spell. */
-	private static final EntityDataSerializer<String> CONTINUOUS_SPELL = SynchedEntityData.createKey(EntityEvilWizard.class, EntityDataSerializers.STRING);
-	private static final EntityDataSerializer<Integer> SPELL_COUNTER = SynchedEntityData.createKey(EntityEvilWizard.class, EntityDataSerializers.VARINT);
+	private static final EntityDataAccessor<String> CONTINUOUS_SPELL = SynchedEntityData.defineId(EntityEvilWizard.class, EntityDataSerializers.STRING);
+	private static final EntityDataAccessor<Integer> SPELL_COUNTER = SynchedEntityData.defineId(EntityEvilWizard.class, EntityDataSerializers.INT);
 
 	/** The resource location for the evil wizard's loot table. */
 	private static final ResourceLocation LOOT_TABLE = new ResourceLocation(Wizardry.MODID, "entities/evil_wizard");
@@ -160,7 +161,7 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	}
 
 	public void setElement(Element element){
-		this.dataManager.set(ELEMENT, element.ordinal());
+		this.entityData.set(ELEMENT, element.ordinal());
 	}
 
 	@Override

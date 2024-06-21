@@ -9,6 +9,7 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellProperties;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -21,7 +22,7 @@ public class ItemBlankScroll extends Item implements IWorkbenchItem {
 
 	public ItemBlankScroll(){
         super(new Item.Properties().tab(WizardryTabs.WIZARDRY));
-		this.addPropertyOverride(new ResourceLocation("festive"), (s, w, e) -> Wizardry.tisTheSeason ? 1 : 0);
+		ItemProperties.register(this, new ResourceLocation("festive"), (stack, p_174636_, entityIn, p_174638_) -> Wizardry.tisTheSeason ? 1 : 0);
 	}
 
 	@Override

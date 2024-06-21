@@ -145,11 +145,11 @@ public final class WizardryPotions {
 	public static final RegistryObject<MobEffect> EMPOWERMENT = registerPotion("empowerment", new PotionMagicEffect(MobEffectCategory.BENEFICIAL, 0x8367bd,
 			new ResourceLocation(Wizardry.MODID, "textures/gui/potion_icons/empowerment.png")));
 
-	public static final RegistryObject<MobEffect> CURSE_OF_ENFEEBLEMENT = registerPotion("curse_of_enfeeblement", new CurseEnfeeblement(true, 0x36000b));
+	public static final RegistryObject<MobEffect> CURSE_OF_ENFEEBLEMENT = registerPotion("curse_of_enfeeblement", new CurseEnfeeblement(MobEffectCategory.HARMFUL, 0x36000b));
 
-	public static final RegistryObject<MobEffect> CURSE_OF_UNDEATH = registerPotion("curse_of_undeath", new CurseUndeath(true, 0x685c00));
+	public static final RegistryObject<MobEffect> CURSE_OF_UNDEATH = registerPotion("curse_of_undeath", new CurseUndeath(MobEffectCategory.HARMFUL, 0x685c00));
 
-	public static final RegistryObject<MobEffect> CONTAINMENT = registerPotion("containment", new PotionContainment(true, 0x7988cc));
+	public static final RegistryObject<MobEffect> CONTAINMENT = registerPotion("containment", new PotionContainment(MobEffectCategory.HARMFUL, 0x7988cc));
 
 	public static final RegistryObject<MobEffect> FROST_STEP = registerPotion("frost_step", new PotionFrostStep(MobEffectCategory.BENEFICIAL, 0));
 

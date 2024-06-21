@@ -49,7 +49,7 @@ public class EntityIceCharge extends EntityBomb {
 
 		if(entityHit != null){
 			// This is if the ice charge gets a direct hit
-			float damage = Spells.ice_charge.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.ICE_CHARGE.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 			entityHit.hurt(
 					MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FROST).setProjectile(),
@@ -57,8 +57,8 @@ public class EntityIceCharge extends EntityBomb {
 
 			if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
 				((LivingEntity)entityHit).addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
-						Spells.ice_charge.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
+						Spells.ICE_CHARGE.getProperty(Spell.DIRECT_EFFECT_DURATION).intValue(),
+						Spells.ICE_CHARGE.getProperty(Spell.DIRECT_EFFECT_STRENGTH).intValue()));
 		}
 
 		// Particle effect
@@ -80,7 +80,7 @@ public class EntityIceCharge extends EntityBomb {
 			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_SMASH, 1.5f, random.nextFloat() * 0.4f + 0.6f);
 			this.playSound(WizardrySounds.ENTITY_ICE_CHARGE_ICE, 1.2f, random.nextFloat() * 0.4f + 1.2f);
 
-			double radius = Spells.ice_charge.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
+			double radius = Spells.ICE_CHARGE.getProperty(Spell.EFFECT_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(radius, this.getX(), this.getY(),
 					this.getZ(), this.level);
@@ -90,8 +90,8 @@ public class EntityIceCharge extends EntityBomb {
 				if(target != entityHit && target != this.getOwner()){
 					if(!MagicDamage.isEntityImmune(DamageType.FROST, target))
 						target.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
-								Spells.ice_charge.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
+								Spells.ICE_CHARGE.getProperty(Spell.SPLASH_EFFECT_DURATION).intValue(),
+								Spells.ICE_CHARGE.getProperty(Spell.SPLASH_EFFECT_STRENGTH).intValue()));
 				}
 			}
 
@@ -125,7 +125,7 @@ public class EntityIceCharge extends EntityBomb {
 			}
 
 			// Releases shards
-			for(int i = 0; i < Spells.ice_charge.getProperty(ICE_SHARDS).intValue(); i++){
+			for(int i = 0; i < Spells.ICE_CHARGE.getProperty(ICE_SHARDS).intValue(); i++){
 				double dx = random.nextDouble() - 0.5;
 				double dy = random.nextDouble() - 0.5;
 				double dz = random.nextDouble() - 0.5;

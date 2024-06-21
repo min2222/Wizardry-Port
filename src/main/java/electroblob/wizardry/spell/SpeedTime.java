@@ -12,13 +12,13 @@ import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.ITickable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.phys.Vec3;
 
 public class SpeedTime extends Spell {
@@ -78,12 +78,17 @@ public class SpeedTime extends Spell {
 
 		// Ticks all the tile entities near the caster
 		// Copy the list first!
-		List<BlockEntity> tileentities = new ArrayList<>(world.tickableTileEntities);
+		List<BlockEntity> tileentities = new ArrayList<>(world.freshBlockEntities);
 		tileentities.removeIf(t -> caster.distanceToSqr(Vec3.atCenterOf(t.getBlockPos())) > radius*radius);
 
 		if(!tileentities.isEmpty()){
 			for(int i = 0; i < potencyLevel; i++){
-				tileentities.forEach(t -> ((ITickable)t).update());
+				tileentities.forEach(t -> {
+					BlockEntityTicker<BlockEntity> ticker = (BlockEntityTicker<BlockEntity>) t.getBlockState().getTicker(world, t.getType());
+					if(ticker != null) {
+						ticker.tick(world, t.getBlockPos(), t.getBlockState(), t);
+					}
+				});
 			}
 			flag = true;
 		}

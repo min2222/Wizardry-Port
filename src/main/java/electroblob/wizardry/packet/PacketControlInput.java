@@ -92,7 +92,7 @@ public class PacketControlInput {
 						if(stack != null){
 							if(MinecraftForge.EVENT_BUS.post(new ResurrectionEvent(player, player))) break;
 							// This should suffice, since this is the only way a player can cast resurrection when dead!
-							((ISpellCastingItem)stack.getItem()).cast(stack, Spells.resurrection, player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
+							((ISpellCastingItem)stack.getItem()).cast(stack, Spells.RESURRECTION, player, InteractionHand.MAIN_HAND, 0, new SpellModifiers());
 							break;
 						}
 					}

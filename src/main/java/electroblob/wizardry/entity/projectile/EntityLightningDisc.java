@@ -30,7 +30,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 		Entity entityHit = result.getType() == HitResult.Type.ENTITY ? ((EntityHitResult) result).getEntity() : null;
 
 		if(entityHit != null){
-			float damage = Spells.lightning_disc.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.LIGHTNING_DISC.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 			entityHit.hurt(MagicDamage.causeIndirectMagicDamage(this, this.getOwner(),
 					DamageType.SHOCK), damage);
 		}
@@ -59,7 +59,7 @@ public class EntityLightningDisc extends EntityMagicProjectile {
 
 	@Override
 	public float getSeekingStrength(){
-		return Spells.lightning_disc.getProperty(Spell.SEEKING_STRENGTH).floatValue();
+		return Spells.LIGHTNING_DISC.getProperty(Spell.SEEKING_STRENGTH).floatValue();
 	}
 
 	@Override

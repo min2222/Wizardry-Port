@@ -6,12 +6,10 @@ import electroblob.wizardry.enchantment.EnchantmentMagicSword;
 import electroblob.wizardry.enchantment.EnchantmentTimed;
 import electroblob.wizardry.util.InventoryUtils;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Class responsible for defining, storing and registering all of wizardry's enchantments.
@@ -19,7 +17,6 @@ import javax.annotation.Nonnull;
  * @author Electroblob
  * @since Wizardry 2.1
  */
-@ObjectHolder(Wizardry.MODID)
 @Mod.EventBusSubscriber
 public final class WizardryEnchantments {
 
@@ -34,31 +31,15 @@ public final class WizardryEnchantments {
 
 	// All of these have custom classes, so the unlocalised name (referred to simply as 'name' for enchantments) is
 	// dealt with inside those classes.
-
-	@Nonnull
-	@SuppressWarnings("ConstantConditions")
-	private static <T> T placeholder(){ return null; }
 	
-	public static final Enchantment magic_sword = placeholder();
-	public static final Enchantment magic_bow = placeholder();
-	public static final Enchantment flaming_weapon = placeholder();
-	public static final Enchantment freezing_weapon = placeholder();
+    public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, Wizardry.MODID);
+	
+    public static final RegistryObject<Enchantment> MAGIC_SWORD = ENCHANTMENTS.register("magic_sword", () -> new EnchantmentMagicSword());
+    public static final RegistryObject<Enchantment> MAGIC_BOW = ENCHANTMENTS.register("magic_bow", () -> new EnchantmentTimed());
+    public static final RegistryObject<Enchantment> FLAMING_WEAPON = ENCHANTMENTS.register("flaming_weapon", () -> new EnchantmentTimed());
+    public static final RegistryObject<Enchantment> FREEZING_WEAPON = ENCHANTMENTS.register("freezing_weapon", () -> new EnchantmentTimed());
 
-	public static final Enchantment magic_protection = placeholder();
-	public static final Enchantment frost_protection = placeholder();
-	public static final Enchantment shock_protection = placeholder();
-
-	@SubscribeEvent
-	public static void register(RegistryEvent.Register<Enchantment> event){
-
-		event.getRegistry().register(new EnchantmentMagicSword().setRegistryName(Wizardry.MODID, "magic_sword"));
-		event.getRegistry().register(new EnchantmentTimed().setRegistryName(Wizardry.MODID, "magic_bow"));
-		event.getRegistry().register(new EnchantmentTimed().setRegistryName(Wizardry.MODID, "flaming_weapon"));
-		event.getRegistry().register(new EnchantmentTimed().setRegistryName(Wizardry.MODID, "freezing_weapon"));
-
-		event.getRegistry().register(new EnchantmentMagicProtection(Enchantment.Rarity.UNCOMMON, EnchantmentMagicProtection.Type.MAGIC, InventoryUtils.ARMOUR_SLOTS).setRegistryName(Wizardry.MODID, "magic_protection"));
-		event.getRegistry().register(new EnchantmentMagicProtection(Enchantment.Rarity.RARE, EnchantmentMagicProtection.Type.FROST, InventoryUtils.ARMOUR_SLOTS).setRegistryName(Wizardry.MODID, "frost_protection"));
-		event.getRegistry().register(new EnchantmentMagicProtection(Enchantment.Rarity.RARE, EnchantmentMagicProtection.Type.SHOCK, InventoryUtils.ARMOUR_SLOTS).setRegistryName(Wizardry.MODID, "shock_protection"));
-	}
-
+	public static final RegistryObject<Enchantment> MAGIC_PROTECTION = ENCHANTMENTS.register("magic_protection", () -> new EnchantmentMagicProtection(Enchantment.Rarity.UNCOMMON, EnchantmentMagicProtection.Type.MAGIC, InventoryUtils.ARMOUR_SLOTS));
+	public static final RegistryObject<Enchantment> FROST_PROTECTION = ENCHANTMENTS.register("frost_protection", () -> new EnchantmentMagicProtection(Enchantment.Rarity.RARE, EnchantmentMagicProtection.Type.FROST, InventoryUtils.ARMOUR_SLOTS));
+	public static final RegistryObject<Enchantment> SHOCK_PROTECTION = ENCHANTMENTS.register("shock_protection", () -> new EnchantmentMagicProtection(Enchantment.Rarity.RARE, EnchantmentMagicProtection.Type.SHOCK, InventoryUtils.ARMOUR_SLOTS));
 }

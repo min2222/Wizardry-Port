@@ -1,39 +1,44 @@
 package electroblob.wizardry.tileentity;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.event.ImbuementActivateEvent;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ItemWizardArmour;
-import electroblob.wizardry.registry.*;
+import electroblob.wizardry.registry.WizardryAdvancementTriggers;
+import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryLoot;
+import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.util.GeometryUtils;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.ITickable;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import org.apache.commons.lang3.ArrayUtils;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
+public class TileEntityImbuementAltar extends BlockEntity {
 
 	private static final int IMBUEMENT_DURATION = 140;
 
@@ -43,8 +48,11 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 	private Player lastUser;
 	/** For loading purposes only. This does not get updated once loaded! */
 	private UUID lastUserUUID;
+	
+	private static final Direction[] HORIZONTALS = ObfuscationReflectionHelper.getPrivateValue(Direction.class, null, "f_122349_");
 
-	public TileEntityImbuementAltar(){
+	public TileEntityImbuementAltar(BlockPos pos, BlockState state) {
+		super(WizardryBlocks.IMBUEMENT_ALTAR_BLOCK_ENTITY.get(), pos, state);
 		stack = ItemStack.EMPTY;
 	}
 
@@ -67,58 +75,57 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 			return; // Don't sync if nothing changed
 		}
 
-		world.notifyBlockUpdate(pos, level.getBlockState(pos), level.getBlockState(pos), 3); // Sync
+		level.markAndNotifyBlock(worldPosition, level.getChunkAt(worldPosition), level.getBlockState(worldPosition), level.getBlockState(worldPosition), 3, 512); // Sync
 	}
 
 	public ItemStack getStack(){
 		return stack;
 	}
 
-	@Override
-	public void update(){
+    public static void update(Level world, BlockPos pos, BlockState state, TileEntityImbuementAltar tileEntity) {
 
-		if(lastUserUUID != null && lastUser == null) lastUser = level.getPlayerEntityByUUID(lastUserUUID);
+		if(tileEntity.lastUserUUID != null && tileEntity.lastUser == null) tileEntity.lastUser = world.getPlayerByUUID(tileEntity.lastUserUUID);
 
-		if(imbuementTimer > 0){
+		if(tileEntity.imbuementTimer > 0){
 
-			if(imbuementTimer == 1){ // Has to be done here because of syncing
-				world.playSound(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
+			if(tileEntity.imbuementTimer == 1){ // Has to be done here because of syncing
+				world.playLocalSound(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
 						WizardrySounds.BLOCK_IMBUEMENT_ALTAR_IMBUE, SoundSource.BLOCKS, 1, 1, false);
 			}
 
-			ItemStack result = getResult();
+			ItemStack result = tileEntity.getResult();
 
 			if(result.isEmpty()){
-				imbuementTimer = 0;
+				tileEntity.imbuementTimer = 0;
 
 			}else{
 
-				if(imbuementTimer++ >= IMBUEMENT_DURATION){
-					this.stack = result;
-					consumeReceptacleContents();
-					imbuementTimer = 0;
-					displayElement = null;
-					if(lastUser instanceof ServerPlayer){
-						WizardryAdvancementTriggers.imbuement_altar.trigger((ServerPlayer)lastUser, this.stack);
+				if(tileEntity.imbuementTimer++ >= IMBUEMENT_DURATION){
+					tileEntity.stack = result;
+					tileEntity.consumeReceptacleContents();
+					tileEntity.imbuementTimer = 0;
+					tileEntity.displayElement = null;
+					if(tileEntity.lastUser instanceof ServerPlayer){
+						WizardryAdvancementTriggers.imbuement_altar.trigger((ServerPlayer)tileEntity.lastUser, tileEntity.stack);
 					}
 				}
 
-				if(level.isClientSide && world.random.nextInt(2) == 0){
+				if(world.isClientSide && world.random.nextInt(2) == 0){
 
-					Element[] elements = getReceptacleElements();
+					Element[] elements = tileEntity.getReceptacleElements();
 
-					Vec3 centre = GeometryUtils.getCentre(this.pos.up());
+					Vec3 centre = GeometryUtils.getCentre(pos.above());
 
 					for(int i = 0; i < elements.length; i++){
 
 						if(elements[i] == null) continue;
 
-						Vec3 offset = new Vec3(Direction.byHorizontalIndex(i).getDirectionVec());
-						Vec3 vec = GeometryUtils.getCentre(this.pos).add(0, 0.3, 0).add(offset.scale(0.7));
+						Vec3 offset = new Vec3(Direction.from2DDataValue(i).step());
+						Vec3 vec = GeometryUtils.getCentre(pos).add(0, 0.3, 0).add(offset.scale(0.7));
 
 						int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(elements[i]);
 
-						ParticleBuilder.create(Type.DUST, world.rand, vec.x, vec.y, vec.z, 0.1, false)
+						ParticleBuilder.create(Type.DUST, world.random, vec.x, vec.y, vec.z, 0.1, false)
 								.vel(centre.subtract(vec).scale(0.02)).clr(colours[1]).fade(colours[2]).time(50).spawn(world);
 					}
 				}
@@ -138,10 +145,10 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 	private ItemStack getResult(){
 
-		boolean actuallyCrafting = imbuementTimer >= IMBUEMENT_DURATION - 1 && world instanceof ServerLevel;
+		boolean actuallyCrafting = imbuementTimer >= IMBUEMENT_DURATION - 1 && level instanceof ServerLevel;
 		Element[] elements = getReceptacleElements();
 
-		ItemStack result = getImbuementResult(stack, elements, actuallyCrafting, world, lastUser);
+		ItemStack result = getImbuementResult(stack, elements, actuallyCrafting, level, lastUser);
 
 		if(result.isEmpty()){
 			displayElement = null;
@@ -159,14 +166,14 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 		Element[] elements = new Element[4];
 
-		for(Direction side : Direction.HORIZONTALS){
+		for(Direction side : HORIZONTALS){
 
-			BlockEntity tileEntity = level.getTileEntity(pos.relative(side));
+			BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
-				elements[side.getHorizontalIndex()] = ((TileEntityReceptacle)tileEntity).getElement();
+				elements[side.get2DDataValue()] = ((TileEntityReceptacle)tileEntity).getElement();
 			}else{
-				elements[side.getHorizontalIndex()] = null;
+				elements[side.get2DDataValue()] = null;
 			}
 		}
 
@@ -176,9 +183,9 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 	/** Empties the 4 adjacent receptacles. */
 	private void consumeReceptacleContents(){
 
-		for(Direction side : Direction.HORIZONTALS){
+		for(Direction side : HORIZONTALS){
 
-			BlockEntity tileEntity = level.getTileEntity(pos.relative(side));
+			BlockEntity tileEntity = level.getBlockEntity(worldPosition.relative(side));
 
 			if(tileEntity instanceof TileEntityReceptacle){
 				((TileEntityReceptacle)tileEntity).setElement(null);
@@ -187,39 +194,22 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag nbt){
-		super.writeToNBT(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		CompoundTag itemTag = new CompoundTag();
-		stack.writeToNBT(itemTag);
-		nbt.setTag("item", itemTag);
+		stack.save(itemTag);
+		nbt.put("item", itemTag);
 		nbt.putInt("imbuementTimer", imbuementTimer);
-		if(lastUser != null) nbt.setUniqueId("lastUser", lastUser.getUUID());
-		return nbt;
+		if(lastUser != null) nbt.putUUID("lastUser", lastUser.getUUID());
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag nbt){
-		super.readFromNBT(nbt);
-		CompoundTag itemTag = nbt.getCompoundTag("item");
-		this.stack = new ItemStack(itemTag);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
+		CompoundTag itemTag = nbt.getCompound("item");
+		this.stack = ItemStack.of(itemTag);
 		this.imbuementTimer = nbt.getInt("imbuementTimer");
 		this.lastUserUUID = nbt.getUUID("lastUser");
-	}
-
-	@Override
-	public CompoundTag getUpdateTag(){
-		return this.writeToNBT(new CompoundTag());
-	}
-
-	@Nullable
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket(){
-		return new SPacketUpdateTileEntity(pos, 0, this.getUpdateTag());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt){
-		readFromNBT(pkt.getNbtCompound());
 	}
 
 	/**
@@ -247,7 +237,7 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 
 			if(Arrays.stream(receptacleElements).distinct().count() == 1 && receptacleElements[0] != null){ // All the same element
 
-				ItemStack result = new ItemStack(ItemWizardArmour.getArmour(receptacleElements[0], ((ItemWizardArmour)input.getItem()).armourClass, ((ItemWizardArmour)input.getItem()).armorType));
+				ItemStack result = new ItemStack(ItemWizardArmour.getArmour(receptacleElements[0], ((ItemWizardArmour)input.getItem()).armourClass, ((ItemWizardArmour)input.getItem()).getSlot()));
 
 				result.setTag(input.getTag());
 				((IManaStoringItem)result.getItem()).setMana(result, ((ItemWizardArmour)input.getItem()).getMana(input));
@@ -256,15 +246,35 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 			}
 		}
 
-		if((input.getItem() == WizardryItems.magic_crystal || input.getItem() == Item.getItemFromBlock(WizardryBlocks.crystal_block))
-				&& input.getMetadata() == 0){
+		if((input.getItem() == WizardryItems.MAGIC_CRYSTAL.get() || input.getItem() == WizardryItems.MAGIC_CRYSTAL_BLOCK.get())){
 
 			if(Arrays.stream(receptacleElements).distinct().count() == 1 && receptacleElements[0] != null){ // All the same element
-				return new ItemStack(input.getItem(), input.getCount(), receptacleElements[0].ordinal());
+				if(receptacleElements[0].equals(Element.FIRE)) {
+					return new ItemStack(WizardryItems.FIRE_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.ICE)) {
+					return new ItemStack(WizardryItems.ICE_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.LIGHTNING)) {
+					return new ItemStack(WizardryItems.LIGHTNING_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.NECROMANCY)) {
+					return new ItemStack(WizardryItems.NECROMANCY_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.EARTH)) {
+					return new ItemStack(WizardryItems.EARTH_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.SORCERY)) {
+					return new ItemStack(WizardryItems.SORCERY_CRYSTAL.get(), input.getCount());
+				}
+				else if(receptacleElements[0].equals(Element.HEALING)) {
+					return new ItemStack(WizardryItems.HEALING_CRSYTAL.get(), input.getCount());
+				}
+				return new ItemStack(input.getItem(), input.getCount());
 			}
 		}
 
-		if(input.getItem() == WizardryItems.ruined_spell_book){
+		if(input.getItem() == WizardryItems.RUINED_SPELL_BOOK.get()){
 
 			if(!ArrayUtils.contains(receptacleElements, null)){ // All receptacles filled (any element)
 
@@ -276,16 +286,16 @@ public class TileEntityImbuementAltar extends BlockEntity implements ITickable {
 					// The probabilities are a little complicated but work out quite nicely at 57% chance with 4 of the
 					// same element of spectral dust
 					Element element = receptacleElements[world.random.nextInt(receptacleElements.length)];
-					LootTable table = level.getLootTableManager().getLootTableFromLocation(
+					LootTable table = world.getServer().getLootTables().get(
 							WizardryLoot.RUINED_SPELL_BOOK_LOOT_TABLES[element.ordinal() - 1]);
-					LootContext context = new LootContext.Builder((ServerLevel)world).withPlayer(lastUser)
-							.withLuck(lastUser == null ? 0 : lastUser.getLuck()).build();
+					LootContext.Builder context = new LootContext.Builder((ServerLevel)world).withParameter(LootContextParams.THIS_ENTITY, lastUser)
+							.withLuck(lastUser == null ? 0 : lastUser.getLuck());
 
-					List<ItemStack> stacks = table.generateLootForPools(world.rand, context);
+					List<ItemStack> stacks = table.getRandomItems(context.create(LootContextParamSets.BLOCK));
 					return stacks.isEmpty() ? ItemStack.EMPTY : stacks.get(0);
 				}
 
-				return new ItemStack(WizardryItems.spell_book); // No point generating loot every tick just to check the recipe
+				return new ItemStack(WizardryItems.SPELL_BOOK.get()); // No point generating loot every tick just to check the recipe
 			}
 		}
 

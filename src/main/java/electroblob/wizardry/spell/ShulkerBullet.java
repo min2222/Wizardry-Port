@@ -1,29 +1,26 @@
 package electroblob.wizardry.spell;
 
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.util.EntityUtils;
-import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.EntityShulkerBullet;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.Comparator;
-import java.util.List;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 
 public class ShulkerBullet extends Spell {
 
@@ -86,14 +83,13 @@ public class ShulkerBullet extends Spell {
 
 				// Where there's a will there's a way...
 				CompoundTag nbt = new CompoundTag();
+				BlockPos pos = target.blockPosition();
 				bullet.save(nbt);
 				nbt.putInt("Dir", direction.get3DDataValue());
-				BlockPos pos = target.blockPosition();
-				CompoundTag targetTag = NbtUtils.createUUID(target.getUUID());
-				targetTag.putInt("X", pos.getX());
-				targetTag.putInt("Y", pos.getY());
-				targetTag.putInt("Z", pos.getZ());
-				NBTExtras.storeTagSafely(nbt, "Target", targetTag);
+				nbt.putUUID("Target", target.getUUID());
+				nbt.putInt("X", pos.getX());
+				nbt.putInt("Y", pos.getY());
+				nbt.putInt("Z", pos.getZ());
 				bullet.load(nbt); // LOL I just modified private fields without reflection
 
 				bullet.getPersistentData().putFloat(SpellThrowable.DAMAGE_MODIFIER_NBT_KEY, modifiers.get(SpellModifiers.POTENCY));

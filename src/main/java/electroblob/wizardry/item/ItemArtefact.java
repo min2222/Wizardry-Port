@@ -386,10 +386,10 @@ public class ItemArtefact extends Item {
 					// Based on a stationary start and a gravity acceleration of 0.02 blocks/tick^2, at 3 blocks of fall
 					// distance the player should be falling at about 0.35b/t, so 0.5 blocks should be enough of a window
 					if(player.fallDistance > 3f && player.fallDistance < 3.5f && player.level.random.nextFloat() < 0.5f){
-						if(!WizardData.get(player).isCasting()) WizardData.get(player).startCastingContinuousSpell(Spells.glide, new SpellModifiers(), 600);
+						if(!WizardData.get(player).isCasting()) WizardData.get(player).startCastingContinuousSpell(Spells.GLIDE, new SpellModifiers(), 600);
 					}else if(player.isOnGround()){
 						WizardData data = WizardData.get(player);
-						if(data.currentlyCasting() == Spells.glide) data.stopCastingContinuousSpell();
+						if(data.currentlyCasting() == Spells.GLIDE) data.stopCastingContinuousSpell();
 					}
 
 				}else if(artefact == WizardryItems.AMULET_AUTO_SHIELD.get()){
@@ -435,8 +435,8 @@ public class ItemArtefact extends Item {
 				}else if(artefact == WizardryItems.CHARM_FEEDING.get()){
 					// Every 5 seconds, feed the player if they are hungry enough
 					if(player.tickCount % 100 == 0){
-						if(player.getFoodData().getFoodLevel() < 20 - Spells.satiety.getProperty(Satiety.HUNGER_POINTS).intValue()){
-							if(findMatchingWandAndCast(player, Spells.satiety)) continue;
+						if(player.getFoodData().getFoodLevel() < 20 - Spells.SATIETY.getProperty(Satiety.HUNGER_POINTS).intValue()){
+							if(findMatchingWandAndCast(player, Spells.SATIETY)) continue;
 						}
 						if(player.getFoodData().getFoodLevel() < 20 - Spells.REPLENISH_HUNGER.getProperty(ReplenishHunger.HUNGER_POINTS).intValue()){
 							findMatchingWandAndCast(player, Spells.REPLENISH_HUNGER);
@@ -508,7 +508,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.RING_BLOCKWRANGLER.get()){
 
-					if(event.getSpell() == Spells.greater_telekinesis){
+					if(event.getSpell() == Spells.GREATER_TELEKINESIS){
 						modifiers.set(SpellModifiers.POTENCY, modifiers.get(SpellModifiers.POTENCY) * 2, false);
 					}
 
@@ -524,7 +524,7 @@ public class ItemArtefact extends Item {
 
 				}else if(artefact == WizardryItems.CHARM_FLIGHT.get()){
 
-					if(event.getSpell() == Spells.flight || event.getSpell() == Spells.glide){
+					if(event.getSpell() == Spells.FLIGHT || event.getSpell() == Spells.GLIDE){
 						modifiers.set(SpellModifiers.POTENCY, 1.5f * potency, true);
 					}
 
@@ -681,7 +681,7 @@ public class ItemArtefact extends Item {
 						}
 
 						DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
-								MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
+								MagicDamage.DamageType.SHOCK, true), Spells.STATIC_AURA.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
 						target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, player.level.random.nextFloat() * 0.4F + 1.5F);
 
 					}
@@ -708,7 +708,7 @@ public class ItemArtefact extends Item {
 							&& event.getSource().getEntity() instanceof LivingEntity){
 
 						LivingEntity target = (LivingEntity)event.getSource().getEntity();
-						((Banish)Spells.banish).teleport(target, target.level, 8 + target.level.random.nextDouble() * 8);
+						((Banish)Spells.BANISH).teleport(target, target.level, 8 + target.level.random.nextDouble() * 8);
 					}
 
 				}else if(artefact == WizardryItems.AMULET_TRANSIENCE.get()){
@@ -765,7 +765,7 @@ public class ItemArtefact extends Item {
 									}
 
 									DamageSafetyChecker.attackEntitySafely(target, MagicDamage.causeDirectMagicDamage(player,
-											MagicDamage.DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
+											MagicDamage.DamageType.SHOCK, true), Spells.STATIC_AURA.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
 									target.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 								});
 					}
@@ -897,7 +897,7 @@ public class ItemArtefact extends Item {
 
 					if(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).getType() == MagicDamage.DamageType.FIRE){
 						Disintegration.spawnEmbers(event.getEntity().level, player, event.getEntity(),
-								Spells.disintegration.getProperty(Disintegration.EMBER_COUNT).intValue());
+								Spells.DISINTEGRATION.getProperty(Disintegration.EMBER_COUNT).intValue());
 					}
 
 				}else if(artefact == WizardryItems.RING_ARCANE_FROST.get()){
@@ -977,9 +977,9 @@ public class ItemArtefact extends Item {
 			if(event.getEntity().getInventory().items.stream()
 					.filter(s -> !event.getEntity().level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(s), event.getEntity().level).isEmpty())
 					.mapToInt(ItemStack::getCount)
-					.sum() >= Spells.pocket_furnace.getProperty(PocketFurnace.ITEMS_SMELTED).intValue()){
+					.sum() >= Spells.POCKET_FURNACE.getProperty(PocketFurnace.ITEMS_SMELTED).intValue()){
 
-				findMatchingWandAndCast(event.getEntity(), Spells.pocket_furnace);
+				findMatchingWandAndCast(event.getEntity(), Spells.POCKET_FURNACE);
 			}
 		}
 	}

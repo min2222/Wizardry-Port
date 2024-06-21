@@ -17,6 +17,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -46,7 +47,7 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 
 	public ItemScroll(){
         super(new Item.Properties().stacksTo(16).tab(WizardryTabs.SPELLS));
-		this.addPropertyOverride(new ResourceLocation("festive"), (s, w, e) -> Wizardry.tisTheSeason ? 1 : 0);
+		ItemProperties.register(this, new ResourceLocation("festive"), (stack, p_174636_, entityIn, p_174638_) -> Wizardry.tisTheSeason ? 1 : 0);
 	}
 	
 	@Override

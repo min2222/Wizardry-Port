@@ -86,8 +86,8 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
         Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         builder.putAll(multimap);
 		if(slot == EquipmentSlot.MAINHAND){
-			float attackDamage = Spells.lightning_hammer.arePropertiesInitialised() ?
-					Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() : 10; // Fallback for search tree init, value doesn't really matter
+			float attackDamage = Spells.LIGHTNING_HAMMER.arePropertiesInitialised() ?
+					Spells.LIGHTNING_HAMMER.getProperty(Spell.DIRECT_DAMAGE).floatValue() : 10; // Fallback for search tree init, value doesn't really matter
 			builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", attackDamage, EntityUtils.Operations.ADD));
 			builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", ATTACK_SPEED, EntityUtils.Operations.ADD));
 			builder.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(MOVEMENT_SPEED_MODIFIER, "Weapon modifier", MOVEMENT_SPEED_REDUCTION, EntityUtils.Operations.MULTIPLY_FLAT));
@@ -205,7 +205,7 @@ public class ItemLightningHammer extends Item implements IConjuredItem {
 				nearby.remove(hit);
 				nearby.remove(wielder);
 				// When held, the number of chaining targets is halved
-				int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue() / 2;
+				int maxTargets = Spells.LIGHTNING_HAMMER.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue() / 2;
 				while(nearby.size() > maxTargets) nearby.remove(nearby.size() - 1);
 
 				for(LivingEntity target : nearby){

@@ -33,10 +33,10 @@ import electroblob.wizardry.util.SpellModifiers;
 import electroblob.wizardry.util.SpellProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -46,18 +46,18 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.network.NetworkEvent.GatherLoginPayloadsEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 
 /**
@@ -72,7 +72,7 @@ import net.minecraftforge.registries.RegistryBuilder;
  * execute the code that makes the spell work, and return true or false depending on whether the spell succeeded and
  * therefore whether mana should be used up.
  * <p></p>
- * - Register the spell using {@link RegistryEvent.Register}, with {@link Spell} as the type parameter. Each spell
+ * - Register the spell using {@link RegisterEvent}, with {@link Spell} as the type parameter. Each spell
  * should have a single instance, like blocks and items. <i>As of Wizardry 2.1, spells use the Forge registry system.
  * Related methods such as {@link Spell#metadata()} and {@link Spell#byMetadata(int)} have been re-routed to use this system, leaving
  * minimal external changes. Note also that the constructor automatically sets the registry name for you, though you may
@@ -685,8 +685,8 @@ public abstract class Spell implements Comparable<Spell> {
 	// ========================================== Translation methods ============================================
 
 	/* The general idea with translation is to use net.minecraft.client.resources.I18n directly on the client side (and
-	 * just prepend formatting codes where necessary), and to use TextComponentTranslation on the server (setting the
-	 * style as necessary). TextComponentTranslation effectively stores what needs to be translated, without actually
+	 * just prepend formatting codes where necessary), and to use MutableComponent on the server (setting the
+	 * style as necessary). MutableComponent effectively stores what needs to be translated, without actually
 	 * translating it. If, for whatever reason, you need to supply an ITextComponent but don't want it translated
 	 * (perhaps a name?), you can use TextComponentString, which will simply keep the raw string it is given. */
 
@@ -702,14 +702,14 @@ public abstract class Spell implements Comparable<Spell> {
 
 	/**
 	 * Returns the translated display name of the spell, without formatting (i.e. not coloured). <b>Client-side
-	 * only!</b> On the server side, use {@link TextComponentTranslation} (see {@link Spell#getNameForTranslation()}).
+	 * only!</b> On the server side, use {@link MutableComponent} (see {@link Spell#getNameForTranslation()}).
 	 */
 	public Component getDisplayName(){
 		return Wizardry.proxy.translate(getTranslationKey());
 	}
 
 	/**
-	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the spell, without
+	 * Returns a {@code MutableComponent} which will be translated to the display name of the spell, without
 	 * formatting (i.e. not coloured).
 	 */
 	public Component getNameForTranslation(){
@@ -718,14 +718,14 @@ public abstract class Spell implements Comparable<Spell> {
 
 	/**
 	 * Returns the translated display name of the spell, with formatting (i.e. coloured). <b>Client-side only!</b> On
-	 * the server side, use {@link TextComponentTranslation} (see {@link Spell#getNameForTranslationFormatted()}).
+	 * the server side, use {@link MutableComponent} (see {@link Spell#getNameForTranslationFormatted()}).
 	 */
 	public Component getDisplayNameWithFormatting(){
 		return Wizardry.proxy.translate(getTranslationKey(), getElement().getColour());
 	}
 
 	/**
-	 * Returns a {@code TextComponentTranslation} which will be translated to the display name of the spell, with
+	 * Returns a {@code MutableComponent} which will be translated to the display name of the spell, with
 	 * formatting (i.e. coloured).
 	 */
 	public Component getNameForTranslationFormatted(){
@@ -790,17 +790,17 @@ public abstract class Spell implements Comparable<Spell> {
 				case TIER_MATCH_PREFIX:
 				case TIER_MATCH_ALIAS:
 					// Tier IS known for undiscovered spells so we can match it
-					target = getTier().getDisplayName().toLowerCase(Locale.ROOT);
+					target = getTier().getDisplayName().getString().toLowerCase(Locale.ROOT);
 					break;
 				case ELEMENT_MATCH_PREFIX:
 				case ELEMENT_MATCH_ALIAS:
 					if(!discovered) return false; // Element is unknown so doesn't match
-					target = getElement().getDisplayName().toLowerCase(Locale.ROOT);
+					target = getElement().getDisplayName().getString().toLowerCase(Locale.ROOT);
 					break;
 				case TYPE_MATCH_PREFIX:
 				case TYPE_MATCH_ALIAS:
 					if(!discovered) return false; // Type is unknown so doesn't match
-					target = getType().getDisplayName().toLowerCase(Locale.ROOT);
+					target = getType().getDisplayName().getString().toLowerCase(Locale.ROOT);
 					break;
 				case MODID_MATCH_PREFIX:
 				case MODID_MATCH_ALIAS:
@@ -1127,7 +1127,7 @@ public abstract class Spell implements Comparable<Spell> {
 	}
 
 	@SubscribeEvent
-	public static void onClientConnectEvent(FMLNetworkEvent.ClientConnectedToServerEvent event){
+	public static void onClientConnectEvent(GatherLoginPayloadsEvent event){
 		// Right. Read carefully!
 		// This code would actually work perfectly well on a dedicated server. In singleplayer, however, it is a problem
 		// because the client and server SHARE STATIC VARIABLES (because they share the same JVM... stupid I know). LAN
@@ -1144,7 +1144,7 @@ public abstract class Spell implements Comparable<Spell> {
 	}
 
 	@SubscribeEvent
-	public static void onClientDisconnectEvent(FMLNetworkEvent.ClientDisconnectionFromServerEvent event){
+	public static void onClientDisconnectEvent(LevelEvent.Unload event){
 		// Why does the world UNLOAD event happen during world LOADING? How does that even work?!
 		clearProperties();
 		for(Spell spell : registry.get()){

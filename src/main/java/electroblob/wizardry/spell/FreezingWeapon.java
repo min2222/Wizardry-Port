@@ -33,20 +33,20 @@ public class FreezingWeapon extends Spell {
 
 		// Won't work if the weapon already has the enchantment
 		if(WizardData.get(caster) != null
-				&& WizardData.get(caster).getImbuementDuration(WizardryEnchantments.freezing_weapon) <= 0){
+				&& WizardData.get(caster).getImbuementDuration(WizardryEnchantments.FREEZING_WEAPON.get()) <= 0){
 
 			for(ItemStack stack : InventoryUtils.getPrioritisedHotbarAndOffhand(caster)){
 
 				if((ImbueWeapon.isSword(stack) || ImbueWeapon.isBow(stack))
-						&& !EnchantmentHelper.getEnchantments(stack).containsKey(WizardryEnchantments.freezing_weapon)){
+						&& !EnchantmentHelper.getEnchantments(stack).containsKey(WizardryEnchantments.FREEZING_WEAPON.get())){
 					// The enchantment level as determined by the damage multiplier. The + 0.5f is so that
 					// weird float processing doesn't incorrectly round it down.
-					stack.enchant(WizardryEnchantments.freezing_weapon,
+					stack.enchant(WizardryEnchantments.FREEZING_WEAPON.get(),
 							modifiers.get(SpellModifiers.POTENCY) == 1.0f ? 1
 									: (int)((modifiers.get(SpellModifiers.POTENCY) - 1.0f)
 											/ Constants.POTENCY_INCREASE_PER_TIER + 0.5f));
 
-					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.freezing_weapon,
+					WizardData.get(caster).setImbuementDuration(WizardryEnchantments.FREEZING_WEAPON.get(),
 							(int)(getProperty(EFFECT_DURATION).floatValue() * modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 
 					if(world.isClientSide){

@@ -50,12 +50,12 @@ public class EntityLargeMagicFireball extends EntityMagicFireball {
 	}
 
 	public float getExplosionPower(){
-		return explosionPower == -1 ? Spells.greater_fireball.getProperty(EXPLOSION_POWER).floatValue() : explosionPower;
+		return explosionPower == -1 ? Spells.GREATER_FIREBALL.getProperty(EXPLOSION_POWER).floatValue() : explosionPower;
 	}
 
 	@Override
 	public float getDamage(){
-		return damage == -1 ? Spells.greater_fireball.getProperty(Spell.DAMAGE).floatValue() : damage;
+		return damage == -1 ? Spells.GREATER_FIREBALL.getProperty(Spell.DAMAGE).floatValue() : damage;
 	}
 
 	@Override

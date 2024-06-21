@@ -1,6 +1,5 @@
 package electroblob.wizardry.tileentity;
 
-import electroblob.wizardry.block.BlockVanishingCobweb;
 import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

@@ -131,18 +131,18 @@ public interface Imbuement {
 				}
 
 				// Taken directly from ItemBow, so it works exactly the same as the power enchantment.
-				int level = bow.getEnchantmentLevel(WizardryEnchantments.magic_bow);
+				int level = bow.getEnchantmentLevel(WizardryEnchantments.MAGIC_BOW.get());
 
 				if(level > 0){
 					arrow.setBaseDamage(arrow.getBaseDamage() + (double)level * 0.5D + 0.5D);
 				}
 
-				if(bow.getEnchantmentLevel(WizardryEnchantments.flaming_weapon) > 0){
+				if(bow.getEnchantmentLevel(WizardryEnchantments.FLAMING_WEAPON.get()) > 0){
 					// Again, this is exactly what happens in ItemBow (flame is flame; level does nothing).
 					arrow.setSecondsOnFire(100);
 				}
 
-				level = bow.getEnchantmentLevel(WizardryEnchantments.freezing_weapon);
+				level = bow.getEnchantmentLevel(WizardryEnchantments.FREEZING_WEAPON.get());
 
 				if(level > 0){
 					if(arrow.getPersistentData() != null){

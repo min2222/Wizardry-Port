@@ -98,7 +98,7 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	public void onSpawn(){
 		if(this.entityData.get(SPAWN_PARTICLES)) this.spawnParticleEffect();
 		if(isSunSensitive() && getCaster() instanceof Player
-				&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.charm_undead_helmets)){
+				&& ItemArtefact.isArtefactActive((Player)getCaster(), WizardryItems.CHARM_UNDEAD_HELMETS.get())){
 			setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
 		}
 	}

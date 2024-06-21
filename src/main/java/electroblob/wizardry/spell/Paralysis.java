@@ -120,7 +120,7 @@ public class Paralysis extends SpellRay {
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 		// Paralysed creatures snap out of paralysis when they take critical damage
 		if(event.getEntity().hasEffect(WizardryPotions.PARALYSIS.get()) && event.getEntity().getHealth()
-				- event.getAmount() <= Spells.paralysis.getProperty(CRITICAL_HEALTH).floatValue()){
+				- event.getAmount() <= Spells.PARALYSIS.getProperty(CRITICAL_HEALTH).floatValue()){
 			event.getEntity().removeEffect(WizardryPotions.PARALYSIS.get());
 		}
 	}

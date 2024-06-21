@@ -59,12 +59,12 @@ public class EntitySmokeBomb extends EntityBomb {
 			this.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_SMASH, 1.5F, random.nextFloat() * 0.4F + 0.6F);
 			this.playSound(WizardrySounds.ENTITY_SMOKE_BOMB_SMOKE, 1.2F, 1.0f);
 
-			double range = Spells.smoke_bomb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
+			double range = Spells.SMOKE_BOMB.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(range, this.getX(), this.getY(),
 					this.getZ(), this.level);
 
-			int duration = Spells.smoke_bomb.getProperty(Spell.EFFECT_DURATION).intValue();
+			int duration = Spells.SMOKE_BOMB.getProperty(Spell.EFFECT_DURATION).intValue();
 
 			for(LivingEntity target : targets){
 				if(target != this.getOwner()){

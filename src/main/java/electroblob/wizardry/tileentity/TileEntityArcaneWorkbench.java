@@ -7,10 +7,10 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.IWorkbenchItem;
-import electroblob.wizardry.item.ItemCrystal;
 import electroblob.wizardry.item.ItemSpellBook;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryTags;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.core.BlockPos;
@@ -184,7 +184,7 @@ public class TileEntityArcaneWorkbench extends BaseContainerBlockEntity {
 			return false;
 
 		}else if(slotNumber == ContainerArcaneWorkbench.CRYSTAL_SLOT){
-			return itemstack.getItem() instanceof ItemCrystal;
+			return itemstack.is(WizardryTags.WizardryItemTags.CRYSTALS);
 
 		}else if(slotNumber == ContainerArcaneWorkbench.CENTRE_SLOT){
 			return itemstack.getItem() instanceof IWorkbenchItem;

@@ -1,7 +1,5 @@
 package electroblob.wizardry.tileentity;
 
-import java.util.Random;
-
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.spell.Spell;
@@ -26,7 +24,7 @@ public class TileEntityLectern extends BlockEntity {
 	public float bookSpread;
 	public float bookSpreadPrev;
 
-	public Spell currentSpell = Spells.none;
+	public Spell currentSpell = Spells.NONE;
 	
 	public TileEntityLectern(BlockPos p_155229_, BlockState p_155230_) {
 		super(WizardryBlocks.LECTERN_BLOCK_ENTITY.get(), p_155229_, p_155230_);

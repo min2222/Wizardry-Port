@@ -8,11 +8,11 @@ import electroblob.wizardry.util.BlockUtils;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 
 public class SpectralPathway extends Spell {
 	
@@ -38,8 +38,8 @@ public class SpectralPathway extends Spell {
 			return false;
 		}
 
-		Direction direction = caster.getHorizontalFacing();
-
+		Direction direction = caster.getDirection();
+		
 		boolean flag = false;
 
 		if(!world.isClientSide){
@@ -57,7 +57,7 @@ public class SpectralPathway extends Spell {
 						modifiers.get(WizardryItems.DURATION_UPGRADE.get())) || flag;
 				flag = placePathwayBlockIfPossible(world, origin.relative(direction, startPoint + i)
 						// Moves the BlockPos minus one block perpendicular to direction.
-						.offset(Direction.getFacingFromAxis(AxisDirection.NEGATIVE, direction.rotateY().getAxis())),
+						.relative(Direction.fromAxisAndDirection(direction.getClockWise().getAxis(), AxisDirection.NEGATIVE)),
 						modifiers.get(WizardryItems.DURATION_UPGRADE.get())) || flag;
 			}
 		}

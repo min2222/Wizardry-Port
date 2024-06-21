@@ -1,20 +1,22 @@
 package electroblob.wizardry.spell;
 
+import java.util.Optional;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.util.InventoryUtils;
 import electroblob.wizardry.util.SpellModifiers;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 
 public class PocketFurnace extends Spell {
@@ -40,26 +42,33 @@ public class PocketFurnace extends Spell {
 
 			if(!stack.isEmpty() && !world.isClientSide){
 
-				result = FurnaceRecipes.instance().getSmeltingResult(stack);
+				Container dummyInv = new SimpleContainer(1);
+				dummyInv.setItem(0, stack);
+				Optional<SmeltingRecipe> optionalSmeltingRecipe = world.getRecipeManager().getRecipeFor(RecipeType.SMELTING, dummyInv, world);
 
-				if(!result.isEmpty() && !(stack.getItem() instanceof ItemTool) && !(stack.getItem() instanceof SwordItem)
-						&& !(stack.getItem() instanceof ArmorItem)
-						&& !Settings.containsMetaItem(Wizardry.settings.pocketFurnaceItemBlacklist, stack)){
+				if (optionalSmeltingRecipe.isPresent()) {
+					optionalSmeltingRecipe.get().assemble(dummyInv);
 
-					if(stack.getCount() <= usesLeft){
-						ItemStack stack2 = new ItemStack(result.getItem(), stack.getCount(), result.getItemDamage());
-						if(InventoryUtils.doesPlayerHaveItem(caster, result.getItem())){
-							caster.getInventory().addItemStackToInventory(stack2);
-							caster.getInventory().setInventorySlotContents(i, ItemStack.EMPTY);
-						}else{
-							caster.getInventory().setInventorySlotContents(i, stack2);
+					result = optionalSmeltingRecipe.get().getResultItem();
+
+					if (!result.isEmpty() && !(stack.getItem() instanceof TieredItem) && !(stack.getItem() instanceof ArmorItem) && !Settings.containsMetaItem(Wizardry.settings.pocketFurnaceItemBlacklist, stack)) {
+						if (stack.getCount() <= usesLeft) {
+							ItemStack stack2 = new ItemStack(result.getItem(), stack.getCount());
+							if (InventoryUtils.doesPlayerHaveItem(caster, result.getItem())) {
+								caster.addItem(stack2);
+								caster.getInventory().setItem(i, ItemStack.EMPTY);
+							} else {
+								caster.getInventory().setItem(i, stack2);
+							}
+							usesLeft -= stack.getCount();
+						} else {
+							ItemStack copy = caster.getInventory().getItem(i).copy();
+							copy.shrink(usesLeft);
+							caster.getInventory().setItem(i, copy);
+							caster.getInventory().add(
+									new ItemStack(result.getItem(), usesLeft));
+							usesLeft = 0;
 						}
-						usesLeft -= stack.getCount();
-					}else{
-						caster.getInventory().remove(i, usesLeft);
-						caster.getInventory().addItemStackToInventory(
-								new ItemStack(result.getItem(), usesLeft, result.getItemDamage()));
-						usesLeft = 0;
 					}
 				}
 			}

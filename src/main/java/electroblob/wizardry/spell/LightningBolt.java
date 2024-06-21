@@ -98,7 +98,7 @@ public class LightningBolt extends SpellRay {
 
 			DamageSource source = summoner == null ? DamageSource.LIGHTNING_BOLT
 					: MagicDamage.causeIndirectMagicDamage(event.getLightning(), summoner, DamageType.SHOCK);
-			float damage = Spells.lightning_bolt.getProperty(DAMAGE).floatValue() * damageModifier;
+			float damage = Spells.LIGHTNING_BOLT.getProperty(DAMAGE).floatValue() * damageModifier;
 
 			// Don't need DamageSafetyChecker here because this isn't an attack event
 			EntityUtils.attackEntityWithoutKnockback(event.getEntity(), source, damage);

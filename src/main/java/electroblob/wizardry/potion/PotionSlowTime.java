@@ -39,7 +39,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	}
 
 	private static double getEffectRadius(){
-		return Spells.slow_time.getProperty(Spell.EFFECT_RADIUS).doubleValue();
+		return Spells.SLOW_TIME.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 	}
 
 	public static void unblockNearbyEntities(LivingEntity host){
@@ -128,7 +128,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 		}
 
 		// Un-mark all entities that have just left range
-		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.getX(), host.getY(), host.getZ(), host.world, Entity.class);
+		List<Entity> targetsBeyondRange = EntityUtils.getEntitiesWithinRadius(getEffectRadius() + 3, host.getX(), host.getY(), host.getZ(), host.level, Entity.class);
 		targetsBeyondRange.removeAll(targetsInRange);
 		targetsBeyondRange.forEach(e -> e.canUpdate(true));
 

@@ -29,7 +29,7 @@ public class EntityEmber extends EntityMagicProjectile {
 
 	@Override
 	public int getLifetime(){
-		return Spells.disintegration.getProperty(Disintegration.EMBER_LIFETIME).intValue() + extraLifetime;
+		return Spells.DISINTEGRATION.getProperty(Disintegration.EMBER_LIFETIME).intValue() + extraLifetime;
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class EntityEmber extends EntityMagicProjectile {
 		super.push(entity);
 
 		if(entity instanceof LivingEntity && ((LivingEntity)entity).getHealth() > 0){
-			entity.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue());
+			entity.setSecondsOnFire(Spells.DISINTEGRATION.getProperty(Spell.BURN_DURATION).intValue());
 		}
 	}
 
@@ -71,7 +71,7 @@ public class EntityEmber extends EntityMagicProjectile {
 
 		level.getEntities(getOwner(), this.getBoundingBox(), e -> e instanceof LivingEntity)
 				.stream().filter(e -> !(e instanceof LivingEntity) || ((LivingEntity)e).getHealth() > 0)
-				.forEach(e -> e.setSecondsOnFire(Spells.disintegration.getProperty(Spell.BURN_DURATION).intValue()));
+				.forEach(e -> e.setSecondsOnFire(Spells.DISINTEGRATION.getProperty(Spell.BURN_DURATION).intValue()));
 
 		// Copied from ParticleLava
 		if(this.random.nextFloat() > (float)this.tickCount / this.getLifetime()){

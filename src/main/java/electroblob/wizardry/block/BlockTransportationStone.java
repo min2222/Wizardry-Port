@@ -13,6 +13,7 @@ import electroblob.wizardry.util.Location;
 import electroblob.wizardry.util.ParticleBuilder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -33,9 +34,8 @@ public class BlockTransportationStone extends Block {
 	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.0625f * 5, 0, 0.0625f * 5, 0.0625f * 11, 0.0625f * 6,
 			0.0625f * 11);
 
-	public BlockTransportationStone(Material material){
-		super(material);
-		this.setTickRandomly(true);
+	public BlockTransportationStone(BlockBehaviour.Properties properties){
+		super(properties);
 	}
 
 	@Override
@@ -219,7 +219,7 @@ public class BlockTransportationStone extends Block {
 		for(int x = -1; x <= 1; x++){
 			for(int z = -1; z <= 1; z++){
 				if(x == 0 && z == 0) continue;
-				if(level.getBlockState(pos.add(x, 0, z)).getBlock() == WizardryBlocks.transportation_stone) n++;
+				if(world.getBlockState(pos.offset(x, 0, z)).getBlock() == WizardryBlocks.TRANSPORTATION_STONE.get()) n++;
 			}
 		}
 

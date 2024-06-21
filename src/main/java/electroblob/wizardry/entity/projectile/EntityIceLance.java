@@ -28,7 +28,7 @@ public class EntityIceLance extends EntityMagicArrow {
 		this.setKnockbackStrength(1);
 	}
 
-	@Override public double getDamage(){ return Spells.ice_lance.getProperty(Spell.DAMAGE).floatValue(); }
+	@Override public double getDamage(){ return Spells.ICE_LANCE.getProperty(Spell.DAMAGE).floatValue(); }
 
 	@Override public int getLifetime(){ return -1; }
 
@@ -48,8 +48,8 @@ public class EntityIceLance extends EntityMagicArrow {
 		// Adds a freeze effect to the target.
 		if(!MagicDamage.isEntityImmune(DamageType.FROST, entityHit))
 			entityHit.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-					Spells.ice_lance.getProperty(Spell.EFFECT_DURATION).intValue(),
-					Spells.ice_lance.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+					Spells.ICE_LANCE.getProperty(Spell.EFFECT_DURATION).intValue(),
+					Spells.ICE_LANCE.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 		this.playSound(WizardrySounds.ENTITY_ICE_LANCE_HIT, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}

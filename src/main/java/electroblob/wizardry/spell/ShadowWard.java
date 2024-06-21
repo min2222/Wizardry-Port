@@ -68,12 +68,12 @@ public class ShadowWard extends Spell {
 		
 		if(event.getSource() != null && event.getSource().getEntity() instanceof LivingEntity){
 
-			if(EntityUtils.isCasting(event.getEntity(), Spells.shadow_ward) && !event.getSource().isBypassArmor()
+			if(EntityUtils.isCasting(event.getEntity(), Spells.SHADOW_WARD) && !event.getSource().isBypassArmor()
 					&& !(event.getSource() instanceof IElementalDamage && ((IElementalDamage)event.getSource()).isRetaliatory())){
 
 				event.setCanceled(true);
 
-				float reflectedFraction = Mth.clamp(Spells.shadow_ward.getProperty(REFLECTED_FRACTION).floatValue(), 0, 1);
+				float reflectedFraction = Mth.clamp(Spells.SHADOW_WARD.getProperty(REFLECTED_FRACTION).floatValue(), 0, 1);
 
 				// Now we can preserve the original damage source (sort of) as long as we make it retaliatory.
 				// For some reason this isn't working, so I've reverted to plain old magic damage for now.

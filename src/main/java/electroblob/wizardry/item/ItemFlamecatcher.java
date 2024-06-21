@@ -46,7 +46,7 @@ public class ItemFlamecatcher extends BowItem implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		return this.getMaxDamageFromNBT(stack, Spells.flamecatcher);
+		return this.getMaxDamageFromNBT(stack, Spells.FLAMECATCHER);
 	}
 
 	@Override

@@ -72,6 +72,7 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 /**
  * A {@code Forfeit} object represents a negative effect that may happen when a player attempts to cast an
@@ -100,6 +101,8 @@ public abstract class Forfeit {
 	private final ResourceLocation name;
 
 	protected final SoundEvent sound;
+	
+	private static final Direction[] HORIZONTALS = ObfuscationReflectionHelper.getPrivateValue(Direction.class, null, "f_122349_");
 
 	public Forfeit(ResourceLocation name){
 		this.name = name;
@@ -186,7 +189,7 @@ public abstract class Forfeit {
 			WizardData data = WizardData.get(player);
 
 			float chance = (float)Wizardry.settings.forfeitChance;
-			if(ItemArtefact.isArtefactActive(player, WizardryItems.amulet_wisdom)) chance *= 0.5;
+			if(ItemArtefact.isArtefactActive(player, WizardryItems.AMULET_WISDOM.get())) chance *= 0.5;
 
 			// Use the synchronised random to ensure the same outcome on client- and server-side
 			if(data.synchronisedRandom.nextFloat() < chance && !data.hasSpellBeenDiscovered(event.getSpell())){
@@ -344,7 +347,7 @@ public abstract class Forfeit {
 		}));
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("storm", (w, p) -> {
-			if(!Spells.invoke_weather.isEnabled(Context.WANDS)) return;
+			if(!Spells.INVOKE_WEATHER.isEnabled(Context.WANDS)) return;
 			int standardWeatherTime = (300 + (new Random()).nextInt(600)) * 20;
 			if(!w.isClientSide) {
 				((ServerLevel)w).setWeatherParameters(standardWeatherTime, standardWeatherTime, true, true);
@@ -353,7 +356,7 @@ public abstract class Forfeit {
 
 		add(Tier.APPRENTICE, Element.LIGHTNING, create("lightning_sigils", (w, p) -> {
 			if(!w.isClientSide){
-				for(Direction direction : Direction.HORIZONTALS){
+				for(Direction direction : HORIZONTALS){
 					BlockPos pos = p.blockPosition().relative(direction, 2);
 					Integer y = BlockUtils.getNearestFloor(w, pos, 2);
 					if(y == null) continue;
@@ -387,7 +390,7 @@ public abstract class Forfeit {
 
 		add(Tier.MASTER, Element.LIGHTNING, create("storm_elementals", (w, p) -> {
 			if(!w.isClientSide){
-				for(Direction direction : Direction.HORIZONTALS){
+				for(Direction direction : HORIZONTALS){
 					BlockPos pos = p.blockPosition().relative(direction, 3);
 					EntityStormElemental stormElemental = new EntityStormElemental(w);
 					stormElemental.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
@@ -416,7 +419,7 @@ public abstract class Forfeit {
 
 		add(Tier.MASTER, Element.NECROMANCY, create("shadow_wraiths", (w, p) -> {
 			if(!w.isClientSide){
-				for(Direction direction : Direction.HORIZONTALS){
+				for(Direction direction : HORIZONTALS){
 					BlockPos pos = p.blockPosition().relative(direction, 3);
 					EntityShadowWraith wraith = new EntityShadowWraith(w);
 					wraith.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
@@ -427,10 +430,10 @@ public abstract class Forfeit {
 
 		add(Tier.NOVICE, Element.EARTH, create("snares", (w, p) -> {
 			if(!w.isClientSide && EntityUtils.canDamageBlocks(p, w)){
-				for(Direction direction : Direction.HORIZONTALS){
+				for(Direction direction : HORIZONTALS){
 					BlockPos pos = p.blockPosition().relative(direction);
 					if(BlockUtils.canBlockBeReplaced(w, pos) && BlockUtils.canPlaceBlock(p, w, pos))
-						w.setBlockAndUpdate(pos, WizardryBlocks.snare.defaultBlockState());
+						w.setBlockAndUpdate(pos, WizardryBlocks.SNARE.get().defaultBlockState());
 				}
 			}
 		}));
@@ -468,7 +471,7 @@ public abstract class Forfeit {
 				sphere.forEach(pos -> {
 					FallingBlockEntity block = new FallingBlockEntity(w, pos.getX() + 0.5, pos.getY() + 0.5,
 							pos.getZ() + 0.5, w.getBlockState(pos));
-					block.motionY = 0.3 * (4 - (p.blockPosition().getY() - pos.getY()));
+					block.setDeltaMovement(block.getDeltaMovement().x, 0.3 * (4 - (p.blockPosition().getY() - pos.getY())), block.getDeltaMovement().z);
 					w.addFreshEntity(block);
 				});
 			}
@@ -484,7 +487,7 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.APPRENTICE, Element.SORCERY, create("teleport_self", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.random.nextDouble() * 8)));
+		add(Tier.APPRENTICE, Element.SORCERY, create("teleport_self", (w, p) -> ((Banish)Spells.BANISH).teleport(p, w, 8 + w.random.nextDouble() * 8)));
 
 		add(Tier.ADVANCED, Element.SORCERY, create("levitate_self", (w, p) -> p.addEffect(new MobEffectInstance(MobEffects.LEVITATION, 200))));
 
@@ -515,7 +518,7 @@ public abstract class Forfeit {
 			}
 		}));
 
-		add(Tier.MASTER, Element.SORCERY, create("teleport_self_large_distance", (w, p) -> ((Banish)Spells.banish).teleport(p, w, 8 + w.random.nextDouble() * 700)));
+		add(Tier.MASTER, Element.SORCERY, create("teleport_self_large_distance", (w, p) -> ((Banish)Spells.BANISH).teleport(p, w, 8 + w.random.nextDouble() * 700)));
 
 		add(Tier.NOVICE, Element.HEALING, create("damage_self", (w, p) -> p.hurt(DamageSource.MAGIC, 4)));
 

@@ -40,7 +40,7 @@ public class EntityIceball extends EntityMagicProjectile {
 
 			if(entityHit != null){
 
-				float damage = Spells.iceball.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+				float damage = Spells.ICEBALL.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 				entityHit.hurt(
 						MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.FROST).setProjectile(),
@@ -48,8 +48,8 @@ public class EntityIceball extends EntityMagicProjectile {
 
 				if(entityHit instanceof LivingEntity && !MagicDamage.isEntityImmune(DamageType.FROST, entityHit)){
 					((LivingEntity)entityHit).addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-							Spells.iceball.getProperty(Spell.EFFECT_DURATION).intValue(),
-							Spells.iceball.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+							Spells.ICEBALL.getProperty(Spell.EFFECT_DURATION).intValue(),
+							Spells.ICEBALL.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}
 
 			}else{

@@ -15,23 +15,21 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.EntityZombie;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber
 public class Clairvoyance extends Spell {
@@ -94,8 +92,7 @@ public class Clairvoyance extends Spell {
 							this.playSound(world, caster, ticksInUse, -1, modifiers);
 
 							if(!world.isClientSide && caster instanceof ServerPlayer){
-								WizardryPacketHandler.net.sendTo(new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.DURATION_UPGRADE.get())),
-										(ServerPlayer)caster);
+								WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)caster), new PacketClairvoyance.Message(path, modifiers.get(WizardryItems.DURATION_UPGRADE.get())));
 							}
 
 							return true;
@@ -121,7 +118,7 @@ public class Clairvoyance extends Spell {
 	public static void spawnPathPaticles(Level world, Path path, float durationMultiplier){
 
 		// A bit annoying that we have to use the reference here but there's no easy way around it
-		float duration = Spells.clairvoyance.getProperty(DURATION).floatValue();
+		float duration = Spells.CLAIRVOYANCE.getProperty(DURATION).floatValue();
 
 		PathPoint point, nextPoint;
 
@@ -170,7 +167,7 @@ public class Clairvoyance extends Spell {
 
 					if(!event.getLevel().isClientSide){
 						event.getEntity().displayClientMessage(
-								Component.translatable("spell." + Spells.clairvoyance.getUnlocalisedName() + ".confirm", Spells.clairvoyance.getNameForTranslationFormatted()), true);
+								Component.translatable("spell." + Spells.CLAIRVOYANCE.getUnlocalisedName() + ".confirm", Spells.CLAIRVOYANCE.getNameForTranslationFormatted()), true);
 					}
 
 					event.setCanceled(true);

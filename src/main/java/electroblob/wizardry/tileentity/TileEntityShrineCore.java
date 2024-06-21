@@ -23,6 +23,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -33,7 +34,10 @@ import net.minecraft.util.ITickable;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor.TargetPoint;
 
 import java.util.Arrays;
 import java.util.List;
@@ -144,8 +148,7 @@ public class TileEntityShrineCore extends BlockEntity {
 
 		if(!level.isClientSide){
 
-			WizardryPacketHandler.net.sendToAllAround(new PacketConquerShrine.Message(this.worldPosition),
-					new NetworkRegistry.TargetPoint(this.level.dimension(), x, y, z, 64));
+			WizardryPacketHandler.net.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(x, y, z, 64, this.level.dimension())), new PacketConquerShrine.Message(this.worldPosition));
 
 			if(level.getBlockState(worldPosition).getBlock() == WizardryBlocks.runestone_pedestal){
 				level.setBlockAndUpdate(worldPosition, WizardryBlocks.runestone_pedestal.defaultBlockState()
@@ -155,7 +158,7 @@ public class TileEntityShrineCore extends BlockEntity {
 			}
 		}
 
-		world.markTileEntityForRemoval(this);
+		level.markTileEntityForRemoval(this);
 
 		if(!level.isClientSide){
 			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getPersistentData(), ArcaneLock.NBT_KEY);
@@ -184,7 +187,7 @@ public class TileEntityShrineCore extends BlockEntity {
 				e -> e instanceof Player || e instanceof EntityWizard || e instanceof EntityEvilWizard);
 
 		for(LivingEntity entity : entities){
-			entity.addEffect(new MobEffectInstance(WizardryPotions.containment, 219));
+			entity.addEffect(new MobEffectInstance(WizardryPotions.CONTAINMENT.get(), 219));
 			NBTExtras.storeTagSafely(entity.getPersistentData(), PotionContainment.ENTITY_TAG, NbtUtils.writeBlockPos(this.worldPosition));
 		}
 	}

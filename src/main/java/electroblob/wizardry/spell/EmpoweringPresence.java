@@ -65,7 +65,7 @@ public class EmpoweringPresence extends SpellAreaEffect {
 		if(event.getCaster() != null && event.getCaster().hasEffect(WizardryPotions.EMPOWERMENT.get())
 				&& !(event.getSpell() instanceof EmpoweringPresence)){ // Prevent exponential empowerment stacking!
 
-			float potency = 1 + Spells.empowering_presence.getProperty(POTENCY_PER_LEVEL).floatValue()
+			float potency = 1 + Spells.EMPOWERING_PRESENCE.getProperty(POTENCY_PER_LEVEL).floatValue()
 					* (event.getCaster().getEffect(WizardryPotions.EMPOWERMENT.get()).getAmplifier() + 1);
 
 			event.getModifiers().set(SpellModifiers.POTENCY,

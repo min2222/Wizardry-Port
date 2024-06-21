@@ -68,7 +68,7 @@ public class Charge extends Spell {
 
 			Vec3 look = player.getLookAngle();
 
-			float speed = Spells.charge.getProperty(Charge.CHARGE_SPEED).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
+			float speed = Spells.CHARGE.getProperty(Charge.CHARGE_SPEED).floatValue() * modifiers.get(WizardryItems.RANGE_UPGRADE.get());
 
             player.setDeltaMovement(look.x * speed, player.getDeltaMovement().y, look.z * speed);
 
@@ -82,8 +82,8 @@ public class Charge extends Spell {
 
 			collided.remove(player);
 
-			float damage = Spells.charge.getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY);
-			float knockback = Spells.charge.getProperty(KNOCKBACK_STRENGTH).floatValue();
+			float damage = Spells.CHARGE.getProperty(DAMAGE).floatValue() * modifiers.get(SpellModifiers.POTENCY);
+			float knockback = Spells.CHARGE.getProperty(KNOCKBACK_STRENGTH).floatValue();
 
 			collided.forEach(e -> e.hurt(MagicDamage.causeDirectMagicDamage(player, MagicDamage.DamageType.SHOCK), damage));
 			collided.forEach(e -> e.push(player.getDeltaMovement().x * knockback, player.getDeltaMovement().y * knockback + 0.3f, player.getDeltaMovement().z * knockback));

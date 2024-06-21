@@ -1,5 +1,7 @@
 package electroblob.wizardry.block;
 
+import java.util.Random;
+
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.spell.Spell;
@@ -7,53 +9,53 @@ import electroblob.wizardry.tileentity.TileEntityThorns;
 import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
-import net.minecraft.world.level.block.BlockDoublePlant.EnumBlockHalf;
-import net.minecraft.world.level.block.properties.PropertyEnum;
-import net.minecraft.world.level.block.properties.PropertyInteger;
-import net.minecraft.world.level.block.state.BlockStateContainer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BushBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BlockDoublePlant.EnumBlockHalf;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Random;
-
 @Mod.EventBusSubscriber
-public class BlockThorns extends BushBlock implements ITileEntityProvider {
+public class BlockThorns extends BushBlock implements EntityBlock {
 
 	public static final int GROWTH_STAGES = 8;
 	public static final int GROWTH_STAGE_DURATION = 2;
 
-	public static final PropertyInteger AGE = PropertyInteger.create("age", 0, GROWTH_STAGES-1);
-	public static final PropertyEnum<EnumBlockHalf> HALF = PropertyEnum.create("half", EnumBlockHalf.class);
+	public static final IntegerProperty AGE = IntegerProperty.create("age", 0, GROWTH_STAGES-1);
+	public static final EnumProperty<DoubleBlockHalf> HALF = EnumProperty.create("half", DoubleBlockHalf.class);
 
 	public BlockThorns(){
-		this.setDefaultState(this.blockState.getBaseState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 7));
-		this.setHardness(4);
-		this.setSoundType(SoundType.PLANT);
-		this.setCreativeTab(null);
+		super(BlockBehaviour.Properties.of(Material.PLANT).noCollission().offsetType(BlockBehaviour.OffsetType.XZ).destroyTime(4).sound(SoundType.CROP));
+        this.registerDefaultState(this.stateDefinition.any().setValue(HALF, DoubleBlockHalf.LOWER).setValue(AGE, Integer.valueOf(7)));
 	}
 
 	@Override
 	public AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
-		return FULL_BLOCK_AABB;
+		return FULL_BLOCK_;
 	}
 
 	@Override

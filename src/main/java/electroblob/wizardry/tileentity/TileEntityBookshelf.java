@@ -20,10 +20,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class TileEntityBookshelf extends RandomizableContainerBlockEntity {
 
@@ -130,7 +130,7 @@ public class TileEntityBookshelf extends RandomizableContainerBlockEntity {
 	/** Sets the {@value NATURAL_NBT_KEY} flag to true in the given NBT tag compound, <b>if</b> the compound belongs to
 	 * a bookshelf tile entity (more specifically, if it has an "id" tag matching the bookshelf TE's registry name). */
 	public static void markAsNatural(CompoundTag nbt){
-		if(nbt != null && nbt.getString("id").equals(BlockEntity.getKey(TileEntityBookshelf.class).toString())){
+		if(nbt != null && nbt.getString("id").equals(ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(WizardryBlocks.BOOKSHELF_BLOCK_ENTITY.get()).toString())){
 			nbt.putBoolean(NATURAL_NBT_KEY, true);
 		}
 	}

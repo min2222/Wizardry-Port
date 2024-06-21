@@ -57,7 +57,7 @@ public class EntityForceOrb extends EntityBomb {
 			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT_BLOCK, 1.5F, pitch);
 			this.playSound(WizardrySounds.ENTITY_FORCE_ORB_HIT_BLOCK, 1.5F, pitch - 0.01f);
 
-			double blastRadius = Spells.force_orb.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
+			double blastRadius = Spells.FORCE_ORB.getProperty(Spell.BLAST_RADIUS).floatValue() * blastMultiplier;
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(blastRadius, this.getX(),
 					this.getY(), this.getZ(), this.level);
@@ -72,7 +72,7 @@ public class EntityForceOrb extends EntityBomb {
 					double dz = this.getZ() - target.getZ() > 0 ? -0.5 - (this.getZ() - target.getZ()) / 8
 							: 0.5 - (this.getZ() - target.getZ()) / 8;
 
-					float damage = Spells.force_orb.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+					float damage = Spells.FORCE_ORB.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 					target.hurt(
 							MagicDamage.causeIndirectMagicDamage(this, this.getOwner(), DamageType.BLAST), damage);

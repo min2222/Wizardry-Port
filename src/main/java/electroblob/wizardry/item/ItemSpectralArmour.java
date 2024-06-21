@@ -22,7 +22,7 @@ public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 
 	@Override
 	public int getMaxDamage(ItemStack stack){
-		return this.getMaxDamageFromNBT(stack, Spells.conjure_armour);
+		return this.getMaxDamageFromNBT(stack, Spells.CONJURE_ARMOUR);
 	}
 
 	@Override

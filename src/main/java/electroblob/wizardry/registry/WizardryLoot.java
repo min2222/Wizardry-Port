@@ -2,25 +2,21 @@ package electroblob.wizardry.registry;
 
 import java.util.Arrays;
 
-import org.jetbrains.annotations.Nullable;
-
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.loot.RandomSpell;
 import electroblob.wizardry.loot.WizardSpell;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
-import net.minecraft.world.storage.loot.LootEntry;
-import net.minecraft.world.storage.loot.LootEntryTable;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.minecraft.world.storage.loot.LootTableList;
-import net.minecraft.world.storage.loot.RandomValueRange;
-import net.minecraft.world.storage.loot.conditions.LootCondition;
-import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -73,8 +69,6 @@ public final class WizardryLoot {
  
 		// Always registers the loot tables, but only injects the additions into vanilla if the appropriate option is
 		// enabled in the config (see WizardryEventHandler).
-		LootFunctionManager.registerFunction(new RandomSpell.Serializer());
-		LootFunctionManager.registerFunction(new WizardSpell.Serializer());
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/wizard_tower"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/obelisk"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/shrine"));
@@ -122,9 +116,8 @@ public final class WizardryLoot {
 				if (entry == null) {
 					return; // If this is true it didn't work :(
 				}
-				Class entityClass = entry.getEntityClass();
 
-				if (MobCategory.MONSTER.getCreatureClass().isAssignableFrom(entityClass)) {
+				if (entry.getCategory().equals(MobCategory.MONSTER)) {
 					event.getTable().addPool(getAdditive(Wizardry.MODID + ":entities/mob_additions", Wizardry.MODID + "_additional_mob_drops"));
 				}
 			}
@@ -134,21 +127,19 @@ public final class WizardryLoot {
 		// This is because you are supposed to only catch one item at a time!
 		if(event.getName().toString().matches("minecraft:gameplay/fishing/junk")){
 			// The first (and in this case, only) vanilla loot pool is named "main"
-			event.getTable().getPool("main").addEntry(getAdditiveEntry(Wizardry.MODID + ":gameplay/fishing/junk_additions", 4));
+			event.getTable().addPool(LootPool.lootPool().add(getAdditiveEntry(Wizardry.MODID + ":gameplay/fishing/junk_additions", 4)).build());
 		}else if(event.getName().toString().matches("minecraft:gameplay/fishing/treasure")){
-			event.getTable().getPool("main").addEntry(getAdditiveEntry(Wizardry.MODID + ":gameplay/fishing/treasure_additions", 1));
+			event.getTable().addPool(LootPool.lootPool().add(getAdditiveEntry(Wizardry.MODID + ":gameplay/fishing/treasure_additions", 1)).build());
 		}
 	}
 
-	private static LootPool getAdditive(String entryName, String poolName){
-		return new LootPool(new LootEntry[]{getAdditiveEntry(entryName, 1)}, new LootCondition[0],
-				new RandomValueRange(1), new RandomValueRange(0, 1), Wizardry.MODID + "_" + poolName);
-	}
+    private static LootPool getAdditive(String entryName, String poolName) {
+        return LootPool.lootPool().add(getAdditiveEntry(entryName, 1)).setRolls(ConstantValue.exactly(1)).setBonusRolls(UniformGenerator.between(0, 1)).name(Wizardry.MODID + "_" + poolName).build();
+    }
 
-	private static LootEntryTable getAdditiveEntry(String name, int weight){
-		return new LootEntryTable(new ResourceLocation(name), weight, 0, new LootCondition[0],
-				Wizardry.MODID + "_additive_entry");
-	}
+    private static LootPoolEntryContainer.Builder<?> getAdditiveEntry(String name, int weight) {
+        return LootTableReference.lootTableReference(new ResourceLocation(name)).setWeight(weight).setQuality(0);
+    }
 
 //	@SubscribeEvent
 //	public static void onLivingSpawnEvent(LivingSpawnEvent.SpecialSpawn event){

@@ -21,6 +21,7 @@ import electroblob.wizardry.misc.Forfeit;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.WizardryAdvancementTriggers;
 import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.registry.WizardryEnchantments;
 import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryLoot;
@@ -126,6 +127,7 @@ public class Wizardry {
 		WizardryBlocks.BLOCK_ENTITIES.register(bus);
 		WizardryGuiHandler.MENUS.register(bus);
 		WizardryLoot.FUNCTIONS.register(bus);
+		WizardryEnchantments.ENCHANTMENTS.register(bus);
 	}
 
 	@EventHandler

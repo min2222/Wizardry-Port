@@ -63,7 +63,7 @@ public interface ISpellCaster {
 	 */
 	@Nonnull
 	default Spell getContinuousSpell(){
-		return Spells.none;
+		return Spells.NONE;
 	}
 
 	/**
