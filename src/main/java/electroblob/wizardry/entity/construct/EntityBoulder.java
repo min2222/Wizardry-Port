@@ -80,8 +80,8 @@ public class EntityBoulder extends EntityScaledConstruct {
 		// Entity damage
 		List<LivingEntity> collided = level.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
 
-		float damage = Spells.boulder.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
-		float knockback = Spells.boulder.getProperty(Boulder.KNOCKBACK_STRENGTH).floatValue();
+		float damage = Spells.BOULDER.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+		float knockback = Spells.BOULDER.getProperty(Boulder.KNOCKBACK_STRENGTH).floatValue();
 
 		for(LivingEntity entity : collided){
 

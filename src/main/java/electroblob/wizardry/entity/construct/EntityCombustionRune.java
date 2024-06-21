@@ -48,7 +48,7 @@ public class EntityCombustionRune extends EntityScaledConstruct {
 
 				if(this.isValidTarget(target)){
 
-					float strength = Spells.combustion_rune.getProperty(Spell.BLAST_RADIUS).floatValue() * sizeMultiplier;
+					float strength = Spells.COMBUSTION_RUNE.getProperty(Spell.BLAST_RADIUS).floatValue() * sizeMultiplier;
 
 					level.explode(this.getCaster(), this.getX(), this.getY(), this.getZ(), strength, true,
 							EntityUtils.canDamageBlocks(getCaster(), level) ? BlockInteraction.DESTROY : BlockInteraction.NONE);

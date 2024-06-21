@@ -5,19 +5,27 @@ import electroblob.wizardry.block.BlockArcaneWorkbench;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.block.BlockCrystalFlower;
 import electroblob.wizardry.block.BlockCrystalOre;
-import electroblob.wizardry.block.BlockGildedWood;
+import electroblob.wizardry.block.BlockDryFrostedIce;
 import electroblob.wizardry.block.BlockImbuementAltar;
 import electroblob.wizardry.block.BlockLectern;
+import electroblob.wizardry.block.BlockPermafrost;
+import electroblob.wizardry.block.BlockSnare;
+import electroblob.wizardry.block.BlockSpectral;
+import electroblob.wizardry.block.BlockStatue;
 import electroblob.wizardry.block.BlockThorns;
 import electroblob.wizardry.block.BlockTransportationStone;
+import electroblob.wizardry.block.BlockVanishingCobweb;
 import electroblob.wizardry.tileentity.TileEntityArcaneWorkbench;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
 import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
 import electroblob.wizardry.tileentity.TileEntityLectern;
+import electroblob.wizardry.tileentity.TileEntityPlayerSave;
 import electroblob.wizardry.tileentity.TileEntityReceptacle;
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.tileentity.TileEntityThorns;
+import electroblob.wizardry.tileentity.TileEntityTimer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
@@ -62,18 +70,18 @@ public final class WizardryBlocks {
     public static final RegistryObject<Block> SORCERY_CRYSTAL_BLOCK = BLOCKS.register("sorcery_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_LIGHT_GREEN).strength(5, 10).requiresCorrectToolForDrops()));
     public static final RegistryObject<Block> HEALING_CRYSTAL_BLOCK = BLOCKS.register("healing_crystal_block", () -> new Block(BlockBehaviour.Properties.of(Material.METAL, MaterialColor.COLOR_YELLOW).strength(5, 10).requiresCorrectToolForDrops()));
 
-	public static final RegistryObject<Block> PETRIFIED_STONE = placeholder();
-	public static final RegistryObject<Block> ICE_STATUE = placeholder();
+	public static final RegistryObject<Block> PETRIFIED_STONE = BLOCKS.register("petrified_stone", () -> new BlockStatue(BlockBehaviour.Properties.of(Material.STONE).strength(1.5F, 10.0F), false));
+	public static final RegistryObject<Block> ICE_STATUE = BLOCKS.register("ice_statue", () -> new BlockStatue(BlockBehaviour.Properties.of(Material.ICE).strength(0.5F).friction(0.98F).sound(SoundType.GLASS).noOcclusion(), true));
 	public static final RegistryObject<Block> MAGIC_LIGHT = placeholder();
-	public static final RegistryObject<Block> SNARE = placeholder();
-	public static final RegistryObject<Block> SPECTRAL_BLOCK = placeholder();
-	public static final RegistryObject<Block> METEOR = placeholder();
-	public static final RegistryObject<Block> VANISHING_COBWEB = placeholder();
+	public static final RegistryObject<Block> SNARE = BLOCKS.register("snare", () -> new BlockSnare(BlockBehaviour.Properties.of(Material.PLANT).sound(SoundType.CROP).instabreak().noOcclusion()));
+	public static final RegistryObject<Block> SPECTRAL_BLOCK = BLOCKS.register("spectral_block", () -> new BlockSpectral(BlockBehaviour.Properties.of(Material.GLASS).strength(-1.0F, 6000000.0F).sound(SoundType.GLASS)));
+	public static final RegistryObject<Block> METEOR = BLOCKS.register("meteor", () -> new Block(BlockBehaviour.Properties.of(Material.STONE).lightLevel((state) -> 1)));
+	public static final RegistryObject<Block> VANISHING_COBWEB = BLOCKS.register("vanishing_cobweb", () -> new BlockVanishingCobweb(BlockBehaviour.Properties.of(Material.WEB).noCollission().strength(4)));
     public static final RegistryObject<Block> THORNS = BLOCKS.register("thorns", () -> new BlockThorns());
 	public static final RegistryObject<Block> OBSIDIAN_CRUST = placeholder();
-	public static final RegistryObject<Block> DRY_FROSTED_ICE = placeholder();
+	public static final RegistryObject<Block> DRY_FROSTED_ICE = BLOCKS.register("dry_frosted_ice", () -> new BlockDryFrostedIce());
 	public static final RegistryObject<Block> CRYSTAL_FLOWER_POT = placeholder();
-	public static final RegistryObject<Block> PERMAFROST = placeholder();
+	public static final RegistryObject<Block> PERMAFROST = BLOCKS.register("permafrost", () -> new BlockPermafrost());
 
     public static final RegistryObject<Block> FIRE_RUNESTONE = BLOCKS.register("fire_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_RED).strength(1.5F, 10.0F)));
     public static final RegistryObject<Block> ICE_RUNESTONE = BLOCKS.register("ice_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_LIGHT_BLUE).strength(1.5F, 10.0F)));
@@ -91,12 +99,12 @@ public final class WizardryBlocks {
     public static final RegistryObject<Block> SORCERY_RUNESTONE_PEDESTAL = BLOCKS.register("sorcery_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.COLOR_GRAY).strength(1.5F, 10.0F)));
     public static final RegistryObject<Block> HEALING_RUNESTONE_PEDESTAL = BLOCKS.register("healing_runestone_pedestal", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_YELLOW).strength(1.5F, 10.0F)));
 
-    public static final RegistryObject<Block> GILDED_OAK_WOOD = BLOCKS.register("gilded_oak_wood", () -> new BlockGildedWood());
-    public static final RegistryObject<Block> GILDED_SPRUCE_WOOD = BLOCKS.register("gilded_spruce_wood", () -> new BlockGildedWood());
-    public static final RegistryObject<Block> GILDED_BIRCH_WOOD = BLOCKS.register("gilded_birch_wood", () -> new BlockGildedWood());
-    public static final RegistryObject<Block> GILDED_JUNGLE_WOOD = BLOCKS.register("gilded_jungle_wood", () -> new BlockGildedWood());
-    public static final RegistryObject<Block> GILDED_ACACIA_WOOD = BLOCKS.register("gilded_acacia_wood", () -> new BlockGildedWood());
-    public static final RegistryObject<Block> GILDED_DARK_OAK_WOOD = BLOCKS.register("gilded_dark_oak_wood", () -> new BlockGildedWood());
+    public static final RegistryObject<Block> GILDED_OAK_WOOD = BLOCKS.register("gilded_oak_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> GILDED_SPRUCE_WOOD = BLOCKS.register("gilded_spruce_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> GILDED_BIRCH_WOOD = BLOCKS.register("gilded_birch_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> GILDED_JUNGLE_WOOD = BLOCKS.register("gilded_jungle_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> GILDED_ACACIA_WOOD = BLOCKS.register("gilded_acacia_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
+    public static final RegistryObject<Block> GILDED_DARK_OAK_WOOD = BLOCKS.register("gilded_dark_oak_wood", () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).strength(2, 5).sound(SoundType.WOOD)));
     
     public static final RegistryObject<Block> OAK_BOOKSHELF = BLOCKS.register("oak_bookshelf", () -> new BlockBookshelf());
     public static final RegistryObject<Block> SPRUCE_BOOKSHELF = BLOCKS.register("spruce_bookshelf", () -> new BlockBookshelf());
@@ -133,7 +141,9 @@ public final class WizardryBlocks {
     				WizardryBlocks.JUNGLE_LECTERN.get(), 
     				WizardryBlocks.ACACIA_LECTERN.get(), 
     				WizardryBlocks.DARK_OAK_LECTERN.get()).build(null));
+    public static final RegistryObject<BlockEntityType<TileEntityPlayerSave>> PLAYER_SAVE_BLOCK_ENTITY = BLOCK_ENTITIES.register("player_save", () -> BlockEntityType.Builder.of(TileEntityPlayerSave::new, WizardryBlocks.SNARE.get()).build(null));
     public static final RegistryObject<BlockEntityType<TileEntityReceptacle>> RECEPTACLE_BLOCK_ENTITY = BLOCK_ENTITIES.register("receptacle", () -> BlockEntityType.Builder.of(TileEntityReceptacle::new, WizardryBlocks.RECEPTACLE.get()).build(null));
     public static final RegistryObject<BlockEntityType<TileEntityStatue>> STATUE_BLOCK_ENTITY = BLOCK_ENTITIES.register("statue", () -> BlockEntityType.Builder.of(TileEntityStatue::new, WizardryBlocks.PETRIFIED_STONE.get(), WizardryBlocks.ICE_STATUE.get()).build(null));
     public static final RegistryObject<BlockEntityType<TileEntityThorns>> THORNS_BLOCK_ENTITY = BLOCK_ENTITIES.register("thorns", () -> BlockEntityType.Builder.of(TileEntityThorns::new, WizardryBlocks.THORNS.get()).build(null));
+    public static final RegistryObject<BlockEntityType<TileEntityTimer>> TIMER_BLOCK_ENTITY = BLOCK_ENTITIES.register("timer", () -> BlockEntityType.Builder.of(TileEntityTimer::new, WizardryBlocks.VANISHING_COBWEB.get()).build(null));
 }

@@ -39,12 +39,12 @@ public class EntityTornado extends EntityScaledConstruct {
 
 	public EntityTornado(Level world){
 		this(WizardryEntities.TORNADO.get(), world);
-		setSize(Spells.tornado.getProperty(Spell.EFFECT_RADIUS).floatValue(), 8);
+		setSize(Spells.TORNADO.getProperty(Spell.EFFECT_RADIUS).floatValue(), 8);
 	}
 	
 	public EntityTornado(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.tornado.getProperty(Spell.EFFECT_RADIUS).floatValue(), 8);
+		setSize(Spells.TORNADO.getProperty(Spell.EFFECT_RADIUS).floatValue(), 8);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class EntityTornado extends EntityScaledConstruct {
 						target.setSecondsOnFire(4); // Just a fun Easter egg so no properties here!
 					}
 
-					float damage = Spells.tornado.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+					float damage = Spells.TORNADO.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 					if(this.getCaster() != null){
 						target.hurt( MagicDamage.causeIndirectMagicDamage(this, getCaster(),
@@ -117,7 +117,7 @@ public class EntityTornado extends EntityScaledConstruct {
 						target.hurt(DamageSource.MAGIC, damage);
 					}
 
-					target.setDeltaMovement(dx, velY + Spells.tornado.getProperty(Tornado.UPWARD_ACCELERATION).floatValue(), dz);
+					target.setDeltaMovement(dx, velY + Spells.TORNADO.getProperty(Tornado.UPWARD_ACCELERATION).floatValue(), dz);
 
 					// Player motion is handled on that player's client so needs packets
 					if(target instanceof ServerPlayer){

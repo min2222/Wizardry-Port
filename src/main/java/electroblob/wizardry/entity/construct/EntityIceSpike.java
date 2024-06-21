@@ -72,10 +72,10 @@ public class EntityIceSpike extends EntityMagicConstruct {
 					DamageSource source = this.getCaster() == null ? DamageSource.MAGIC : MagicDamage.causeDirectMagicDamage(this.getCaster(), DamageType.FROST);
 					// Potion effect only gets added if the damage succeeded
 					// We DO want knockback here or the entity gets stuck on the spike, which is a bit of a cheat
-					if(((LivingEntity)entity).hurt(source, Spells.ice_spikes.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
+					if(((LivingEntity)entity).hurt(source, Spells.ICE_SPIKES.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier))
 						((LivingEntity)entity).addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
-								Spells.ice_spikes.getProperty(Spell.EFFECT_DURATION).intValue(),
-								Spells.ice_spikes.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+								Spells.ICE_SPIKES.getProperty(Spell.EFFECT_DURATION).intValue(),
+								Spells.ICE_SPIKES.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 				}
 			}
 		}

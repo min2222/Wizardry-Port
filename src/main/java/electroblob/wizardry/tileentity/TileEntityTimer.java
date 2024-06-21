@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class TileEntityTimer extends BlockEntity {
@@ -14,12 +13,12 @@ public class TileEntityTimer extends BlockEntity {
 	public int timer = 0;
 	public int maxTimer;
 
-    public TileEntityTimer(BlockEntityType<?> type, BlockPos pos, BlockState state) {
-        super(type, pos, state);
+    public TileEntityTimer(BlockPos pos, BlockState state) {
+        super(WizardryBlocks.TIMER_BLOCK_ENTITY.get(), pos, state);
     }
 
-    public TileEntityTimer(BlockEntityType<?> type, BlockPos pos, BlockState state, int maxTimer) {
-        this(type, pos, state);
+    public TileEntityTimer(BlockPos pos, BlockState state, int maxTimer) {
+        super(WizardryBlocks.TIMER_BLOCK_ENTITY.get(), pos, state);
         this.maxTimer = maxTimer;
     }
 

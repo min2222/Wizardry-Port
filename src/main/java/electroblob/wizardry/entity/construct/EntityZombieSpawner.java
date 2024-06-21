@@ -51,7 +51,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				zombie.setCaster(this.getCaster());
 				// Modifier implementation
 				// Attribute modifiers are pretty opaque, see https://minecraft.gamepedia.com/Attribute#Modifiers
-				zombie.setLifetime(Spells.zombie_apocalypse.getProperty(SpellMinion.MINION_LIFETIME).intValue());
+				zombie.setLifetime(Spells.ZOMBIE_APOCALYPSE.getProperty(SpellMinion.MINION_LIFETIME).intValue());
 				AttributeInstance attribute = zombie.getAttribute(Attributes.ATTACK_DAMAGE);
 				attribute.addTransientModifier(new AttributeModifier(SpellMinion.POTENCY_ATTRIBUTE_MODIFIER,
 						damageMultiplier - 1, EntityUtils.Operations.MULTIPLY_CUMULATIVE));
@@ -62,7 +62,7 @@ public class EntityZombieSpawner extends EntityMagicConstruct {
 				level.addFreshEntity(zombie);
 			}
 
-			spawnTimer += Spells.zombie_apocalypse.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + random.nextInt(20);
+			spawnTimer += Spells.ZOMBIE_APOCALYPSE.getProperty(ZombieApocalypse.MINION_SPAWN_INTERVAL).intValue() + random.nextInt(20);
 		}
 
 		if(level.isClientSide){

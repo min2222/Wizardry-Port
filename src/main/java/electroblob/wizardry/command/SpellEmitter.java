@@ -9,6 +9,7 @@ import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
@@ -60,7 +61,7 @@ public class SpellEmitter implements ITickable {
 	/** Sets this spell emitter's world. This should only be used on the client side when the world has not yet been
 	 * set, otherwise the world will not be changed and a warning will be printed to the console. */
 	public void setWorld(Level world){
-		if(level.isClientSide && this.world == null){
+		if(world.isClientSide && this.world == null){
 			this.world = world;
 		}else{
 			Wizardry.logger.warn("Tried to change the world for a spell emitter, this shouldn't happen!");
@@ -88,7 +89,7 @@ public class SpellEmitter implements ITickable {
 	}
 
 	/** Writes this {@code SpellEmitter} to the given ByteBuf. */
-	public void write(ByteBuf buf){
+	public void write(FriendlyByteBuf buf){
 		buf.writeInt(spell.networkID());
 		buf.writeDouble(x);
 		buf.writeDouble(y);
@@ -103,7 +104,7 @@ public class SpellEmitter implements ITickable {
 	}
 
 	/** Reads a {@code SpellEmitter} from the given ByteBuf and returns it. */
-	public static SpellEmitter read(ByteBuf buf){
+	public static SpellEmitter read(FriendlyByteBuf buf){
 
 		Spell spell = Spell.byNetworkID(buf.readInt());
 		double x = buf.readDouble();
@@ -125,9 +126,9 @@ public class SpellEmitter implements ITickable {
 		CompoundTag nbt = new CompoundTag();
 
 		nbt.putInt("spell", spell.metadata());
-		nbt.setDouble("x", x);
-		nbt.setDouble("y", y);
-		nbt.setDouble("z", z);
+		nbt.putDouble("x", x);
+		nbt.putDouble("y", y);
+		nbt.putDouble("z", z);
 		nbt.putInt("direction", direction.getIndex());
 		nbt.putInt("duration", duration);
 		NBTExtras.storeTagSafely(nbt, "modifiers", modifiers.toNBT());

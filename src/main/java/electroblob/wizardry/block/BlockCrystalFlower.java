@@ -58,14 +58,14 @@ public class BlockCrystalFlower extends BushBlock {
 		// Grows crystal flowers when bonemeal is used on grass
 		if(Wizardry.settings.bonemealGrowsCrystalFlowers && event.getBlock().getBlock() == Blocks.GRASS){
 
-			BlockPos pos = event.getPos().add(event.getWorld().random.nextInt(8) - event.getWorld().random.nextInt(8),
-					event.getWorld().random.nextInt(4) - event.getWorld().random.nextInt(4),
-					event.getWorld().random.nextInt(8) - event.getWorld().random.nextInt(8));
+			BlockPos pos = event.getPos().add(event.getLevel().random.nextInt(8) - event.getLevel().random.nextInt(8),
+					event.getLevel().random.nextInt(4) - event.getLevel().random.nextInt(4),
+					event.getLevel().random.nextInt(8) - event.getLevel().random.nextInt(8));
 
-			if(event.getWorld().isEmptyBlock(new BlockPos(pos))
-					&& (!event.getWorld().provider.isNether() || pos.getY() < 127)
-					&& WizardryBlocks.crystal_flower.canPlaceBlockAt(event.getWorld(), pos)){
-				event.getWorld().setBlockAndUpdate(pos, WizardryBlocks.crystal_flower.defaultBlockState(), 2);
+			if(event.getLevel().isEmptyBlock(new BlockPos(pos))
+					&& (!event.getLevel().provider.isNether() || pos.getY() < 127)
+					&& WizardryBlocks.CRYSTAL_FLOWER.get().canPlaceBlockAt(event.getLevel(), pos)){
+				event.getLevel().setBlock(pos, WizardryBlocks.CRYSTAL_FLOWER.get().defaultBlockState(), 2);
 			}
 		}
 	}

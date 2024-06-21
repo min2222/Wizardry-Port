@@ -38,6 +38,7 @@ import electroblob.wizardry.util.SpellProperties;
 import electroblob.wizardry.util.WandHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -120,13 +121,13 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		this.element = element;
 		WizardryRecipes.addToManaFlaskCharging(this);
 		// TODO: Hook to allow addon devs to have this override apply to their own animations
-		addPropertyOverride(new ResourceLocation("pointing"),
-				(s, w, e) -> e != null && e.getActiveItemStack() == s
-						&& (s.getItemUseAction() == SpellActions.POINT
-						|| s.getItemUseAction() == SpellActions.POINT_UP
-						|| s.getItemUseAction() == SpellActions.POINT_DOWN
-						|| s.getItemUseAction() == SpellActions.GRAPPLE
-						|| s.getItemUseAction() == SpellActions.SUMMON) ? 1 : 0);
+		ItemProperties.register(this, new ResourceLocation("pointing"),
+				(s, w, e, i) -> e != null && e.getUseItem() == s
+						&& (s.getUseAnimation() == SpellActions.POINT
+						|| s.getUseAnimation() == SpellActions.POINT_UP
+						|| s.getUseAnimation() == SpellActions.POINT_DOWN
+						|| s.getUseAnimation() == SpellActions.GRAPPLE
+						|| s.getUseAnimation() == SpellActions.SUMMON) ? 1 : 0);
 	}
 
 	@Override

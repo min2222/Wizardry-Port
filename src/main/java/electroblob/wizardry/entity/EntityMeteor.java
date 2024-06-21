@@ -72,7 +72,7 @@ public class EntityMeteor extends FallingBlockEntity {
 			if(!this.level.isClientSide){
 				this.setDeltaMovement(this.getDeltaMovement().multiply(0.699999988079071D, -0.5D, 0.699999988079071D));
 				this.level.explode(this, this.getX(), this.getY(), this.getZ(),
-						Spells.meteor.getProperty(Meteor.BLAST_STRENGTH).floatValue() * blastMultiplier,
+						Spells.METEOR.getProperty(Meteor.BLAST_STRENGTH).floatValue() * blastMultiplier,
 						damageBlocks, damageBlocks ? BlockInteraction.DESTROY : BlockInteraction.NONE);
 				this.discard();
 

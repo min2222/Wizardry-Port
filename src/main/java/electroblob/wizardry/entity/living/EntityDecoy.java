@@ -29,7 +29,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 	}
 
 	@Override
-	protected void initEntityAI(){
+	protected void registerGoals(){
 		// Decoys just wander around aimlessly, watching anything living.
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(1, new EntityAIWander(this, 1.0D));

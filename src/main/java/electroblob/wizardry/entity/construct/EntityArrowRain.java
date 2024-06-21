@@ -12,12 +12,12 @@ public class EntityArrowRain extends EntityScaledConstruct {
 
 	public EntityArrowRain(Level world){
 		this(WizardryEntities.ARROW_RAIN.get(), world);
-		setSize(Spells.arrow_rain.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
+		setSize(Spells.ARROW_RAIN.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}
 	
 	public EntityArrowRain(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.arrow_rain.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
+		setSize(Spells.ARROW_RAIN.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}
 
 	@Override

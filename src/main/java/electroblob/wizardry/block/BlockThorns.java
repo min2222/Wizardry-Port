@@ -1,6 +1,6 @@
 package electroblob.wizardry.block;
 
-import java.util.Random;
+import javax.annotation.Nullable;
 
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryBlocks;
@@ -10,31 +10,29 @@ import electroblob.wizardry.util.AllyDesignationSystem;
 import electroblob.wizardry.util.EntityUtils;
 import electroblob.wizardry.util.MagicDamage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.BlockDoublePlant.EnumBlockHalf;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.BlockStateContainer;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.Material;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,85 +52,69 @@ public class BlockThorns extends BushBlock implements EntityBlock {
 	}
 
 	@Override
-	public AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
-		return FULL_BLOCK_;
-	}
+	public BlockState getStateForPlacement(BlockPlaceContext ctx){
 
-	@Override
-	public BlockState getStateFromMeta(int meta){
-		return this.defaultBlockState().withProperty(HALF, meta == 0 ? EnumBlockHalf.LOWER : EnumBlockHalf.UPPER);
-	}
-
-	@Override
-	public int getMetaFromState(BlockState state){
-		return state.getValue(HALF).ordinal();
-	}
-
-	@Override
-	public BlockState getActualState(BlockState state, IBlockAccess world, BlockPos pos){
-
-		if(state.getValue(HALF) == EnumBlockHalf.UPPER) pos = pos.down();
-		// Copied from BlockFlowerPot on authority of the Forge docs, which say it needs to be here
-		BlockEntity tileentity = world instanceof ChunkCache ? ((ChunkCache)world).getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK) : level.getTileEntity(pos);
+		BlockEntity tileentity = ctx.getLevel().getBlockEntity(ctx.getClickedPos());
 
 		if(tileentity instanceof TileEntityThorns){
-			return state.withProperty(AGE, ((TileEntityThorns)tileentity).getAge());
+			return this.defaultBlockState().setValue(AGE, ((TileEntityThorns)tileentity).getAge());
 		}else{
-			return state.withProperty(AGE, 7);
+			return this.defaultBlockState().setValue(AGE, 7);
 		}
 	}
 
-	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, HALF, AGE);
-	}
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_49915_) {
+        p_49915_.add(HALF).add(AGE);
+    }
 
 	public void placeAt(Level world, BlockPos lowerPos, int flags){
-		level.setBlockAndUpdate(lowerPos, this.defaultBlockState().withProperty(HALF, EnumBlockHalf.LOWER).withProperty(AGE, 0), flags);
-		level.setBlockAndUpdate(lowerPos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER).withProperty(AGE, 0), flags);
+		world.setBlock(lowerPos, this.defaultBlockState().setValue(HALF, DoubleBlockHalf.LOWER).setValue(AGE, 0), flags);
+		world.setBlock(lowerPos.above(), this.defaultBlockState().setValue(HALF, DoubleBlockHalf.UPPER).setValue(AGE, 0), flags);
 	}
 
 	@Override
-	public void onBlockPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		level.setBlockAndUpdate(pos.up(), this.defaultBlockState().withProperty(HALF, EnumBlockHalf.UPPER), 2);
+	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+		world.setBlock(pos.above(), this.defaultBlockState().setValue(HALF, DoubleBlockHalf.UPPER), 2);
 	}
 
 	@Override
-	public void breakBlock(Level world, BlockPos pos, BlockState state){
-		super.breakBlock(world, pos, state);
-		if(state.getValue(HALF) == EnumBlockHalf.LOWER){
-			if(level.getBlockState(pos.up()).getBlock() == this){
-				world.destroyBlock(pos.up(), false);
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState p_60518_, boolean p_60519_) {
+    	super.onRemove(state, world, pos, p_60518_, p_60519_);
+		if(state.getValue(HALF) == DoubleBlockHalf.LOWER){
+			if(world.getBlockState(pos.above()).getBlock() == this){
+				world.destroyBlock(pos.above(), false);
 			}
 		}else{
-			if(level.getBlockState(pos.down()).getBlock() == this){
-				world.destroyBlock(pos.down(), false);
+			if(world.getBlockState(pos.below()).getBlock() == this){
+				world.destroyBlock(pos.below(), false);
 			}
 		}
-	}
+    }
 
-	public boolean canBlockStay(Level worldIn, BlockPos pos, BlockState state){
-		if(state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER){
-			return worldIn.getBlockState(pos.down()).getBlock() == this;
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos) {
+		if(state.getValue(HALF) == DoubleBlockHalf.UPPER){
+			return worldIn.getBlockState(pos.below()).getBlock() == this;
 		}else{
-			BlockState iblockstate = worldIn.getBlockState(pos.up());
-			return iblockstate.getBlock() == this && this.canSustainBush(worldIn.getBlockState(pos.down()));
+			BlockState iblockstate = worldIn.getBlockState(pos.above());
+			return iblockstate.getBlock() == this && this.mayPlaceOn(worldIn.getBlockState(pos.below()), worldIn, pos);
 		}
-	}
+    }
 
 	@Override
-	public void onEntityCollision(Level world, BlockPos pos, BlockState state, Entity entity){
+    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
 		if(applyThornDamage(world, pos, state, entity)){
-			entity.setInWeb(); // Needs to be called client-side for players (and besides, all of this is common code)
+			entity.makeStuckInBlock(state, new Vec3(0.25D, (double) 0.05F, 0.25D)); // Needs to be called client-side for players (and besides, all of this is common code)
 		}
 	}
 
 	private static boolean applyThornDamage(Level world, BlockPos pos, BlockState state, Entity target){
 
 		DamageSource source = DamageSource.CACTUS;
-		float damage = Spells.forest_of_thorns.getProperty(Spell.DAMAGE).floatValue();
+		float damage = Spells.FOREST_OF_THORNS.getProperty(Spell.DAMAGE).floatValue();
 
-		BlockEntity tileentity = level.getTileEntity(state.getValue(HALF) == EnumBlockHalf.UPPER ? pos.down() : pos);
+		BlockEntity tileentity = world.getBlockEntity(state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos);
 
 		if(tileentity instanceof TileEntityThorns){
 
@@ -155,29 +137,41 @@ public class BlockThorns extends BushBlock implements EntityBlock {
 	}
 
 	@Override
-	public Block.EnumOffsetType getOffsetType(){
-		return Block.EnumOffsetType.XZ;
+	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+		return new TileEntityThorns(p_153215_, p_153216_);
 	}
 
 	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
-		return new TileEntityThorns();
+	public boolean canBeReplaced(BlockState p_60470_, BlockPlaceContext p_60471_) {
+		return false;
 	}
-
+	
 	@Override
-	public boolean hasTileEntity(BlockState state){
-		return state.getValue(HALF) == EnumBlockHalf.LOWER;
+	protected boolean mayPlaceOn(BlockState p_51042_, BlockGetter p_51043_, BlockPos p_51044_) {
+		return true;
 	}
+	
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
+        return createTicker(p_153273_, p_153275_, WizardryBlocks.THORNS_BLOCK_ENTITY.get());
+    }
 
-	@Override public boolean isReplaceable(IBlockAccess world, BlockPos pos){ return false; }
-	@Override protected boolean canSustainBush(BlockState state){ return state.isNormalCube(); }
-	@Override public Item getItemDropped(BlockState state, Random rand, int fortune){ return Items.AIR; }
-	@Override public boolean canSilkHarvest(Level world, BlockPos pos, BlockState state, Player player){ return false; }
+    @Nullable
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level p_151988_, BlockEntityType<T> p_151989_, BlockEntityType<TileEntityThorns> p_151990_) {
+        return createTickerHelper(p_151989_, p_151990_, TileEntityThorns::update);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Nullable
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> p_152133_, BlockEntityType<E> p_152134_, BlockEntityTicker<? super E> p_152135_) {
+        return p_152134_ == p_152133_ ? (BlockEntityTicker<A>) p_152135_ : null;
+    }
 
 	@SubscribeEvent
 	public static void onLeftClickBlockEvent(PlayerInteractEvent.LeftClickBlock event){
-		if(!event.getWorld().isRemote && event.getWorld().getBlockState(event.getPos()).getBlock() == WizardryBlocks.thorns){
-			applyThornDamage(event.getWorld(), event.getPos(), event.getWorld().getBlockState(event.getPos()), event.getEntity());
+		if(!event.getLevel().isClientSide && event.getLevel().getBlockState(event.getPos()).getBlock() == WizardryBlocks.THORNS.get()){
+			applyThornDamage(event.getLevel(), event.getPos(), event.getLevel().getBlockState(event.getPos()), event.getEntity());
 		}
 	}
 

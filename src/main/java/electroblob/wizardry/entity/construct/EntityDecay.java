@@ -49,7 +49,7 @@ public class EntityDecay extends EntityMagicConstruct {
 					// In this case, we do want particles to be shown.
 					if(!target.hasEffect(WizardryPotions.DECAY.get()))
 						target.addEffect(new MobEffectInstance(WizardryPotions.DECAY.get(),
-								Spells.decay.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
+								Spells.DECAY.getProperty(Spell.EFFECT_DURATION).intValue(), 0));
 				}
 			}
 			

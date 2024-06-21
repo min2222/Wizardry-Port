@@ -272,8 +272,8 @@ public class BlockBookshelf extends HorizontalDirectionalBlock implements Entity
 		registerBookModelTexture(() -> WizardryItems.duration_upgrade, 		new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
 		registerBookModelTexture(() -> WizardryItems.cooldown_upgrade, 		new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
 		registerBookModelTexture(() -> WizardryItems.blast_upgrade, 		new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
-		registerBookModelTexture(() -> WizardryItems.attunement_upgrade, 	new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
-		registerBookModelTexture(() -> WizardryItems.melee_upgrade, 		new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
+		registerBookModelTexture(() -> WizardryItems.ATTUNEMENT_UPGRADE, 	new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
+		registerBookModelTexture(() -> WizardryItems.MELEE_UPGRADE, 		new ResourceLocation(Wizardry.MODID, "blocks/scrolls_wooden"));
 	}
 
 	/**

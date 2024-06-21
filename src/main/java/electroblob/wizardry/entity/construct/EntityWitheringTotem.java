@@ -80,7 +80,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 		super.tick();
 
-		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
+		double radius = Spells.WITHERING_TOTEM.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
 		if(level.isClientSide){
 
@@ -106,7 +106,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 		nearby.removeIf(e -> !isValidTarget(e));
 		nearby.sort(Comparator.comparingDouble(e -> e.distanceToSqr(this)));
 
-		int targetsRemaining = Spells.withering_totem.getProperty(WitheringTotem.MAX_TARGETS).intValue()
+		int targetsRemaining = Spells.WITHERING_TOTEM.getProperty(WitheringTotem.MAX_TARGETS).intValue()
 				+ (int)((damageMultiplier - 1) / Constants.POTENCY_INCREASE_PER_TIER);
 
 		while(!nearby.isEmpty() && targetsRemaining > 0){
@@ -117,7 +117,7 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 
 				if(target.tickCount % target.invulnerableDuration == 1){
 
-					float damage = Spells.withering_totem.getProperty(Spell.DAMAGE).floatValue();
+					float damage = Spells.WITHERING_TOTEM.getProperty(Spell.DAMAGE).floatValue();
 
 					if(EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 							getCaster(), DamageType.WITHER), damage)){
@@ -147,19 +147,19 @@ public class EntityWitheringTotem extends EntityScaledConstruct {
 	@Override
 	public void despawn(){
 
-		double radius = Spells.withering_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
+		double radius = Spells.WITHERING_TOTEM.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
 		List<LivingEntity> nearby = EntityUtils.getLivingWithinRadius(radius, getX(), getY(), getZ(), level);
 		nearby.removeIf(e -> !isValidTarget(e));
 
-		float damage = Math.min(getHealthDrained() * 0.2f, Spells.withering_totem.getProperty(WitheringTotem.MAX_EXPLOSION_DAMAGE).floatValue());
+		float damage = Math.min(getHealthDrained() * 0.2f, Spells.WITHERING_TOTEM.getProperty(WitheringTotem.MAX_EXPLOSION_DAMAGE).floatValue());
 
 		for(LivingEntity target : nearby){
 
 			if(EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 					getCaster(), DamageType.MAGIC), damage)){
-				target.addEffect(new MobEffectInstance(MobEffects.WITHER, Spells.withering_totem.getProperty(Spell.EFFECT_DURATION).intValue(),
-						Spells.withering_totem.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+				target.addEffect(new MobEffectInstance(MobEffects.WITHER, Spells.WITHERING_TOTEM.getProperty(Spell.EFFECT_DURATION).intValue(),
+						Spells.WITHERING_TOTEM.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 			}
 		}
 

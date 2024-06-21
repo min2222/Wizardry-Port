@@ -1,7 +1,6 @@
 package electroblob.wizardry.tileentity;
 
 import electroblob.wizardry.block.BlockThorns;
-import electroblob.wizardry.registry.WizardryBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -16,7 +15,7 @@ public class TileEntityThorns extends TileEntityPlayerSave {
 	public float damageMultiplier = 1;
 
 	public TileEntityThorns(BlockPos p_155229_, BlockState p_155230_) {
-		super(WizardryBlocks.THORNS_BLOCK_ENTITY.get(), p_155229_, p_155230_);
+		super(p_155229_, p_155230_);
 		this.lifetime = 600;
 	}
 

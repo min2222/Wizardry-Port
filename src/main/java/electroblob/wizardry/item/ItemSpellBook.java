@@ -46,7 +46,7 @@ public class ItemSpellBook extends Item implements IMetadata{
 
 	public ItemSpellBook(){
         super(new Item.Properties().stacksTo(16).tab(WizardryTabs.SPELLS));
-		ItemProperties.register(this, new ResourceLocation("festive"), (s, w, e) -> Wizardry.tisTheSeason ? 1 : 0);
+		ItemProperties.register(this, new ResourceLocation("festive"), (s, w, e, i) -> Wizardry.tisTheSeason ? 1 : 0);
 	}
 	
 	@Override

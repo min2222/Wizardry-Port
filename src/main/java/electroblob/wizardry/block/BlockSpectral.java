@@ -1,34 +1,34 @@
 package electroblob.wizardry.block;
 
+import javax.annotation.Nullable;
+
 import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.api.distmarker.Dist;
-
-import java.util.Random;
 
 @Mod.EventBusSubscriber
-public class BlockSpectral extends Block implements ITileEntityProvider {
+public class BlockSpectral extends BaseEntityBlock {
 
-	public BlockSpectral(Material material){
+	public BlockSpectral(BlockBehaviour.Properties material){
 		super(material);
-		this.setSoundType(SoundType.GLASS);
 	}
 
 	// Replaces getRenderBlockPass
@@ -37,15 +37,14 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.TRANSLUCENT;
 	}
-
-	// See BlockTransportationStone for what all these do
-	@Override public boolean isFullCube(BlockState state){ return false; }
-	@Override public boolean isBlockNormalCube(BlockState state){ return false; }
-	@Override public boolean isNormalCube(BlockState state){ return false; }
-	@Override public boolean isOpaqueCube(BlockState state){ return false; }
+	
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
 
 	@Override
-	public void randomDisplayTick(BlockState state, Level world, BlockPos pos, Random random){
+	public void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random){
 		
 		for(int i=0; i<2; i++){
 			ParticleBuilder.create(Type.DUST)
@@ -64,38 +63,27 @@ public class BlockSpectral extends Block implements ITileEntityProvider {
 //	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state){
-		return true;
-	}
-
-	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
-		return new TileEntityTimer(1200);
-	}
-
-	@Override
-	public int quantityDropped(Random par1Random){
-		return 0;
-	}
-
-	@SuppressWarnings("deprecation")
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-                                        Direction side){
-
-		BlockState iblockstate = blockAccess.getBlockState(pos.relative(side));
-		Block block = iblockstate.getBlock();
-
-		return block == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new TileEntityTimer(pos, state, 1200);
 	}
 
 	@SubscribeEvent
-	public static void onBlockPlaceEvent(BlockEvent.PlaceEvent event){
+	public static void onBlockPlaceEvent(EntityPlaceEvent event){
 		// Spectral blocks cannot be built on
-		if(event.getPlacedAgainst() == WizardryBlocks.spectral_block){
+		if(event.getPlacedAgainst() == WizardryBlocks.SPECTRAL_BLOCK.get().defaultBlockState()){
 			event.setCanceled(true);
 		}
 	}
+	
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
+        return createTicker(p_153273_, p_153275_, WizardryBlocks.TIMER_BLOCK_ENTITY.get());
+    }
+
+    @Nullable
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level p_151988_, BlockEntityType<T> p_151989_, BlockEntityType<TileEntityTimer> p_151990_) {
+        return createTickerHelper(p_151989_, p_151990_, TileEntityTimer::update);
+    }
 
 }

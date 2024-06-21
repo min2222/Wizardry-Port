@@ -135,10 +135,10 @@ public class ClientProxy extends CommonProxy {
 	public static final Map<ArmorMaterial, HumanoidModel> wizard_armour_models = new HashMap<>();
 
 	static {
-		wizard_armour_models.put(Materials.SILK, new ModelWizardArmour(0.75f));
-		wizard_armour_models.put(Materials.SAGE, new ModelSageArmour(0.75f));
-		wizard_armour_models.put(Materials.BATTLEMAGE, new ModelRobeArmour(0.75f, true));
-		wizard_armour_models.put(Materials.WARLOCK, new ModelRobeArmour(0.75f, false));
+		wizard_armour_models.put(Materials.WizardryArmorMaterial.SILK, new ModelWizardArmour(0.75f));
+		wizard_armour_models.put(Materials.WizardryArmorMaterial.SAGE, new ModelSageArmour(0.75f));
+		wizard_armour_models.put(Materials.WizardryArmorMaterial.BATTLEMAGE, new ModelRobeArmour(0.75f, true));
+		wizard_armour_models.put(Materials.WizardryArmorMaterial.WARLOCK, new ModelRobeArmour(0.75f, false));
 	}
 
 	/** The wrap width for standard multi-line descriptions (see {@link ClientProxy#addMultiLineDescription(List, String, Style, Object...)}). */

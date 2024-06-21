@@ -22,12 +22,12 @@ public class EntityHealAura extends EntityScaledConstruct {
 
 	public EntityHealAura(Level world){
 		this(WizardryEntities.HEALING_AURA.get(), world);
-		setSize(Spells.healing_aura.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
+		setSize(Spells.HEALING_AURA.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
 	
 	public EntityHealAura(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.healing_aura.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
+		setSize(Spells.HEALING_AURA.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
 
 	@Override
@@ -55,9 +55,9 @@ public class EntityHealAura extends EntityScaledConstruct {
 							if (this.getCaster() != null) {
 								target.hurt(
 										MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.RADIANT),
-										Spells.healing_aura.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
+										Spells.HEALING_AURA.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
 							} else {
-								target.hurt(DamageSource.MAGIC, Spells.healing_aura.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
+								target.hurt(DamageSource.MAGIC, Spells.HEALING_AURA.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier);
 							}
 
 							// Removes knockback
@@ -66,7 +66,7 @@ public class EntityHealAura extends EntityScaledConstruct {
 					}
 
 				}else if(target.getHealth() < target.getMaxHealth() && target.tickCount % 5 == 0){
-					target.heal(Spells.healing_aura.getProperty(Spell.HEALTH).floatValue() * damageMultiplier);
+					target.heal(Spells.HEALING_AURA.getProperty(Spell.HEALTH).floatValue() * damageMultiplier);
 				}
 			}
 		}else{

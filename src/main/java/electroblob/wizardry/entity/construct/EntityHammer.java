@@ -95,18 +95,18 @@ public class EntityHammer extends EntityMagicConstruct {
 			this.setXRot(0);
 			this.spin = false;
 
-			double seekerRange = Spells.lightning_hammer.getProperty(Spell.EFFECT_RADIUS).doubleValue();
+			double seekerRange = Spells.LIGHTNING_HAMMER.getProperty(Spell.EFFECT_RADIUS).doubleValue();
 
 			List<LivingEntity> targets = EntityUtils.getLivingWithinRadius(seekerRange, this.getX(),
 					this.getY() + 1, this.getZ(), level);
 
-			int maxTargets = Spells.lightning_hammer.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue();
+			int maxTargets = Spells.LIGHTNING_HAMMER.getProperty(LightningHammer.SECONDARY_MAX_TARGETS).intValue();
 			while(targets.size() > maxTargets) targets.remove(targets.size() - 1);
 
 			for(LivingEntity target : targets){
 
 				if(EntityUtils.isLiving(target) && this.isValidTarget(target)
-						&& target.tickCount % Spells.lightning_hammer.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
+						&& target.tickCount % Spells.LIGHTNING_HAMMER.getProperty(LightningHammer.ATTACK_INTERVAL).floatValue() == 0){
 
 					if(level.isClientSide){
 
@@ -118,7 +118,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 					target.playSound(WizardrySounds.ENTITY_HAMMER_ATTACK, 1.0F, random.nextFloat() * 0.4F + 1.5F);
 
-					float damage = Spells.lightning_hammer.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier;
+					float damage = Spells.LIGHTNING_HAMMER.getProperty(Spell.SPLASH_DAMAGE).floatValue() * damageMultiplier;
 
 					if(this.getCaster() != null){
 						EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(
@@ -136,7 +136,7 @@ public class EntityHammer extends EntityMagicConstruct {
 
 			List<Entity> collided = level.getEntities(this, this.getBoundingBox(), e -> e instanceof LivingEntity);
 
-			float damage = Spells.lightning_hammer.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
+			float damage = Spells.LIGHTNING_HAMMER.getProperty(Spell.DIRECT_DAMAGE).floatValue() * damageMultiplier;
 
 			for(Entity entity : collided){
 				entity.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(), DamageType.SHOCK), damage);

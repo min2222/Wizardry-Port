@@ -2,6 +2,8 @@ package electroblob.wizardry;
 
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.legacy.Configuration;
+import electroblob.wizardry.legacy.Property;
 import electroblob.wizardry.packet.PacketSyncSettings;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
@@ -14,9 +16,6 @@ import net.minecraft.world.entity.EntityList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.api.distmarker.Dist;

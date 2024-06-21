@@ -1,73 +1,51 @@
 package electroblob.wizardry.block;
 
+import javax.annotation.Nullable;
+
+import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityTimer;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
-import java.util.Random;
+public class BlockVanishingCobweb extends BaseEntityBlock {
 
-public class BlockVanishingCobweb extends Block implements ITileEntityProvider {
-
-	public BlockVanishingCobweb(Material material){
+	public BlockVanishingCobweb(BlockBehaviour.Properties material){
 		super(material);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT;
-	}
+    @Override
+    public RenderShape getRenderShape(BlockState p_49232_) {
+        return RenderShape.MODEL;
+    }
 
-	@Override
-	public EnumBlockRenderType getRenderType(BlockState state){
-		return EnumBlockRenderType.MODEL;
-	}
+    @Override
+    public void entityInside(BlockState p_58180_, Level p_58181_, BlockPos p_58182_, Entity p_58183_) {
+        p_58183_.makeStuckInBlock(p_58180_, new Vec3(0.25D, (double) 0.05F, 0.25D));
+    }
 
-	@Override
-	public boolean isOpaqueCube(BlockState state){
-		return false;
-	}
+    @Override
+    public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+        return new TileEntityTimer(p_153215_, p_153216_, 400);
+    }
 
-	@Override
-	public AABB getCollisionBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
-		return NULL_AABB;
-	}
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
+        return createTicker(p_153273_, p_153275_, WizardryBlocks.TIMER_BLOCK_ENTITY.get());
+    }
 
-	@Override
-	public boolean isFullCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean hasTileEntity(BlockState state){
-		return true;
-	}
-
-	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
-		return new TileEntityTimer(400);
-	}
-
-	@Override
-	public void onEntityCollision(Level world, BlockPos pos, BlockState state, Entity entity){
-		entity.setInWeb();
-	}
-
-	@Override
-	public int quantityDropped(Random par1Random){
-		return 0;
-	}
+    @Nullable
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level p_151988_, BlockEntityType<T> p_151989_, BlockEntityType<TileEntityTimer> p_151990_) {
+        return createTickerHelper(p_151989_, p_151990_, TileEntityTimer::update);
+    }
 
 }

@@ -30,7 +30,7 @@ public class ItemFlamingAxe extends AxeItem implements IConjuredItem {
 	private Rarity rarity = Rarity.COMMON;
 
 	public ItemFlamingAxe(Tier material){
-		super(material, 8, -3, new Item.Properties().durability(1200).setNoRepair()); // Might cause problems if removed, the actual number is irrelevant as long as it's > 0
+		super(material, Spells.FLAMING_AXE.getProperty(Spell.DAMAGE).floatValue(), -3, new Item.Properties().durability(1200).setNoRepair()); // Might cause problems if removed, the actual number is irrelevant as long as it's > 0
 		addAnimationPropertyOverrides();
 	}
 
@@ -86,12 +86,6 @@ public class ItemFlamingAxe extends AxeItem implements IConjuredItem {
 		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setDamageValue(damage + 1);
-	}
-
-	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot){
-		attackDamageBaseline = Spells.FLAMING_AXE.getProperty(Spell.DAMAGE).floatValue();
-		return super.getDefaultAttributeModifiers(equipmentSlot);
 	}
 
 	@Override

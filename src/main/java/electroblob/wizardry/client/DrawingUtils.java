@@ -1,17 +1,23 @@
 package electroblob.wizardry.client;
 
+import java.util.Random;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.Mth;
-import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
-
-import java.util.Random;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Utility class containing some useful static methods for drawing GUIs, as well as general rendering.
@@ -34,8 +40,8 @@ public final class DrawingUtils {
 	 * Shorthand for {@link DrawingUtils#drawTexturedRect(int, int, int, int, int, int, int, int)} which draws the
 	 * entire texture (u and v are set to 0 and textureWidth and textureHeight are the same as width and height).
 	 */
-	public static void drawTexturedRect(int x, int y, int width, int height){
-		drawTexturedRect(x, y, 0, 0, width, height, width, height);
+	public static void drawTexturedRect(PoseStack poseStack, int x, int y, int width, int height){
+		drawTexturedRect(poseStack, x, y, 0, 0, width, height, width, height);
 	}
 	
 	/**
@@ -53,8 +59,8 @@ public final class DrawingUtils {
 	 * @param textureWidth The width of the actual image.
 	 * @param textureHeight The height of the actual image.
 	 */
-	public static void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight){
-		DrawingUtils.drawTexturedFlippedRect(x, y, u, v, width, height, textureWidth, textureHeight, false, false);
+	public static void drawTexturedRect(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight){
+		DrawingUtils.drawTexturedFlippedRect(poseStack, x, y, u, v, width, height, textureWidth, textureHeight, false, false);
 	}
 
 	/**
@@ -74,8 +80,9 @@ public final class DrawingUtils {
 	 * @param flipX Whether to flip the texture in the x direction.
 	 * @param flipY Whether to flip the texture in the y direction.
 	 */
-	public static void drawTexturedFlippedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, boolean flipX, boolean flipY){
-	
+	public static void drawTexturedFlippedRect(PoseStack poseStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, boolean flipX, boolean flipY){
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		
 		float f = 1F / (float)textureWidth;
 		float f1 = 1F / (float)textureHeight;
 		
@@ -87,14 +94,14 @@ public final class DrawingUtils {
 		Tesselator tessellator = Tesselator.getInstance();
 		BufferBuilder buffer = tessellator.getBuilder();
 		
-		buffer.begin(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.POSITION_TEX);
+		buffer.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-		buffer.vertex((double)(x), 		(double)(y + height), 0).tex((double)((float)(u1) * f), (double)((float)(v2) * f1)).endVertex();
-		buffer.vertex((double)(x + width), (double)(y + height), 0).tex((double)((float)(u2) * f), (double)((float)(v2) * f1)).endVertex();
-		buffer.vertex((double)(x + width), (double)(y), 		  0).tex((double)((float)(u2) * f), (double)((float)(v1) * f1)).endVertex();
-		buffer.vertex((double)(x), 		(double)(y), 		  0).tex((double)((float)(u1) * f), (double)((float)(v1) * f1)).endVertex();
+		buffer.vertex(poseStack.last().pose(), (x), 		(y + height), 0).uv(((float)(u1) * f), ((float)(v2) * f1)).endVertex();
+		buffer.vertex(poseStack.last().pose(), (x + width), (y + height), 0).uv(((float)(u2) * f), ((float)(v2) * f1)).endVertex();
+		buffer.vertex(poseStack.last().pose(), (x + width), (y), 		  0).uv(((float)(u2) * f), ((float)(v1) * f1)).endVertex();
+		buffer.vertex(poseStack.last().pose(), (x), 		(y), 		  0).uv(((float)(u1) * f), ((float)(v1) * f1)).endVertex();
 
-		tessellator.draw();
+        BufferUploader.drawWithShader(buffer.end());
 	}
 
 	/**
@@ -111,20 +118,22 @@ public final class DrawingUtils {
 	 * @param width The width of the section, expressed as a fraction of the image width
 	 * @param height The height of the section, expressed as a fraction of the image width
 	 */
-	public static void drawTexturedStretchedRect(int x, int y, int u, int v, int finalWidth, int finalHeight, int width,
+	public static void drawTexturedStretchedRect(PoseStack stack, int x, int y, int u, int v, int finalWidth, int finalHeight, int width,
 			int height){
 	
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		
-		buffer.pos((x), y + finalHeight, 0).tex(u, v + height).endVertex();
-		buffer.pos(x + finalWidth, y + finalHeight, 0).tex(u + width, v + height).endVertex();
-		buffer.pos(x + finalWidth, (y), 0).tex(u + width, v).endVertex();
-		buffer.pos((x), (y), 0).tex(u, v).endVertex();
-		
-		tessellator.draw();
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
+        Tesselator tessellator = Tesselator.getInstance();
+        BufferBuilder buffer = tessellator.getBuilder();
+
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+        buffer.vertex(stack.last().pose(), (x), y + finalHeight, 0).uv(u, v + height).endVertex();
+        buffer.vertex(stack.last().pose(), x + finalWidth, y + finalHeight, 0).uv(u + width, v + height).endVertex();
+        buffer.vertex(stack.last().pose(), x + finalWidth, (y), 0).uv(u + width, v).endVertex();
+        buffer.vertex(stack.last().pose(), (x), (y), 0).uv(u, v).endVertex();
+
+        BufferUploader.drawWithShader(buffer.end());
 	}
 
 	/**
@@ -142,11 +151,11 @@ public final class DrawingUtils {
 	 * @param flipX Whether to flip the texture in the x direction.
 	 * @param flipY Whether to flip the texture in the y direction.
 	 */
-	public static void drawGlitchRect(Random random, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, boolean flipX, boolean flipY){
+	public static void drawGlitchRect(PoseStack stack, Random random, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, boolean flipX, boolean flipY){
 		for(int i=0; i<height; i++){
 			if(flipY) i = height - i - 1;
 			int offset = random.nextInt(4) == 0 ? random.nextInt(6) - 3 : 0;
-			drawTexturedFlippedRect(x + offset, y + i, u, v + i, width, 1, textureWidth, textureHeight, flipX, flipY);
+			drawTexturedFlippedRect(stack, x + offset, y + i, u, v + i, width, 1, textureWidth, textureHeight, flipX, flipY);
 		}
 	}
 
@@ -199,10 +208,10 @@ public final class DrawingUtils {
 	 * would be if it was not scaled (automatically or manually).
 	 * @param alignR True to right-align the text, false for normal left alignment.
 	 */
-	public static void drawScaledStringToWidth(Font font, String text, float x, float y, float scale, int colour, float width, boolean centre, boolean alignR){
+	public static void drawScaledStringToWidth(PoseStack stack, Font font, String text, float x, float y, float scale, int colour, float width, boolean centre, boolean alignR){
 		
-		float textWidth = font.getStringWidth(text) * scale;
-		float textHeight = font.FONT_HEIGHT * scale;
+		float textWidth = font.width(text) * scale;
+		float textHeight = font.lineHeight * scale;
 		
 		if(textWidth > width){
 			scale *= width/textWidth;
@@ -210,24 +219,23 @@ public final class DrawingUtils {
 			x += width - textWidth;
 		}
 		
-		if(centre) y += (font.FONT_HEIGHT - textHeight)/2;
+		if(centre) y += (font.lineHeight - textHeight)/2;
 		
-		DrawingUtils.drawScaledTranslucentString(font, text, x, y, scale, colour);
+		DrawingUtils.drawScaledTranslucentString(stack, font, text, x, y, scale, colour);
 	}
 
 	/** Draws the given string at the given position, scaling the text by the specified factor. Also enables blending to
 	 * render text in semitransparent colours (e.g. 0x88ffffff). */
-	public static void drawScaledTranslucentString(Font font, String text, float x, float y, float scale, int colour){
+	public static void drawScaledTranslucentString(PoseStack stack, Font font, String text, float x, float y, float scale, int colour){
 		
-		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-		GlStateManager.scale(scale, scale, scale);
-		// Because we scaled the entire rendering space, the coordinates have to be scaled inversely
-		x /= scale;
-		y /= scale;
-		font.drawStringWithShadow(text, x, y, colour);
-		GlStateManager.disableBlend();
-		GlStateManager.popMatrix();
+        stack.pushPose();
+        RenderSystem.enableBlend();
+        stack.scale(scale, scale, scale);
+        x /= scale;
+        y /= scale;
+        font.drawShadow(stack, text, x, y, colour);
+        RenderSystem.disableBlend();
+        stack.popPose();
 	}
 
 	/**
@@ -243,31 +251,23 @@ public final class DrawingUtils {
 	 * @param mouseY The y position of the mouse, used for tooltip positioning.
 	 * @param tooltip Whether to draw the tooltip.
 	 */
-	public static void drawItemAndTooltip(GuiContainer gui, ItemStack stack, int x, int y, int mouseX, int mouseY, boolean tooltip){
+	public static void drawItemAndTooltip(AbstractContainerScreen<?> gui, ItemStack stack, int x, int y, int mouseX, int mouseY, boolean tooltip){
 	
-		RenderItem renderItem = Minecraft.getInstance().getRenderItem();
-		GlStateManager.pushMatrix();
-		RenderHelper.enableGUIStandardItemLighting();
-		GlStateManager.disableLighting();
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableColorMaterial();
-		GlStateManager.enableLighting();
-		renderItem.zLevel = 100.0F;
-	
-		if(!stack.isEmpty()){
-			renderItem.renderItemAndEffectIntoGUI(stack, x, y);
-			renderItem.renderItemOverlays(Minecraft.getInstance().fontRenderer, stack, x, y);
-	
-			if(tooltip){
-				gui.drawHoveringText(gui.getItemToolTip(stack), mouseX + gui.getXSize()/2 - gui.width/2,
-						mouseY + gui.getYSize()/2 - gui.getBbHeight()/2);
-			}
-		}
-	
-		GlStateManager.popMatrix();
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		RenderHelper.enableStandardItemLighting();
+        ItemRenderer renderItem = Minecraft.getInstance().getItemRenderer();
+        PoseStack poseStack = RenderSystem.getModelViewStack();
+        poseStack.pushPose();
+        renderItem.blitOffset = 100.0F;
+
+        if (!stack.isEmpty()) {
+            renderItem.renderGuiItem(stack, x, y);
+            renderItem.renderGuiItemDecorations(Minecraft.getInstance().font, stack, x, y);
+
+            if (tooltip) {
+                gui.renderComponentTooltip(poseStack, gui.getTooltipFromItem(stack), mouseX + gui.getXSize() / 2 - gui.width / 2, mouseY + gui.getYSize() / 2 - gui.height / 2);
+            }
+        }
+
+        poseStack.popPose();
 	}
 
 	/**
@@ -290,7 +290,7 @@ public final class DrawingUtils {
 
 	/**
 	 * Tests if the point with the given coordinates lies within the rectangle specified. The check is identical to
-	 * {@link GuiContainer#isPointInRegion(int, int, int, int, int, int)}, but without the adjustment relative to the GUI.
+	 * {@link AbstractContainerScreen#isPointInRegion(int, int, int, int, int, int)}, but without the adjustment relative to the GUI.
 	 * @param left The minimum x coordinate of the rectangle
 	 * @param top The minimum y coordinate of the rectangle
 	 * @param width The width of the rectangle

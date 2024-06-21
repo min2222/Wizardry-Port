@@ -5,6 +5,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,8 +22,12 @@ public class TileEntityPlayerSave extends BlockEntity {
 	 * {@link TileEntityPlayerSave#getCaster()}. */
 	private UUID casterUUID;
 
-    public TileEntityPlayerSave(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
-        super(p_155228_, p_155229_, p_155230_);
+    public TileEntityPlayerSave(BlockPos p_155229_, BlockState p_155230_) {
+        this(WizardryBlocks.PLAYER_SAVE_BLOCK_ENTITY.get(), p_155229_, p_155230_);
+    }
+    
+    public TileEntityPlayerSave(BlockEntityType<?> type, BlockPos p_155229_, BlockState p_155230_) {
+        super(type, p_155229_, p_155230_);
     }
 
 	/** Called to manually sync the tile entity with clients. */

@@ -160,7 +160,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 
 	// Only fired server-side
 	@SubscribeEvent
-	public static void onWorldTickEvent(TickEvent.WorldTickEvent event){
+	public static void onWorldTickEvent(TickEvent.LevelTickEvent event){
 
 		if(event.phase == TickEvent.Phase.END){
 
@@ -168,7 +168,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 			// this is correct (the loaded tile entity list will of course be different in each case.
 
 			// Somehow this was throwing a CME, I have no idea why so I'm just going to cheat and copy the list
-			List<BlockEntity> tileEntities = new ArrayList<>(event.world.loadedTileEntityList);
+			List<BlockEntity> tileEntities = new ArrayList<>(event.level.loadedTileEntityList);
 
 			for(BlockEntity tileentity : tileEntities){
 				if(tileentity instanceof DispenserBlockEntity){

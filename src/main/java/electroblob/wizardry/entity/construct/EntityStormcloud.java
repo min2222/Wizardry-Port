@@ -24,12 +24,12 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 	public EntityStormcloud(Level world){
 		this(WizardryEntities.STORMCLOUD.get(), world);
-		setSize(Spells.stormcloud.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 2);
+		setSize(Spells.STORMCLOUD.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 2);
 	}
 	
 	public EntityStormcloud(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.stormcloud.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 2);
+		setSize(Spells.STORMCLOUD.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 2);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class EntityStormcloud extends EntityScaledConstruct {
 
 		targets.removeIf(t -> !this.isValidTarget(t));
 
-		float damage = Spells.stormcloud.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier;
+		float damage = Spells.STORMCLOUD.getProperty(Spell.DAMAGE).floatValue() * this.damageMultiplier;
 
 		for(LivingEntity target : targets){
 

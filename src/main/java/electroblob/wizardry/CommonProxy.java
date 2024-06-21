@@ -9,6 +9,7 @@ import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.ItemSpectralBow;
 import electroblob.wizardry.legacy.IMetadata;
+import electroblob.wizardry.legacy.Property;
 import electroblob.wizardry.packet.PacketCastContinuousSpell;
 import electroblob.wizardry.packet.PacketCastSpell;
 import electroblob.wizardry.packet.PacketCastSpellAtPos;
@@ -28,7 +29,6 @@ import electroblob.wizardry.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -53,7 +53,6 @@ import net.minecraft.world.phys.Vec3;
  * @author Electroblob
  * @since Wizardry 1.0
  */
-@SuppressWarnings("deprecation")
 public class CommonProxy {
 
 	// SECTION Registry
@@ -121,7 +120,7 @@ public class CommonProxy {
 	}
 
 	public double getConjuredBowDurability(ItemStack stack){
-		return ((ItemSpectralBow)WizardryItems.SPECTRAL_BOW.get()).getDefaultDurabilityForDisplay(stack);
+		return ((ItemSpectralBow)WizardryItems.SPECTRAL_BOW.get()).getBarColor(stack);
 	}
 
 	/**

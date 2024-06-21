@@ -19,12 +19,12 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 	public EntityFireRing(Level world){
 		this(WizardryEntities.RING_OF_FIRE.get(), world);
-		setSize(Spells.ring_of_fire.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
+		setSize(Spells.RING_OF_FIRE.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
 	
 	public EntityFireRing(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.ring_of_fire.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
+		setSize(Spells.RING_OF_FIRE.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 1);
 	}
 
 	@Override
@@ -52,9 +52,9 @@ public class EntityFireRing extends EntityScaledConstruct {
 
 					if(!MagicDamage.isEntityImmune(DamageType.FIRE, target)){
 
-						target.setSecondsOnFire(Spells.ring_of_fire.getProperty(Spell.BURN_DURATION).intValue());
+						target.setSecondsOnFire(Spells.RING_OF_FIRE.getProperty(Spell.BURN_DURATION).intValue());
 
-						float damage = Spells.ring_of_fire.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
+						float damage = Spells.RING_OF_FIRE.getProperty(Spell.DAMAGE).floatValue() * damageMultiplier;
 
 						if(this.getCaster() != null){
 							target.hurt(MagicDamage.causeIndirectMagicDamage(this, getCaster(),

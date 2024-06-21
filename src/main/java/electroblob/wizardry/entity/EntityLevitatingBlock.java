@@ -135,7 +135,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 
 					if(isConcrete && d0 > 1.0D){
 
-						HitResult raytraceresult = this.level.clip(new Vec3(this.prevgetX(), this.prevgetY(), this.prevgetZ()), new Vec3(this.getX(), this.getY(), this.getZ()), true);
+						HitResult raytraceresult = this.level.clip(new Vec3(this.xo, this.yo, this.zo), new Vec3(this.getX(), this.getY(), this.getZ()), true);
 
 						if(raytraceresult != null && this.level.getBlockState(raytraceresult.getBlockPos()).getMaterial() == Material.WATER){
 							blockpos1 = raytraceresult.getBlockPos();
@@ -154,7 +154,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 						BlockState iblockstate = this.level.getBlockState(blockpos1);
 
 						if(this.level.isEmptyBlock(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ()))){
-							if(!isConcreteInWater && BlockFalling.canFallThrough(this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
+							if(!isConcreteInWater && FallingBlock.canFallThrough(this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 0.009999999776482582D, this.getZ())))){
 								this.onGround = false;
 								return;
 							}

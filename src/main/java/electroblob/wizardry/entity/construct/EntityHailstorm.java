@@ -12,12 +12,12 @@ public class EntityHailstorm extends EntityScaledConstruct {
 
 	public EntityHailstorm(Level world){
 		this(WizardryEntities.HAILSTORM.get(), world);
-		setSize(Spells.hailstorm.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
+		setSize(Spells.HAILSTORM.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}
 	
 	public EntityHailstorm(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		setSize(Spells.hailstorm.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
+		setSize(Spells.HAILSTORM.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 5);
 	}
 
 	@Override

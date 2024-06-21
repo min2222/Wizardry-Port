@@ -1,29 +1,29 @@
 package electroblob.wizardry.block;
 
+import javax.annotation.Nullable;
+
+import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.util.BlockUtils;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nullable;
-import java.util.Random;
-
-public class BlockStatue extends Block implements ITileEntityProvider {
+public class BlockStatue extends BaseEntityBlock {
 
 	private boolean isIce;
 
@@ -32,76 +32,38 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	/** The NBT tag name for storing the frozen flag (used for rendering) in the target's tag compound. */
 	public static final String FROZEN_NBT_KEY = "frozen";
 
-	public BlockStatue(Material material){
+	public BlockStatue(BlockBehaviour.Properties material, boolean isIce){
 		super(material);
-		this.isIce = material == Material.ICE;
-		if(this.isIce){
-			this.setDefaultSlipperiness(0.98f);
-			this.setSoundType(SoundType.GLASS);
-		}
+		this.isIce = isIce;
 	}
 
 	@Override
-	public AABB getBoundingBox(BlockState state, IBlockAccess world, BlockPos pos){
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext ctx){
 		// Not a good idea to call getBlockBoundsMinX() or whatever from in here, since this method changes those!
 		if(!this.isIce){
 
-			if(level.getTileEntity(pos) instanceof TileEntityStatue){
+			if(world.getBlockEntity(pos) instanceof TileEntityStatue){
 
-				TileEntityStatue statue = (TileEntityStatue)level.getTileEntity(pos);
+				TileEntityStatue statue = (TileEntityStatue)world.getBlockEntity(pos);
 
 				if(statue.creature != null){
 
 					// Block bounds are set to match the width and height of the entity, clamped to within 1 block.
-					return new AABB((float)Math.max(0.5 - statue.creature.width / 2, 0), 0,
-							(float)Math.max(0.5 - statue.creature.width / 2, 0),
-							(float)Math.min(0.5 + statue.creature.width / 2, 1),
+					return Shapes.create((float)Math.max(0.5 - statue.creature.getBbWidth() / 2, 0), 0,
+							(float)Math.max(0.5 - statue.creature.getBbWidth() / 2, 0),
+							(float)Math.min(0.5 + statue.creature.getBbWidth() / 2, 1),
 							// This checks if the block is the top one and if so reduces its height so the top lines up
 							// with
 							// the top of the entity model.
 							statue.position == statue.parts
 									? (float)Math.min(statue.creature.getBbHeight() - statue.parts + 1, 1)
 									: 1,
-							(float)Math.min(0.5 + statue.creature.width / 2, 1));
+							(float)Math.min(0.5 + statue.creature.getBbWidth() / 2, 1));
 				}
 			}
 		}
 
-		return FULL_BLOCK_AABB;
-	}
-
-	// getCollisionBoundingBox eventually calls getBoundingBox anyway, and since I want the collision box and the block
-	// outline to be the same here, I've removed that getCollisionBoundingBox entirely.
-
-	// The number of these methods is quite simply ridiculous. This one seems to be for placement logic and block
-	// connections (fences, glass panes, etc.)...
-	@Override
-	public boolean isFullCube(BlockState state){
-		return false;
-	}
-
-	// ...this one isn't used much but has something to do with redstone...
-	@Override
-	public boolean isBlockNormalCube(BlockState state){
-		return false;
-	}
-
-	// ... this one is for most other game logic...
-	@Override
-	public boolean isNormalCube(BlockState state){
-		return false;
-	}
-
-	// Forge version of the above method. I still need to override both though because vanilla uses the other one.
-	@Override
-	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
-		return false;
-	}
-
-	// ... and this one is for rendering.
-	@Override
-	public boolean isOpaqueCube(BlockState state){
-		return false;
+		return super.getShape(state, world, pos, ctx);
 	}
 
 	@Override
@@ -110,74 +72,63 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(BlockState state){
-		return this.isIce ? EnumBlockRenderType.MODEL : EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+	public RenderShape getRenderShape(BlockState state){
+		return this.isIce ? RenderShape.MODEL : RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state){
-		return true;
+	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+		return new TileEntityStatue(pPos, pState, this.isIce);
 	}
+	
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
+        return createTicker(p_153273_, p_153275_, WizardryBlocks.STATUE_BLOCK_ENTITY.get());
+    }
+
+    @Nullable
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level p_151988_, BlockEntityType<T> p_151989_, BlockEntityType<TileEntityStatue> p_151990_) {
+        return createTickerHelper(p_151989_, p_151990_, TileEntityStatue::update);
+    }
 
 	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
-		return new TileEntityStatue(this.isIce);
-	}
+	public void destroy(LevelAccessor world, BlockPos pos, BlockState pState) {
 
-	@Override
-	public int quantityDropped(Random random){
-		return 0;
-	}
+		if(!world.isClientSide()){
 
-	@Override
-	public void breakBlock(Level world, BlockPos pos, BlockState state){
-
-		if(!level.isClientSide){
-
-			TileEntityStatue tileentity = (TileEntityStatue)level.getTileEntity(pos);
+			TileEntityStatue tileentity = (TileEntityStatue)world.getBlockEntity(pos);
 
 			if(tileentity != null){
 				if(tileentity.parts == 2){
 					if(tileentity.position == 2){
-						world.destroyBlock(pos.down(), false);
+						world.destroyBlock(pos.below(), false);
 					}else{
-						world.destroyBlock(pos.up(), false);
+						world.destroyBlock(pos.above(), false);
 					}
 				}else if(tileentity.parts == 3){
 					if(tileentity.position == 3){
-						world.destroyBlock(pos.down(), false);
-						world.destroyBlock(pos.down(2), false);
+						world.destroyBlock(pos.below(), false);
+						world.destroyBlock(pos.below(2), false);
 					}else if(tileentity.position == 2){
-						world.destroyBlock(pos.down(), false);
-						world.destroyBlock(pos.up(), false);
+						world.destroyBlock(pos.below(), false);
+						world.destroyBlock(pos.above(), false);
 					}else{
-						world.destroyBlock(pos.up(), false);
-						world.destroyBlock(pos.up(2), false);
+						world.destroyBlock(pos.above(), false);
+						world.destroyBlock(pos.above(2), false);
 					}
 				}
 			}
 
 			// This is only when position == 1 because world.destroyBlock calls this function for the other blocks.
 			if(tileentity != null && tileentity.position == 1 && tileentity.creature != null){
-				tileentity.creature.getPersistentData().removeTag(BlockStatue.PETRIFIED_NBT_KEY);
-				tileentity.creature.isDead = false;
+				tileentity.creature.getPersistentData().remove(BlockStatue.PETRIFIED_NBT_KEY);
+				tileentity.creature.revive();
 				world.addFreshEntity(tileentity.creature);
 			}
 		}
 
-		super.breakBlock(world, pos, state);
-	}
-
-	@SuppressWarnings("deprecation")
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public boolean shouldSideBeRendered(BlockState blockState, IBlockAccess blockAccess, BlockPos pos,
-                                        Direction side){
-
-		BlockState iblockstate = blockAccess.getBlockState(pos.relative(side));
-		Block block = iblockstate.getBlock();
-
-		return this.isIce && block == this ? false : super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+		super.destroy(world, pos, pState);
 	}
 	
 	/**
@@ -193,65 +144,65 @@ public class BlockStatue extends Block implements ITileEntityProvider {
 		
 		if(target.deathTime > 0) return false;
 
-		BlockPos pos = new BlockPos(target);
+		BlockPos pos = target.blockPosition();
 		Level world = target.level;
 
 		target.hurtTime = 0; // Stops the entity looking red while frozen and the resulting z-fighting
-		target.extinguish();
+		target.clearFire();
 
 		// Short mobs such as spiders and pigs
-		if((target.getBbHeight() < 1.2 || target.isChild()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
+		if((target.getBbHeight() < 1.2 || target.isBaby()) && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canPlaceBlock(caster, world, pos)){
 			
-			level.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(level.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 1);
-				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
+			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			if(world.getBlockEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos)).setCreatureAndPart(target, 1, 1);
+				((TileEntityStatue)world.getBlockEntity(pos)).setLifetime(duration);
 			}
 			
-			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().putBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}
 		// Normal sized mobs like zombies and skeletons
-		else if(target.getBbHeight() < 2.5 && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up())
-				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up())){
+		else if(target.getBbHeight() < 2.5 && BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.above())
+				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.above())){
 			
-			level.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(level.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 2);
-				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
+			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			if(world.getBlockEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos)).setCreatureAndPart(target, 1, 2);
+				((TileEntityStatue)world.getBlockEntity(pos)).setLifetime(duration);
 			}
 
-			level.setBlockAndUpdate(pos.up(), this.defaultBlockState());
-			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 2);
+			world.setBlockAndUpdate(pos.above(), this.defaultBlockState());
+			if(world.getBlockEntity(pos.above()) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos.above())).setCreatureAndPart(target, 2, 2);
 			}
 
-			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().putBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}
 		// Tall mobs like endermen
-		else if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.up()) && BlockUtils.canBlockBeReplaced(world, pos.up(2))
-				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.up()) && BlockUtils.canPlaceBlock(caster, world, pos.up(2))){
+		else if(BlockUtils.canBlockBeReplaced(world, pos) && BlockUtils.canBlockBeReplaced(world, pos.above()) && BlockUtils.canBlockBeReplaced(world, pos.above(2))
+				&& BlockUtils.canPlaceBlock(caster, world, pos) && BlockUtils.canPlaceBlock(caster, world, pos.above()) && BlockUtils.canPlaceBlock(caster, world, pos.above(2))){
 			
-			level.setBlockAndUpdate(pos, this.defaultBlockState());
-			if(level.getTileEntity(pos) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos)).setCreatureAndPart(target, 1, 3);
-				((TileEntityStatue)level.getTileEntity(pos)).setLifetime(duration);
+			world.setBlockAndUpdate(pos, this.defaultBlockState());
+			if(world.getBlockEntity(pos) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos)).setCreatureAndPart(target, 1, 3);
+				((TileEntityStatue)world.getBlockEntity(pos)).setLifetime(duration);
 			}
 
-			level.setBlockAndUpdate(pos.up(), this.defaultBlockState());
-			if(level.getTileEntity(pos.up()) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos.up())).setCreatureAndPart(target, 2, 3);
+			world.setBlockAndUpdate(pos.above(), this.defaultBlockState());
+			if(world.getBlockEntity(pos.above()) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos.above())).setCreatureAndPart(target, 2, 3);
 			}
 
-			level.setBlockAndUpdate(pos.up(2), this.defaultBlockState());
-			if(level.getTileEntity(pos.up(2)) instanceof TileEntityStatue){
-				((TileEntityStatue)level.getTileEntity(pos.up(2))).setCreatureAndPart(target, 3, 3);
+			world.setBlockAndUpdate(pos.above(2), this.defaultBlockState());
+			if(world.getBlockEntity(pos.above(2)) instanceof TileEntityStatue){
+				((TileEntityStatue)world.getBlockEntity(pos.above(2))).setCreatureAndPart(target, 3, 3);
 			}
 
-			target.getPersistentData().setBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
+			target.getPersistentData().putBoolean(this.isIce ? FROZEN_NBT_KEY : PETRIFIED_NBT_KEY, true);
 			target.discard();
 			return true;
 		}

@@ -34,7 +34,7 @@ public class EntityEarthquake extends EntityMagicConstruct { // NOT a scaled con
 
 		super.tick();
 
-		double speed = Spells.earthquake.getProperty(Earthquake.SPREAD_SPEED).doubleValue();
+		double speed = Spells.EARTHQUAKE.getProperty(Earthquake.SPREAD_SPEED).doubleValue();
 
 		if(!level.isClientSide && EntityUtils.canDamageBlocks(getCaster(), level)){
 

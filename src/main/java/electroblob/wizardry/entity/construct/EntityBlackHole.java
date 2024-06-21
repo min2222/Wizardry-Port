@@ -44,7 +44,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 
 	public EntityBlackHole(Level world){
 		this(WizardryEntities.BLACK_HOLE.get(), world);
-		float r = Spells.black_hole.getProperty(Spell.EFFECT_RADIUS).floatValue();
+		float r = Spells.BLACK_HOLE.getProperty(Spell.EFFECT_RADIUS).floatValue();
 		setSize(r * 2, r);
 		randomiser = new int[30];
 		for(int i = 0; i < randomiser.length; i++){
@@ -58,7 +58,7 @@ public class EntityBlackHole extends EntityScaledConstruct {
 	
 	public EntityBlackHole(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
-		float r = Spells.black_hole.getProperty(Spell.EFFECT_RADIUS).floatValue();
+		float r = Spells.BLACK_HOLE.getProperty(Spell.EFFECT_RADIUS).floatValue();
 		setSize(r * 2, r);
 		randomiser = new int[30];
 		for(int i = 0; i < randomiser.length; i++){

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -36,13 +37,13 @@ public class RenderContainmentField {
 	}
 
 	@SubscribeEvent
-	public static void onRenderWorldLastEvent(RenderWorldLastEvent event){
+	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
 
 		Player player = Minecraft.getInstance().player;
 
-		if(player.hasEffect(WizardryPotions.containment)){
+		if(player.hasEffect(WizardryPotions.CONTAINMENT.get())){
 
-			Vec3 centre = GeometryUtils.getCentre(NbtUtils.readBlockPos(player.getPersistentData().getCompoundTag(PotionContainment.ENTITY_TAG)));
+			Vec3 centre = GeometryUtils.getCentre(NbtUtils.readBlockPos(player.getPersistentData().getCompound(PotionContainment.ENTITY_TAG)));
 			float r = PotionContainment.getContainmentDistance(player.getActivePotionEffect(WizardryPotions.containment).getAmplifier());
 
 			GlStateManager.pushMatrix();

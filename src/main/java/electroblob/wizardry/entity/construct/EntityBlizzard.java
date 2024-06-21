@@ -24,14 +24,14 @@ public class EntityBlizzard extends EntityScaledConstruct {
 		this(WizardryEntities.BLIZZARD.get(), world);
 		// TODO: Set the size properly and do whatever forcefield does to allow block and entity interaction inside it
 		// 		 (Probably need to do this for several others too)
-		setSize(Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);
+		setSize(Spells.BLIZZARD.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);
 	}
 	
 	public EntityBlizzard(EntityType<? extends EntityScaledConstruct> type, Level world){
 		super(type, world);
 		// TODO: Set the size properly and do whatever forcefield does to allow block and entity interaction inside it
 		// 		 (Probably need to do this for several others too)
-		setSize(Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);
+		setSize(Spells.BLIZZARD.getProperty(Spell.EFFECT_RADIUS).floatValue() * 2, 3);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class EntityBlizzard extends EntityScaledConstruct {
 
 		// This is a good example of why you might define a spell base property without necessarily using it in the
 		// spell - in fact, blizzard doesn't even have a spell class (yet)
-		double radius = Spells.blizzard.getProperty(Spell.EFFECT_RADIUS).doubleValue() * sizeMultiplier;
+		double radius = Spells.BLIZZARD.getProperty(Spell.EFFECT_RADIUS).doubleValue() * sizeMultiplier;
 
 		if(!this.level.isClientSide){
 

@@ -1,5 +1,8 @@
 package electroblob.wizardry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.data.SpellEmitterData;
 import electroblob.wizardry.data.SpellGlyphData;
@@ -12,44 +15,56 @@ import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.packet.PacketSyncAdvancements;
 import electroblob.wizardry.packet.WizardryPacketHandler;
-import electroblob.wizardry.registry.*;
+import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryAdvancementTriggers;
+import electroblob.wizardry.registry.WizardryEnchantments;
+import electroblob.wizardry.registry.WizardryItems;
+import electroblob.wizardry.registry.WizardryPotions;
+import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.FreezingWeapon;
 import electroblob.wizardry.spell.ImbueWeapon;
 import electroblob.wizardry.spell.Spell;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.IElementalDamage;
+import electroblob.wizardry.util.InventoryUtils;
+import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
+import electroblob.wizardry.util.SpellProperties;
+import electroblob.wizardry.util.WandHelper;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.storage.loot.LootContext;
-import net.minecraft.world.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.PlayLevelSoundEvent;
-import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * General-purpose event handler for things that don't fit anywhere else or groups of related behaviours that are better
@@ -77,10 +92,10 @@ public final class WizardryEventHandler {
 	@SubscribeEvent
 	public static void onPlayerLoggedInEvent(PlayerLoggedInEvent event){
 		// When a player logs in, they are sent the glyph data, server settings and spell properties.
-		if(event.player instanceof ServerPlayer){
-			ServerPlayer player = (ServerPlayer)event.player;
-			SpellGlyphData.get(player.world).sync(player);
-			SpellEmitterData.get(player.world).sync(player);
+		if(event.getEntity() instanceof ServerPlayer){
+			ServerPlayer player = (ServerPlayer)event.getEntity();
+			SpellGlyphData.get(player.level).sync(player);
+			SpellEmitterData.get(player.level).sync(player);
 			Wizardry.settings.sync(player);
 			syncAdvancements(player, false);
 			Spell.syncProperties(player);
@@ -91,7 +106,7 @@ public final class WizardryEventHandler {
 	public static void onPlaySoundAtEntityEvent(PlayLevelSoundEvent.AtEntity event){
 		// Muffle (there's no spell class for it so it's here instead)
 		if(event.getEntity() instanceof LivingEntity
-				&& ((LivingEntity)event.getEntity()).hasEffect(WizardryPotions.muffle)){
+				&& ((LivingEntity)event.getEntity()).hasEffect(WizardryPotions.MUFFLE.get())){
 			event.setCanceled(true);
 		}
 	}
@@ -117,7 +132,7 @@ public final class WizardryEventHandler {
 			if(player.getAdvancements().getProgress(advancement).isDone()) advancements.add(advancement.getId());
 		}
 
-		WizardryPacketHandler.net.sendTo(new PacketSyncAdvancements.Message(showToasts, advancements.toArray(new ResourceLocation[0])), player);
+		WizardryPacketHandler.net.send(new PacketSyncAdvancements.Message(showToasts, advancements.toArray(new ResourceLocation[0])), player);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH) // Disabling of specific spells comes after arcane jammer but before everything else
@@ -136,7 +151,7 @@ public final class WizardryEventHandler {
 
 		// If a spell is disabled in the config, it will not work.
 		if(!enabled){
-			if(event.getCaster() != null && !event.getCaster().level.isClientSide) event.getCaster().sendMessage(
+			if(event.getCaster() != null && !event.getCaster().level.isClientSide) event.getCaster().sendSystemMessage(
 					Component.translatable("spell.disabled", event.getSpell().getNameForTranslationFormatted()));
 			event.setCanceled(true);
 		}
@@ -151,7 +166,7 @@ public final class WizardryEventHandler {
 
 			// Advancement triggers
 			if(player instanceof ServerPlayer){
-				WizardryAdvancementTriggers.cast_spell.trigger((ServerPlayer)player, event.getSpell(), player.getItemInHand(player.getActiveHand()));
+				WizardryAdvancementTriggers.cast_spell.trigger((ServerPlayer)player, event.getSpell(), player.getItemInHand(player.getUsedItemHand()));
 			}
 
 			// Spell discovery (only players can discover spells, obviously)
@@ -175,7 +190,7 @@ public final class WizardryEventHandler {
 						// Sound and text only happen server-side, in survival, with discovery mode on, and only when
 						// the spell wasn't cast using commands.
 						EntityUtils.playSoundAtPlayer(player, WizardrySounds.MISC_DISCOVER_SPELL, 1.25f, 1);
-						player.sendMessage(Component.translatable("spell.discover",
+						player.sendSystemMessage(Component.translatable("spell.discover",
 								event.getSpell().getNameForTranslationFormatted()));
 					}
 				}
@@ -196,30 +211,30 @@ public final class WizardryEventHandler {
 		if(event.getEntity() instanceof Mob && event.getTarget() != null){
 
 			// Muffle
-			if(event.getTarget().hasEffect(WizardryPotions.muffle)){
+			if(event.getTarget().hasEffect(WizardryPotions.MUFFLE.get())){
 
-				Vec3 vec = event.getTarget().getPositionEyes(1).subtract(event.getEntity().getPositionEyes(1));
+				Vec3 vec = event.getTarget().getEyePosition(1).subtract(event.getEntity().getEyePosition(1));
 				// Find the angle between the direction the mob is looking and the direction the player is in
 				// Angle between a and b = acos((a.b) / (|a|*|b|))
-				double angle = Math.acos(vec.dotProduct(event.getEntity().getLookVec()) / vec.length());
+				double angle = Math.acos(vec.dot(event.getEntity().getLookAngle()) / vec.length());
 				// If the player is not within the 144-degree arc in front of the mob, it won't detect them
 				if(angle > 0.4 * Math.PI){
-					((Mob)event.getEntity()).setAttackTarget(null);
+					((Mob)event.getEntity()).setTarget(null);
 				}
 			}
 
 			// Mirage
-			if(event.getTarget().hasEffect(WizardryPotions.mirage)){
+			if(event.getTarget().hasEffect(WizardryPotions.MIRAGE.get())){
 				// Can't find players under mirage at all! (Pretty sure this excludes revenge-targeting)
-				((Mob)event.getEntity()).setAttackTarget(null);
+				((Mob)event.getEntity()).setTarget(null);
 			}
 
 			// Blindness tweak
 			// I'm not going as far as potion core's implementation, this is just so it does *something* to mobs
-			if(event.getEntity().hasEffect(MobEffects.BLINDNESS) && !Loader.isModLoaded("potioncore")
+			if(event.getEntity().hasEffect(MobEffects.BLINDNESS)
 					&& Wizardry.settings.blindnessTweak && event.getTarget().distanceToSqr(event.getEntity()) > 3.5 * 3.5){
 				// Can't detect anything more than 3.5 blocks away (roughly the player's view distance when blinded)
-				((Mob)event.getEntity()).setAttackTarget(null);
+				((Mob)event.getEntity()).setTarget(null);
 			}
 		}
 	}
@@ -260,27 +275,27 @@ public final class WizardryEventHandler {
 						&& ((IElementalDamage)event.getSource()).isRetaliatory())){
 
 			LivingEntity attacker = (LivingEntity)event.getSource().getEntity();
-			Level world = event.getEntity().world;
+			Level world = event.getEntity().level;
 
-			if(attacker.getDistance(event.getEntity()) < 10){
+			if(attacker.distanceTo(event.getEntity()) < 10){
 
 				// Fireskin
-				if(event.getEntity().hasEffect(WizardryPotions.fireskin)
+				if(event.getEntity().hasEffect(WizardryPotions.FIRESKIN.get())
 						&& !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
-					attacker.setSecondsOnFire(Spells.fire_breath.getProperty(Spell.BURN_DURATION).intValue() * 20);
+					attacker.setSecondsOnFire(Spells.FIRE_BREATH.getProperty(Spell.BURN_DURATION).intValue() * 20);
 
 				// Ice Shroud
-				if(event.getEntity().hasEffect(WizardryPotions.ice_shroud)
+				if(event.getEntity().hasEffect(WizardryPotions.ICE_SHROUD.get())
 						&& !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity())
 						&& !(attacker instanceof FakePlayer)) // Fake players cause problems
-					attacker.addEffect(new MobEffectInstance(WizardryPotions.frost,
-							Spells.ice_shroud.getProperty(Spell.EFFECT_DURATION).intValue(),
-							Spells.ice_shroud.getProperty(Spell.EFFECT_STRENGTH).intValue()));
+					attacker.addEffect(new MobEffectInstance(WizardryPotions.FROST.get(),
+							Spells.ICE_SHROUD.getProperty(Spell.EFFECT_DURATION).intValue(),
+							Spells.ICE_SHROUD.getProperty(Spell.EFFECT_STRENGTH).intValue()));
 
 				// Static Aura
-				if(event.getEntity().hasEffect(WizardryPotions.static_aura)){
+				if(event.getEntity().hasEffect(WizardryPotions.STATIC_AURA.get())){
 
-					if(level.isClientSide){
+					if(world.isClientSide){
 
 						ParticleBuilder.create(Type.LIGHTNING).entity(event.getEntity()).pos(0, event.getEntity().getBbHeight() / 2, 0)
 								.target(attacker).spawn(world);
@@ -290,7 +305,7 @@ public final class WizardryEventHandler {
 					}
 
 					DamageSafetyChecker.attackEntitySafely(attacker, MagicDamage.causeDirectMagicDamage(event.getEntity(),
-							DamageType.SHOCK, true), Spells.static_aura.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getDamageType());
+							DamageType.SHOCK, true), Spells.STATIC_AURA.getProperty(Spell.DAMAGE).floatValue(), event.getSource().getMsgId());
 					attacker.playSound(WizardrySounds.SPELL_STATIC_AURA_RETALIATE, 1.0F, world.random.nextFloat() * 0.4F + 1.5F);
 				}
 			}
@@ -302,9 +317,9 @@ public final class WizardryEventHandler {
 	public static void onLivingHurtEvent(LivingHurtEvent event){
 
 		// Ward
-		MobEffectInstance effect = event.getEntity().getActivePotionEffect(WizardryPotions.ward);
+		MobEffectInstance effect = event.getEntity().getEffect(WizardryPotions.WARD.get());
 
-		if(effect != null && event.getSource().isMagicDamage()){
+		if(effect != null && event.getSource().isMagic()){
 			event.setAmount(event.getAmount() * Math.max(0, 1 - 0.2f * (1 + effect.getAmplifier()))); // Resistance is 20%
 		}
 
@@ -316,17 +331,15 @@ public final class WizardryEventHandler {
 			// Players can only ever attack with their main hand, so this is the right method to use here.
 			if(!attacker.getMainHandItem().isEmpty() && ImbueWeapon.isSword(attacker.getMainHandItem())){
 
-				int level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.flaming_weapon,
-						attacker.getMainHandItem());
+				int level = attacker.getMainHandItem().getEnchantmentLevel(WizardryEnchantments.FLAMING_WEAPON.get());
 
 				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FIRE, event.getEntity()))
 					event.getEntity().setSecondsOnFire(level * 4);
 
-				level = EnchantmentHelper.getEnchantmentLevel(WizardryEnchantments.freezing_weapon,
-						attacker.getMainHandItem());
+				level = attacker.getMainHandItem().getEnchantmentLevel(WizardryEnchantments.FREEZING_WEAPON.get());
 				// Frost lasts for longer because it doesn't do any actual damage
 				if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
-					event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 200, 0));
+					event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), level * 200, 0));
 			}
 		}
 
@@ -338,7 +351,7 @@ public final class WizardryEventHandler {
 					.getInt(FreezingWeapon.FREEZING_ARROW_NBT_KEY);
 
 			if(level > 0 && !MagicDamage.isEntityImmune(DamageType.FROST, event.getEntity()))
-				event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.frost, level * 150, 0));
+				event.getEntity().addEffect(new MobEffectInstance(WizardryPotions.FROST.get(), level * 150, 0));
 		}
 
 		// Damage scaling
@@ -365,12 +378,12 @@ public final class WizardryEventHandler {
 				SpellModifiers modifiers = ((ISpellCaster)event.getEntity()).getModifiers();
 				int count = ((ISpellCaster)event.getEntity()).getSpellCounter();
 
-				if(spell != null && spell != Spells.none){ // IntelliJ is wrong, do NOT remove the null check!
+				if(spell != null && spell != Spells.NONE){ // IntelliJ is wrong, do NOT remove the null check!
 
 					if(!MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(SpellCastEvent.Source.NPC, spell, event.getEntity(),
 							modifiers, count))){
 
-						spell.cast(event.getEntity().world, (Mob)event.getEntity(), InteractionHand.MAIN_HAND, count,
+						spell.cast(event.getEntity().level, (Mob)event.getEntity(), InteractionHand.MAIN_HAND, count,
 								// TODO: This implementation of modifiers relies on them being accessible client-side.
 								// 		 Right now that doesn't matter because NPCs don't use modifiers, but they might in future
 								((Mob)event.getEntity()).getTarget(), modifiers);
@@ -394,27 +407,27 @@ public final class WizardryEventHandler {
 			//  if we didn't handle this
 			if(event.getEntity().getClass().getCanonicalName().contains("lycanitesmobs"))
 			{
-				ServerLevel world = (ServerLevel)event.getEntity().getEntityWorld();
-				LootTable table =  level.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
+				ServerLevel world = (ServerLevel)event.getEntity().getLevel();
+				LootTable table =  world.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
 
 				LootContext ctx = new LootContext.Builder(world).withPlayer(player).build();
-				List<ItemStack> stacks = table.generateLootForPools(world.rand, ctx);
+				List<ItemStack> stacks = table.generateLootForPools(world.random, ctx);
 
 				for(ItemStack stack : stacks) {
-					event.getEntity().entityDropItem(stack, 0f);
+					event.getEntity().spawnAtLocation(stack, 0f);
 				}
 			}
 
 			for(ItemStack stack : InventoryUtils.getPrioritisedHotbarAndOffhand(player)){
 
 				if(stack.getItem() instanceof IManaStoringItem && !((IManaStoringItem)stack.getItem()).isManaFull(stack)
-						&& WandHelper.getUpgradeLevel(stack, WizardryItems.siphon_upgrade) > 0){
+						&& WandHelper.getUpgradeLevel(stack, WizardryItems.SIPHON_UPGRADE.get()) > 0){
 
 					int mana = Constants.SIPHON_MANA_PER_LEVEL
-							* WandHelper.getUpgradeLevel(stack, WizardryItems.siphon_upgrade)
-							+ player.world.random.nextInt(Constants.SIPHON_MANA_PER_LEVEL);
+							* WandHelper.getUpgradeLevel(stack, WizardryItems.SIPHON_UPGRADE.get())
+							+ player.level.random.nextInt(Constants.SIPHON_MANA_PER_LEVEL);
 
-					if(ItemArtefact.isArtefactActive(player, WizardryItems.ring_siphoning)) mana *= 1.3f;
+					if(ItemArtefact.isArtefactActive(player, WizardryItems.RING_SIPHONING.get())) mana *= 1.3f;
 
 					((IManaStoringItem)stack.getItem()).rechargeMana(stack, mana);
 
@@ -436,7 +449,7 @@ public final class WizardryEventHandler {
 	@SubscribeEvent // Priority doesn't matter here, we're only setting event fields so if it's cancelled it won't matter
 	public static void onLivingFallEvent(LivingFallEvent event){
 		// Why is fall damage based on distance fallen? Why? Who on earth came up with that? It makes no sense whatsoever!
-		if(!event.getEntity().level.isClientSide && Wizardry.settings.replaceVanillaFallDamage && !Loader.isModLoaded("speedbasedfalldamage")){
+		if(!event.getEntity().level.isClientSide && Wizardry.settings.replaceVanillaFallDamage){
 			// We want to keep the fall damage EXACTLY THE SAME for free, uninterrupted falls, but fix the weirdness
 			// caused when something else changes the entity's velocity
 			// All living entities have a gravity of 0.08b/t^2
@@ -444,7 +457,7 @@ public final class WizardryEventHandler {
 			// However, Minecraft also has a drag of 0.02 * the velocity, so we actually expect a slightly different value
 			// Much maths later...
 
-			double v = event.getEntity().motionY;
+			double v = event.getEntity().getDeltaMovement().y;
 			// Players are weird, their velocity somehow resets on the server just before this event fires so
 			// instead we're storing the y velocity from the previous tick in WizardData and retrieving it here
 			// Of course, if another mod screws things up and sets a player's velocity client-side only then this won't

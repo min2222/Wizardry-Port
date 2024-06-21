@@ -319,12 +319,12 @@ public abstract class EntityMagicArrow extends Projectile implements IEntityAddi
 
 				if(entity1.canBeCollidedWith() && (entity1 != this.getCaster() || this.ticksInAir >= 5)){
 					f1 = 0.3F;
-					AABB axisalignedbb1 = entity1.getBoundingBox().grow((double)f1, (double)f1,
+					AABB axisalignedbb1 = entity1.getBoundingBox().inflate((double)f1, (double)f1,
 							(double)f1);
 					HitResult RayTraceResult1 = axisalignedbb1.calculateIntercept(vec3d1, vec3d);
 
 					if(RayTraceResult1 != null){
-						double d1 = vec3d1.distanceTo(RayTraceResult1.hitVec);
+						double d1 = vec3d1.distanceTo(RayTraceResult1.getLocation());
 
 						if(d1 < d0 || d0 == 0.0D){
 							entity = entity1;

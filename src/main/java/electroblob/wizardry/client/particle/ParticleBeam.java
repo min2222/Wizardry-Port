@@ -69,12 +69,12 @@ public class ParticleBeam extends ParticleTargeted {
 			break;
 
 		case 1:
-			drawShearedBox(buffer, x1, y1, z1, x2, y2, z2, 0.6f*thickness, (particleRed + 1)/2, (particleGreen + 1)/2,
-					(particleBlue + 1)/2, 0.65f);
+			drawShearedBox(buffer, x1, y1, z1, x2, y2, z2, 0.6f*thickness, (rCol + 1)/2, (gCol + 1)/2,
+					(bCol + 1)/2, 0.65f);
 			break;
 
 		case 2:
-			drawShearedBox(buffer, x1, y1, z1, x2, y2, z2, thickness, particleRed, particleGreen, particleBlue, 0.3f);
+			drawShearedBox(buffer, x1, y1, z1, x2, y2, z2, thickness, rCol, gCol, bCol, 0.3f);
 			break;
 		}
 		

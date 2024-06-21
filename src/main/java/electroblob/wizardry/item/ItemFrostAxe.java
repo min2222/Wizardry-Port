@@ -32,7 +32,7 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 	private Rarity rarity = Rarity.COMMON;
 
 	public ItemFrostAxe(Tier material){
-		super(material, 8, -3, new Item.Properties().durability(1200).setNoRepair());
+		super(material, Spells.FROST_AXE.getProperty(Spell.DAMAGE).floatValue(), -3, new Item.Properties().durability(1200).setNoRepair());
 		addAnimationPropertyOverrides();
 	}
 
@@ -88,12 +88,6 @@ public class ItemFrostAxe extends AxeItem implements IConjuredItem {
 		int damage = stack.getDamageValue();
 		if(damage > stack.getMaxDamage()) InventoryUtils.replaceItemInInventory(entity, slot, stack, ItemStack.EMPTY);
 		stack.setDamageValue(damage + 1);
-	}
-
-	@Override
-	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot equipmentSlot){
-		attackDamageBaseline = Spells.FROST_AXE.getProperty(Spell.DAMAGE).floatValue();
-		return super.getDefaultAttributeModifiers(equipmentSlot);
 	}
 
 	@Override

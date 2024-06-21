@@ -73,26 +73,6 @@ public class BlockLectern extends HorizontalDirectionalBlock implements EntityBl
 	}
 
 	@Override
-	public boolean isOpaqueCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean isFullCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean isFullBlock(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean isNormalCube(BlockState state){
-		return false;
-	}
-
-	@Override
 	public boolean canPlaceTorchOnTop(BlockState state, IBlockAccess world, BlockPos pos){
 		return false;
 	}

@@ -14,7 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Base class for {@link DispenserCastingData}. Originally this was written because command blocks had a similar system,
@@ -47,7 +47,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 	/** Returns whether this tile entity is currently casting a continuous spell. */
 	public boolean isCasting(){
-		return this.spell != null && this.spell != Spells.none;
+		return this.spell != null && this.spell != Spells.NONE;
 	}
 
 	/** Returns the continuous spell this tile entity is currently casting, or the {@link None} spell if it isn't
@@ -86,8 +86,8 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 		stopCasting();
 
 		if(!tileEntity.getLevel().isClientSide){
-			IMessage msg = new PacketDispenserCastSpell.Message(x, y, z, getDirection(), tileEntity.getPos(), spell, 0, modifiers);
-			WizardryPacketHandler.net.sendToDimension(msg, tileEntity.getLevel().provider.getDimension());
+			PacketDispenserCastSpell.Message msg = new PacketDispenserCastSpell.Message(x, y, z, getDirection(), tileEntity.getBlockPos(), spell, 0, modifiers);
+			WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> tileEntity.getLevel().dimension()), msg);
 		}
 	}
 
@@ -95,7 +95,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 	 * do so using their own tick event handlers. */
 	protected void update(){
 
-		if(this.tileEntity.isInvalid()){
+		if(this.tileEntity.isRemoved()){
 			return;
 		}
 
@@ -109,7 +109,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 			Direction direction = getDirection();
 
-			if(MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(getSource(), spell, tileEntity.getWorld(),
+			if(MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Tick(getSource(), spell, tileEntity.getLevel(),
 					x, y, z, direction, modifiers, castingTick))){
 				// When the event is canceled client-side, this will stop the spell on the client only, as specified in
 				// the javadoc for SpellCastEvent.Tick.
@@ -117,7 +117,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 				return;
 			}
 
-			this.spell.cast(tileEntity.getWorld(), x, y, z, direction, castingTick, -1, modifiers);
+			this.spell.cast(tileEntity.getLevel(), x, y, z, direction, castingTick, -1, modifiers);
 
 			castingTick++;
 
@@ -154,7 +154,7 @@ public abstract class BlockCastingData<T extends BlockEntity> implements INBTSer
 
 			this.spell = Spell.byMetadata(nbt.getInt("spell"));
 			this.castingTick = nbt.getInt("castingTick");
-			this.modifiers = SpellModifiers.fromNBT(nbt.getCompoundTag("modifiers"));
+			this.modifiers = SpellModifiers.fromNBT(nbt.getCompound("modifiers"));
 		}
 	}
 

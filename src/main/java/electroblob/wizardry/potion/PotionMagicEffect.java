@@ -41,23 +41,23 @@ public class PotionMagicEffect extends MobEffect {
 			@Override
 			public boolean renderGuiIcon(MobEffectInstance instance, Gui gui, PoseStack poseStack, int x, int y, float z, float alpha) {
 				RenderSystem.setShaderColor(1, 1, 1, alpha);
-				drawIcon(x + 3, y + 3, instance, Minecraft.getInstance());
+				drawIcon(poseStack, x + 3, y + 3, instance, Minecraft.getInstance());
 				return true;
 			}
 			
 			
 			@Override
 			public boolean renderInventoryIcon(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, PoseStack poseStack, int x, int y, int blitOffset) {
-				drawIcon(x + 6, y + 7, instance, Minecraft.getInstance());
+				drawIcon(poseStack, x + 6, y + 7, instance, Minecraft.getInstance());
 				return true;
 			}
 		});
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	protected void drawIcon(int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc){
+	protected void drawIcon(PoseStack poseStack, int x, int y, MobEffectInstance effect, net.minecraft.client.Minecraft mc){
 		RenderSystem.setShaderTexture(0, texture);
-		electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 18, 18, 18, 18);
+		electroblob.wizardry.client.DrawingUtils.drawTexturedRect(poseStack, x, y, 0, 0, 18, 18, 18, 18);
 	}
 
 }

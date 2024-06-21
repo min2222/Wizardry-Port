@@ -4,15 +4,17 @@ import java.util.UUID;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.DrawingUtils;
+import electroblob.wizardry.registry.WizardryEntities;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -47,8 +49,13 @@ public class EntityBlazeMinion extends Blaze implements ISummonedCreature {
 
 	/** Creates a new blaze minion in the given world. */
 	public EntityBlazeMinion(Level world){
-		super(world);
-		this.experienceValue = 0;
+		this(WizardryEntities.BLAZE_MINION.get(), world);
+		this.xpReward = 0;
+	}
+	
+	public EntityBlazeMinion(EntityType<? extends Blaze> type, Level world){
+		super(type, world);
+		this.xpReward = 0;
 	}
 
 	// EntityBlaze overrides
@@ -56,19 +63,19 @@ public class EntityBlazeMinion extends Blaze implements ISummonedCreature {
 	// This particular override is pretty standard: let the superclass handle basic AI like swimming, but replace its
 	// targeting system with one that targets hostile mobs and takes the AllyDesignationSystem into account.
 	@Override
-	protected void initEntityAI(){
-		super.initEntityAI();
-		this.targetTasks.taskEntries.clear();
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
+	protected void registerGoals(){
+		super.registerGoals();
+		this.goalSelector.removeAllGoals();
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(LivingEntity entity){
-		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
+	public void setLastHurtByMob(LivingEntity entity){
+		if(this.shouldRevengeTarget(entity)) super.setLastHurtByMob(entity);
 	}
 
 	@Override
@@ -94,8 +101,8 @@ public class EntityBlazeMinion extends Blaze implements ISummonedCreature {
 	protected void spawnParticleEffect(){
 		if(this.level.isClientSide){
 			for(int i = 0; i < 15; i++){
-				this.world.spawnParticle(ParticleTypes.FLAME, this.getX() + this.random.nextFloat() - 0.5f,
-						this.getY() + this.random.nextFloat() * height, this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
+				this.level.addParticle(ParticleTypes.FLAME, this.getX() + this.random.nextFloat() - 0.5f,
+						this.getY() + this.random.nextFloat() * getBbHeight(), this.getZ() + this.random.nextFloat() - 0.5f, 0, 0, 0);
 			}
 		}
 	}
@@ -148,7 +155,7 @@ public class EntityBlazeMinion extends Blaze implements ISummonedCreature {
 	}
 
 	@Override
-	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
+	public boolean canAttack(LivingEntity entityType){
 		return true;
 	}
 

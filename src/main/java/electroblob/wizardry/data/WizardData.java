@@ -17,6 +17,7 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,7 +62,7 @@ import java.util.stream.Collectors;
  */
 // On the plus side, having to rethink this class allowed me to clean it up a lot.
 @Mod.EventBusSubscriber
-public class WizardData implements INBTSerializable<NBTTagCompound> {
+public class WizardData implements INBTSerializable<CompoundTag> {
 
 	/** Static instance of what I like to refer to as the capability key. Private because, well, it's internal! */
 	// This annotation does some crazy Forge magic behind the scenes and assigns this field a value.

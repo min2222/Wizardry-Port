@@ -60,7 +60,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 		super.tick();
 
-		double radius = Spells.radiant_totem.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
+		double radius = Spells.RADIANT_TOTEM.getProperty(Spell.EFFECT_RADIUS).floatValue() * sizeMultiplier;
 
 		if(level.isClientSide){
 
@@ -89,7 +89,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 				|| AllyDesignationSystem.isAllied(getCaster(), e)).collect(Collectors.toList());
 		nearby.removeAll(nearbyAllies);
 
-		int targetsRemaining = Spells.radiant_totem.getProperty(RadiantTotem.MAX_TARGETS).intValue()
+		int targetsRemaining = Spells.RADIANT_TOTEM.getProperty(RadiantTotem.MAX_TARGETS).intValue()
 				+ (int)((damageMultiplier - 1) / Constants.POTENCY_INCREASE_PER_TIER);
 
 		while(!nearbyAllies.isEmpty() && targetsRemaining > 0){
@@ -98,7 +98,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 			if(ally.getHealth() < ally.getMaxHealth()){
 				// Slightly slower than healing aura, and it only does 1 at a time (without potency modifiers)
-				if(ally.tickCount % 8 == 0) ally.heal(Spells.radiant_totem.getProperty(Spell.HEALTH).floatValue());
+				if(ally.tickCount % 8 == 0) ally.heal(Spells.RADIANT_TOTEM.getProperty(Spell.HEALTH).floatValue());
 				targetsRemaining--;
 
 				if(level.isClientSide){
@@ -116,7 +116,7 @@ public class EntityRadiantTotem extends EntityScaledConstruct {
 
 				if(target.tickCount % target.invulnerableDuration == 1){
 
-					float damage = Spells.radiant_totem.getProperty(Spell.DAMAGE).floatValue();
+					float damage = Spells.RADIANT_TOTEM.getProperty(Spell.DAMAGE).floatValue();
 
 					EntityUtils.attackEntityWithoutKnockback(target, MagicDamage.causeIndirectMagicDamage(this,
 							getCaster(), DamageType.RADIANT), damage);

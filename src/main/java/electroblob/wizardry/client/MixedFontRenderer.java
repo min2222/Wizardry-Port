@@ -92,7 +92,7 @@ public class MixedFontRenderer extends Font {
 			Minecraft.getInstance().fontFilterFishy.drawSplitString(string.substring(1), x, y, width,
 					colour);
 		}else{
-			Minecraft.getInstance().fontRenderer.drawSplitString(string, x, y, width, colour);
+			Minecraft.getInstance().font.drawSplitString(string, x, y, width, colour);
 		}
 	}
 
