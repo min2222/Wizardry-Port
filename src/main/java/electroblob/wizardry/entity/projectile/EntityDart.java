@@ -7,11 +7,11 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class EntityDart extends EntityMagicArrow {
 	
@@ -39,7 +39,7 @@ public class EntityDart extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(HitResult hit){
+	public void onBlockHit(BlockHitResult hit){
 		this.playSound(WizardrySounds.ENTITY_DART_HIT_BLOCK, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
 	}
 

@@ -3,6 +3,7 @@ package electroblob.wizardry.integration;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.util.EntityUtils;
@@ -75,14 +76,14 @@ public final class DamageSafetyChecker {
 			}
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * target.level.getEntities().getAll().size()){
+		if(attacksThisTick > EXCESSIVE_CALL_LIMIT * Lists.newArrayList(Wizardry.proxy.getAllEntities(target.level)).size()){
 			// This should never ever happen unless another mod is intercepting non-entity-based damage and damaging
 			// the same target.
 			logInterception(originalSourceName, true);
 			return false;
 		}
 
-		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * target.level.getEntities().getAll().size()){
+		if(attacksThisTick > EXCESSIVE_CALL_THRESHOLD * Lists.newArrayList(Wizardry.proxy.getAllEntities(target.level)).size()){
 			// Sometimes this is unavoidable, it's neither mod's fault but without some kind of forge standard or
 			// universal cooperation there's no easy way to prevent it.
 			logInterception(originalSourceName, false);

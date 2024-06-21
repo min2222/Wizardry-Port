@@ -174,23 +174,14 @@ public final class EntityUtils {
 	public static Entity getEntityByUUID(Level world, @Nullable UUID id){
 
 		if(id == null) return null; // It would return null eventually but there's no point even looking
-
-		Method m = ObfuscationReflectionHelper.findMethod(Level.class, "m_142646_");
-		try 
-		{
-			LevelEntityGetter<Entity> list = (LevelEntityGetter<Entity>) m.invoke(world);
-			for(Entity entity : list.getAll()){
-				// This is a perfect example of where you need to use .equals() and not ==. For most applications,
-				// this was unnoticeable until world reload because the UUID instance or entity instance is stored.
-				// Fixed now though.
-				if(entity != null && entity.getUUID() != null && entity.getUUID().equals(id)){
-					return entity;
-				}
+		
+		for(Entity entity : Wizardry.proxy.getAllEntities(world)){
+			// This is a perfect example of where you need to use .equals() and not ==. For most applications,
+			// this was unnoticeable until world reload because the UUID instance or entity instance is stored.
+			// Fixed now though.
+			if(entity != null && entity.getUUID() != null && entity.getUUID().equals(id)){
+				return entity;
 			}
-		}
-		catch(Exception e)
-		{
-			
 		}
 		return null;
 	}

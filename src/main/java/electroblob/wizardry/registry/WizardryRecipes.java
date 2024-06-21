@@ -3,21 +3,22 @@ package electroblob.wizardry.registry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.IManaStoringItem;
 import electroblob.wizardry.item.ItemManaFlask;
 import electroblob.wizardry.misc.RecipeRechargeWithFlask;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Class responsible for defining and registering wizardry's non-JSON recipes (i.e. smelting recipes and dynamic
@@ -57,11 +58,6 @@ public final class WizardryRecipes {
 	/** Now only deals with the dynamic crafting recipes and the smelting recipes. */
 	@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event){
-
-		IForgeRegistry<IRecipe> registry = event.getRegistry();
-
-		FurnaceRecipes.instance().addSmeltingRecipeForBlock(WizardryBlocks.CRYSTAL_ORE.get(), new ItemStack(WizardryItems.MAGIC_CRYSTAL.get()), 0.5f);
-
 		// Mana flask recipes
 
 		for(Item chargeable : chargeableItems){
@@ -80,5 +76,15 @@ public final class WizardryRecipes {
 		registered = true;
 
 	}
-
+	
+	public static class WizardryRecipeGenerator extends RecipeProvider {
+		public WizardryRecipeGenerator(DataGenerator p_125973_) {
+			super(p_125973_);
+		}
+		
+		@Override
+		protected void buildCraftingRecipes(Consumer<FinishedRecipe> p_176532_) {
+			
+		}
+	}
 }

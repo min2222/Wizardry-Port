@@ -13,7 +13,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class EntityIceLance extends EntityMagicArrow {
 
@@ -55,7 +55,7 @@ public class EntityIceLance extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(HitResult hit){
+	public void onBlockHit(BlockHitResult hit){
 		// Adds a particle effect when the ice lance hits a block.
 		if(this.level.isClientSide){
 			for(int j = 0; j < 10; j++){

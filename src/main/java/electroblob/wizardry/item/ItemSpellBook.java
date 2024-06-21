@@ -35,6 +35,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemSpellBook extends Item implements IMetadata{
 
@@ -80,7 +82,9 @@ public class ItemSpellBook extends Item implements IMetadata{
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
-		player.openGui(Wizardry.instance, WizardryGuiHandler.SPELL_BOOK, world, 0, 0, 0);
+        if (world.isClientSide) {
+            Wizardry.proxy.openSpellBook(stack);
+        }
 		return InteractionResultHolder.success(stack);
 	}
 
@@ -121,10 +125,9 @@ public class ItemSpellBook extends Item implements IMetadata{
 				tooltip.add(spell.getType().getDisplayName());
 			}
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
-			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":spell_book") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
+			if (advanced.isAdvanced() && ForgeRegistries.ITEMS.getKey(this).getPath().equals(Wizardry.MODID + ":spell_book") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				String name = new Style().setColor(ChatFormatting.BLUE).setItalic(true).getFormattingCode() +
-						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
+				Component name = Component.literal(ModList.get().getModContainerById(modId).get().getModInfo().getDisplayName()).withStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true));
 				tooltip.add(name);
 			}
 		}

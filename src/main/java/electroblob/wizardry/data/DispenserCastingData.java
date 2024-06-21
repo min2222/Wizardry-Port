@@ -1,32 +1,33 @@
 package electroblob.wizardry.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.event.SpellCastEvent.Source;
 import electroblob.wizardry.item.ItemScroll;
+import electroblob.wizardry.legacy.IMetadata;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.SpellModifiers;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.level.block.BlockDispenser;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Internal capability for attaching data to dispensers. The sole purpose of this class is to keep track of continuous
@@ -43,9 +44,8 @@ import java.util.List;
 public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity> {
 
 	/** Static instance of what I like to refer to as the capability key. Private because, well, it's internal! */
-	// This annotation does some crazy Forge magic behind the scenes and assigns this field a value.
-	@CapabilityInject(DispenserCastingData.class)
-	private static final Capability<DispenserCastingData> DISPENSER_CASTING_CAPABILITY = null;
+    private static final Capability<DispenserCastingData> DISPENSER_CASTING_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
 
 	/** The time for which this dispenser will continue casting a continuous spell. When castingTick exceeds this value,
 	 * the dispenser will either stop casting or, if it contains more of the same type of scroll, continue casting and
@@ -84,7 +84,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 
 	@Override
 	protected boolean shouldContinueCasting(){
-		return tileEntity.getLevel().isBlockPowered(tileEntity.getBlockPos());
+		return tileEntity.getLevel().hasNeighborSignal(tileEntity.getBlockPos());
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 		
 		for(int i = 0; i < tileEntity.getContainerSize(); i++){
 			ItemStack stack = tileEntity.getItem(i);
-			if(stack.getItem() instanceof ItemScroll && stack.getMetadata() == spell.metadata()) slots.add(i);
+			if(stack.getItem() instanceof ItemScroll && ((IMetadata) stack.getItem()).getMetadata(stack) == spell.metadata()) slots.add(i);
 		}
 		
 		if(slots.isEmpty()) return false; // If no stack was found that matched the current spell
@@ -131,21 +131,11 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 		return dispenser.getCapability(DISPENSER_CASTING_CAPABILITY).orElse(null);
 	}
 	
-	/** Called from preInit in the main mod class to register the DispenserCastingData capability. */
-	public static void register(){
-
-		CapabilityManager.INSTANCE.register(DispenserCastingData.class, new IStorage<DispenserCastingData>(){
-			
-			@Override
-			public Tag writeNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side){
-				return null;
-			}
-
-			@Override
-			public void readNBT(Capability<DispenserCastingData> capability, DispenserCastingData instance, Direction side, Tag nbt){}
-			
-		}, DispenserCastingData::new);
-	}
+    public static void attachCapability(AttachCapabilitiesEvent<BlockEntity> event) {
+        if (event.getObject() instanceof DispenserBlockEntity) {
+            event.addCapability(new ResourceLocation(Wizardry.MODID, "casting_data"), new DispenserCastingData.Provider((DispenserBlockEntity) event.getObject()));
+        }
+    }
 
 	// Event handlers
 
@@ -185,39 +175,32 @@ public class DispenserCastingData extends BlockCastingData<DispenserBlockEntity>
 	 * DispenserCastingData go hand-in-hand; secondly, it's too short to be worth a separate file; and thirdly (and most 
 	 * importantly) it allows me to access DISPENSER_CASTING_CAPABILITY while keeping it private.
 	 */
-	public static class Provider implements ICapabilitySerializable<CompoundTag> {
+    public static class Provider implements ICapabilitySerializable<CompoundTag> {
+        private final LazyOptional<DispenserCastingData> data;
 
-		private final DispenserCastingData data;
+        public Provider(DispenserBlockEntity dispenser) {
+            data = LazyOptional.of(() ->
+            {
+                DispenserCastingData i = new DispenserCastingData(dispenser);
+                return i;
+            });
+        }
 
-		public Provider(DispenserBlockEntity dispenser){
-			data = new DispenserCastingData(dispenser);
-		}
+        @Nonnull
+        @Override
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
+            return DISPENSER_CASTING_CAPABILITY.orEmpty(capability, data.cast());
+        }
 
-		@Override
-		public boolean hasCapability(Capability<?> capability, Direction facing){
-			return capability == DISPENSER_CASTING_CAPABILITY;
-		}
+        @Override
+        public CompoundTag serializeNBT() {
+            return data.orElseThrow(NullPointerException::new).serializeNBT();
+        }
 
-		@Override
-		public <T> T getCapability(Capability<T> capability, Direction facing){
-
-			if(capability == DISPENSER_CASTING_CAPABILITY){
-				return DISPENSER_CASTING_CAPABILITY.cast(data);
-			}
-
-			return null;
-		}
-
-		@Override
-		public CompoundTag serializeNBT(){
-			return data.serializeNBT();
-		}
-
-		@Override
-		public void deserializeNBT(CompoundTag nbt){
-			data.deserializeNBT(nbt);
-		}
-
-	}
+        @Override
+        public void deserializeNBT(CompoundTag nbt) {
+            data.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
+        }
+    }
 
 }

@@ -1,7 +1,8 @@
 package electroblob.wizardry.potion;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.ItemArtefact;
@@ -143,7 +144,7 @@ public class PotionSlowTime extends PotionMagicEffect implements ISyncedPotion {
 	public static void cleanUpEntities(Level world){
 		// Had trouble with accessing loadedTileEntityList from tick events causing random CMEs so I'm making a
 		// copy of this too just in case
-		List<Entity> loadedEntityList = new ArrayList<>(world.getEntities().getAll());
+		List<Entity> loadedEntityList = Lists.newArrayList(Wizardry.proxy.getAllEntities(world));
 
 		for(Entity entity : loadedEntityList){
 			if(entity.getPersistentData().getBoolean(NBT_KEY)){

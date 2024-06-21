@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityIceShard extends EntityMagicArrow {
@@ -53,12 +52,12 @@ public class EntityIceShard extends EntityMagicArrow {
 	}
 
 	@Override
-	public void onBlockHit(HitResult hit){
+	public void onBlockHit(BlockHitResult hit){
 		
 		// Adds a particle effect when the ice shard hits a block.
 		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3 vec = hit.getLocation().add(new Vec3(((BlockHitResult) hit).getDirection().step()).scale(0.15));
+			Vec3 vec = hit.getLocation().add(new Vec3(hit.getDirection().step()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0.75f, 1, 1).spawn(level);
 			
 			for(int j = 0; j < 10; j++){

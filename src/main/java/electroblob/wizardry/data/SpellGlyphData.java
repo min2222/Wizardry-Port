@@ -1,23 +1,29 @@
 package electroblob.wizardry.data;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.RandomStringUtils;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.packet.PacketGlyphData;
 import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.NBTExtras;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.apache.commons.lang3.RandomStringUtils;
-
-import java.util.*;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * Class responsible for generating and storing the randomised spell names and descriptions for each world, which are
@@ -39,25 +45,25 @@ public class SpellGlyphData extends SavedData {
 	}
 
 	public SpellGlyphData(String name){
-		super(name);
+		
 	}
 
 	/** Generates random names and descriptions for any spells which don't already have them. */
 	public void generateGlyphNames(Level world){
 
 		for(Spell spell : Spell.getAllSpells()){
-			if(!randomNames.containsKey(spell)) randomNames.put(spell, generateRandomName(world.rand));
+			if(!randomNames.containsKey(spell)) randomNames.put(spell, generateRandomName(world.random));
 		}
 
 		for(Spell spell : Spell.getAllSpells()){
 			if(!randomDescriptions.containsKey(spell))
-				randomDescriptions.put(spell, generateRandomDescription(world.rand));
+				randomDescriptions.put(spell, generateRandomDescription(world.random));
 		}
 
 		this.setDirty();
 	}
 
-	private String generateRandomName(Random random){
+	private String generateRandomName(RandomSource random){
 
 		String name = "";
 
@@ -68,7 +74,7 @@ public class SpellGlyphData extends SavedData {
 		return name.trim();
 	}
 
-	private String generateRandomDescription(Random random){
+	private String generateRandomDescription(RandomSource random){
 
 		String name = "";
 
@@ -83,9 +89,9 @@ public class SpellGlyphData extends SavedData {
 	 * Returns the spell glyph data for this world, or creates a new instance if it doesn't exist yet. Also checks for
 	 * any spells that are missing glyph data and adds it accordingly.
 	 */
-	public static SpellGlyphData get(Level world){
+	public static SpellGlyphData get(ServerLevel world){
 
-		SpellGlyphData instance = (SpellGlyphData)world.loadData(SpellGlyphData.class, NAME);
+		SpellGlyphData instance = (SpellGlyphData)world.getDataStorage().get(SpellGlyphData::load, NAME);
 
 		if(instance == null){
 			instance = new SpellGlyphData();
@@ -99,7 +105,7 @@ public class SpellGlyphData extends SavedData {
 		if(instance.randomNames.size() < Spell.getTotalSpellCount()
 				|| instance.randomDescriptions.size() < Spell.getTotalSpellCount()){
 			instance.generateGlyphNames(world);
-			level.setData(NAME, instance);
+			world.getDataStorage().set(NAME, instance);
 		}
 
 		return instance;
@@ -122,7 +128,7 @@ public class SpellGlyphData extends SavedData {
 
 		PacketGlyphData.Message msg = new PacketGlyphData.Message(names, descriptions);
 
-		WizardryPacketHandler.net.sendTo(msg, player);
+		WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> player), msg);
 
 		Wizardry.logger.info("Synchronising spell glyph data for " + player.getName());
 
@@ -143,23 +149,23 @@ public class SpellGlyphData extends SavedData {
 		return descriptions == null ? "" : descriptions.get(spell);
 	}
 
-	@Override
-	public void readFromNBT(CompoundTag nbt){
+	public static SpellGlyphData load(CompoundTag nbt){
+        SpellGlyphData data = new SpellGlyphData();
+        data.randomNames = new HashMap<>();
+        data.randomDescriptions = new HashMap<>();
 
-		this.randomNames = new HashMap<>();
-		this.randomDescriptions = new HashMap<>();
+        ListTag tagList = nbt.getList("spellGlyphData", Tag.TAG_COMPOUND);
 
-		ListTag tagList = nbt.getTagList("spellGlyphData", NBT.TAG_COMPOUND);
-
-		for(int i = 0; i < tagList.tagCount(); i++){
-			CompoundTag tag = tagList.getCompoundTagAt(i);
-			randomNames.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("name"));
-			randomDescriptions.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("description"));
-		}
+        for (int i = 0; i < tagList.size(); i++) {
+            CompoundTag tag = tagList.getCompound(i);
+            data.randomNames.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("name"));
+            data.randomDescriptions.put(Spell.byMetadata(tag.getInt("spell")), tag.getString("description"));
+        }
+        return data;
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag nbt){
+	public CompoundTag save(CompoundTag nbt){
 
 		ListTag tagList = new ListTag();
 
@@ -168,9 +174,9 @@ public class SpellGlyphData extends SavedData {
 			// The description is now also included; there's no point in making a second compound tag!
 			CompoundTag tag = new CompoundTag();
 			tag.putInt("spell", spell.metadata());
-			tag.setString("name", this.randomNames.get(spell));
-			tag.setString("description", this.randomDescriptions.get(spell));
-			tagList.appendTag(tag);
+			tag.putString("name", this.randomNames.get(spell));
+			tag.putString("description", this.randomDescriptions.get(spell));
+			tagList.add(tag);
 		}
 
 		NBTExtras.storeTagSafely(nbt, "spellGlyphData", tagList);
@@ -179,10 +185,10 @@ public class SpellGlyphData extends SavedData {
 	}
 
 	@SubscribeEvent
-	public static void onWorldLoadEvent(WorldEvent.Load event){
-		if(!event.getWorld().isRemote && event.getWorld().provider.getDimension() == 0){
+	public static void onWorldLoadEvent(LevelEvent.Load event){
+		if(!event.getLevel().isClientSide() && ((Level) event.getLevel()).dimension() == Level.OVERWORLD){
 			// Called to initialise the spell glyph data when a world loads, if it isn't already.
-			SpellGlyphData.get(event.getWorld());
+			SpellGlyphData.get((Level) event.getLevel());
 		}
 	}
 }

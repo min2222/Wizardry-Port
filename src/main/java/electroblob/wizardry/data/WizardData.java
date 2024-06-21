@@ -1,6 +1,24 @@
 package electroblob.wizardry.data;
 
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.EvictingQueue;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.enchantment.Imbuement;
@@ -18,35 +36,36 @@ import electroblob.wizardry.util.NBTExtras;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.Capability.IStorage;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-
-import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
-import java.util.*;
-import java.util.stream.Collectors;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
 
 /**
  * Capability-based replacement for the old ExtendedPlayer class from 1.7.10. This has been reworked to leave minimum
@@ -65,9 +84,9 @@ import java.util.stream.Collectors;
 public class WizardData implements INBTSerializable<CompoundTag> {
 
 	/** Static instance of what I like to refer to as the capability key. Private because, well, it's internal! */
-	// This annotation does some crazy Forge magic behind the scenes and assigns this field a value.
-	@CapabilityInject(WizardData.class)
-	private static final Capability<WizardData> WIZARD_DATA_CAPABILITY = null;
+    private static final Capability<WizardData> WIZARD_DATA_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    	
+    });
 
 	/** Internal storage of registered variable keys. This only contains the stored keys. */
 	private static final Set<IStoredVariable> storedVariables = new HashSet<>();
@@ -146,9 +165,9 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 		this.spellsDiscovered = new HashSet<>();
 		// All players can recognise magic missile. This is not done using discoverSpell because that seems to cause
 		// a crash on load occasionally (probably something to do with achievements being initialised)
-		this.spellsDiscovered.add(Spells.magic_missile);
+		this.spellsDiscovered.add(Spells.MAGIC_MISSILE);
 		this.recentSpells = EvictingQueue.create(MAX_RECENT_SPELLS); // Only keeps a reference to the last 5 spells cast
-		this.castCommandSpell = Spells.none;
+		this.castCommandSpell = Spells.NONE;
 		this.castCommandModifiers = new SpellModifiers();
 		this.castCommandTick = 0;
 		this.itemCastingModifiers = new SpellModifiers();
@@ -157,30 +176,15 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 		this.spellData = new HashMap<>();
 	}
 
-	/** Called from preInit in the main mod class to register the WizardData capability. */
-	public static void register(){
-
-		// Yes - by the looks of it, having an interface is completely unnecessary in this case.
-		CapabilityManager.INSTANCE.register(WizardData.class, new IStorage<WizardData>(){
-			// These methods are only called by Capability.writeNBT() or Capability.readNBT(), which in turn are
-			// NEVER CALLED. Unless I'm missing some reflective invocation, that means this entire class serves only
-			// to allow capabilities to be saved and loaded manually. What that would be useful for I don't know.
-			// (If an API forces most users to write redundant code for no reason, it's not user friendly, is it?)
-			// ... well, that's my rant for today!
-			@Override
-			public NBTBase writeNBT(Capability<WizardData> capability, WizardData instance, Direction side){
-				return null;
-			}
-
-			@Override
-			public void readNBT(Capability<WizardData> capability, WizardData instance, Direction side, NBTBase nbt){}
-
-		}, WizardData::new);
-	}
+    public static void attachCapability(AttachCapabilitiesEvent<Entity> e) {
+        if (e.getObject() instanceof Player player) {
+            e.addCapability(new ResourceLocation(Wizardry.MODID, "wizard_data"), new WizardData.Provider((Player) e.getObject()));
+        }
+    }
 
 	/** Returns the WizardData instance for the specified player. */
 	public static WizardData get(Player player){
-		return player.getCapability(WIZARD_DATA_CAPABILITY, null);
+		return player.getCapability(WIZARD_DATA_CAPABILITY).orElse(new WizardData(player));
 	}
 
 	// ============================================= Variable Storage =============================================
@@ -350,13 +354,13 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 		Set<Imbuement> activeImbuements = new HashSet<Imbuement>();
 
 		// For each item in the player's inventory
-		for(ItemStack stack : player.inventory.mainInventory){
+		for(ItemStack stack : player.getInventory().items){
 			updateImbutedItem(stack, activeImbuements);
 		}
-		for(ItemStack stack : player.inventory.armorInventory){
+		for(ItemStack stack : player.getInventory().armor){
 			updateImbutedItem(stack, activeImbuements);
 		}
-		for(ItemStack stack : player.inventory.offHandInventory){
+		for(ItemStack stack : player.getInventory().offhand){
 			updateImbutedItem(stack, activeImbuements);
 		}
 
@@ -368,13 +372,13 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 
 		if(stack.isEnchanted()){
 
-			NBTTagList enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
+			ListTag enchantmentList = stack.getItem() == Items.ENCHANTED_BOOK ?
 					EnchantedBookItem.getEnchantments(stack) : stack.getEnchantmentTags();
 
-			Iterator<NBTBase> iterator = enchantmentList.iterator();
+			Iterator<Tag> iterator = enchantmentList.iterator();
 			// For each of the item's enchantments
 			while(iterator.hasNext()){
-				NBTTagCompound enchantmentTag = (NBTTagCompound) iterator.next();
+				CompoundTag enchantmentTag = (CompoundTag) iterator.next();
 				Enchantment enchantment = Enchantment.byId(enchantmentTag.getShort("id"));
 				// Ignores the enchantment unless it is an imbuement
 				if(enchantment instanceof Imbuement){
@@ -409,14 +413,14 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 			return false;
 		}else{
 			this.allies.add(player.getUUID());
-			this.allyNames.add(player.getName());
+			this.allyNames.add(player.getName().getString());
 			return true;
 		}
 	}
 
 	/** Returns whether the given player is in this player's list of allies, or is on the same team as this player. */
 	public boolean isPlayerAlly(Player player){
-		return this.allies.contains(player.getUUID()) || this.player.isOnSameTeam(player);
+		return this.allies.contains(player.getUUID()) || this.player.isAlliedTo(player);
 	}
 
 	/** Returns whether the player with the given UUID is in this player's list of allies. The player to whom the given
@@ -424,8 +428,8 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 	 * allies don't accidentally damage them, even when the owner is offline. */
 	public boolean isPlayerAlly(UUID playerUUID){
 		// Scoreboard teams use usernames, but since we keep a cache of those...
-		return this.allies.contains(playerUUID) || (this.player.getTeam() != null && this.player.getTeam().getMembershipCollection() != null
-		&& this.player.getTeam().getMembershipCollection().stream().anyMatch(allyNames::contains));
+		return this.allies.contains(playerUUID) || (this.player.getTeam() != null && this.player.getTeam().getPlayers() != null
+		&& this.player.getTeam().getPlayers().stream().anyMatch(allyNames::contains));
 	}
 
 	// Command continuous spell casting
@@ -438,21 +442,21 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 		this.castCommandDuration = duration;
 
 		if(!this.player.level.isClientSide){
-			PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, spell, modifiers, duration);
-			WizardryPacketHandler.net.sendToDimension(message, this.player.world.provider.getDimension());
+            PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, spell, modifiers, duration);
+            WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> this.player.level.dimension()), message);
 		}
 	}
 
 	/** Stops casting the current spell. */
 	public void stopCastingContinuousSpell(){
 
-		this.castCommandSpell = Spells.none;
+		this.castCommandSpell = Spells.NONE;
 		this.castCommandTick = 0;
 		this.castCommandModifiers.reset();
 
 		if(!this.player.level.isClientSide){
-			PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, Spells.none, this.castCommandModifiers, this.castCommandDuration);
-			WizardryPacketHandler.net.sendToDimension(message, this.player.world.provider.getDimension());
+			PacketCastContinuousSpell.Message message = new PacketCastContinuousSpell.Message(this.player, Spells.NONE, this.castCommandModifiers, this.castCommandDuration);
+            WizardryPacketHandler.net.send(PacketDistributor.DIMENSION.with(() -> this.player.level.dimension()), message);
 		}
 	}
 
@@ -471,7 +475,7 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 				return;
 			}
 
-			if(this.castCommandSpell.cast(player.world, player, InteractionHand.MAIN_HAND, castCommandTick, this.castCommandModifiers)
+			if(this.castCommandSpell.cast(player.level, player, InteractionHand.MAIN_HAND, castCommandTick, this.castCommandModifiers)
 					&& this.castCommandTick == 0){
 				// On the first tick casting a continuous spell via commands, SpellCastEvent.Post is fired.
 				MinecraftForge.EVENT_BUS.post(new SpellCastEvent.Post(Source.COMMAND, castCommandSpell, player, castCommandModifiers));
@@ -487,7 +491,7 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 
 	/** Returns whether this player is currently casting a continuous spell via commands. */
 	public boolean isCasting(){
-		return this.castCommandSpell != null && this.castCommandSpell != Spells.none;
+		return this.castCommandSpell != null && this.castCommandSpell != Spells.NONE;
 	}
 
 	/**
@@ -506,7 +510,7 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 
 		if(this.selectedMinion != null && this.selectedMinion.get() == null) this.selectedMinion = null;
 
-		prevMotionY = player.motionY;
+		prevMotionY = player.getDeltaMovement().y;
 
 		// This new system removes a lot of repetitive event handler code and inflexible data which had duplicate
 		// functions, just for different enchantments.
@@ -547,26 +551,26 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 		if(this.player instanceof ServerPlayer){
 			int id = -1;
 			if(this.selectedMinion != null && this.selectedMinion.get() instanceof Entity)
-				id = ((Entity)this.selectedMinion.get()).getEntityId();
-			long seed = player.world.random.nextLong();
+				id = ((Entity)this.selectedMinion.get()).getId();
+			long seed = player.level.random.nextLong();
 			this.synchronisedRandom.setSeed(seed);
-			IMessage msg = new PacketPlayerSync.Message(seed, this.spellsDiscovered, id, this.spellData);
-			WizardryPacketHandler.net.sendTo(msg, (ServerPlayer)this.player);
+			PacketPlayerSync.Message msg = new PacketPlayerSync.Message(seed, this.spellsDiscovered, id, this.spellData);
+			WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)this.player), msg);
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public NBTTagCompound serializeNBT(){
+	public CompoundTag serializeNBT(){
 
-		NBTTagCompound properties = new NBTTagCompound();
+		CompoundTag properties = new CompoundTag();
 
 		NBTExtras.storeTagSafely(properties, "imbuements", NBTExtras.mapToNBT(this.imbuementDurations,
-				imbuement -> new NBTTagInt(Enchantment.getEnchantmentID((Enchantment)imbuement)), NBTTagInt::new));
+				imbuement -> IntTag.valueOf(((ForgeRegistry<Enchantment>) ForgeRegistries.ENCHANTMENTS).getID((Enchantment) imbuement)), IntTag::valueOf));
 
 		// Mmmmmm Java 8....
-		NBTExtras.storeTagSafely(properties, "allies", NBTExtras.listToNBT(this.allies, NBTUtil::createUUIDTag));
-		NBTExtras.storeTagSafely(properties, "allyNames", NBTExtras.listToNBT(this.allyNames, NBTTagString::new));
+		NBTExtras.storeTagSafely(properties, "allies", NBTExtras.listToNBT(this.allies, NbtUtils::createUUID));
+		NBTExtras.storeTagSafely(properties, "allyNames", NBTExtras.listToNBT(this.allyNames, StringTag::valueOf));
 
 		// Might be worth converting this over to WizardryUtilities.listToNBT.
 		int[] spells = new int[this.spellsDiscovered.size()];
@@ -575,11 +579,11 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 			spells[i] = spell.metadata();
 			i++;
 		}
-		properties.setIntArray("discoveredSpells", spells);
+		properties.putIntArray("discoveredSpells", spells);
 
 		properties.putInt("maxTierReached", maxTierReached.ordinal());
 
-		NBTExtras.storeTagSafely(properties, "recentSpells", NBTExtras.listToNBT(recentSpells, s -> new NBTTagInt(s.metadata())));
+		NBTExtras.storeTagSafely(properties, "recentSpells", NBTExtras.listToNBT(recentSpells, s -> IntTag.valueOf(s.metadata())));
 
 		storedVariables.forEach(k -> k.write(properties, this.spellData.get(k)));
 
@@ -587,15 +591,15 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 	}
 
 	@Override
-	public void deserializeNBT(NBTTagCompound nbt){
+	public void deserializeNBT(CompoundTag nbt){
 
 		if(nbt != null){
 
-			this.imbuementDurations = NBTExtras.NBTToMap(nbt.getTagList("imbuements", NBT.TAG_COMPOUND),
-					(NBTTagInt tag) -> (Imbuement)Enchantment.byId(tag.getInt()), NBTTagInt::getInt);
+			this.imbuementDurations = NBTExtras.NBTToMap(nbt.getList("imbuements", Tag.TAG_COMPOUND),
+					(IntTag tag) -> (Imbuement)Enchantment.byId(tag.getAsInt()), IntTag::getAsInt);
 
-			this.allies = new HashSet<>(NBTExtras.NBTToList(nbt.getTagList("allies", NBT.TAG_COMPOUND), NBTUtil::getUUIDFromTag));
-			this.allyNames = new HashSet<>(NBTExtras.NBTToList(nbt.getTagList("allyNames", NBT.TAG_STRING), NBTTagString::getString));
+			this.allies = new HashSet<>(NBTExtras.NBTToList(nbt.getList("allies", Tag.TAG_COMPOUND), NbtUtils::loadUUID));
+			this.allyNames = new HashSet<>(NBTExtras.NBTToList(nbt.getList("allyNames", Tag.TAG_STRING), StringTag::getAsString));
 
 			this.spellsDiscovered = new HashSet<>();
 			for(int id : nbt.getIntArray("discoveredSpells")){
@@ -606,8 +610,8 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 
 			// Probably won't be null but we may as well just reinitialise it instead of clearing it
 			this.recentSpells = EvictingQueue.create(MAX_RECENT_SPELLS);
-			this.recentSpells.addAll(NBTExtras.NBTToList(nbt.getTagList("recentSpells", NBT.TAG_INT),
-					(NBTTagInt tag) -> Spell.byMetadata(tag.getInt())));
+			this.recentSpells.addAll(NBTExtras.NBTToList(nbt.getList("recentSpells", Tag.TAG_INT),
+					(IntTag tag) -> Spell.byMetadata(tag.getAsInt())));
 
 			try{
 				storedVariables.forEach(k -> this.spellData.put(k, k.read(nbt)));
@@ -669,38 +673,33 @@ public class WizardData implements INBTSerializable<CompoundTag> {
 	 * hand-in-hand; secondly, it's too short to be worth a separate file; and thirdly (and most importantly) it allows
 	 * me to access WIZARD_DATA_CAPABILITY while keeping it private.
 	 */
-	public static class Provider implements ICapabilitySerializable<NBTTagCompound> {
+	public static class Provider implements ICapabilitySerializable<CompoundTag> {
 
-		private final WizardData data;
+        private final LazyOptional<WizardData> data;
 
-		public Provider(Player player){
-			data = new WizardData(player);
-		}
+        public Provider(Player player) {
+            data = LazyOptional.of(() ->
+            {
+                WizardData i = new WizardData(player);
+                return i;
+            });
+        }
 
-		@Override
-		public boolean hasCapability(Capability<?> capability, Direction facing){
-			return capability == WIZARD_DATA_CAPABILITY;
-		}
+        @Nonnull
+        @Override
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
+            return WIZARD_DATA_CAPABILITY.orEmpty(capability, data.cast());
+        }
 
-		@Override
-		public <T> T getCapability(Capability<T> capability, Direction facing){
+        @Override
+        public CompoundTag serializeNBT() {
+            return data.orElseThrow(NullPointerException::new).serializeNBT();
+        }
 
-			if(capability == WIZARD_DATA_CAPABILITY){
-				return WIZARD_DATA_CAPABILITY.cast(data);
-			}
-
-			return null;
-		}
-
-		@Override
-		public NBTTagCompound serializeNBT(){
-			return data.serializeNBT();
-		}
-
-		@Override
-		public void deserializeNBT(NBTTagCompound nbt){
-			data.deserializeNBT(nbt);
-		}
+        @Override
+        public void deserializeNBT(CompoundTag nbt) {
+            data.orElseThrow(NullPointerException::new).deserializeNBT(nbt);
+        }
 
 	}
 

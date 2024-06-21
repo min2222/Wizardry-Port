@@ -127,7 +127,7 @@ public class ArcaneJammer extends SpellRay {
 		if(event.getEntity() instanceof SpellcasterIllager
 				&& event.getEntity().hasEffect(WizardryPotions.ARCANE_JAMMER.get())){
 
-			((SpellcasterIllager)event.getEntity()).setSpellType(SpellcasterIllager.IllagerSpell.NONE);
+			((SpellcasterIllager)event.getEntity()).setIsCastingSpell(SpellcasterIllager.IllagerSpell.NONE);
 
 			try{
 				spellTicks.set(event.getEntity(), 10);

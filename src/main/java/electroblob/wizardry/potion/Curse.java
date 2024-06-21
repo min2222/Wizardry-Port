@@ -49,7 +49,7 @@ public class Curse extends PotionMagicEffect {
 			public boolean renderInventoryIcon(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, PoseStack poseStack, int x, int y, int blitOffset) {
 				Minecraft mc = Minecraft.getInstance();
 				RenderSystem.setShaderTexture(0, BACKGROUND);
-				electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 0, 0, 140, 32, 256, 256);
+				electroblob.wizardry.client.DrawingUtils.drawTexturedRect(poseStack, x, y, 0, 0, 140, 32, 256, 256);
 				
 				Component name = Wizardry.proxy.translate(Curse.this.getDescriptionId());
 
@@ -74,7 +74,7 @@ public class Curse extends PotionMagicEffect {
 			public boolean renderGuiIcon(MobEffectInstance instance, Gui gui, PoseStack poseStack, int x, int y, float z, float alpha) {
 				RenderSystem.setShaderColor(1, 1, 1, 1);
 				RenderSystem.setShaderTexture(0, BACKGROUND);
-				electroblob.wizardry.client.DrawingUtils.drawTexturedRect(x, y, 141, 0, 24, 24, 256, 256);
+				electroblob.wizardry.client.DrawingUtils.drawTexturedRect(poseStack, x, y, 141, 0, 24, 24, 256, 256);
 				return IClientMobEffectExtensions.super.renderGuiIcon(instance, gui, poseStack, x, y, z, alpha);
 			}
 		});

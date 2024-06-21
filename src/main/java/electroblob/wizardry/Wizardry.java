@@ -13,7 +13,6 @@ import electroblob.wizardry.command.CommandSetAlly;
 import electroblob.wizardry.command.CommandViewAllies;
 import electroblob.wizardry.data.DispenserCastingData;
 import electroblob.wizardry.data.WizardData;
-import electroblob.wizardry.integration.antiqueatlas.WizardryAntiqueAtlasIntegration;
 import electroblob.wizardry.integration.baubles.WizardryBaublesIntegration;
 import electroblob.wizardry.inventory.ContainerBookshelf;
 import electroblob.wizardry.misc.DonationPerksHandler;
@@ -39,6 +38,8 @@ import electroblob.wizardry.worldgen.WorldGenShrine;
 import electroblob.wizardry.worldgen.WorldGenUndergroundLibraryRuins;
 import electroblob.wizardry.worldgen.WorldGenWizardTower;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -50,6 +51,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.network.NetworkRegistry;
 
@@ -128,10 +130,10 @@ public class Wizardry {
 		WizardryGuiHandler.MENUS.register(bus);
 		WizardryLoot.FUNCTIONS.register(bus);
 		WizardryEnchantments.ENCHANTMENTS.register(bus);
+		bus.addListener(this::commonSetup);
 	}
 
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event){
+    private void commonSetup(FMLCommonSetupEvent event) {
 
 		logger = event.getModLog();
 
@@ -143,8 +145,8 @@ public class Wizardry {
 				&& calendar.get(Calendar.DAY_OF_MONTH) <= 26;
 
 		// Capabilities
-		WizardData.register();
-		DispenserCastingData.register();
+        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, WizardData::attachCapability);
+        MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, DispenserCastingData::attachCapability);
 
 		// Register things that don't have registries
 		WizardryLoot.register();

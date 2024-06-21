@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityFlamecatcherArrow extends EntityMagicArrow {
@@ -42,10 +41,10 @@ public class EntityFlamecatcherArrow extends EntityMagicArrow {
 	}
 	
 	@Override
-	public void onBlockHit(HitResult hit){
+	public void onBlockHit(BlockHitResult hit){
 		if(this.level.isClientSide){
 			// Gets a position slightly away from the block hit so the particle doesn't get cut in half by the block face
-			Vec3 vec = hit.getLocation().add(new Vec3(((BlockHitResult) hit).getDirection().step()).scale(0.15));
+			Vec3 vec = hit.getLocation().add(new Vec3(hit.getDirection().step()).scale(0.15));
 			ParticleBuilder.create(Type.FLASH).pos(vec).clr(0xff6d00).fade(0.85f, 0.5f, 0.8f).spawn(level);
 		}
 	}

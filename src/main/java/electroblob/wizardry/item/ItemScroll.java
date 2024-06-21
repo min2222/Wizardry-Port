@@ -38,7 +38,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchItem, IMetadata {
 	
@@ -128,10 +130,9 @@ public class ItemScroll extends Item implements ISpellCastingItem, IWorkbenchIte
 				tooltip.add(spell.getType().getDisplayName());
 			}
 			// Advanced tooltips displays the source mod's name if the spell is not from Wizardry
-			if (advanced.isAdvanced() && this.getRegistryName().toString().equals(Wizardry.MODID + ":scroll") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
+			if (advanced.isAdvanced() && ForgeRegistries.ITEMS.getKey(this).getPath().equals(Wizardry.MODID + ":scroll") && !spell.getRegistryName().getNamespace().equals(Wizardry.MODID)) {
 				String modId = spell.getRegistryName().getNamespace();
-				Component name = Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true).getFormattingCode() +
-						Loader.instance().getIndexedModList().get(modId).getMetadata().name;
+				Component name = Component.literal(ModList.get().getModContainerById(modId).get().getModInfo().getDisplayName()).withStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withItalic(true));
 				tooltip.add(name);
 			}
 		}

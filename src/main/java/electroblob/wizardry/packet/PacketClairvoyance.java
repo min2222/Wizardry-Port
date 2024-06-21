@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import electroblob.wizardry.Wizardry;
-import io.netty.buffer.ByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraftforge.network.NetworkEvent;
 
 /**
@@ -54,22 +55,22 @@ public class PacketClairvoyance {
 			// The order is important
 			this.durationMultiplier = buf.readFloat();
 
-			List<PathPoint> points = new ArrayList<PathPoint>();
+			List<Node> points = new ArrayList<Node>();
 
 			while(buf.isReadable()){
-				points.add(new PathPoint(buf.readInt(), buf.readInt(), buf.readInt()));
+				points.add(new Node(buf.readInt(), buf.readInt(), buf.readInt()));
 			}
 
-			this.path = new Path(points.toArray(new PathPoint[0]));
+			this.path = new Path(points, new BlockPos(buf.readInt(), buf.readInt(), buf.readInt()), false);
 		}
 
 		public void toBytes(FriendlyByteBuf buf){
 
 			buf.writeFloat(durationMultiplier);
 
-			for(int i = 0; i < path.getCurrentPathLength(); i++){
+			for(int i = 0; i < path.getNodeCount(); i++){
 
-				PathPoint point = path.getPathPointFromIndex(i);
+				Node point = path.getNode(i);
 
 				buf.writeInt(point.x);
 				buf.writeInt(point.y);

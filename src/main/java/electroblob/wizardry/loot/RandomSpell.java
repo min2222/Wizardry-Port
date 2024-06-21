@@ -100,7 +100,7 @@ public class RandomSpell extends LootItemConditionalFunction {
 
 		// This method is badly-named, loot chests pass a player through too, not just mobs
 		// (And WHY does it only return an entity?! The underlying field is always a player so I'm casting it anyway)
-		Player player = (Player)context.getKillerPlayer();
+        Player player = context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER);
 
 		Spell spell = pickRandomSpell(stack, random, spellContext, player);
 

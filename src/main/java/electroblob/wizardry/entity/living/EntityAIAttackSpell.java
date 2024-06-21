@@ -104,12 +104,11 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 
 	private void setContinuousSpellAndNotify(Spell spell, SpellModifiers modifiers){
 		attacker.setContinuousSpell(spell);
-		WizardryPacketHandler.net.sendToAllAround(
+		// Particles are usually only visible from 16 blocks away, so 128 is more than far enough.
+		// TODO: Why is this one a 128 block radius, whilst the other one is all in dimension?
+		WizardryPacketHandler.net.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(128, attacker.getX(), attacker.getY(), attacker.getZ(), attacker.level.dimension())),
 				new PacketNPCCastSpell.Message(attacker.getId(), target == null ? -1 : target.getId(),
-						InteractionHand.MAIN_HAND, spell, modifiers),
-				// Particles are usually only visible from 16 blocks away, so 128 is more than far enough.
-				// TODO: Why is this one a 128 block radius, whilst the other one is all in dimension?
-				new TargetPoint(attacker.level.dimension(), attacker.getX(), attacker.getY(), attacker.getZ(), 128));
+						InteractionHand.MAIN_HAND, spell, modifiers));
 	}
 
 	@Override
@@ -146,7 +145,7 @@ public class EntityAIAttackSpell<T extends Mob & ISpellCaster> extends Goal {
 							.post(new SpellCastEvent.Tick(Source.NPC, attacker.getContinuousSpell(), attacker,
 									attacker.getModifiers(), this.continuousSpellDuration - this.continuousSpellTimer))
 					// ...or the spell no longer succeeds...
-					|| !attacker.getContinuousSpell().cast(attacker.world, attacker, InteractionHand.MAIN_HAND,
+					|| !attacker.getContinuousSpell().cast(attacker.level, attacker, InteractionHand.MAIN_HAND,
 							this.continuousSpellDuration - this.continuousSpellTimer, target, attacker.getModifiers())
 					// ...or the time has elapsed...
 					|| this.continuousSpellTimer == 0){

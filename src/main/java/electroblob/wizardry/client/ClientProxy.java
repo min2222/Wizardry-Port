@@ -10,6 +10,7 @@ import electroblob.wizardry.client.audio.MovingSoundSpellCharge;
 import electroblob.wizardry.client.audio.SoundLoop;
 import electroblob.wizardry.client.audio.SoundLoopSpell;
 import electroblob.wizardry.client.gui.GuiLectern;
+import electroblob.wizardry.client.gui.GuiSpellBook;
 import electroblob.wizardry.client.gui.GuiSpellDisplay;
 import electroblob.wizardry.client.gui.config.NamedBooleanEntry;
 import electroblob.wizardry.client.gui.config.SpellHUDSkinChooserEntry;
@@ -64,6 +65,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.RenderBlaze;
 import net.minecraft.client.renderer.entity.RenderHusk;
 import net.minecraft.client.renderer.entity.RenderSkeleton;
@@ -881,4 +883,19 @@ public class ClientProxy extends CommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityImbuementAltar.class, new RenderImbuementAltar());
 
 	}
+	
+	@Override
+	public Iterable<Entity> getAllEntities(Level world) {
+        return ((ClientLevel) world).entitiesForRendering();
+	}
+	
+	@Override
+	public void openWizardHandBook(ItemStack stack) {
+		Minecraft.getInstance().setScreen(new GuiWizardHandbook());
+	}
+	
+    @Override
+    public void openSpellBook(ItemStack stack) {
+        Minecraft.getInstance().setScreen(new GuiSpellBook(stack));
+    }
 }

@@ -1,6 +1,14 @@
 package electroblob.wizardry.item;
 
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import electroblob.wizardry.registry.Spells;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +21,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 
@@ -98,19 +107,23 @@ public class ItemSpectralArmour extends ArmorItem implements IConjuredItem {
 
 		return "ebwizardry:textures/armour/spectral_armour.png";
 	}
+	
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public net.minecraft.client.model.ModelBiped getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-                                                               EquipmentSlot armorSlot, net.minecraft.client.model.ModelBiped _default){
-		net.minecraft.client.renderer.GlStateManager.enableBlend();
-		net.minecraft.client.renderer.GlStateManager.tryBlendFuncSeparate(
-				net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA,
-				net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-				net.minecraft.client.renderer.GlStateManager.SourceFactor.ONE,
-				net.minecraft.client.renderer.GlStateManager.DestFactor.ZERO
-		);
-		return super.getArmorModel(entityLiving, itemStack, armorSlot, _default);
-	}
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+    	consumer.accept(new IClientItemExtensions() {
+    		@Override
+    		public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack,
+    				EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+    			RenderSystem.enableBlend();
+    			RenderSystem.blendFuncSeparate(
+    					GlStateManager.SourceFactor.SRC_ALPHA,
+    					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+    					GlStateManager.SourceFactor.ONE,
+    					GlStateManager.DestFactor.ZERO);
+    			return IClientItemExtensions.super.getHumanoidArmorModel(livingEntity, itemStack, equipmentSlot, original);
+    		}
+    	});
+    }
 
 }

@@ -5,13 +5,11 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.registry.WizardryTabs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -38,7 +36,7 @@ public class ItemWizardHandbook extends Item {
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand){
 		ItemStack stack = player.getItemInHand(hand);
 		if (Wizardry.settings.loadHandbook) {
-			player.openGui(Wizardry.instance, WizardryGuiHandler.WIZARD_HANDBOOK, world, 0, 0, 0);
+            Wizardry.proxy.openWizardHandBook(stack);
 		} else if (!world.isClientSide){
 			player.displayClientMessage(Component.translatable("item." + Wizardry.MODID + ":wizard_handbook.disabled"), false);
 		}

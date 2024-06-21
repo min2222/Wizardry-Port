@@ -1,12 +1,11 @@
 package electroblob.wizardry.item;
 
-import electroblob.wizardry.Wizardry;
-import net.minecraft.world.item.UseAnim;
-import net.minecraftforge.common.util.EnumHelper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import electroblob.wizardry.Wizardry;
+import net.minecraft.world.item.UseAnim;
 
 /**
  * Defines and stores wizardry's custom {@link UseAnim}s.
@@ -50,7 +49,7 @@ public final class SpellActions {
 	 */
 	public static UseAnim createAction(String modID, String name){
 		// Using $ because this name will be used as the in-code name of the enum constant, and : wouldn't compile
-		UseAnim action = EnumHelper.addAction(modID + "$" + name);
+		UseAnim action = UseAnim.CUSTOM;
 		spellActions.add(action);
 		return action;
 	}

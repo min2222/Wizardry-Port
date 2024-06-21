@@ -3,6 +3,8 @@ package electroblob.wizardry.spell;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.SpellActions;
 import electroblob.wizardry.registry.WizardryItems;
@@ -65,7 +67,7 @@ public class SpeedTime extends Spell {
 		float potencyLevel = ((modifiers.get(SpellModifiers.POTENCY) - 1) * 2 + 1) * getProperty(EXTRA_TICKS).floatValue();
 
 		// Ticks all the entities near the caster
-		List<Entity> entities = new ArrayList<>(world.getEntities().getAll());
+		List<Entity> entities = Lists.newArrayList(Wizardry.proxy.getAllEntities(world));
 		entities.removeIf(e -> e instanceof Player);
 		entities.removeIf(e -> caster.distanceTo(e) > radius);
 

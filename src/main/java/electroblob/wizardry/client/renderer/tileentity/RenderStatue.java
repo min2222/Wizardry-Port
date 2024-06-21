@@ -1,31 +1,33 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
 
-public class RenderStatue extends TileEntitySpecialRenderer<TileEntityStatue> {
+public class RenderStatue implements BlockEntityRenderer<TileEntityStatue> {
 
 	private int destroyStage = 0; // Gets set each time a statue is rendered to allow access from the layer renderer
 
 	@Override
-	public void render(TileEntityStatue statue, double x, double y, double z, float partialTicks,
-			int destroyStage, float alpha){
+	public void render(TileEntityStatue statue, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
 
 		// Multiblock support for the breaking animation. The chest has its own way of doing this in
 		// TileEntityRendererDispatcher, but I don't have access to that.
 		if(statue.position != 1 && destroyStage >= 0){
-			BlockEntity tileentity = statue.getWorld().getTileEntity(statue.getPos().down(statue.position - 1));
+			BlockEntity tileentity = statue.getLevel().getBlockEntity(statue.getBlockPos().below(statue.position - 1));
 			// System.out.println(tileentity);
 			if(tileentity instanceof TileEntityStatue){
 				// If this is the block breaking animation pass and this isn't the bottom block, divert the call to
 				// the bottom block.
-				this.render((TileEntityStatue)tileentity, x, y - (statue.position - 1), z, partialTicks,
-						destroyStage, alpha);
+				this.render(statue, pPartialTick, pPoseStack, pBufferSource, pPackedLight, pPackedOverlay);
 			}
 		}
 
