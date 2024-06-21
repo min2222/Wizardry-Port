@@ -317,7 +317,7 @@ public class GuiSpellDisplay {
 		String format = cooldown > 0 ? "\u00A78" : spell.getElement().getFormattingCode();
 		if(!discovered) format = "\u00A79";
 		// Obfuscates the spell name if the player has the arcane jammer effect
-		if(player.hasEffect(WizardryPotions.arcane_jammer)) format = format + "\u00A7k";
+		if(player.hasEffect(WizardryPotions.ARCANE_JAMMER.get())) format = format + "\u00A7k";
 		
 		String name = discovered ? spell.getDisplayName() : SpellGlyphData.getGlyphName(spell, player.world);
 		name = format + name;

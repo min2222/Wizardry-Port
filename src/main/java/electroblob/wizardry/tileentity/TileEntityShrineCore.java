@@ -1,7 +1,12 @@
 package electroblob.wizardry.tileentity;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockPedestal;
+import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.entity.living.EntityEvilWizard;
 import electroblob.wizardry.entity.living.EntityWizard;
 import electroblob.wizardry.packet.PacketConquerShrine;
@@ -11,37 +16,32 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.ArcaneLock;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.BlockUtils;
+import electroblob.wizardry.util.EntityUtils;
+import electroblob.wizardry.util.GeometryUtils;
+import electroblob.wizardry.util.NBTExtras;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerChunkCache;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.util.ITickable;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.TargetPoint;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import net.minecraftforge.registries.ForgeRegistry;
 
 public class TileEntityShrineCore extends BlockEntity {
 	
@@ -108,7 +108,7 @@ public class TileEntityShrineCore extends BlockEntity {
 					}
 
 					wizard.moveTo(x1, y1 + 0.5, z1, 0, 0);
-					wizard.setElement(p_155014_.getBlockState(p_155015_).getValue(BlockPedestal.ELEMENT));
+					wizard.setElement(((ForgeRegistry<Element>)Element.registry.get()).getValue(p_155014_.getBlockState(p_155015_).getValue(BlockPedestal.ELEMENT)));
 					wizard.finalizeSpawn((ServerLevelAccessor) p_155014_, p_155014_.getCurrentDifficultyAt(p_155015_), MobSpawnType.STRUCTURE, null, null);
 					wizard.hasStructure = true;
 

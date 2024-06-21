@@ -3,6 +3,7 @@ package electroblob.wizardry.entity.living;
 import java.util.UUID;
 
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityFlying;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.EntityAIAttackMelee;
 import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
@@ -39,13 +41,18 @@ public class EntitySilverfishMinion extends Silverfish implements ISummonedCreat
 
 	/** Creates a new silverfish minion in the given world. */
 	public EntitySilverfishMinion(Level world){
-		super(world);
-		this.experienceValue = 0;
+		this(WizardryEntities.SILVERFISH_MINION.get(), world);
+		this.xpReward = 0;
+	}
+	
+	public EntitySilverfishMinion(EntityType<? extends Silverfish> type, Level world){
+		super(type, world);
+		this.xpReward = 0;
 	}
 
 	// EntitySilverfish overrides
 	@Override
-	protected void initEntityAI(){
+	protected void registerGoals(){
 		// Super not called because we don't want AISummonSilverfish or AIHideInStone
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, false));

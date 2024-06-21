@@ -52,4 +52,9 @@ public class Property {
 		return false;
 	}
 
+	public int[] getIntList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

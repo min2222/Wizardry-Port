@@ -48,7 +48,7 @@ public class EntitySkeletonMinion extends AbstractSkeleton implements ISummonedC
 	/** Creates a new skeleton minion in the given world. */
 	public EntitySkeletonMinion(Level world){
 		super(world);
-		this.experienceValue = 0;
+		this.xpReward = 0;
 	}
 
 	// EntitySkeleton overrides

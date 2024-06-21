@@ -43,7 +43,7 @@ public class EntitySpiderMinion extends CaveSpider implements ISummonedCreature 
 	/** Creates a new spider minion in the given world. */
 	public EntitySpiderMinion(Level world){
 		super(world);
-		this.experienceValue = 0;
+		this.xpReward = 0;
 	}
 
 	// EntitySpider overrides

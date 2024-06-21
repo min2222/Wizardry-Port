@@ -1,7 +1,21 @@
 package electroblob.wizardry;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.item.ItemArtefact;
+import electroblob.wizardry.legacy.ConfigCategory;
 import electroblob.wizardry.legacy.Configuration;
 import electroblob.wizardry.legacy.Property;
 import electroblob.wizardry.packet.PacketSyncSettings;
@@ -10,22 +24,16 @@ import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.AllyDesignationSystem.FriendlyFire;
 import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.EntityList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.oredict.OreDictionary;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.File;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Singleton class which deals with everything related to wizardry's config file. To access individual settings, use
@@ -1339,7 +1347,7 @@ public final class Settings {
 		// Converts all strings in the list to lower case, to ignore case sensitivity, and trims them.
 		for(int i = 0; i < property.getStringList().length; i++){
 			property.getStringList()[i] = property.getStringList()[i].toLowerCase(Locale.ROOT).trim();
-			MagicDamage.addEntityImmunity(EntityList.getClass(new ResourceLocation(property.getStringList()[i])),
+			MagicDamage.addEntityImmunity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(property.getStringList()[i])),
 					DamageType.FIRE);
 		}
 		propOrder.add(property.getName());
@@ -1352,7 +1360,7 @@ public final class Settings {
 		// Converts all strings in the list to lower case, to ignore case sensitivity, and trims them.
 		for(int i = 0; i < property.getStringList().length; i++){
 			property.getStringList()[i] = property.getStringList()[i].toLowerCase(Locale.ROOT).trim();
-			MagicDamage.addEntityImmunity(EntityList.getClass(new ResourceLocation(property.getStringList()[i])),
+			MagicDamage.addEntityImmunity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(property.getStringList()[i])),
 					DamageType.FROST);
 		}
 		propOrder.add(property.getName());
@@ -1365,7 +1373,7 @@ public final class Settings {
 		// Converts all strings in the list to lower case, to ignore case sensitivity, and trims them.
 		for(int i = 0; i < property.getStringList().length; i++){
 			property.getStringList()[i] = property.getStringList()[i].toLowerCase(Locale.ROOT).trim();
-			MagicDamage.addEntityImmunity(EntityList.getClass(new ResourceLocation(property.getStringList()[i])),
+			MagicDamage.addEntityImmunity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(property.getStringList()[i])),
 					DamageType.SHOCK);
 		}
 		propOrder.add(property.getName());
@@ -1378,7 +1386,7 @@ public final class Settings {
 		// Converts all strings in the list to lower case, to ignore case sensitivity, and trims them.
 		for(int i = 0; i < property.getStringList().length; i++){
 			property.getStringList()[i] = property.getStringList()[i].toLowerCase(Locale.ROOT).trim();
-			MagicDamage.addEntityImmunity(EntityList.getClass(new ResourceLocation(property.getStringList()[i])),
+			MagicDamage.addEntityImmunity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(property.getStringList()[i])),
 					DamageType.WITHER);
 		}
 		propOrder.add(property.getName());
@@ -1391,7 +1399,7 @@ public final class Settings {
 		// Converts all strings in the list to lower case, to ignore case sensitivity, and trims them.
 		for(int i = 0; i < property.getStringList().length; i++){
 			property.getStringList()[i] = property.getStringList()[i].toLowerCase(Locale.ROOT).trim();
-			MagicDamage.addEntityImmunity(EntityList.getClass(new ResourceLocation(property.getStringList()[i])),
+			MagicDamage.addEntityImmunity(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(property.getStringList()[i])),
 					DamageType.POISON);
 		}
 		propOrder.add(property.getName());

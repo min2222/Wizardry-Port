@@ -39,4 +39,14 @@ public class Configuration {
 		return null;
 	}
 
+	public ConfigCategory getCategory(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Property get(String worldgenCategory, String string, int[] is, String string2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
