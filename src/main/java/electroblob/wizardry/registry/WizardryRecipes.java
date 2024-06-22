@@ -7,18 +7,11 @@ import java.util.function.Consumer;
 
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.item.IManaStoringItem;
-import electroblob.wizardry.item.ItemManaFlask;
-import electroblob.wizardry.misc.RecipeRechargeWithFlask;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 /**
  * Class responsible for defining and registering wizardry's non-JSON recipes (i.e. smelting recipes and dynamic
@@ -56,7 +49,8 @@ public final class WizardryRecipes {
 	}
 
 	/** Now only deals with the dynamic crafting recipes and the smelting recipes. */
-	@SubscribeEvent
+	//TODO
+	/*@SubscribeEvent
 	public static void registerRecipes(RegistryEvent.Register<IRecipe> event){
 		// Mana flask recipes
 
@@ -75,7 +69,7 @@ public final class WizardryRecipes {
 
 		registered = true;
 
-	}
+	}*/
 	
 	public static class WizardryRecipeGenerator extends RecipeProvider {
 		public WizardryRecipeGenerator(DataGenerator p_125973_) {

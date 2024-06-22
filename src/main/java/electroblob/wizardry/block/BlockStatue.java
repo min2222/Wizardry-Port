@@ -6,7 +6,6 @@ import electroblob.wizardry.registry.WizardryBlocks;
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.util.BlockUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.BlockGetter;
@@ -64,11 +63,6 @@ public class BlockStatue extends BaseEntityBlock {
 		}
 
 		return super.getShape(state, world, pos, ctx);
-	}
-
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return this.isIce ? BlockRenderLayer.TRANSLUCENT : BlockRenderLayer.SOLID;
 	}
 
 	@Override

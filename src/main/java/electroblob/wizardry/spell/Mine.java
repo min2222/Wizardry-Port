@@ -90,7 +90,7 @@ public class Mine extends SpellRay {
 
 						if(caster instanceof ServerPlayer){ // Everything in here is server-side only so this is fine
 
-							boolean silkTouch = state1.getBlock().canSilkHarvest(world, pos1, state1, (Player)caster)
+							boolean silkTouch = canSilkHarvest(world, pos1, state1, (Player)caster)
 									&& ItemArtefact.isArtefactActive((Player)caster, WizardryItems.CHARM_SILK_TOUCH.get());
 
 							int xp = BlockUtils.checkBlockBreakXP(caster, world, pos);
@@ -122,6 +122,16 @@ public class Mine extends SpellRay {
 		}
 
 		return false;
+	}
+	
+	//TODO
+	protected ItemStack getSilkTouchDrop(BlockState state1) {
+		return ItemStack.EMPTY;
+	}
+
+	//TODO
+	protected boolean canSilkHarvest(Level world, BlockPos pos1, BlockState state1, Player caster) {
+		return true;
 	}
 
 	@Override

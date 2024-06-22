@@ -4,28 +4,26 @@ import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.tileentity.TileEntityMagicLight;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.AABB;
 
-public class BlockMagicLight extends Block implements ITileEntityProvider {
+public class BlockMagicLight extends BaseEntityBlock {
 
 	//private static final AxisAlignedBB AABB = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
-	public BlockMagicLight(Material material){
-		super(material);
-		this.setLightLevel(1.0f);
-		this.setBlockUnbreakable();
+	public BlockMagicLight(){
+		super(BlockBehaviour.Properties.of(Material.AIR).lightLevel((state) -> 15).strength(-1.0F, 3600000.0F).noCollission());
 	}
 
 	@Override
@@ -61,7 +59,7 @@ public class BlockMagicLight extends Block implements ITileEntityProvider {
 
 	@Override
 	public boolean addDestroyEffects(Level world, BlockPos pos, net.minecraft.client.particle.ParticleManager manager){
-		if(level.getBlockState(pos).getBlock() == this) return true; // No break particles!
+		if(world.getBlockState(pos).getBlock() == this) return true; // No break particles!
 		else return super.addDestroyEffects(world, pos, manager);
 	}
 

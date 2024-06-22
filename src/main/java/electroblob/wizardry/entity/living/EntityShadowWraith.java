@@ -46,7 +46,7 @@ public class EntityShadowWraith extends EntitySummonedCreature implements ISpell
 		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 
-		this.setAIMoveSpeed((float)AISpeed);
+		this.setSpeed((float)AISpeed);
 	}
 
 	@Override

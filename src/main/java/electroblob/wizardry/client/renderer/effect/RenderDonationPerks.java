@@ -43,7 +43,7 @@ public class RenderDonationPerks {
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
 		Player player = event.getEntity();
-		float partialTicks = event.getPartialRenderTick();
+		float partialTicks = event.getPartialTick();
 
 		Element element = DonationPerksHandler.getElement(player);
 

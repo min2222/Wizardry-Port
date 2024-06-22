@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -562,8 +563,8 @@ public final class Settings {
 	/** Sends a packet to the specified player's client containing all the <b>synchronised</b> settings. */
 	public void sync(ServerPlayer player){
 		Wizardry.logger.info("Synchronising config settings for " + player.getName());
-		IMessage message = new PacketSyncSettings.Message(this);
-		WizardryPacketHandler.net.sendTo(message, player);
+		PacketSyncSettings.Message message = new PacketSyncSettings.Message(this);
+		WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> player), message);
 	}
 
 	public ConfigCategory getConfigCategory(String name){

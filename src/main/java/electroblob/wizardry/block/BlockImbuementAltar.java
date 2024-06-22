@@ -1,145 +1,113 @@
 package electroblob.wizardry.block;
 
-import electroblob.wizardry.registry.WizardryBlocks;
-import electroblob.wizardry.registry.WizardryTabs;
-import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.properties.PropertyBool;
-import net.minecraft.world.level.block.state.BlockFaceShape;
-import net.minecraft.world.level.block.state.BlockStateContainer;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.level.Level;
-
 import java.util.Arrays;
 
-public class BlockImbuementAltar extends Block implements ITileEntityProvider {
+import javax.annotation.Nullable;
 
-	public static final PropertyBool ACTIVE = PropertyBool.create("active");
+import electroblob.wizardry.registry.WizardryBlocks;
+import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
-	private static final net.minecraft.world.phys.AABB AABB = new AABB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0);
+public class BlockImbuementAltar extends BaseEntityBlock {
+
+	public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+
+	private static final VoxelShape AABB = Shapes.box(0.0, 0.0, 0.0, 1.0, 0.75, 1.0);
 
 	public BlockImbuementAltar(){
-		super(Material.ROCK);
-		this.setBlockUnbreakable();
-		this.setResistance(6000000);
-		this.setLightLevel(0.4f);
-		this.setCreativeTab(WizardryTabs.WIZARDRY);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(ACTIVE, false));
+		super(BlockBehaviour.Properties.of(Material.STONE).strength(-1.0F, 6000000.0F).lightLevel((state) -> 6));
+		this.registerDefaultState(this.stateDefinition.any().setValue(ACTIVE, false));
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, ACTIVE);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> p_49915_) {
+		p_49915_.add(ACTIVE);
+	}
+
+    @Override
+    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+        return AABB;
+    }
+
+	@Override
+	public BlockEntity newBlockEntity(BlockPos p_153215_, BlockState p_153216_) {
+		return new TileEntityImbuementAltar(p_153215_, p_153216_);
 	}
 
 	@Override
-	public BlockState getStateFromMeta(int meta){
-		return this.defaultBlockState().withProperty(ACTIVE, meta == 1);
+	public RenderShape getRenderShape(BlockState p_49232_) {
+		return RenderShape.MODEL;
 	}
 
 	@Override
-	public int getMetaFromState(BlockState state){
-		return state.getValue(ACTIVE) ? 1 : 0;
+	public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+		return state.getValue(ACTIVE) ? super.getLightEmission(state, level, pos) : 0;
 	}
 
 	@Override
-	public net.minecraft.world.phys.AABB getBoundingBox(BlockState state, IBlockAccess source, BlockPos pos){
-		return AABB;
-	}
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour, boolean flag){
 
-	@Override
-	public BlockEntity createNewTileEntity(Level world, int metadata){
-		return new TileEntityImbuementAltar();
-	}
+		Direction[] HORIZONTALS = ObfuscationReflectionHelper.getPrivateValue(Direction.class, null, "f_122349_");
+		boolean shouldBeActive = Arrays.stream(HORIZONTALS)
+				.allMatch(s -> world.getBlockState(pos.relative(s)).getBlock() == WizardryBlocks.RECEPTACLE.get()
+							&& world.getBlockState(pos.relative(s)).getValue(BlockReceptacle.FACING) == s);
 
-	@Override
-	public boolean isNormalCube(BlockState state, IBlockAccess world, BlockPos pos){
-		return false;
-	}
-
-	@Override
-	public EnumBlockRenderType getRenderType(BlockState state){
-		return EnumBlockRenderType.MODEL;
-	}
-
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT; // Required to shade parts of the block faces differently to others
-	}
-
-	@Override
-	public boolean isOpaqueCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean isFullCube(BlockState state){
-		return false;
-	}
-
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess world, BlockState state, BlockPos pos, Direction face){
-		return face == Direction.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
-	}
-
-	@Override
-	public int getLightValue(BlockState state, IBlockAccess world, BlockPos pos){
-		return state.getValue(ACTIVE) ? super.getLightValue(state, world, pos) : 0;
-	}
-
-	@Override
-	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos neighbour){
-
-		boolean shouldBeActive = Arrays.stream(Direction.HORIZONTALS)
-				.allMatch(s -> level.getBlockState(pos.relative(s)).getBlock() == WizardryBlocks.receptacle
-							&& level.getBlockState(pos.relative(s)).getValue(BlockReceptacle.FACING) == s);
-
-		if(level.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
+		if(world.getBlockState(pos).getValue(ACTIVE) != shouldBeActive){ // Only set when it actually needs changing
 
 			// Get contents of altar before replacing it
-			BlockEntity te = level.getTileEntity(pos);
+			BlockEntity te = world.getBlockEntity(pos);
 			ItemStack stack = ItemStack.EMPTY;
-			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getItem();
+			if(te instanceof TileEntityImbuementAltar) stack = ((TileEntityImbuementAltar)te).getStack();
 
-			level.setBlockAndUpdate(pos, level.getBlockState(pos).withProperty(ACTIVE, shouldBeActive));
+			world.setBlockAndUpdate(pos, world.getBlockState(pos).setValue(ACTIVE, shouldBeActive));
 
 			// Copy over contents of altar from before to new tile entity
-			te = level.getTileEntity(pos);
+			te = world.getBlockEntity(pos);
 			if(te instanceof TileEntityImbuementAltar) ((TileEntityImbuementAltar)te).setStack(stack);
 
-			world.checkLight(pos);
+			world.getChunkSource().getLightEngine().checkBlock(pos);
 		}
 
-		BlockEntity tileEntity = level.getTileEntity(pos);
+		BlockEntity tileEntity = world.getBlockEntity(pos);
 		if(tileEntity instanceof TileEntityImbuementAltar){
 			((TileEntityImbuementAltar)tileEntity).checkRecipe();
 		}
 	}
 
 	@Override
-	public boolean onBlockActivated(Level world, BlockPos pos, BlockState block, Player player, InteractionHand hand,
-                                    Direction side, float hitX, float hitY, float hitZ){
+	public InteractionResult use(BlockState p_60503_, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult p_60508_) {
 
-		BlockEntity tileEntity = level.getTileEntity(pos);
+		BlockEntity tileEntity = world.getBlockEntity(pos);
 
 		if(!(tileEntity instanceof TileEntityImbuementAltar) || player.isShiftKeyDown()){
-			return false;
+			return InteractionResult.FAIL;
 		}
 
-		ItemStack currentStack = ((TileEntityImbuementAltar)tileEntity).getItem();
+		ItemStack currentStack = ((TileEntityImbuementAltar)tileEntity).getStack();
 		ItemStack toInsert = player.getItemInHand(hand);
 
 		if(currentStack.isEmpty()){
@@ -152,28 +120,38 @@ public class BlockImbuementAltar extends Block implements ITileEntityProvider {
 		}else{
 
 			if(toInsert.isEmpty()){
-				player.setHeldItem(hand, currentStack);
-			}else if(!player.addItemStackToInventory(currentStack)){
-				player.dropItem(currentStack, false);
+				player.setItemInHand(hand, currentStack);
+			}else if(!player.addItem(currentStack)){
+				player.drop(currentStack, false);
 			}
 
 			((TileEntityImbuementAltar)tileEntity).setStack(ItemStack.EMPTY);
 			((TileEntityImbuementAltar)tileEntity).setLastUser(null);
 		}
 
-		return true;
+		return InteractionResult.SUCCESS;
 	}
-
+	
 	@Override
-	public void breakBlock(Level world, BlockPos pos, BlockState block){
-
-        BlockEntity tileentity = level.getTileEntity(pos);
+	public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
+		
+        BlockEntity tileentity = p_60516_.getBlockEntity(p_60517_);
 
         if(tileentity instanceof TileEntityImbuementAltar){
-            InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), ((TileEntityImbuementAltar)tileentity).getItem());
+            Containers.dropItemStack(p_60516_, p_60517_.getX(), p_60517_.getY(), p_60517_.getZ(), ((TileEntityImbuementAltar)tileentity).getStack());
         }
-
-        super.breakBlock(world, pos, block);
+        
+		super.onRemove(p_60515_, p_60516_, p_60517_, p_60518_, p_60519_);
 	}
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153273_, BlockState p_153274_, BlockEntityType<T> p_153275_) {
+        return createTicker(p_153273_, p_153275_, WizardryBlocks.IMBUEMENT_ALTAR_BLOCK_ENTITY.get());
+    }
+
+    @Nullable
+    protected static <T extends BlockEntity> BlockEntityTicker<T> createTicker(Level p_151988_, BlockEntityType<T> p_151989_, BlockEntityType<TileEntityImbuementAltar> p_151990_) {
+        return createTickerHelper(p_151989_, p_151990_, TileEntityImbuementAltar::update);
+    }
 }

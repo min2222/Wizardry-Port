@@ -203,7 +203,7 @@ public class EntityLevitatingBlock extends FallingBlockEntity implements IEntity
 			// === End super copy ===
 		}
 
-		double velocitySquared = motionX * motionX + motionY * motionY + motionZ * motionZ;
+		double velocitySquared = getDeltaMovement().x * getDeltaMovement().x + getDeltaMovement().y * getDeltaMovement().y + getDeltaMovement().z * getDeltaMovement().z;
 
 		if(velocitySquared >= 0.2){
 

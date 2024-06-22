@@ -9,7 +9,10 @@ import electroblob.wizardry.block.BlockCrystalOre;
 import electroblob.wizardry.block.BlockDryFrostedIce;
 import electroblob.wizardry.block.BlockImbuementAltar;
 import electroblob.wizardry.block.BlockLectern;
+import electroblob.wizardry.block.BlockMagicLight;
+import electroblob.wizardry.block.BlockObsidianCrust;
 import electroblob.wizardry.block.BlockPermafrost;
+import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.block.BlockSnare;
 import electroblob.wizardry.block.BlockSpectral;
 import electroblob.wizardry.block.BlockStatue;
@@ -73,13 +76,13 @@ public final class WizardryBlocks {
 
 	public static final RegistryObject<Block> PETRIFIED_STONE = BLOCKS.register("petrified_stone", () -> new BlockStatue(BlockBehaviour.Properties.of(Material.STONE).strength(1.5F, 10.0F), false));
 	public static final RegistryObject<Block> ICE_STATUE = BLOCKS.register("ice_statue", () -> new BlockStatue(BlockBehaviour.Properties.of(Material.ICE).strength(0.5F).friction(0.98F).sound(SoundType.GLASS).noOcclusion(), true));
-	public static final RegistryObject<Block> MAGIC_LIGHT = placeholder();
+	public static final RegistryObject<Block> MAGIC_LIGHT = BLOCKS.register("magic_light", () -> new BlockMagicLight());
 	public static final RegistryObject<Block> SNARE = BLOCKS.register("snare", () -> new BlockSnare(BlockBehaviour.Properties.of(Material.PLANT).sound(SoundType.CROP).instabreak().noOcclusion()));
 	public static final RegistryObject<Block> SPECTRAL_BLOCK = BLOCKS.register("spectral_block", () -> new BlockSpectral(BlockBehaviour.Properties.of(Material.GLASS).strength(-1.0F, 6000000.0F).sound(SoundType.GLASS)));
 	public static final RegistryObject<Block> METEOR = BLOCKS.register("meteor", () -> new Block(BlockBehaviour.Properties.of(Material.STONE).lightLevel((state) -> 1)));
 	public static final RegistryObject<Block> VANISHING_COBWEB = BLOCKS.register("vanishing_cobweb", () -> new BlockVanishingCobweb(BlockBehaviour.Properties.of(Material.WEB).noCollission().strength(4)));
     public static final RegistryObject<Block> THORNS = BLOCKS.register("thorns", () -> new BlockThorns());
-	public static final RegistryObject<Block> OBSIDIAN_CRUST = placeholder();
+	public static final RegistryObject<Block> OBSIDIAN_CRUST = BLOCKS.register("obsidian_crust", () -> new BlockObsidianCrust());
 	public static final RegistryObject<Block> DRY_FROSTED_ICE = BLOCKS.register("dry_frosted_ice", () -> new BlockDryFrostedIce());
 	public static final RegistryObject<Block> CRYSTAL_FLOWER_POT = BLOCKS.register("crystal_flower_pot", () -> new BlockCrystalFlowerPot(() -> null, () -> CRYSTAL_FLOWER.get(), BlockBehaviour.Properties.of(Material.DECORATION).instabreak().noOcclusion().randomTicks().lightLevel(value -> 6)));
 	public static final RegistryObject<Block> PERMAFROST = BLOCKS.register("permafrost", () -> new BlockPermafrost());
@@ -121,7 +124,7 @@ public final class WizardryBlocks {
     public static final RegistryObject<Block> ACACIA_LECTERN = BLOCKS.register("acacia_lectern", () -> new BlockLectern());
     public static final RegistryObject<Block> DARK_OAK_LECTERN = BLOCKS.register("dark_oak_lectern", () -> new BlockLectern());
 
-	public static final RegistryObject<Block> RECEPTACLE = placeholder();
+	public static final RegistryObject<Block> RECEPTACLE = BLOCKS.register("receptacle", () -> new BlockReceptacle());
     public static final RegistryObject<Block> IMBUEMENT_ALTAR = BLOCKS.register("imbuement_altar", () -> new BlockImbuementAltar());
     
     public static final RegistryObject<BlockEntityType<TileEntityArcaneWorkbench>> ARCANE_WORKBENCH_BLOCK_ENTITY = BLOCK_ENTITIES.register("arcane_workbench", () -> BlockEntityType.Builder.of(TileEntityArcaneWorkbench::new, WizardryBlocks.ARCANE_WORKBENCH.get()).build(null));

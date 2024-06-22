@@ -78,7 +78,7 @@ public class RenderArcaneWorkbench extends TileEntitySpecialRenderer<TileEntityA
 	 */
 	private void renderWand(TileEntityArcaneWorkbench tileentity, double viewAngle, float partialTicks){
 
-		ItemStack stack = tileentity.getStackInSlot(ContainerArcaneWorkbench.CENTRE_SLOT);
+		ItemStack stack = tileentity.getItem(ContainerArcaneWorkbench.CENTRE_SLOT);
 
 		if(!stack.isEmpty()){
 

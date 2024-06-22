@@ -151,14 +151,33 @@ public class TileEntityShrineCore extends BlockEntity {
 			WizardryPacketHandler.net.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(x, y, z, 64, this.level.dimension())), new PacketConquerShrine.Message(this.worldPosition));
 
 			if(level.getBlockState(worldPosition).getBlock() instanceof BlockPedestal){
-				level.setBlockAndUpdate(worldPosition, WizardryBlocks.runestone_pedestal.defaultBlockState()
-						.setValue(BlockPedestal.ELEMENT, level.getBlockState(worldPosition).getValue(BlockPedestal.ELEMENT)));
+				Element element = ((ForgeRegistry<Element>)Element.registry.get()).getValue(level.getBlockState(worldPosition).getValue(BlockPedestal.ELEMENT));
+				if(element == Element.EARTH) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.EARTH_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.FIRE) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.FIRE_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.HEALING) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.HEALING_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.ICE) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.ICE_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.LIGHTNING) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.LIGHTNING_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.NECROMANCY) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.NECROMANCY_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				else if(element == Element.SORCERY) {
+					level.setBlockAndUpdate(worldPosition, WizardryBlocks.SORCERY_RUNESTONE_PEDESTAL.get().defaultBlockState());
+				}
+				
 			}else{
 				Wizardry.logger.warn("What's going on?! A shrine core is being conquered but the block at its position is not a runestone pedestal!");
 			}
 		}
-
-		level.markTileEntityForRemoval(this);
 
 		if(!level.isClientSide){
 			if(linkedContainer != null) NBTExtras.removeUniqueId(linkedContainer.getPersistentData(), ArcaneLock.NBT_KEY);

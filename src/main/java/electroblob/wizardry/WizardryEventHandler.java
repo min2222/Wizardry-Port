@@ -93,7 +93,7 @@ public final class WizardryEventHandler {
 		if(event.getEntity() instanceof ServerPlayer){
 			ServerPlayer player = (ServerPlayer)event.getEntity();
 			SpellGlyphData.get((ServerLevel) player.level).sync(player);
-			SpellEmitterData.get(player.level).sync(player);
+			SpellEmitterData.get((ServerLevel) player.level).sync(player);
 			Wizardry.settings.sync(player);
 			syncAdvancements(player, false);
 			Spell.syncProperties(player);

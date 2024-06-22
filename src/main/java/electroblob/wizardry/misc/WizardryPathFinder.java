@@ -1,17 +1,18 @@
 package electroblob.wizardry.misc;
 
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
+
 import electroblob.wizardry.spell.Clairvoyance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.pathfinding.NodeProcessor;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathHeap;
-import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.world.IBlockAccess;
-
-import javax.annotation.Nullable;
-import java.util.Set;
+import net.minecraft.world.level.pathfinder.BinaryHeap;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.NodeEvaluator;
+import net.minecraft.world.level.pathfinder.Path;
 
 /**
  * Minecraft's pathfinder refused to play nicely, so I 'borrowed' its code and fiddled with it. Currently this is only
@@ -20,13 +21,13 @@ import java.util.Set;
 public class WizardryPathFinder {
 
 	/** The path being generated */
-	private final PathHeap path = new PathHeap();
-	private final Set<PathPoint> closedSet = Sets.<PathPoint>newHashSet();
+	private final BinaryHeap path = new BinaryHeap();
+	private final Set<Node> closedSet = Sets.<Node>newHashSet();
 	/** Selection of path points to add to the path */
-	private final PathPoint[] pathOptions = new PathPoint[32];
-	private final NodeProcessor nodeProcessor;
+	private final Node[] pathOptions = new Node[32];
+	private final NodeEvaluator nodeProcessor;
 
-	public WizardryPathFinder(NodeProcessor processor){
+	public WizardryPathFinder(NodeEvaluator processor){
 		this.nodeProcessor = processor;
 	}
 
@@ -40,15 +41,15 @@ public class WizardryPathFinder {
 	private Path findPath(IBlockAccess world, Mob entity, double x, double y, double z, float range){
 		this.path.clearPath();
 		this.nodeProcessor.init(world, entity);
-		PathPoint pathpoint = this.nodeProcessor.getStart();
-		PathPoint pathpoint1 = this.nodeProcessor.getPathPointToCoords(x, y, z);
+		Node pathpoint = this.nodeProcessor.getStart();
+		Node pathpoint1 = this.nodeProcessor.getPathPointToCoords(x, y, z);
 		Path path = this.findPath(pathpoint, pathpoint1, range);
 		this.nodeProcessor.postProcess();
 		return path;
 	}
 
 	@Nullable
-	private Path findPath(PathPoint start, PathPoint end, float range){
+	private Path findPath(Node start, Node end, float range){
 
 		start.totalPathDistance = 0.0F;
 		start.distanceToNext = start.distanceManhattan(end);
@@ -56,7 +57,7 @@ public class WizardryPathFinder {
 		this.path.clearPath();
 		this.closedSet.clear();
 		this.path.addPoint(start);
-		PathPoint pathpoint = start;
+		Node pathpoint = start;
 		int i = 0;
 
 		while(!this.path.isPathEmpty()){
@@ -68,7 +69,7 @@ public class WizardryPathFinder {
 				break;
 			}
 
-			PathPoint pathpoint1 = this.path.dequeue();
+			Node pathpoint1 = this.path.dequeue();
 
 			if(pathpoint1.equals(end)){
 				pathpoint = end;
@@ -84,7 +85,7 @@ public class WizardryPathFinder {
 
 			for(int k = 0; k < j; ++k){
 
-				PathPoint pathpoint2 = this.pathOptions[k];
+				Node pathpoint2 = this.pathOptions[k];
 				float f = pathpoint1.distanceManhattan(pathpoint2);
 				pathpoint2.distanceFromOrigin = pathpoint1.distanceFromOrigin + f;
 				pathpoint2.cost = f + pathpoint2.costMalus;
@@ -118,16 +119,16 @@ public class WizardryPathFinder {
 	/**
 	 * Returns a new PathEntity for a given start and end point
 	 */
-	private Path createEntityPath(PathPoint start, PathPoint end){
+	private Path createEntityPath(Node start, Node end){
 
 		int i = 1;
 
-		for(PathPoint pathpoint = end; pathpoint.previous != null; pathpoint = pathpoint.previous){
+		for(Node pathpoint = end; pathpoint.previous != null; pathpoint = pathpoint.previous){
 			++i;
 		}
 
-		PathPoint[] points = new PathPoint[i];
-		PathPoint pathpoint1 = end;
+		Node[] points = new Node[i];
+		Node pathpoint1 = end;
 		--i;
 
 		for(points[i] = end; pathpoint1.previous != null; points[i] = pathpoint1){

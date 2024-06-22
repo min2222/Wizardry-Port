@@ -1,51 +1,54 @@
 package electroblob.wizardry.block;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.google.common.collect.ImmutableList;
+
 import electroblob.wizardry.Settings;
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryTabs;
 import electroblob.wizardry.tileentity.TileEntityBookshelf;
-import net.minecraft.world.level.block.BlockHorizontal;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.ITileEntityProvider;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.block.properties.PropertyInteger;
-import net.minecraft.world.level.block.state.BlockFaceShape;
-import net.minecraft.world.level.block.state.BlockStateContainer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.properties.PropertyInteger;
+import net.minecraft.world.level.block.state.BlockFaceShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.BlockStateContainer;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import org.apache.commons.lang3.ArrayUtils;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber
 public class BlockBookshelf extends HorizontalDirectionalBlock implements EntityBlock {
@@ -328,8 +331,8 @@ public class BlockBookshelf extends HorizontalDirectionalBlock implements Entity
 	}
 
 	@SubscribeEvent
-	public static void onWorldUnloadEvent(WorldEvent.Unload event){
-		event.getWorld().removeEventListener(Listener.instance);
+	public static void onWorldUnloadEvent(LevelEvent.Unload event){
+		event.getLevel().removeEventListener(Listener.instance);
 	}
 
 	public static class Listener implements IWorldEventListener {

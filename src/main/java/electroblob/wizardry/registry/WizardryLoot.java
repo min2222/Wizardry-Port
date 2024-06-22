@@ -16,7 +16,6 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -69,7 +68,8 @@ public final class WizardryLoot {
  
 		// Always registers the loot tables, but only injects the additions into vanilla if the appropriate option is
 		// enabled in the config (see WizardryEventHandler).
-		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/wizard_tower"));
+		//TODO
+		/*LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/wizard_tower"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/obelisk"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/shrine"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "chests/dungeon_additions"));
@@ -85,7 +85,7 @@ public final class WizardryLoot {
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "gameplay/fishing/junk_additions"));
 		LootTableList.register(new ResourceLocation(Wizardry.MODID, "gameplay/fishing/treasure_additions"));
-		for(ResourceLocation location : RUINED_SPELL_BOOK_LOOT_TABLES) LootTableList.register(location);
+		for(ResourceLocation location : RUINED_SPELL_BOOK_LOOT_TABLES) LootTableList.register(location);*/
 
 	}
 

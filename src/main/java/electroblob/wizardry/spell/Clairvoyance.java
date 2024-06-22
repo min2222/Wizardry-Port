@@ -5,31 +5,20 @@ import electroblob.wizardry.data.Persistence;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.SpellActions;
-import electroblob.wizardry.misc.WizardryPathFinder;
-import electroblob.wizardry.packet.PacketClairvoyance;
-import electroblob.wizardry.packet.WizardryPacketHandler;
 import electroblob.wizardry.registry.Spells;
-import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.util.ParticleBuilder;
-import electroblob.wizardry.util.ParticleBuilder.Type;
 import electroblob.wizardry.util.SpellModifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber
 public class Clairvoyance extends Spell {
@@ -52,7 +41,8 @@ public class Clairvoyance extends Spell {
 	@Override
 	public boolean cast(Level world, Player caster, InteractionHand hand, int ticksInUse, SpellModifiers modifiers){
 
-		WizardData data = WizardData.get(caster);
+		//TODO
+		/*WizardData data = WizardData.get(caster);
 
 		if(data != null && !caster.isShiftKeyDown()){
 
@@ -107,7 +97,7 @@ public class Clairvoyance extends Spell {
 			}else{
 				if(!world.isClientSide) caster.displayClientMessage(Component.translatable("spell." + this.getUnlocalisedName() + ".wrongdimension"), true);
 			}
-		}
+		}*/
 
 		// Fixes the problem with the sound not playing for the client of the caster.
 		if(world.isClientSide) this.playSound(world, caster, ticksInUse, -1, modifiers);
@@ -118,7 +108,8 @@ public class Clairvoyance extends Spell {
 	public static void spawnPathPaticles(Level world, Path path, float durationMultiplier){
 
 		// A bit annoying that we have to use the reference here but there's no easy way around it
-		float duration = Spells.CLAIRVOYANCE.getProperty(DURATION).floatValue();
+		//TODO
+		/*float duration = Spells.CLAIRVOYANCE.getProperty(DURATION).floatValue();
 
 		PathPoint point, nextPoint;
 
@@ -142,7 +133,7 @@ public class Clairvoyance extends Spell {
 		point = path.getFinalPathPoint();
 
 		ParticleBuilder.create(Type.PATH).pos(point.x + 0.5, point.y + 0.5, point.z + 0.5)
-		.time((int)(duration * durationMultiplier)).clr(1f, 1f, 1f).spawn(world);
+		.time((int)(duration * durationMultiplier)).clr(1f, 1f, 1f).spawn(world);*/
 	}
 
 	@SubscribeEvent

@@ -8,7 +8,6 @@ import electroblob.wizardry.util.MagicDamage;
 import electroblob.wizardry.util.MagicDamage.DamageType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -73,11 +72,6 @@ public class BlockSnare extends BaseEntityBlock  {
             p_60510_.setBlockAndUpdate(p_60511_, Blocks.AIR.defaultBlockState());
         }
     }
-
-	@Override
-	public BlockRenderLayer getRenderLayer() {
-		return BlockRenderLayer.CUTOUT;
-	}
 
 	@Override
 	public RenderShape getRenderShape(BlockState state){

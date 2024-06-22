@@ -2,6 +2,7 @@ package electroblob.wizardry.client.particle;
 
 import electroblob.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -30,7 +31,7 @@ public class ParticleVine extends ParticleTargeted {
 	private static final ResourceLocation STEM_TEXTURE = new ResourceLocation(Wizardry.MODID, "particle/vine");
 	private static final ResourceLocation[] LEAF_TEXTURES = generateTextures("vine_leaf", 5);
 
-	public ParticleVine(Level world, double x, double y, double z){
+	public ParticleVine(ClientLevel world, double x, double y, double z){
 		super(world, x, y, z, STEM_TEXTURE);
 		//this.setRBGColorF(1, 1, 1);
 		this.setLifetime(0);

@@ -27,7 +27,7 @@ public class BlockDryFrostedIce extends FrostedIceBlock {
     @Override
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if(random.nextInt(3) == 0){
-			this.slightlyMelt(worldIn, pos, state, random, true);
+			this.slightlyMelt(state, worldIn, pos);
 		}else{
 			worldIn.scheduleTick(pos, this, Mth.nextInt(random, 20, 40));
 		}

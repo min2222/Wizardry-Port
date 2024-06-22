@@ -1,7 +1,6 @@
 package electroblob.wizardry.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
@@ -15,7 +14,6 @@ public class BlockCrystalOre extends Block {
 
 	public BlockCrystalOre(){
 		super(BlockBehaviour.Properties.of(Material.STONE).sound(SoundType.STONE).strength(3, 5).requiresCorrectToolForDrops());
-		setHarvestLevel("pickaxe", 2); //BlockTags.NEEDS_IRON_TOOL;
 	}
 
     @Override

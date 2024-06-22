@@ -1,17 +1,18 @@
 package electroblob.wizardry.command;
 
+import java.util.List;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.data.WizardData;
 import electroblob.wizardry.util.EntityUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.command.*;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.text.TextComponentTranslation;
-
-import java.util.List;
+import net.minecraft.world.entity.player.Player;
 
 public class CommandSetAlly extends CommandBase {
 

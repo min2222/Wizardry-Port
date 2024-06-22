@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "ebwizardry:blocks/spectral_block"
+  },
+  "render_type": "translucent"
+}

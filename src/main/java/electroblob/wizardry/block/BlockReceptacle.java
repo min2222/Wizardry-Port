@@ -11,8 +11,10 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BlockTorch;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.ITileEntityProvider;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.state.BlockFaceShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +34,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 
-public class BlockReceptacle extends BlockTorch implements ITileEntityProvider {
+public class BlockReceptacle extends WallTorchBlock implements EntityBlock {
 
 	protected static final AABB STANDING_AABB = new AABB(4 / 16d, 0 / 16d, 4 / 16d, 12 / 16d, 8 / 16d, 12 / 16d);
 	protected static final AABB NORTH_WALL_AABB = new AABB(4 / 16d, 2 / 16d, 7 / 16d, 12 / 16d, 10 / 16d, 16 / 16d);

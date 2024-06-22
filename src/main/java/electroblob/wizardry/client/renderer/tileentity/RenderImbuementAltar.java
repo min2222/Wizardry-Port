@@ -1,78 +1,82 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import java.util.Random;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Vector3f;
+
 import electroblob.wizardry.block.BlockReceptacle;
 import electroblob.wizardry.tileentity.TileEntityImbuementAltar;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.opengl.GL11;
 
-import java.util.Random;
+public class RenderImbuementAltar implements BlockEntityRenderer<TileEntityImbuementAltar> {
 
-public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityImbuementAltar> {
-
-	public RenderImbuementAltar(){}
+	public RenderImbuementAltar(BlockEntityRendererProvider.Context ctx){}
 
 	@Override
-	public void render(TileEntityImbuementAltar tileentity, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
+	public void render(TileEntityImbuementAltar tileentity, float partialTicks, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_) {
+		p_112309_.pushPose();
 
-		GlStateManager.pushMatrix();
-
-		GlStateManager.translate((float)x + 0.5F, (float)y + 1.4F, (float)z + 0.5F);
-		GlStateManager.rotate(180, 0F, 0F, 1F);
+		p_112309_.translate(0.5F, 1.4F, 0.5F);
+		p_112309_.mulPose(Vector3f.ZP.rotationDegrees(180));
 
 		float t = Minecraft.getInstance().player.tickCount + partialTicks;
-		GlStateManager.translate(0, 0.05f * Mth.sin(t/15), 0);
+		p_112309_.translate(0, 0.05f * Mth.sin(t/15), 0);
 
-		this.renderItem(tileentity, t);
-		this.renderRays(tileentity, partialTicks);
+		this.renderItem(p_112309_, tileentity, t, p_112310_, p_112311_);
+		this.renderRays(p_112309_, tileentity, partialTicks);
 
-		GlStateManager.popMatrix();
+		p_112309_.popPose();
 	}
 
-	private void renderItem(TileEntityImbuementAltar tileentity, float t){
+	private void renderItem(PoseStack posestack, TileEntityImbuementAltar tileentity, float t, MultiBufferSource source, int light) {
 
-		ItemStack stack = tileentity.getItem();
+		ItemStack stack = tileentity.getStack();
 
 		if(!stack.isEmpty()){
 
-			GlStateManager.pushMatrix();
+			posestack.pushPose();
 
-			GlStateManager.rotate(180, 1, 0, 0);
-			GlStateManager.rotate(t, 0, 1, 0);
-			GlStateManager.scale(0.85F, 0.85F, 0.85F);
+			posestack.mulPose(Vector3f.XP.rotationDegrees(180));
+			posestack.mulPose(Vector3f.YP.rotationDegrees(t));
+			posestack.scale(0.85F, 0.85F, 0.85F);
 
-			Minecraft.getInstance().getRenderItem().renderItem(stack, TransformType.FIXED);
+			Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemTransforms.TransformType.FIXED, light, OverlayTexture.NO_OVERLAY, posestack, source, 0);
 
-			GlStateManager.popMatrix();
+			posestack.popPose();
 		}
 	}
 
-	private void renderRays(TileEntityImbuementAltar tileentity, float partialTicks){
+	private void renderRays(PoseStack stack, TileEntityImbuementAltar tileentity, float partialTicks){
 
 		float t = Minecraft.getInstance().player.tickCount + partialTicks;
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
-		Random random = new Random(tileentity.getPos().toLong()); // Use position to get a constant seed
+		Tesselator tessellator = Tesselator.getInstance();
+		BufferBuilder buffer = tessellator.getBuilder();
+		Random random = new Random(tileentity.getBlockPos().asLong()); // Use position to get a constant seed
 
 		int[] colours = BlockReceptacle.PARTICLE_COLOURS.get(tileentity.getDisplayElement());
 
 		if(colours == null) return; // Shouldn't happen
 
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.enableAlpha();
-		GlStateManager.disableTexture2D();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.disableLighting();
-		GlStateManager.depthMask(false);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-		RenderHelper.disableStandardItemLighting();
+		RenderSystem.disableCull();
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+		RenderSystem.depthMask(false);
 
 		int r1 = colours[1] >> 16 & 255;
 		int g1 = colours[1] >> 8 & 255;
@@ -90,24 +94,24 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 			int sliceAngle = 20 + m;
 			float scale = 0.5f;
 
-			GlStateManager.pushMatrix();
+			stack.pushPose();
 
 			float progress = Math.min(tileentity.getImbuementProgress() + partialTicks/141, 1);
 			float s = 1 - progress;
 			s = 1 - s*s;
-			GlStateManager.scale(s, s, s);
+			stack.scale(s, s, s);
 
 			// TODO: This needs optimising! We should easily be able to do this with a single draw() call
 			// Same for magic light and black hole, which don't need ray textures either!
-			GlStateManager.rotate(31 * m, 1, 0, 0);
-			GlStateManager.rotate(31 * n, 0, 0, 1);
+			stack.mulPose(Vector3f.XP.rotationDegrees(31 * m));
+			stack.mulPose(Vector3f.ZP.rotationDegrees(31 * n));
 
-			buffer.begin(5, DefaultVertexFormats.POSITION_COLOR);
+			buffer.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 			float fade = (Math.min(1, 1.9f - progress) - 0.9f) * 10;
 
-			buffer.pos(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
-			buffer.pos(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
+			buffer.vertex(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
+			buffer.vertex(0, 0, 0).color(r1, g1, b1, (int)(255 * fade)).endVertex();
 
 			double x1 = scale * Mth.sin((t + 40 * j) * ((float)Math.PI / 180));
 			double z1 = scale * Mth.cos((t + 40 * j) * ((float)Math.PI / 180));
@@ -115,23 +119,18 @@ public class RenderImbuementAltar extends TileEntitySpecialRenderer<TileEntityIm
 			double x2 = scale * Mth.sin((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 			double z2 = scale * Mth.cos((t + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
-			buffer.pos(x1, 0, z1).color(r2, g2, b2, 0).endVertex();
-			buffer.pos(x2, 0, z2).color(r2, g2, b2, 0).endVertex();
+			buffer.vertex(x1, 0, z1).color(r2, g2, b2, 0).endVertex();
+			buffer.vertex(x2, 0, z2).color(r2, g2, b2, 0).endVertex();
 
-			tessellator.draw();
+			BufferUploader.drawWithShader(buffer.end());
 
-			GlStateManager.popMatrix();
+			stack.popPose();
 		}
 
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.disableAlpha();
-		GlStateManager.depthMask(true);
-		GlStateManager.enableTexture2D();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.enableLighting();
-		RenderHelper.enableStandardItemLighting();
+		RenderSystem.enableCull();
+		RenderSystem.disableBlend();
+		RenderSystem.depthMask(true);
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 	}
 
 }

@@ -18,6 +18,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.api.distmarker.Dist;
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 @Mod.EventBusSubscriber(Dist.CLIENT)
 public class RenderWings {
 
@@ -30,13 +33,14 @@ public class RenderWings {
 	public static void onRenderPlayerEvent(RenderPlayerEvent.Post event){
 
 		Player player = event.getEntity();
+		PoseStack poseStack = event.getPoseStack();
 
-		if(EntityUtils.isCasting(player, Spells.flight)){
+		if(EntityUtils.isCasting(player, Spells.FLIGHT)){
 
-			GlStateManager.pushMatrix();
+			poseStack.pushPose();
 
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			RenderSystem.enableBlend();
+			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			GlStateManager.disableLighting();
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
 

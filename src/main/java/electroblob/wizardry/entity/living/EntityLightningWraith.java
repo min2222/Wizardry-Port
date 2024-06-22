@@ -55,13 +55,13 @@ public class EntityLightningWraith extends EntityBlazeMinion {
 	}
 
 	@Override
-	public void onLivingUpdate(){
+	public void aiStep(){
 		// Fortunately, lightning wraiths don't replace any of blazes' particle effects or the fire sound, they only
 		// add the sparks, so it's fine to call super here.
 		if(level.isClientSide){
-			ParticleBuilder.create(Type.SPARK, this).spawn(world);
+			ParticleBuilder.create(Type.SPARK, this).spawn(level);
 		}
-		super.onLivingUpdate();
+		super.aiStep();
 	}
 
 	@Override
