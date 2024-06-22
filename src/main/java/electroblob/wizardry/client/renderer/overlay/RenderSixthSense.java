@@ -1,5 +1,15 @@
 package electroblob.wizardry.client.renderer.overlay;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Vector3f;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.WizardryClientEventHandler;
 import electroblob.wizardry.constants.Constants;
@@ -9,23 +19,19 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.EntityArmorStand;
-import net.minecraft.world.entity.monster.IMob;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.api.distmarker.Dist;
-import org.lwjgl.opengl.GL11;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RenderSixthSense {
@@ -37,82 +43,78 @@ public class RenderSixthSense {
 	private static final ResourceLocation PLAYER_MARKER_TEXTURE = 		new ResourceLocation(Wizardry.MODID, "textures/gui/sixth_sense_marker_player.png");
 
 	@SubscribeEvent
-	public static void onRenderGameOverlayEvent(RenderGameOverlayEvent.Post event){
+	public static void onRenderGameOverlayEvent(RenderGuiOverlayEvent.Post event){
 
-		if(event.getType() == RenderGameOverlayEvent.ElementType.HELMET){
+    	if(event.getOverlay() == VanillaGuiOverlay.HELMET.type()) {
 
-			if(Minecraft.getInstance().player.hasEffect(WizardryPotions.sixth_sense)){
+			if(Minecraft.getInstance().player.hasEffect(WizardryPotions.SIXTH_SENSE.get())){
 
-				OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-				GlStateManager.color(1, 1, 1, 1);
-				GlStateManager.disableAlpha();
+            	RenderSystem.enableBlend();
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
 
-				WizardryClientEventHandler.renderScreenOverlay(event.getResolution(), SCREEN_OVERLAY_TEXTURE);
-
-				GlStateManager.enableAlpha();
-				GlStateManager.color(1, 1, 1, 1);
+                WizardryClientEventHandler.renderScreenOverlay(event.getPoseStack(), event.getWindow(), SCREEN_OVERLAY_TEXTURE);
+                
+                RenderSystem.disableBlend();
+                RenderSystem.defaultBlendFunc();
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity> event){
+	public static void onRenderLivingEvent(RenderLivingEvent.Post<LivingEntity, EntityModel<LivingEntity>> event){
 
-		Minecraft mc = Minecraft.getInstance();
-		Context renderManager = event.getRenderer().getRenderManager();
+        Minecraft mc = Minecraft.getInstance();
+        PoseStack stack = event.getPoseStack();
 
-		if(mc.player.hasEffect(WizardryPotions.sixth_sense) && !(event.getEntity() instanceof EntityArmorStand)
-				&& event.getEntity() != mc.player && mc.player.getActivePotionEffect(WizardryPotions.sixth_sense) != null
-				&& event.getEntity().getDistance(mc.player) < Spells.sixth_sense.getProperty(Spell.EFFECT_RADIUS).floatValue()
-				* (1 + mc.player.getActivePotionEffect(WizardryPotions.sixth_sense).getAmplifier() * Constants.RANGE_INCREASE_PER_LEVEL)){
+		if(mc.player.hasEffect(WizardryPotions.SIXTH_SENSE.get()) && !(event.getEntity() instanceof ArmorStand)
+				&& event.getEntity() != mc.player && mc.player.getEffect(WizardryPotions.SIXTH_SENSE.get()) != null
+				&& event.getEntity().distanceTo(mc.player) < Spells.SIXTH_SENSE.getProperty(Spell.EFFECT_RADIUS).floatValue()
+				* (1 + mc.player.getEffect(WizardryPotions.SIXTH_SENSE.get()).getAmplifier() * Constants.RANGE_INCREASE_PER_LEVEL)){
 
-			Tessellator tessellator = Tessellator.getInstance();
-			BufferBuilder buffer = tessellator.getBuffer();
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder buffer = tessellator.getBuilder();
 
-			GlStateManager.pushMatrix();
+            stack.pushPose();
 
-			GlStateManager.disableCull();
-			GlStateManager.enableBlend();
-			GlStateManager.disableLighting();
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            RenderSystem.disableCull();
+            RenderSystem.enableBlend();
+            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			// Disabling depth test allows it to be seen through everything.
-			GlStateManager.disableDepth();
+			RenderSystem.disableDepthTest();
 
-			GlStateManager.translate(event.getX(), event.getY() + event.getEntity().getBbHeight() * 0.6, event.getZ());
+			stack.translate(0, event.getEntity().getBbHeight() * 0.6, 0);
 
 			// This counteracts the reverse rotation behaviour when in front f5 view.
 			// Fun fact: this is a bug with vanilla too! Look at a snowball in front f5 view, for example.
-			float yaw = mc.gameSettings.thirdPersonView == 2 ? renderManager.playerViewX : -renderManager.playerViewX;
-			GlStateManager.rotate(180 - renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-			GlStateManager.rotate(yaw, 1.0F, 0.0F, 0.0F);
+            stack.mulPose(mc.getEntityRenderDispatcher().cameraOrientation());
+            stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
 
-			GlStateManager.color(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
 
-			ResourceLocation texture = PASSIVE_MOB_MARKER_TEXTURE;
+            ResourceLocation texture = PASSIVE_MOB_MARKER_TEXTURE;
 
-			if(ItemArtefact.isArtefactActive(mc.player, WizardryItems.charm_sixth_sense)){
-				if(event.getEntity() instanceof IMob) texture = HOSTILE_MOB_MARKER_TEXTURE;
-				else if(event.getEntity() instanceof Player) texture = PLAYER_MARKER_TEXTURE;
-			}
+            if (ItemArtefact.isArtefactActive(mc.player, WizardryItems.CHARM_SIXTH_SENSE.get())) {
+                if (event.getEntity() instanceof Enemy) texture = HOSTILE_MOB_MARKER_TEXTURE;
+                else if (event.getEntity() instanceof Player) texture = PLAYER_MARKER_TEXTURE;
+            }
 
-			mc.renderEngine.bindTexture(texture);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, texture);
 
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-			buffer.pos(-0.6, 0.6, 0).tex(0, 0).endVertex();
-			buffer.pos(0.6, 0.6, 0).tex(1, 0).endVertex();
-			buffer.pos(0.6, -0.6, 0).tex(1, 1).endVertex();
-			buffer.pos(-0.6, -0.6, 0).tex(0, 1).endVertex();
+            buffer.vertex(stack.last().pose(), -0.6f, 0.6f, 0).uv(0, 0).endVertex();
+            buffer.vertex(stack.last().pose(), 0.6f, 0.6f, 0).uv(1, 0).endVertex();
+            buffer.vertex(stack.last().pose(), 0.6f, -0.6f, 0).uv(1, 1).endVertex();
+            buffer.vertex(stack.last().pose(), -0.6f, -0.6f, 0).uv(0, 1).endVertex();
 
-			tessellator.draw();
+            BufferUploader.drawWithShader(buffer.end());
 
-			GlStateManager.enableCull();
-			GlStateManager.disableBlend();
-			GlStateManager.enableLighting();
-			GlStateManager.enableDepth();
+            RenderSystem.enableCull();
+            RenderSystem.disableBlend();
 
-			GlStateManager.popMatrix();
+            stack.popPose();
 		}
 
 	}

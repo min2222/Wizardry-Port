@@ -374,7 +374,7 @@ public class ItemWand extends Item implements IWorkbenchItem, ISpellCastingItem,
 		}
 
 		text.add(Wizardry.proxy.translate("item." + Wizardry.MODID + ":wand.spell", Style.EMPTY.withColor(ChatFormatting.GRAY),
-				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, player.level)));
+				discovered ? spell.getDisplayNameWithFormatting() : "#" + ChatFormatting.BLUE + SpellGlyphData.getGlyphName(spell, Wizardry.proxy.getGlyphData())));
 
 		if(advanced.isAdvanced()){
 			// Advanced tooltips for debugging

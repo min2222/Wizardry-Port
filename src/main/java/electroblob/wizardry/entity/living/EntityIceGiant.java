@@ -38,7 +38,7 @@ public class EntityIceGiant extends IronGolem implements ISummonedCreature {
 	public EntityIceGiant(Level world){
 		super(world);
 		this.setSize(1.4F, 2.9F);
-		this.experienceValue = 0;
+		this.xpReward = 0;
 	}
 
 	@Override

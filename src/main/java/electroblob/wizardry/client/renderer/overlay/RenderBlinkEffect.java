@@ -1,18 +1,19 @@
 package electroblob.wizardry.client.renderer.overlay;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.client.WizardryClientEventHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.ViewportEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.api.distmarker.Dist;
-import org.lwjgl.opengl.GL11;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class RenderBlinkEffect {
@@ -45,31 +46,31 @@ public class RenderBlinkEffect {
 	}
 
 	@SubscribeEvent
-	public static void onFOVUpdateEvent(FOVUpdateEvent event){
+	public static void onFOVUpdateEvent(ViewportEvent.ComputeFov event){
 
 		if(blinkEffectTimer > 0){
 			float f = ((float)Math.max(blinkEffectTimer - 2, 0))/BLINK_EFFECT_DURATION;
-			event.setNewfov(event.getFov() + f * f * 0.7f);
+            event.setFOV(event.getFOV() + f * f * 0.7f);
 		}
 	}
 
 	@SubscribeEvent
-	public static void onRenderGameOverlayEvent(RenderGameOverlayEvent.Post event){
+	public static void onRenderGameOverlayEvent(RenderGuiOverlayEvent.Post event){
 
-		if(event.getType() == RenderGameOverlayEvent.ElementType.HELMET){
+    	if(event.getOverlay() == VanillaGuiOverlay.HELMET.type()) {
 
 			if(blinkEffectTimer > 0){
 
 				float alpha = ((float)blinkEffectTimer)/BLINK_EFFECT_DURATION;
 
-				OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
-				GlStateManager.color(1, 1, 1, alpha);
-				GlStateManager.disableAlpha();
+                RenderSystem.enableBlend();
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                RenderSystem.setShaderColor(1, 1, 1, alpha);
 
-				WizardryClientEventHandler.renderScreenOverlay(event.getResolution(), SCREEN_OVERLAY_TEXTURE);
+                WizardryClientEventHandler.renderScreenOverlay(event.getPoseStack(), event.getWindow(), SCREEN_OVERLAY_TEXTURE);
 
-				GlStateManager.enableAlpha();
-				GlStateManager.color(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+                RenderSystem.defaultBlendFunc();
 			}
 		}
 	}

@@ -1,12 +1,13 @@
 package electroblob.wizardry.entity.living;
 
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.entity.projectile.EntityTippedArrow;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class EntityStrayMinion extends EntitySkeletonMinion {
@@ -16,18 +17,18 @@ public class EntityStrayMinion extends EntitySkeletonMinion {
 		super(world);
 	}
 
-	@Override protected SoundEvent getAmbientSound(){ return SoundEvents.ENTITY_STRAY_AMBIENT; }
-	@Override protected SoundEvent getHurtSound(DamageSource source){ return SoundEvents.ENTITY_STRAY_HURT; }
-	@Override protected SoundEvent getDeathSound(){ return SoundEvents.ENTITY_STRAY_DEATH; }
-	@Override protected SoundEvent getStepSound(){ return SoundEvents.ENTITY_STRAY_STEP; }
+	@Override protected SoundEvent getAmbientSound(){ return SoundEvents.STRAY_AMBIENT; }
+	@Override protected SoundEvent getHurtSound(DamageSource source){ return SoundEvents.STRAY_HURT; }
+	@Override protected SoundEvent getDeathSound(){ return SoundEvents.STRAY_DEATH; }
+	@Override protected SoundEvent getStepSound(){ return SoundEvents.STRAY_STEP; }
 
 	@Override
-	protected Arrow getArrow(float distanceFactor){
+	protected AbstractArrow getArrow(ItemStack stack, float distanceFactor){
 
-		Arrow entityarrow = super.getArrow(distanceFactor);
+		AbstractArrow entityarrow = super.getArrow(stack, distanceFactor);
 
-		if(entityarrow instanceof EntityTippedArrow){
-			((EntityTippedArrow)entityarrow).addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 600));
+		if(entityarrow instanceof Arrow){
+			((Arrow)entityarrow).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 600));
 		}
 
 		return entityarrow;

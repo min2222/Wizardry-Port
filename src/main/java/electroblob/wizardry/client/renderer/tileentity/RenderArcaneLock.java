@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -34,7 +35,7 @@ public class RenderArcaneLock {
 	}
 
 	@SubscribeEvent
-	public static void onRenderWorldLastEvent(RenderLevelLastEvent event){
+	public static void onRenderWorldLastEvent(RenderLevelStageEvent event){
 
 		Player player = Minecraft.getInstance().player;
 		Level world = Minecraft.getInstance().level;
@@ -54,7 +55,7 @@ public class RenderArcaneLock {
 			if(tileentity == null) continue; // What the heck VoxelMap
 
 			if(tileentity.distanceToSqr(origin.x, origin.y, origin.z) <= tileentity.getMaxRenderDistanceSquared()
-					&& tileentity.getTileData().hasUUID(ArcaneLock.NBT_KEY)){
+					&& tileentity.getPersistentData().hasUUID(ArcaneLock.NBT_KEY)){
 
 				if(!flag){
 

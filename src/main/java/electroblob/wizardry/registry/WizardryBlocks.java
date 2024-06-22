@@ -4,6 +4,7 @@ import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockArcaneWorkbench;
 import electroblob.wizardry.block.BlockBookshelf;
 import electroblob.wizardry.block.BlockCrystalFlower;
+import electroblob.wizardry.block.BlockCrystalFlowerPot;
 import electroblob.wizardry.block.BlockCrystalOre;
 import electroblob.wizardry.block.BlockDryFrostedIce;
 import electroblob.wizardry.block.BlockImbuementAltar;
@@ -25,7 +26,6 @@ import electroblob.wizardry.tileentity.TileEntityStatue;
 import electroblob.wizardry.tileentity.TileEntityThorns;
 import electroblob.wizardry.tileentity.TileEntityTimer;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -81,7 +81,7 @@ public final class WizardryBlocks {
     public static final RegistryObject<Block> THORNS = BLOCKS.register("thorns", () -> new BlockThorns());
 	public static final RegistryObject<Block> OBSIDIAN_CRUST = placeholder();
 	public static final RegistryObject<Block> DRY_FROSTED_ICE = BLOCKS.register("dry_frosted_ice", () -> new BlockDryFrostedIce());
-	public static final RegistryObject<Block> CRYSTAL_FLOWER_POT = BLOCKS.register("crystal_flower_pot", () -> new FlowerPotBlock(() -> null, () -> CRYSTAL_FLOWER.get(), BlockBehaviour.Properties.of(Material.DECORATION).instabreak().noOcclusion()));
+	public static final RegistryObject<Block> CRYSTAL_FLOWER_POT = BLOCKS.register("crystal_flower_pot", () -> new BlockCrystalFlowerPot(() -> null, () -> CRYSTAL_FLOWER.get(), BlockBehaviour.Properties.of(Material.DECORATION).instabreak().noOcclusion().randomTicks().lightLevel(value -> 6)));
 	public static final RegistryObject<Block> PERMAFROST = BLOCKS.register("permafrost", () -> new BlockPermafrost());
 
     public static final RegistryObject<Block> FIRE_RUNESTONE = BLOCKS.register("fire_runestone", () -> new Block(BlockBehaviour.Properties.of(Material.STONE, MaterialColor.TERRACOTTA_RED).strength(1.5F, 10.0F)));

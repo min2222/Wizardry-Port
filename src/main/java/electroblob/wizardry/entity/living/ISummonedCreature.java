@@ -23,6 +23,7 @@ import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
@@ -337,7 +338,7 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 	 * Implementors should call this from processInteract, and call super.processInteract if and only if this method
 	 * returns <b>false</b>.
 	 */
-	default boolean interactDelegate(Player player, InteractionHand hand){
+	default InteractionResult interactDelegate(Player player, InteractionHand hand){
 
 		ItemStack stack = player.getItemInHand(hand);
 
@@ -356,10 +357,10 @@ public interface ISummonedCreature extends IEntityAdditionalSpawnData, OwnableEn
 				}
 				data.sync();
 			}
-			return true;
+			return InteractionResult.SUCCESS;
 		}
 
-		return false;
+		return InteractionResult.PASS;
 	}
 
 	// Damage system

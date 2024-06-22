@@ -150,7 +150,7 @@ public class TileEntityShrineCore extends BlockEntity {
 
 			WizardryPacketHandler.net.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(x, y, z, 64, this.level.dimension())), new PacketConquerShrine.Message(this.worldPosition));
 
-			if(level.getBlockState(worldPosition).getBlock() == WizardryBlocks.runestone_pedestal){
+			if(level.getBlockState(worldPosition).getBlock() instanceof BlockPedestal){
 				level.setBlockAndUpdate(worldPosition, WizardryBlocks.runestone_pedestal.defaultBlockState()
 						.setValue(BlockPedestal.ELEMENT, level.getBlockState(worldPosition).getValue(BlockPedestal.ELEMENT)));
 			}else{

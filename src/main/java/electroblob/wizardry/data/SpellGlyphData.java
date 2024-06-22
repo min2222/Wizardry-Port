@@ -133,9 +133,19 @@ public class SpellGlyphData extends SavedData {
 		Wizardry.logger.info("Synchronising spell glyph data for " + player.getName());
 
 	}
+	
+    public static String getGlyphName(Spell spell, SpellGlyphData data) {
+        Map<Spell, String> names = data.randomNames;
+        return names == null ? "" : names.get(spell);
+    }
+
+    public static String getGlyphDescription(Spell spell, SpellGlyphData data) {
+        Map<Spell, String> descriptions = data.randomDescriptions;
+        return descriptions == null ? "" : descriptions.get(spell);
+    }
 
 	/** Helper method to retrieve the random glyph name for the given spell from the map stored in the given world. */
-	public static String getGlyphName(Spell spell, Level world){
+	public static String getGlyphName(Spell spell, ServerLevel world){
 		Map<Spell, String> names = SpellGlyphData.get(world).randomNames;
 		return names == null ? "" : names.get(spell);
 	}
@@ -144,7 +154,7 @@ public class SpellGlyphData extends SavedData {
 	 * Helper method to retrieve the random glyph description for the given spell from the map stored in the given
 	 * world.
 	 */
-	public static String getGlyphDescription(Spell spell, Level world){
+	public static String getGlyphDescription(Spell spell, ServerLevel world){
 		Map<Spell, String> descriptions = SpellGlyphData.get(world).randomDescriptions;
 		return descriptions == null ? "" : descriptions.get(spell);
 	}
@@ -188,7 +198,7 @@ public class SpellGlyphData extends SavedData {
 	public static void onWorldLoadEvent(LevelEvent.Load event){
 		if(!event.getLevel().isClientSide() && ((Level) event.getLevel()).dimension() == Level.OVERWORLD){
 			// Called to initialise the spell glyph data when a world loads, if it isn't already.
-			SpellGlyphData.get((Level) event.getLevel());
+			SpellGlyphData.get((ServerLevel) event.getLevel());
 		}
 	}
 }

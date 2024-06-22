@@ -1,21 +1,19 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.UUID;
+
 import electroblob.wizardry.Wizardry;
-import net.minecraft.world.entity.EntityCreature;
-import net.minecraft.world.entity.EntityFlying;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.Difficulty;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.level.Level;
-
-import java.util.UUID;
 
 /**
  * Abstract base implementation of {@link ISummonedCreature} which is the superclass to all custom summoned entities
@@ -55,16 +53,16 @@ public abstract class EntitySummonedCreature extends PathfinderMob implements IS
 	}
 
 	/** Creates a new summoned creature in the given world. */
-	public EntitySummonedCreature(Level world){
-		super(world);
-		this.experienceValue = 0;
+	public EntitySummonedCreature(EntityType<? extends EntitySummonedCreature> type, Level world){
+		super(type, world);
+		this.xpReward = 0;
 	}
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(LivingEntity entity){
-		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
+	public void setLastHurtByMob(LivingEntity entity){
+		if(this.shouldRevengeTarget(entity)) super.setLastHurtByMob(entity);
 	}
 
 	@Override
@@ -87,10 +85,10 @@ public abstract class EntitySummonedCreature extends PathfinderMob implements IS
 	}
 
 	@Override
-	protected boolean processInteract(Player player, InteractionHand hand){
+	protected InteractionResult mobInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
-		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
+        return this.interactDelegate(player, hand) == InteractionResult.FAIL ? super.mobInteract(player, hand) : this.interactDelegate(player, hand);
 	}
 
 	@Override
@@ -107,33 +105,27 @@ public abstract class EntitySummonedCreature extends PathfinderMob implements IS
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(Player player){ return 0; }
-	@Override protected boolean canDropLoot(){ return false; }
-	@Override protected Item getDropItem(){ return null; }
-	@Override protected ResourceLocation getLootTable(){ return null; }
+	@Override public int getExperienceReward(){ return 0; }
+	@Override protected boolean shouldDropLoot(){ return false; }
+	@Override protected ResourceLocation getDefaultLootTable(){ return null; }
 	@Override public boolean canPickUpLoot(){ return false; }
 
 	// This vanilla method has nothing to do with the custom despawn() method.
-	@Override protected boolean canDespawn(){
+	@Override public boolean removeWhenFarAway(double distance){
 		return getCaster() == null && getOwnerUUID() == null;
 	}
 
 	@Override
-	public boolean getCanSpawnHere(){
-		return this.level.getDifficulty() != Difficulty.PEACEFUL;
-	}
-
-	@Override
-	public boolean canAttackClass(Class<? extends LivingEntity> entityType){
+	public boolean canAttack(LivingEntity entityType){
 		// Returns true unless the given entity type is a flying entity and this entity only has melee attacks.
-		return !EntityFlying.class.isAssignableFrom(entityType) || this.hasRangedAttack();
+		return !(entityType instanceof FlyingMob) || this.hasRangedAttack();
 	}
 
 	@Override
 	public Component getDisplayName(){
 		if(getCaster() != null){
 			return Component.translatable(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
-					Component.translatable("entity." + this.getEntityString() + ".name"));
+					Component.translatable("entity." + this.getEncodeId() + ".name"));
 		}else{
 			return super.getDisplayName();
 		}

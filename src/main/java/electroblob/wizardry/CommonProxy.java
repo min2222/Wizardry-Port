@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import electroblob.wizardry.block.BlockBookshelf;
+import electroblob.wizardry.data.SpellGlyphData;
 import electroblob.wizardry.inventory.ContainerArcaneWorkbench;
 import electroblob.wizardry.item.ItemSpectralBow;
 import electroblob.wizardry.legacy.IMetadata;
@@ -28,7 +29,6 @@ import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.spell.Spell;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -39,7 +39,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,10 +65,6 @@ public class CommonProxy {
 	public void initialiseAnimations(){}
 
 	public void registerKeyBindings(){}
-
-	public HumanoidModel<?> getWizardArmourModel(ArmorMaterial material){
-		return null;
-	}
 
 	public void initGuiBits(){}
 	
@@ -359,6 +354,14 @@ public class CommonProxy {
 
 	public void openSpellBook(ItemStack stack) {
 		
+	}
+	
+	public void setGlyphData(SpellGlyphData data) {
+		
+	}
+
+	public SpellGlyphData getGlyphData() {
+		return null;
 	}
 
 }

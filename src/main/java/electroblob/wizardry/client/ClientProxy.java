@@ -132,27 +132,11 @@ public class ClientProxy extends CommonProxy {
 		}
 	}
 
-	// Armour Models
-	// Can't use an EnumMap here because our additional values aren't really part of the enum
-	public static final Map<ArmorMaterial, HumanoidModel> wizard_armour_models = new HashMap<>();
-
-	static {
-		wizard_armour_models.put(Materials.WizardryArmorMaterial.SILK, new ModelWizardArmour(0.75f));
-		wizard_armour_models.put(Materials.WizardryArmorMaterial.SAGE, new ModelSageArmour(0.75f));
-		wizard_armour_models.put(Materials.WizardryArmorMaterial.BATTLEMAGE, new ModelRobeArmour(0.75f, true));
-		wizard_armour_models.put(Materials.WizardryArmorMaterial.WARLOCK, new ModelRobeArmour(0.75f, false));
-	}
-
 	/** The wrap width for standard multi-line descriptions (see {@link ClientProxy#addMultiLineDescription(List, String, Style, Object...)}). */
 	private static final int TOOLTIP_WRAP_WIDTH = 140;
 
 	// Registry
 	// ===============================================================================================================
-
-	@Override
-	public ModelBiped getWizardArmourModel(ArmorMaterial material){
-		return wizard_armour_models.get(material);
-	}
 
 	@Override
 	public void registerKeyBindings(){
@@ -636,7 +620,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void handleGlyphDataPacket(PacketGlyphData.Message message){
 
-		SpellGlyphData data = SpellGlyphData.get(Minecraft.getInstance().world);
+		SpellGlyphData data = this.getGlyphData();
 
 		data.randomNames = new HashMap<>();
 		data.randomDescriptions = new HashMap<>();
@@ -657,8 +641,8 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void handleEmitterDataPacket(PacketEmitterData.Message message){
-		message.emitters.forEach(e -> e.setWorld(Minecraft.getInstance().world)); // Do this as soon as possible!
-		SpellEmitterData data = SpellEmitterData.get(Minecraft.getInstance().world);
+		message.emitters.forEach(e -> e.setWorld(Minecraft.getInstance().level)); // Do this as soon as possible!
+		SpellEmitterData data = SpellEmitterData.get(Minecraft.getInstance().level);
 		// We shouldn't need to clear the emitters because when a player logs in or changes dimension the client world
 		// is wiped anyway, so the call to get() above should result in a fresh SpellEmitterData instance
 		message.emitters.forEach(data::add);
@@ -897,5 +881,17 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void openSpellBook(ItemStack stack) {
         Minecraft.getInstance().setScreen(new GuiSpellBook(stack));
+    }
+    
+    private SpellGlyphData glyphData;
+    
+    @Override
+    public void setGlyphData(SpellGlyphData data) {
+    	this.glyphData = data;
+    }
+    
+    @Override
+    public SpellGlyphData getGlyphData() {
+    	return this.glyphData;
     }
 }

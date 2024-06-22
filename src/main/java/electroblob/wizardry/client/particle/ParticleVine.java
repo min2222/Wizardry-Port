@@ -33,9 +33,9 @@ public class ParticleVine extends ParticleTargeted {
 	public ParticleVine(Level world, double x, double y, double z){
 		super(world, x, y, z, STEM_TEXTURE);
 		//this.setRBGColorF(1, 1, 1);
-		this.setMaxAge(0);
-		this.particleScale = 1;
-		this.setRBGColorF(0.2f, 0.65f, 0f);
+		this.setLifetime(0);
+		this.quadSize = 1;
+		this.setColor(0.2f, 0.65f, 0f);
 	}
 
 	@Override

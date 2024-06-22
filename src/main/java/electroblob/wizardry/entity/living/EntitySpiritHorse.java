@@ -196,7 +196,7 @@ public class EntitySpiritHorse extends Horse {
 	public Component getDisplayName(){
 		if(getOwner() != null){
 			return Component.translatable(ISummonedCreature.NAMEPLATE_TRANSLATION_KEY, getOwner().getName(),
-					Component.translatable("entity." + this.getEntityString() + ".name"));
+					Component.translatable("entity." + this.getEncodeId() + ".name"));
 		}else{
 			return super.getDisplayName();
 		}

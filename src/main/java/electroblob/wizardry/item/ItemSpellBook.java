@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import electroblob.wizardry.Wizardry;
-import electroblob.wizardry.WizardryGuiHandler;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.data.SpellGlyphData;
 import electroblob.wizardry.data.WizardData;
@@ -107,7 +106,7 @@ public class ItemSpellBook extends Item implements IMetadata{
 
 			// Element colour is not given for undiscovered spells
 			tooltip.add(discovered ? spell.getDisplayNameWithFormatting()
-					: SpellGlyphData.getGlyphName(spell, world));
+					: Component.literal(SpellGlyphData.getGlyphName(spell, Wizardry.proxy.getGlyphData())).withStyle(Style.EMPTY.withColor(ChatFormatting.BLUE).withFont(new ResourceLocation("minecraft", "alt"))));
 
 			tooltip.add(spell.getTier().getDisplayNameWithFormatting());
 

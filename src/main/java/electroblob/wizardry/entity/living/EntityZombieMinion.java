@@ -13,22 +13,20 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Difficulty;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.world.entity.ai.EntityAIMoveThroughVillage;
-import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.world.entity.ai.goal.MoveThroughVillageGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -68,18 +66,17 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	@Override
 	protected void registerGoals(){
-		this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, false));
+		this.goalSelector.addGoal(6, new MoveThroughVillageGoal(this, 1.0D, false, 4, this::canBreakDoors));
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 	}
 
-	@Override public boolean isChild(){ return false; }
-	@Override public void setChild(boolean childZombie){} // Can't be a child
-	@Override protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty){} // They don't have equipment!
-	@Override public void onKillEntity(LivingEntity entityLivingIn){} // Turns villagers to zombies in EntityZombie
-	@Override public void setChildSize(boolean isChild){}
-	@Override protected ItemStack getSkullDrop(){ return ItemStack.EMPTY; }
+	@Override public boolean isBaby(){ return false; }
+	@Override public void setBaby(boolean childZombie){} // Can't be a child
+	@Override protected void populateDefaultEquipmentSlots(RandomSource source, DifficultyInstance difficulty){} // They don't have equipment!
+	@Override public boolean wasKilled(ServerLevel level, LivingEntity entityLivingIn){ return false; } // Turns villagers to zombies in EntityZombie
+	@Override protected ItemStack getSkull(){ return ItemStack.EMPTY; }
 
 	// Implementations
 
@@ -132,10 +129,10 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 	}
 
 	@Override
-	protected boolean processInteract(Player player, InteractionHand hand){
+	protected InteractionResult mobInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
-		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
+        return this.interactDelegate(player, hand) == InteractionResult.FAIL ? super.mobInteract(player, hand) : this.interactDelegate(player, hand);
 	}
 
 	@Override
@@ -152,20 +149,14 @@ public class EntityZombieMinion extends Zombie implements ISummonedCreature {
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(Player player){ return 0; }
-	@Override protected boolean canDropLoot(){ return false; }
-	@Override protected Item getDropItem(){ return null; }
-	@Override protected ResourceLocation getLootTable(){ return null; }
+	@Override public int getExperienceReward(){ return 0; }
+	@Override protected boolean shouldDropLoot(){ return false; }
+	@Override protected ResourceLocation getDefaultLootTable(){ return null; }
 	@Override public boolean canPickUpLoot(){ return false; }
 
 	// This vanilla method has nothing to do with the custom despawn() method.
-	@Override protected boolean canDespawn(){
+	@Override public boolean removeWhenFarAway(double distance){
 		return getCaster() == null && getOwnerUUID() == null;
-	}
-
-	@Override
-	public boolean getCanSpawnHere(){
-		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override

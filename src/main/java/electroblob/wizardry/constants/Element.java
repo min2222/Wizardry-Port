@@ -105,11 +105,6 @@ public class Element {
 		return colour;
 	}
 
-	/** Returns the string formatting code which corresponds to the colour of this element. */
-	public String getFormattingCode(){
-		return colour.getFormattingCode();
-	}
-
 	/** Returns the translated display name for wizards of this element, shown in the trading GUI. */
 	public Component getWizardName(){
 		return Component.translatable("element." + getName() + ".wizard");

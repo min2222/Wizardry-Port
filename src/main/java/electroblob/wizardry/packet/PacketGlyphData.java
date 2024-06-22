@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.data.SpellGlyphData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -19,7 +20,12 @@ public class PacketGlyphData {
 		if(ctx.get().getDirection().getReceptionSide().isClient()){
 			// Using a fully qualified name is a good course of action here; we don't really want to clutter the proxy
 			// methods any more than necessary.
-			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> Wizardry.proxy.handleGlyphDataPacket(message));
+			net.minecraft.client.Minecraft.getInstance().doRunTask(() -> {
+            	if(Wizardry.proxy.getGlyphData() == null) {
+                	Wizardry.proxy.setGlyphData(new SpellGlyphData());
+            	}
+            	Wizardry.proxy.handleGlyphDataPacket(message);
+			});
 		}
 		
 		ctx.get().setPacketHandled(true);

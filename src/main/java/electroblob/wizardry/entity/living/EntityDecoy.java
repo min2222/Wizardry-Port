@@ -6,6 +6,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.EntityAILookIdle;
 import net.minecraft.world.entity.ai.EntityAISwimming;
 import net.minecraft.world.entity.ai.EntityAIWander;
@@ -25,16 +29,16 @@ public class EntityDecoy extends EntitySummonedCreature {
 	@Override
 	public void setCaster(LivingEntity caster){
 		super.setCaster(caster);
-		this.setAlwaysRenderNameTag(caster instanceof Player);
+		this.setCustomNameVisible(caster instanceof Player);
 	}
 
 	@Override
 	protected void registerGoals(){
 		// Decoys just wander around aimlessly, watching anything living.
-		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(1, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(2, new EntityAIWatchClosest(this, LivingEntity.class, 6.0F));
-		this.tasks.addTask(3, new EntityAILookIdle(this));
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new RandomStrollGoal(this, 1.0D));
+		this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, LivingEntity.class, 6.0F));
+		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
 	}
 
 	@Override
@@ -44,12 +48,12 @@ public class EntityDecoy extends EntitySummonedCreature {
 		if(level.isClientSide){
 			for(int i = 0; i < 20; i++){
 				ParticleBuilder.create(Type.DUST)
-				.pos(this.getX() + (this.random.nextDouble() - 0.5) * this.width, this.getY()
-						+ this.random.nextDouble() * this.getBbHeight(), this.getZ() + (this.random.nextDouble() - 0.5) * this.width)
+				.pos(this.getX() + (this.random.nextDouble() - 0.5) * this.getBbWidth(), this.getY()
+						+ this.random.nextDouble() * this.getBbHeight(), this.getZ() + (this.random.nextDouble() - 0.5) * this.getBbWidth())
 				.time(40)
 				.clr(0.2f, 1.0f, 0.8f)
 				.shaded(true)
-				.spawn(world);
+				.spawn(level);
 			}
 		}
 	}
@@ -60,7 +64,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 	}
 
 	@Override
-	public boolean isEntityInvulnerable(DamageSource source){
+	public boolean isInvulnerableTo(DamageSource source){
 		return true;
 	}
 
@@ -72,7 +76,7 @@ public class EntityDecoy extends EntitySummonedCreature {
 	@Override
 	public void tick(){
 		super.tick();
-		if(this.getCaster() == null || this.getCaster().isDead){
+		if(this.getCaster() == null || !this.getCaster().isAlive()){
 			this.discard();
 			this.onDespawn();
 		}

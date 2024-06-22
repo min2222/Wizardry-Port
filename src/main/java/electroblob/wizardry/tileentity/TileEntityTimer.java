@@ -12,17 +12,38 @@ public class TileEntityTimer extends BlockEntity {
 
 	public int timer = 0;
 	public int maxTimer;
+	public int[] randomiser;
+	public int[] randomiser2;
 
     public TileEntityTimer(BlockPos pos, BlockState state) {
         super(WizardryBlocks.TIMER_BLOCK_ENTITY.get(), pos, state);
+		randomiser = new int[30];
+		randomiser[0] = -1;
+		randomiser2 = new int[30];
+		randomiser2[0] = -1;
     }
 
     public TileEntityTimer(BlockPos pos, BlockState state, int maxTimer) {
         super(WizardryBlocks.TIMER_BLOCK_ENTITY.get(), pos, state);
         this.maxTimer = maxTimer;
+		randomiser = new int[30];
+		randomiser[0] = -1;
+		randomiser2 = new int[30];
+		randomiser2[0] = -1;
     }
 
     public static void update(Level world, BlockPos pos, BlockState state, TileEntityTimer tileEntity) {
+		if(tileEntity.randomiser.length > 0 && tileEntity.randomiser[0] == -1){
+			for(int i = 0; i < tileEntity.randomiser.length; i++){
+				tileEntity.randomiser[i] = world.random.nextInt(10);
+			}
+		}
+		if(tileEntity.randomiser2.length > 0 && tileEntity.randomiser2[0] == -1){
+			for(int i = 0; i < tileEntity.randomiser2.length; i++){
+				tileEntity.randomiser2[i] = world.random.nextInt(10);
+			}
+		}
+		
     	tileEntity.timer++;
 
 		if(tileEntity.maxTimer > 0 && tileEntity.timer > tileEntity.maxTimer && !world.isClientSide){// && this.level.getBlockId(xCoord, yCoord, zCoord) ==

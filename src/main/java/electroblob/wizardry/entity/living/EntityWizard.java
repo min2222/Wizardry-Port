@@ -19,6 +19,7 @@ import net.minecraft.world.entity.monster.IMob;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
@@ -797,7 +798,7 @@ public class EntityWizard extends PathfinderMob implements INpc, IMerchant, ISpe
 	 * @param random A random number generator to use.
 	 * @return The tier of the highest-tier spell that was added to the list.
 	 */
-	static Tier populateSpells(final Mob wizard, List<Spell> spells, Element e, boolean master, int n, Random random){
+	static Tier populateSpells(final Mob wizard, List<Spell> spells, Element e, boolean master, int n, RandomSource random){
 
 		// This is the tier of the highest tier spell added.
 		Tier maxTier = Tier.NOVICE;

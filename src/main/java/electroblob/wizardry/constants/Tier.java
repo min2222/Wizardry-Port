@@ -1,6 +1,5 @@
 package electroblob.wizardry.constants;
 
-import java.util.Random;
 import java.util.function.Supplier;
 
 import electroblob.wizardry.Wizardry;
@@ -118,10 +117,6 @@ public class Tier {
 
 	public String getUnlocalisedName(){
 		return unlocalisedName;
-	}
-
-	public String getFormattingCode(){
-		return colour.getFormattingCode();
 	}
 
 	/** The progression required for a wand to be upgraded to this tier. */

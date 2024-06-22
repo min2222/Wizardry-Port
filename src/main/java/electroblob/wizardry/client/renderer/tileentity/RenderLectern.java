@@ -1,52 +1,65 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.tileentity.TileEntityLectern;
-import net.minecraft.world.level.block.BlockHorizontal;
-import net.minecraft.client.model.ModelBook;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.model.BookModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 
-public class RenderLectern extends TileEntitySpecialRenderer<TileEntityLectern> {
+public class RenderLectern implements BlockEntityRenderer<TileEntityLectern> {
 
 	private static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/entity/lectern_book.png");
-	private final ModelBook modelBook = new ModelBook();
+	private final BookModel modelBook;
+
+    public RenderLectern(BlockEntityRendererProvider.Context p_173607_) {
+		this.modelBook = new BookModel(p_173607_.bakeLayer(ModelLayers.BOOK));
+    }
 
 	@Override
-	public void render(TileEntityLectern te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
+	public void render(TileEntityLectern te, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
 
-		GlStateManager.pushMatrix();
-		GlStateManager.translate((float)x + 0.5F, (float)y + 1, (float)z + 0.5F);
-		GlStateManager.rotate(90 - te.getWorld().getBlockState(te.getPos()).getValue(BlockHorizontal.FACING).getHorizontalAngle(), 0, 1, 0);
+		pPoseStack.pushPose();
+		pPoseStack.translate(0.5F, 1, 0.5F);
+		pPoseStack.mulPose(Vector3f.YP.rotationDegrees(90 - te.getLevel().getBlockState(te.getBlockPos()).getValue(HorizontalDirectionalBlock.FACING).toYRot()));
 
-		float time = (float)te.tickCount + partialTicks;
+		float time = (float)te.tickCount + pPartialTick;
 
-		float spread = te.bookSpreadPrev + (te.bookSpread - te.bookSpreadPrev) * partialTicks;
+		float spread = te.bookSpreadPrev + (te.bookSpread - te.bookSpreadPrev) * pPartialTick;
 
-		GlStateManager.translate(0, 0.12, 0);
-		if(spread > 0.3) GlStateManager.translate(0, Mth.sin(time * 0.1F) * 0.01F, 0);
+		pPoseStack.translate(0, 0.12, 0);
+		if(spread > 0.3) pPoseStack.translate(0, Mth.sin(time * 0.1F) * 0.01F, 0);
 
-		GlStateManager.rotate(112.5F, 0, 0, 1);
+		pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(112.5F));
 
-		GlStateManager.translate(0, 0.04 + (1 - spread) * 0.09, (1 - spread) * -0.1875);
+		pPoseStack.translate(0, 0.04 + (1 - spread) * 0.09, (1 - spread) * -0.1875);
 
-		GlStateManager.rotate((1 - spread) * -90, 0, 1, 0);
+		pPoseStack.mulPose(Vector3f.ZP.rotationDegrees((1 - spread) * -90));
 
-		this.bindTexture(BOOK_TEXTURE);
-
-		float f3 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * partialTicks + 0.25F;
-		float f4 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * partialTicks + 0.75F;
+		float f3 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * pPartialTick + 0.25F;
+		float f4 = te.pageFlipPrev + (te.pageFlip - te.pageFlipPrev) * pPartialTick + 0.75F;
 		f3 = (f3 - (float) Mth.fastFloor(f3)) * 1.6F - 0.3F;
 		f4 = (f4 - (float) Mth.fastFloor(f4)) * 1.6F - 0.3F;
 
 		f3 = Mth.clamp(f3, 0, 1);
 		f4 = Mth.clamp(f4, 0, 1);
 
-		GlStateManager.enableCull();
-		this.modelBook.render(null, time, f3, f4, spread, 0.0F, 0.0625F);
-		GlStateManager.popMatrix();
+		RenderSystem.enableCull();
+		VertexConsumer vertexconsumer = pBufferSource.getBuffer(this.modelBook.renderType(BOOK_TEXTURE));
+		this.modelBook.renderToBuffer(pPoseStack, vertexconsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		this.modelBook.setupAnim(time, f3, f4, spread);
+		pPoseStack.popPose();
 
 	}
 

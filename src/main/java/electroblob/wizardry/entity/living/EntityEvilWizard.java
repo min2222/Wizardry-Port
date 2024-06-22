@@ -1,52 +1,69 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.google.common.base.Predicate;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.constants.Element;
 import electroblob.wizardry.constants.Tier;
 import electroblob.wizardry.item.ItemSpellBook;
+import electroblob.wizardry.item.ItemWand;
+import electroblob.wizardry.item.ItemWizardArmour;
+import electroblob.wizardry.item.ItemWizardArmour.ArmourClass;
 import electroblob.wizardry.registry.Spells;
 import electroblob.wizardry.registry.WizardryItems;
 import electroblob.wizardry.registry.WizardryPotions;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
-import electroblob.wizardry.util.*;
+import electroblob.wizardry.util.AllyDesignationSystem;
+import electroblob.wizardry.util.InventoryUtils;
+import electroblob.wizardry.util.NBTExtras;
+import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import electroblob.wizardry.util.SpellModifiers;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.entity.monster.EntityMob;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.SpawnData;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import org.apache.commons.lang3.ArrayUtils;
-
-import javax.annotation.Nullable;
-import java.util.*;
 
 @Mod.EventBusSubscriber
 public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditionalSpawnData {
@@ -85,21 +102,21 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 
 		super(world);
 		this.setSize(0.6F, 1.8F);
-		((PathNavigateGround)this.getNavigator()).setBreakDoors(true);
+		((GroundPathNavigation)this.getNavigation()).setBreakDoors(true);
 
 		// For some reason this can't be done in initEntityAI
-		this.tasks.addTask(3, this.spellCastingAI);
+		this.goalSelector.addGoal(3, this.spellCastingAI);
 
 		this.detachHome();
 	}
 
 	@Override
-	protected void entityInit(){
-		super.entityInit();
-		this.dataManager.register(HEAL_COOLDOWN, -1);
-		this.dataManager.register(ELEMENT, -1);
-		this.dataManager.register(CONTINUOUS_SPELL, "ebwizardry:none");
-		this.dataManager.register(SPELL_COUNTER, 0);
+	protected void registerGoals(){
+		super.registerGoals();
+		this.entityData.define(HEAL_COOLDOWN, -1);
+		this.entityData.define(ELEMENT, -1);
+		this.entityData.define(CONTINUOUS_SPELL, "ebwizardry:none");
+		this.entityData.define(SPELL_COUNTER, 0);
 	}
 
 	@Override
@@ -148,15 +165,15 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	}
 
 	private int getHealCooldown(){
-		return this.dataManager.get(HEAL_COOLDOWN);
+		return this.entityData.get(HEAL_COOLDOWN);
 	}
 
 	private void setHealCooldown(int cooldown){
-		this.dataManager.set(HEAL_COOLDOWN, cooldown);
+		this.entityData.set(HEAL_COOLDOWN, cooldown);
 	}
 
 	public Element getElement(){
-		int n = this.dataManager.get(ELEMENT);
+		int n = this.entityData.get(ELEMENT);
 		return n == -1 ? null : Element.values()[n];
 	}
 
@@ -176,22 +193,22 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 
 	@Override
 	public void setContinuousSpell(Spell spell) {
-		this.dataManager.set(CONTINUOUS_SPELL, spell.getRegistryName().toString());
+		this.entityData.set(CONTINUOUS_SPELL, spell.getRegistryName().toString());
 	}
 
 	@Override
 	public Spell getContinuousSpell() {
-		return Spell.get(this.dataManager.get(CONTINUOUS_SPELL));
+		return Spell.get(this.entityData.get(CONTINUOUS_SPELL));
 	}
 
 	@Override
 	public void setSpellCounter(int count) {
-		this.dataManager.set(SPELL_COUNTER, count);
+		this.entityData.set(SPELL_COUNTER, count);
 	}
 
 	@Override
 	public int getSpellCounter() {
-		return this.dataManager.get(SPELL_COUNTER);
+		return this.entityData.get(SPELL_COUNTER);
 	}
 	
 	@Override
@@ -206,14 +223,14 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	}
 
 	@Override
-	public void setRevengeTarget(@Nullable LivingEntity target){
-		if(target == null || !groupUUIDs.contains(target.getUUID())) super.setRevengeTarget(target);
+	public void setLastHurtByMob(@Nullable LivingEntity target){
+		if(target == null || !groupUUIDs.contains(target.getUUID())) super.setLastHurtByMob(target);
 	}
 
 	@Override
-	public void onLivingUpdate(){
+	public void aiStep(){
 
-		super.onLivingUpdate();
+		super.aiStep();
 
 		int healCooldown = this.getHealCooldown();
 
@@ -288,9 +305,9 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 		Element element = this.getElement();
 		nbt.putInt("element", element == null ? 0 : element.ordinal());
 		nbt.putInt("skin", this.textureIndex);
-		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> new NBTTagInt(spell.metadata())));
-		nbt.setBoolean("hasStructure", this.hasStructure);
-		NBTExtras.storeTagSafely(nbt, "groupUUIDs", NBTExtras.listToNBT(groupUUIDs, NbtUtils::createUUIDTag));
+		NBTExtras.storeTagSafely(nbt, "spells", NBTExtras.listToNBT(spells, spell -> IntTag.valueOf(spell.metadata())));
+		nbt.putBoolean("hasStructure", this.hasStructure);
+		NBTExtras.storeTagSafely(nbt, "groupUUIDs", NBTExtras.listToNBT(groupUUIDs, NbtUtils::createUUID));
 	}
 
 	@Override
@@ -299,7 +316,7 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 		this.setElement(Element.values()[nbt.getInt("element")]);
 		this.textureIndex = nbt.getInt("skin");
 		this.spells = (List<Spell>)NBTExtras.NBTToList(nbt.getTagList("spells", NBT.TAG_INT),
-				(NBTTagInt tag) -> Spell.byMetadata(tag.getInt()));
+				(IntTag tag) -> Spell.byMetadata(tag.getInt()));
 		this.hasStructure = nbt.getBoolean("hasStructure");
 		this.groupUUIDs.addAll(NBTExtras.NBTToList(nbt.getTagList("groupUUIDs", NBT.TAG_COMPOUND), NbtUtils::getUUIDFromTag));
 	}
@@ -350,17 +367,17 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 		// Evil wizards occasionally drop one of their spells as a spell book, but not magic missile. This isn't in
 		// the dropRareDrop method because that would be just as rare as normal mobs; instead this is half as rare.
 		if(this.spells.size() > 0 && random.nextInt(100) - lootingLevel < 5)
-			this.entityDropItem(new ItemStack(WizardryItems.spell_book, 1,
+			this.spawnAtLocation(new ItemStack(WizardryItems.SPELL_BOOK.get(), 1,
 					this.spells.get(1 + random.nextInt(this.spells.size() - 1)).metadata()), 0);
 	}
 
 	@Override
-	protected ResourceLocation getLootTable(){
+	protected ResourceLocation getDefaultLootTable(){
 		return LOOT_TABLE;
 	}
 
 	@Override
-	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, IEntityLivingData data){
+	public SpawnGroupData finalizeSpawn(DifficultyInstance difficulty, IEntityLivingData data){
 
 		data = super.onInitialSpawn(difficulty, data);
 
@@ -378,7 +395,7 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 
 		// Adds armour.
 		for(EquipmentSlot slot : InventoryUtils.ARMOUR_SLOTS){
-			this.setItemStackToSlot(slot, new ItemStack(WizardryItems.getArmour(element, slot)));
+			this.setItemSlot(slot, new ItemStack(ItemWizardArmour.getArmour(element, ArmourClass.WIZARD, slot)));
 		}
 
 		// Default chance is 0.085f, for reference.
@@ -386,25 +403,25 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 			this.setDropChance(slot, 0.0f);
 
 		// All wizards know magic missile, even if it is disabled.
-		spells.add(Spells.magic_missile);
+		spells.add(Spells.MAGIC_MISSILE);
 
-		Tier maxTier = EntityWizard.populateSpells(this, spells, element, hasStructure, 3, rand);
+		Tier maxTier = EntityWizard.populateSpells(this, spells, element, hasStructure, 3, random);
 
 		// Now done after the spells so it can take the tier into account. For evil wizards this is slightly different;
 		// it picks a random wand which is at least a high enough tier for the spells the wizard has.
 		Tier tier = Tier.values()[maxTier.ordinal() + random.nextInt(Tier.values().length - maxTier.ordinal())];
-		this.setItemStackToSlot(EquipmentSlot.MAINHAND, new ItemStack(WizardryItems.getWand(tier, element)));
+		this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ItemWand.getWand(tier, element)));
 
 		return data;
 	}
 
 	@Override
-	public void writeSpawnData(ByteBuf data){
+	public void writeSpawnData(FriendlyByteBuf data){
 		data.writeInt(textureIndex);
 	}
 
 	@Override
-	public void readSpawnData(ByteBuf data){
+	public void readSpawnData(FriendlyByteBuf data){
 		textureIndex = data.readInt();
 	}
 
@@ -412,7 +429,7 @@ public class EntityEvilWizard extends Mob implements ISpellCaster, IEntityAdditi
 	public static void onCheckSpawnEvent(LivingSpawnEvent.CheckSpawn event){
 		// We have no way of checking if it's a spawner in getCanSpawnHere() so this has to be done here instead
 		if(event.getEntity() instanceof EntityEvilWizard && !event.isSpawner()){
-			if(!ArrayUtils.contains(Wizardry.settings.mobSpawnDimensions, event.getWorld().provider.getDimension()))
+			if(!ArrayUtils.contains(Wizardry.settings.mobSpawnDimensions, ((Level) event.getLevel()).dimension()))
 				event.setResult(Event.Result.DENY);
 		}
 	}

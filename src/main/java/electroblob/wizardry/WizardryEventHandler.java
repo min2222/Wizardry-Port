@@ -1,7 +1,6 @@
 package electroblob.wizardry;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import electroblob.wizardry.constants.Constants;
 import electroblob.wizardry.data.SpellEmitterData;
@@ -48,8 +47,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -65,6 +62,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 /**
  * General-purpose event handler for things that don't fit anywhere else or groups of related behaviours that are better
@@ -94,7 +92,7 @@ public final class WizardryEventHandler {
 		// When a player logs in, they are sent the glyph data, server settings and spell properties.
 		if(event.getEntity() instanceof ServerPlayer){
 			ServerPlayer player = (ServerPlayer)event.getEntity();
-			SpellGlyphData.get(player.level).sync(player);
+			SpellGlyphData.get((ServerLevel) player.level).sync(player);
 			SpellEmitterData.get(player.level).sync(player);
 			Wizardry.settings.sync(player);
 			syncAdvancements(player, false);
@@ -128,11 +126,11 @@ public final class WizardryEventHandler {
 
 		ArrayList<ResourceLocation> advancements = new ArrayList<>();
 
-		for(Advancement advancement : player.getServer().getAdvancementManager().getAdvancements()){
-			if(player.getAdvancements().getProgress(advancement).isDone()) advancements.add(advancement.getId());
+		for(Advancement advancement : player.getServer().getAdvancements().getAllAdvancements()){
+			if(player.getAdvancements().getOrStartProgress(advancement).isDone()) advancements.add(advancement.getId());
 		}
 
-		WizardryPacketHandler.net.send(new PacketSyncAdvancements.Message(showToasts, advancements.toArray(new ResourceLocation[0])), player);
+		WizardryPacketHandler.net.send(PacketDistributor.PLAYER.with(() -> player), new PacketSyncAdvancements.Message(showToasts, advancements.toArray(new ResourceLocation[0])));
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH) // Disabling of specific spells comes after arcane jammer but before everything else
@@ -401,22 +399,6 @@ public final class WizardryEventHandler {
 		if(event.getSource().getEntity() instanceof Player){
 
 			Player player = (Player)event.getSource().getEntity();
-
-			// Compatibility with "Lycanites Mobs" -it uses custom loot drop logic which can't be hooked, given the
-			// number of mobs that spawn as Lycanites when this mod is active it would massively nerf the wizard drops
-			//  if we didn't handle this
-			if(event.getEntity().getClass().getCanonicalName().contains("lycanitesmobs"))
-			{
-				ServerLevel world = (ServerLevel)event.getEntity().getLevel();
-				LootTable table =  world.getLootTableManager().getLootTableFromLocation(new ResourceLocation(Wizardry.MODID, "entities/mob_additions"));
-
-				LootContext ctx = new LootContext.Builder(world).withPlayer(player).build();
-				List<ItemStack> stacks = table.generateLootForPools(world.random, ctx);
-
-				for(ItemStack stack : stacks) {
-					event.getEntity().spawnAtLocation(stack, 0f);
-				}
-			}
 
 			for(ItemStack stack : InventoryUtils.getPrioritisedHotbarAndOffhand(player)){
 

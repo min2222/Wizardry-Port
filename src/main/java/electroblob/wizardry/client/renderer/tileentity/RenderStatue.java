@@ -1,19 +1,29 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 
 import electroblob.wizardry.tileentity.TileEntityStatue;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class RenderStatue implements BlockEntityRenderer<TileEntityStatue> {
-
+	
+	protected static final ResourceLocation[] DESTROY_STAGES = new ResourceLocation[] {
+			new ResourceLocation("textures/blocks/destroy_stage_0.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_1.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_2.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_3.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_4.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_5.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_6.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_7.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_8.png"), 
+			new ResourceLocation("textures/blocks/destroy_stage_9.png")};
 	private int destroyStage = 0; // Gets set each time a statue is rendered to allow access from the layer renderer
 
 	@Override
@@ -33,30 +43,22 @@ public class RenderStatue implements BlockEntityRenderer<TileEntityStatue> {
 
 		if(statue.creature != null && statue.position == 1){
 
-			this.destroyStage = destroyStage;
-
-			GlStateManager.pushMatrix();
+			pPoseStack.pushPose();
 			// The next line makes stuff render in the same place relative to the world wherever the player is.
-			GlStateManager.translate((float)x + 0.5F, (float)y, (float)z + 0.5F);
-			GlStateManager.enableLighting();
+			pPoseStack.translate(0.5F, 0, 0.5F);
 
-			float yaw = statue.creature.prevRotationYaw;
-			int i = statue.creature.getBrightnessForRender();
+			float yaw = statue.creature.yRotO;
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-			int j = i % 65536;
-			int k = i / 65536;
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)j / 1.0F, (float)k / 1.0F);
-			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-			GlStateManager.rotate(-yaw, 0F, 1F, 0F);
+			pPoseStack.mulPose(Vector3f.YP.rotationDegrees(-yaw));
 			// Stops the normal model from rendering.
 			if(!statue.isIce) statue.creature.setInvisible(true);
 			// Setting the last parameter to true prevents the debug bounding box from rendering.
 			// For some reason, passing in the partialTicks causes the entity to spin round really fast
-			Minecraft.getInstance().getRenderManager().renderEntity(statue.creature, 0, 0, 0, 0, 0, true);
+			Minecraft.getInstance().getEntityRenderDispatcher().render(statue.creature, 0, 0, 0, 0, 0, pPoseStack, pBufferSource, pPackedLight);
 			if(!statue.isIce) statue.creature.setInvisible(false);
 
-			GlStateManager.popMatrix();
+			pPoseStack.popPose();
 
 		}
 	}

@@ -1,88 +1,95 @@
 package electroblob.wizardry.client.renderer.tileentity;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Vector3f;
+
 import electroblob.wizardry.Wizardry;
 import electroblob.wizardry.block.BlockMagicLight;
 import electroblob.wizardry.client.DrawingUtils;
 import electroblob.wizardry.item.ISpellCastingItem;
 import electroblob.wizardry.item.ItemArtefact;
 import electroblob.wizardry.registry.WizardryItems;
-import electroblob.wizardry.tileentity.TileEntityMagicLight;
+import electroblob.wizardry.tileentity.TileEntityTimer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.api.distmarker.Dist;
-import org.lwjgl.opengl.GL11;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicLight> {
+public class RenderMagicLight implements BlockEntityRenderer<TileEntityTimer> {
 
 	private static final ResourceLocation RAY_TEXTURE = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/light/ray.png");
 	private static final ResourceLocation FLARE_TEXTURE = new ResourceLocation(Wizardry.MODID,
 			"textures/entity/light/flare.png");
+	
+    public RenderMagicLight(BlockEntityRendererProvider.Context ctx) {
+
+    }
 
 	@Override
-	public void render(TileEntityMagicLight tileentity, double x, double y, double z, float partialTicks,
-			int destroyStage, float alpha){
+	public void render(TileEntityTimer tileentity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource, int pPackedLight, int pPackedOverlay) {
 
-		GlStateManager.pushMatrix();
+		pPoseStack.pushPose();
 
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.disableLighting();
-		GlStateManager.depthMask(false);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
-		RenderHelper.disableStandardItemLighting();
+		RenderSystem.disableCull();
+		RenderSystem.enableBlend();
+		RenderSystem.depthMask(false);
 
-		GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
+		pPoseStack.translate(0.5, 0.5, 0.5);
 
-		float s = DrawingUtils.smoothScaleFactor(tileentity.getLifetime(), tileentity.timer, partialTicks, 10, 10);
-		GlStateManager.scale(s, s, s);
+		float s = DrawingUtils.smoothScaleFactor(tileentity.getLifetime(), tileentity.timer, pPartialTick, 10, 10);
+		pPoseStack.scale(s, s, s);
 
 		// Renders the aura effect
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
+		Tesselator tessellator = Tesselator.getInstance();
+		BufferBuilder buffer = tessellator.getBuilder();
 
-		GlStateManager.pushMatrix();
+		pPoseStack.pushPose();
 
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 		// This counteracts the reverse rotation behaviour when in front f5 view.
 		// Fun fact: this is a bug with vanilla too! Look at a snowball in front f5 view, for example.
-		float yaw = Minecraft.getInstance().gameSettings.thirdPersonView == 2
-				? Minecraft.getInstance().getRenderManager().playerViewX
-				: -Minecraft.getInstance().getRenderManager().playerViewX;
-		GlStateManager.rotate(180.0F - Minecraft.getInstance().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(yaw, 1.0F, 0.0F, 0.0F);
+		pPoseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+		pPoseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
 
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-		this.bindTexture(FLARE_TEXTURE);
+		RenderSystem.setShaderTexture(0, FLARE_TEXTURE);
 
-		buffer.pos(-0.6, 0.6, 0).tex(0, 0).endVertex();
-		buffer.pos(0.6, 0.6, 0).tex(1, 0).endVertex();
-		buffer.pos(0.6, -0.6, 0).tex(1, 1).endVertex();
-		buffer.pos(-0.6, -0.6, 0).tex(0, 1).endVertex();
+		buffer.vertex(pPoseStack.last().pose(), -0.6f, 0.6f, 0).uv(0, 0).endVertex();
+		buffer.vertex(pPoseStack.last().pose(), 0.6f, 0.6f, 0).uv(1, 0).endVertex();
+		buffer.vertex(pPoseStack.last().pose(), 0.6f, -0.6f, 0).uv(1, 1).endVertex();
+		buffer.vertex(pPoseStack.last().pose(), -0.6f, -0.6f, 0).uv(0, 1).endVertex();
 
-		tessellator.draw();
+		BufferUploader.drawWithShader(buffer.end());
 
-		GlStateManager.popMatrix();
+		pPoseStack.popPose();
 
 		// Renders the rays
 
 		// For some reason, the old blend function (GL11.GL_SRC_ALPHA, GL11.GL_SRC_ALPHA) caused the innermost
 		// ends of the rays to appear black, so I have changed it to this, which looks very slightly different.
-		GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA);
+		RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.SRC_ALPHA);
 
-		this.bindTexture(RAY_TEXTURE);
+		RenderSystem.setShaderTexture(0, RAY_TEXTURE);
 
 		if(tileentity.randomiser.length >= 30){
 			for(int j = 0; j < 30; j++){
@@ -90,20 +97,20 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 				int sliceAngle = 20 + tileentity.randomiser[j];
 				float scale = 0.5f;
 
-				GlStateManager.pushMatrix();
+				pPoseStack.pushPose();
 
-				GlStateManager.rotate(31 * tileentity.randomiser[j], 1, 0, 0);
-				GlStateManager.rotate(31 * tileentity.randomiser2[j], 0, 0, 1);
+				pPoseStack.mulPose(Vector3f.XP.rotationDegrees(31 * tileentity.randomiser[j]));
+				pPoseStack.mulPose(Vector3f.ZP.rotationDegrees(31 * tileentity.randomiser2[j]));
 
 				/* OK, so here are the changes to rendering as far as I know: Vertex formats specify how the methods are
 				 * arranged Color has to be called for every vertex, I think. The new methods thing is a bit weird,
 				 * because other than the number of arguments there is essentially no difference between pos, tex,
 				 * color, normal and lightmap. At least they make the code more readable. */
+				
+				buffer.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-				buffer.begin(5, DefaultVertexFormats.POSITION_TEX_COLOR);
-
-				buffer.pos(0, 0, 0).tex(0, 0).color(255, 255, 255, 0).endVertex();
-				buffer.pos(0, 0, 0).tex(0, 1).color(255, 255, 255, 0).endVertex();
+				buffer.vertex(pPoseStack.last().pose(), 0, 0, 0).uv(0, 0).color(255, 255, 255, 0).endVertex();
+				buffer.vertex(pPoseStack.last().pose(), 0, 0, 0).uv(0, 1).color(255, 255, 255, 0).endVertex();
 
 				double x1 = scale * Mth.sin((tileentity.timer + 40 * j) * ((float)Math.PI / 180));
 				// double y1 = 0.7*MathHelper.cos((timerentity.timer - 40*j)*(Math.PI/180))*j/10;
@@ -113,34 +120,34 @@ public class RenderMagicLight extends TileEntitySpecialRenderer<TileEntityMagicL
 				// double y2 = 0.7*MathHelper.sin((timerentity.timer - 40*j)*(Math.PI/180))*j/10;
 				double z2 = scale * Mth.cos((tileentity.timer + 40 * j - sliceAngle) * ((float)Math.PI / 180));
 
-				buffer.pos(x1, 0, z1).tex(1, 0).color(0, 0, 0, 255).endVertex();
-				buffer.pos(x2, 0, z2).tex(1, 1).color(0, 0, 0, 255).endVertex();
+				buffer.vertex(pPoseStack.last().pose(), (float)x1, 0, (float)z1).uv(1, 0).color(0, 0, 0, 255).endVertex();
+				buffer.vertex(pPoseStack.last().pose(), (float)x2, 0, (float)z2).uv(1, 1).color(0, 0, 0, 255).endVertex();
 
-				tessellator.draw();
+				BufferUploader.drawWithShader(buffer.end());
 
-				GlStateManager.popMatrix();
+				pPoseStack.popPose();
 			}
 		}
 
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableLighting();
-		GlStateManager.depthMask(true);
-		RenderHelper.enableStandardItemLighting();
+		RenderSystem.enableCull();
+		RenderSystem.disableBlend();
+		RenderSystem.depthMask(true);
 
-		GlStateManager.popMatrix();
+		pPoseStack.popPose();
 	}
 
 	@SubscribeEvent
-	public static void onDrawBlockHighlightEvent(DrawBlockHighlightEvent event){
+	public static void onDrawBlockHighlightEvent(RenderHighlightEvent.Block event){
 		// Hide the block outline for magic light blocks unless the player can dispel them
-		if(event.getTarget().typeOfHit == HitResult.Type.BLOCK
-				&& event.getPlayer().level.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
+		if(event.getTarget().getType() == HitResult.Type.BLOCK
+				&& event.getCamera().getEntity().level.getBlockState(event.getTarget().getBlockPos()).getBlock() instanceof BlockMagicLight){
 
-			if((!(event.getPlayer().getMainHandItem().getItem() instanceof ISpellCastingItem)
-					&& !(event.getPlayer().getOffHandItem().getItem() instanceof ISpellCastingItem))
-					|| !ItemArtefact.isArtefactActive(event.getPlayer(), WizardryItems.charm_light)){
+			if(!(event.getCamera().getEntity() instanceof Player))
+				return;
+			Player player = (Player) event.getCamera().getEntity();
+			if((!(player.getMainHandItem().getItem() instanceof ISpellCastingItem)
+					&& !(player.getOffhandItem().getItem() instanceof ISpellCastingItem))
+					|| !ItemArtefact.isArtefactActive(player, WizardryItems.CHARM_LIGHT.get())){
 
 				event.setCanceled(true);
 			}

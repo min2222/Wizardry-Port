@@ -1,22 +1,28 @@
 package electroblob.wizardry.entity.living;
 
+import java.util.Collections;
+import java.util.List;
+
 import electroblob.wizardry.registry.Spells;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.registry.WizardrySounds;
 import electroblob.wizardry.spell.Spell;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.effect.EntityLightningBolt;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.Collections;
-import java.util.List;
 
 public class EntityStormElemental extends EntitySummonedCreature implements ISpellCaster {
 
@@ -24,11 +30,17 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 
 	private EntityAIAttackSpell<EntityStormElemental> spellAttackAI = new EntityAIAttackSpell<EntityStormElemental>(this, AISpeed, 15f, 30, 0);
 
-	private static final List<Spell> attack = Collections.singletonList(Spells.lightning_disc);
+	private static final List<Spell> attack = Collections.singletonList(Spells.LIGHTNING_DISC);
 
 	/** Creates a new storm elemental in the given world. */
 	public EntityStormElemental(Level world){
-		super(world);
+		this(WizardryEntities.STORM_ELEMENTAL.get(), world);
+		// For some reason this can't be in initEntityAI
+		this.goalSelector.addGoal(0, this.spellAttackAI);
+	}
+	
+	public EntityStormElemental(EntityType<? extends EntitySummonedCreature> type, Level world){
+		super(type, world);
 		// For some reason this can't be in initEntityAI
 		this.goalSelector.addGoal(0, this.spellAttackAI);
 	}
@@ -36,14 +48,14 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	@Override
 	protected void registerGoals(){
 
-		this.tasks.addTask(1, new EntityAIAttackMelee(this, AISpeed, false));
-		this.tasks.addTask(2, new EntityAIWander(this, AISpeed));
-		this.tasks.addTask(3, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<LivingEntity>(this, LivingEntity.class,
+		this.goalSelector.addGoal(1, new MeleeAttackGoal(this, AISpeed, false));
+		this.goalSelector.addGoal(2, new RandomStrollGoal(this, AISpeed));
+		this.goalSelector.addGoal(3, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<LivingEntity>(this, LivingEntity.class,
 				0, false, true, this.getTargetSelector()));
 
-		this.setAIMoveSpeed((float)AISpeed);
+		this.setSpeed((float)AISpeed);
 	}
 
 	@Override
@@ -81,18 +93,7 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public int getBrightnessForRender(){
-		return 15728880;
-	}
-
-	@Override
-	public float getBrightness(){
-		return 1.0F;
-	}
-
-	@Override
-	public void onLivingUpdate(){
+	public void aiStep(){
 
 		if(this.tickCount % 120 == 1){
 			this.playSound(WizardrySounds.ENTITY_STORM_ELEMENTAL_WIND, 1.0f, 1.0f);
@@ -104,20 +105,20 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 		}
 
 		// Slow fall
-		if(!this.onGround && this.motionY < 0.0D){
-			this.motionY *= 0.6D;
+		if(!this.onGround && this.getDeltaMovement().y < 0.0D){
+			this.setDeltaMovement(this.getDeltaMovement().multiply(1, 0.6D, 1));
 		}
 
 		if(level.isClientSide){
 
 			for(int i=0; i<2; ++i){
 				
-				world.spawnParticle(ParticleTypes.SMOKE_LARGE,
-						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.width,
+				level.addParticle(ParticleTypes.LARGE_SMOKE,
+						this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth(),
 						this.getY() + this.random.nextDouble() * (double)this.getBbHeight(),
-						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.width, 0, 0, 0);
+						this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.getBbWidth(), 0, 0, 0);
 				
-				ParticleBuilder.create(Type.SPARK, this).spawn(world);
+				ParticleBuilder.create(Type.SPARK, this).spawn(level);
 			}
 
 			for(int i=0; i<10; i++){
@@ -127,20 +128,21 @@ public class EntityStormElemental extends EntitySummonedCreature implements ISpe
 				
 				ParticleBuilder.create(Type.SPARKLE).pos(this.getX(), this.getY() + dy, this.getZ())
 				.time(20 + random.nextInt(10)).clr(0, brightness, brightness)//.entity(this)
-				.spin(0.2 + 0.5 * dy, 0.1 + 0.05 * world.random.nextDouble()).spawn(world);
+				.spin(0.2 + 0.5 * dy, 0.1 + 0.05 * level.random.nextDouble()).spawn(level);
 			}
 		}
 
-		super.onLivingUpdate();
+		super.aiStep();
 	}
 
 	@Override
-	public void fall(float distance, float damageMultiplier){
+	public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source){
 		// Immune to fall damage.
+		return false;
 	}
 
 	@Override
-	public void onStruckByLightning(EntityLightningBolt lightning){
+	public void thunderHit(ServerLevel level, LightningBolt lightning){
 		// Immune to lightning.
 	}
 }

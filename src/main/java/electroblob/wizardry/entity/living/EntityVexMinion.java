@@ -5,20 +5,21 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import electroblob.wizardry.Wizardry;
+import electroblob.wizardry.registry.WizardryEntities;
 import electroblob.wizardry.util.ParticleBuilder;
 import electroblob.wizardry.util.ParticleBuilder.Type;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.world.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
 public class EntityVexMinion extends Vex implements ISummonedCreature {
@@ -35,8 +36,13 @@ public class EntityVexMinion extends Vex implements ISummonedCreature {
 
 	/** Creates a new vex minion in the given world. */
 	public EntityVexMinion(Level world){
-		super(world);
-		this.experienceValue = 0;
+		this(WizardryEntities.VEX_MINION.get(), world);
+		this.xpReward = 0;
+	}
+	
+	public EntityVexMinion(EntityType<? extends Vex> type, Level world){
+		super(type, world);
+		this.xpReward = 0;
 	}
 
 	// ISummonedCreature overrides
@@ -49,19 +55,19 @@ public class EntityVexMinion extends Vex implements ISummonedCreature {
 
 	// EntityVex overrides
 	@Override
-	protected void initEntityAI(){
-		super.initEntityAI();
-		this.targetTasks.taskEntries.clear();
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, LivingEntity.class,
+	protected void registerGoals(){
+		super.registerGoals();
+		this.targetSelector.removeAllGoals();
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class,
 				0, false, false, this.getTargetSelector()));
 	}
 
 	// Implementations
 
 	@Override
-	public void setRevengeTarget(LivingEntity entity){
-		if(this.shouldRevengeTarget(entity)) super.setRevengeTarget(entity);
+	public void setLastHurtByMob(LivingEntity entity){
+		if(this.shouldRevengeTarget(entity)) super.setLastHurtByMob(entity);
 	}
 
 	@Override
@@ -86,7 +92,7 @@ public class EntityVexMinion extends Vex implements ISummonedCreature {
 				ParticleBuilder.create(Type.DARK_MAGIC)
 				.pos(this.getX() + this.random.nextFloat(), this.getY() + this.random.nextFloat(), this.getZ() + this.random.nextFloat())
 				.clr(0.3f, 0.3f, 0.3f)
-				.spawn(world);
+				.spawn(level);
 			}
 		}
 	}
@@ -102,10 +108,10 @@ public class EntityVexMinion extends Vex implements ISummonedCreature {
 	}
 
 	@Override
-	protected boolean processInteract(Player player, InteractionHand hand){
+	protected InteractionResult mobInteract(Player player, InteractionHand hand){
 		// In this case, the delegate method determines whether super is called.
 		// Rather handily, we can make use of Java's short-circuiting method of evaluating OR statements.
-		return this.interactDelegate(player, hand) || super.processInteract(player, hand);
+        return this.interactDelegate(player, hand) == InteractionResult.FAIL ? super.mobInteract(player, hand) : this.interactDelegate(player, hand);
 	}
 
 	@Override
@@ -122,27 +128,21 @@ public class EntityVexMinion extends Vex implements ISummonedCreature {
 
 	// Recommended overrides
 
-	@Override protected int getExperiencePoints(Player player){ return 0; }
-	@Override protected boolean canDropLoot(){ return false; }
-	@Override protected Item getDropItem(){ return null; }
-	@Override protected ResourceLocation getLootTable(){ return null; }
+	@Override public int getExperienceReward(){ return 0; }
+	@Override protected boolean shouldDropLoot(){ return false; }
+	@Override protected ResourceLocation getDefaultLootTable(){ return null; }
 	@Override public boolean canPickUpLoot(){ return false; }
 
 	// This vanilla method has nothing to do with the custom despawn() method.
-	@Override protected boolean canDespawn(){
+	@Override public boolean removeWhenFarAway(double distance){
 		return getCaster() == null && getOwnerUUID() == null;
-	}
-
-	@Override
-	public boolean getCanSpawnHere(){
-		return this.level.getDifficulty() != Difficulty.PEACEFUL;
 	}
 
 	@Override
 	public Component getDisplayName(){
 		if(getCaster() != null){
 			return Component.translatable(NAMEPLATE_TRANSLATION_KEY, getCaster().getName(),
-					Component.translatable("entity." + this.getEntityString() + ".name"));
+					Component.translatable("entity." + this.getEncodeId() + ".name"));
 		}else{
 			return super.getDisplayName();
 		}
